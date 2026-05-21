@@ -201,7 +201,6 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
       <div class="ftitle">Region</div><div class="fchips" id="fr"></div>
       <div class="ftitle">Firmware Version</div><div class="fchips" id="ff"></div>
       <div class="ftitle">Firmware Update</div><div class="fchips" id="ffu"></div>
-      <div class="ftitle">HART Version</div><div class="fchips" id="fh"></div>
       <div class="ftitle">Status</div><div class="fchips" id="fs"></div>
       <div class="ftitle">Application</div><div class="fchips" id="fa"></div>
       <button class="rbtn" onclick="rst()">&#8634; Reset Filters</button>
@@ -252,7 +251,6 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
             <th>Metering Name</th>
             <th onclick="srt('Firmware')">Firmware <span id="sx4">&#8597;</span></th>
             <th onclick="srt('Firmware Update')">FW Update <span id="sx5">&#8597;</span></th>
-            <th onclick="srt('Hart version')">HART <span id="sx6">&#8597;</span></th>
             <th onclick="srt('Status')">Status <span id="sx7">&#8597;</span></th>
             <th onclick="srt('Applications')">Application <span id="sx8">&#8597;</span></th>
             <th onclick="srt('Last config installed date')">Config Date <span id="sx9">&#8597;</span></th>
@@ -269,7 +267,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 var RC=['#00d4ff','#3b82f6','#8b5cf6','#ec4899','#f97316','#f59e0b','#10b981','#14b8a6','#06b6d4','#84cc16','#a855f7','#ef4444','#6366f1','#d946ef'];
 var AC={Turbine:'#00d4ff',Supervisory:'#c084fc',USM:'#fb923c',Orifice:'#fbbf24'};
 var FWC={'Up-to-date':'#34d399',Outdated:'#f87171',Unknown:'#a8a29e'};
-var CM={'PTT Region':0,Site:1,TAG:2,Firmware:4,'Firmware Update':5,'Hart version':6,Status:7,Applications:8,'Last config installed date':9};
+var CM={'PTT Region':0,Site:1,TAG:2,Firmware:4,'Firmware Update':5,Status:6,Applications:7,'Last config installed date':8};
 var DATA=[],lastSrc=null;
 var ST={f:{r:new Set(),fw:new Set(),fwu:new Set(),hv:new Set(),st:new Set(),ap:new Set()},q:'',sc:null,sa:true,p:1,ps:20};
 
@@ -367,6 +365,7 @@ function processRows(rows){
     hdrs.forEach(function(h,j){obj[h]=(row[j]||'').trim();});
     if(!obj['Applications']&&obj['Column1'])obj['Applications']=obj['Column1'];
     obj['Applications']=(obj['Applications']||'').trim();
+        obj['Hart version']=fixHart(obj['Hart version']||'');
     var d=obj['Last config installed date']||'';
     obj['Last config installed date']=d.replace(' 00:00:00','').replace('Invalid Date','').trim();
     if(obj['PTT Region']||obj['Site']||obj['TAG'])DATA.push(obj);
@@ -386,6 +385,7 @@ function loadXL(file){
       DATA=rows.map(function(r){
         if(!r['Applications']&&r['Column1'])r['Applications']=r['Column1'];
         r['Applications']=(r['Applications']||'').toString().trim();
+        r['Hart version']=fixHart((r['Hart version']||'').toString());
         var d=r['Last config installed date']||'';
         r['Last config installed date']=d.toString().replace(' 00:00:00','').replace('Invalid Date','').trim();
         return r;
@@ -427,13 +427,30 @@ function refreshGS(){
   });
 }
 
+
+// Fix Hart version: xlsx.js อาจแปลง 5/13 เป็นวันที่
+function fixHart(v) {
+  if (!v) return v;
+  v = v.toString().trim();
+  // map date formats กลับเป็น HART
+  var m = {
+    '13-May':'5/13','12-Apr':'4/12','12-Mar':'3/12','12-Jan':'1/12',
+    '13-may':'5/13','12-apr':'4/12','12-mar':'3/12','12-jan':'1/12',
+    'May 13':'5/13','Apr 12':'4/12','Mar 12':'3/12','Jan 12':'1/12',
+    'May-13':'5/13','Apr-12':'4/12','Mar-12':'3/12','Jan-12':'1/12'
+  };
+  if (m[v]) return m[v];
+  // ถ้าเป็น Excel serial number วันที่ (number) ให้ return ว่าง
+  if (/^\d{5}$/.test(v)) return '-';
+  return v;
+}
+
 var nv=function(v){return(v||'').toString().trim();};
 function fd(){
   var d=DATA;
   if(ST.f.r.size)d=d.filter(function(x){return ST.f.r.has(nv(x['PTT Region']));});
   if(ST.f.fw.size)d=d.filter(function(x){return ST.f.fw.has(nv(x['Firmware']));});
   if(ST.f.fwu.size)d=d.filter(function(x){return ST.f.fwu.has(nv(x['Firmware Update']));});
-  if(ST.f.hv.size)d=d.filter(function(x){return ST.f.hv.has(nv(x['Hart version']));});
   if(ST.f.st.size)d=d.filter(function(x){return ST.f.st.has(nv(x['Status']));});
   if(ST.f.ap.size)d=d.filter(function(x){return ST.f.ap.has(nv(x['Applications']));});
   if(ST.q)d=d.filter(function(x){return nv(x['TAG']).toLowerCase().includes(ST.q)||nv(x['Site']).toLowerCase().includes(ST.q)||nv(x['Metering name']).toLowerCase().includes(ST.q);});
@@ -453,7 +470,6 @@ function buildF(){
     var sc=v==='Up-to-date'?'fwu':v==='Outdated'?'fwo':'fwk';
     return '<span class="chip '+sc+'" onclick="tog(\'fwu\',\''+v+'\',this)">'+v+'</span>';
   }).join('');
-  chips('fh',uniq('Hart version'),'hv');
   chips('fs',['Commissioned','Decommissioned','Terminated'],'st',null,null,true);
   chips('fa',['Turbine','Supervisory','USM','Orifice'],'ap');
 }
@@ -512,10 +528,10 @@ function render(){
   // Table
   var st2=(ST.p-1)*ST.ps,pd=d.slice(st2,st2+ST.ps);
   document.getElementById('tc').textContent=d.length+' records';
-  for(var i=0;i<=9;i++){var el=document.getElementById('sx'+i);if(el)el.innerHTML='&#8597;';}
+  for(var i=0;i<=8;i++){var el=document.getElementById('sx'+i);if(el)el.innerHTML='&#8597;';}
   document.querySelectorAll('th').forEach(function(th){th.classList.remove('sorted');});
   if(ST.sc!==null){var idx=CM[ST.sc];if(idx!==undefined){var ths=document.querySelectorAll('thead th');ths[idx].classList.add('sorted');ths[idx].querySelector('span').innerHTML=ST.sa?'&#8593;':'&#8595;';}}
-  if(!pd.length){document.getElementById('tb').innerHTML='<tr><td colspan="10" style="text-align:center;padding:40px;color:#475569">\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25</td></tr>';rPg(0);return;}
+  if(!pd.length){document.getElementById('tb').innerHTML='<tr><td colspan="9" style="text-align:center;padding:40px;color:#475569">\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25</td></tr>';rPg(0);return;}
   document.getElementById('tb').innerHTML=pd.map(function(x){
     var fw=nv(x['Firmware']),fwu=nv(x['Firmware Update']),st3=nv(x['Status']),ap=nv(x['Applications']);
     var stc=st3==='Commissioned'?'sbc':st3==='Decommissioned'?'sbd':'sbt';
@@ -530,7 +546,7 @@ function render(){
       '<td title="'+mn+'">'+mn.substring(0,34)+(mn.length>34?'&hellip;':'')+'</td>'+
       '<td>'+(fw?'<span class="fw2">'+fw+'</span>':'<span style="color:#475569">&mdash;</span>')+'</td>'+
       '<td><span class="fwb '+fwuc+'">'+fwuicon+' '+fwu+'</span></td>'+
-      '<td>'+(nv(x['Hart version'])?'<span class="hv2">'+nv(x['Hart version'])+'</span>':'<span style="color:#475569">&mdash;</span>')+'</td>'+
+      
       '<td><span class="sb2 '+stc+'">'+st3+'</span></td>'+
       '<td><span class="ab '+apc+'">'+ap+'</span></td>'+
       '<td style="color:#94a3b8;font-size:10px;font-family:Space Mono,monospace">'+(dt||'&mdash;')+'</td></tr>';
@@ -540,7 +556,7 @@ function render(){
 
 function rPg(total){
   var pages=Math.ceil(total/ST.ps)||1,cur=ST.p;
-  var h='<span class="pgi">'+(cur-1)*ST.ps+1+'&ndash;'+Math.min(cur*ST.ps,total)+'/'+total+'</span>';
+  var startNum=((cur-1)*ST.ps)+1;var endNum=Math.min(cur*ST.ps,total);var h='<span class="pgi">'+startNum+'&ndash;'+endNum+'/'+total+'</span>';
   h+='<button class="pb" onclick="gp('+(cur-1)+')" '+(cur<=1?'disabled':'')+'>&lsaquo;</button>';
   var rng=[];for(var p2=1;p2<=pages;p2++){if(p2===1||p2===pages||Math.abs(p2-cur)<=1)rng.push(p2);else if(rng[rng.length-1]!=='...')rng.push('...');}
   rng.forEach(function(p2){if(p2==='...')h+='<span class="pb" style="pointer-events:none">&hellip;</span>';else h+='<button class="pb '+(p2===cur?'on':'')+'" onclick="gp('+p2+')">'+p2+'</button>';});
