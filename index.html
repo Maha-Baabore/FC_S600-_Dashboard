@@ -208,12 +208,14 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
     <div class="content">
       <!-- KPI Row 1: Status -->
-      <div class="krow" style="grid-template-columns:1fr 1fr;">
+      <div class="krow">
         <div class="kcard tot"><div class="klabel">Total Units</div><div class="kval" id="kt">0</div><div class="ksub" id="ks"></div></div>
         <div class="kcard com"><div class="klabel">Commissioned</div><div class="kval" id="kc">0</div><div class="ksub" id="kcp"></div></div>
+        <div class="kcard dec"><div class="klabel">Decommissioned</div><div class="kval" id="kd">0</div><div class="ksub" id="kdp"></div></div>
       </div>
       <!-- KPI Row 2: Firmware -->
-      <div class="krow2" style="grid-template-columns:1fr 1fr;">
+      <div class="krow2">
+        <div class="kcard ter"><div class="klabel">Terminated</div><div class="kval" id="kr">0</div><div class="ksub" id="krp"></div></div>
         <div class="kcard fwup"><div class="klabel">&#9654; Firmware Up-to-date</div><div class="kval" id="kfu">0</div><div class="ksub" id="kfup"></div></div>
         <div class="kcard fwod"><div class="klabel">&#9660; Firmware Outdated</div><div class="kval" id="kfo">0</div><div class="ksub" id="kfop"></div></div>
       </div>
@@ -504,9 +506,8 @@ function render(){
   document.getElementById('ht').textContent=t;
   // Region chart
   var cnt={};d.forEach(function(x){var k=nv(x['PTT Region'])||'?';cnt[k]=(cnt[k]||0)+1;});
-  var regionOrder=['1','2','3','4','5','6','7','8','9','10','11','GSP','OFFSHORE','OSP'];
-  var sorted=regionOrder.map(function(k){return[k,cnt[k]||0];}).filter(function(e){return e[1]>0;});
-  var mx=sorted.reduce(function(m,e){return Math.max(m,e[1]);},1);
+  var sorted=Object.entries(cnt).sort(function(a,b){return b[1]-a[1];}).slice(0,14);
+  var mx=sorted[0]?sorted[0][1]:1;
   var allR=[...new Set(DATA.map(function(x){return nv(x['PTT Region']);}))].sort(function(a,b){var na=parseInt(a),nb=parseInt(b);if(!isNaN(na)&&!isNaN(nb))return na-nb;if(!isNaN(na))return -1;if(!isNaN(nb))return 1;return a.localeCompare(b);});
   var rcm={};allR.forEach(function(r,i){rcm[r]=RC[i%RC.length];});
   document.getElementById('cr').innerHTML=sorted.map(function(e){
