@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FC S600+ PTT — Metering Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080c18;--sf:#0d1220;--sf2:#121929;--sf3:#192236;--ac:#00d4ff;--ac2:#2563eb;--gr:#059669;--rd:#dc2626;--yw:#d97706;--tx:#e2e8f0;--tx2:#94a3b8;--tx3:#475569;--br:rgba(255,255,255,0.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);min-height:100vh;overflow-x:hidden}
+#home{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 0%,rgba(0,212,255,.08) 0%,transparent 65%),var(--bg);padding:40px 20px}
+.logo-box{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--bg);
+  background:linear-gradient(135deg,var(--ac),var(--ac2));width:60px;height:60px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.3;
+  margin-bottom:28px;box-shadow:0 0 40px rgba(0,212,255,.25)}
+.home-title{font-size:30px;font-weight:700;margin-bottom:6px;text-align:center}
+.home-sub{font-size:13px;color:var(--tx3);margin-bottom:44px;font-family:'Space Mono',monospace}
+.src-tabs{display:flex;width:580px;max-width:100%;border-radius:14px 14px 0 0;overflow:hidden}
+.src-tab{flex:1;padding:13px 0;text-align:center;font-size:13px;font-weight:600;cursor:pointer;
+  background:var(--sf2);color:var(--tx3);border:1px solid var(--br);transition:all .2s;border-bottom:none}
+.src-tab:first-child{border-radius:14px 0 0 0}.src-tab:last-child{border-radius:0 14px 0 0}
+.src-tab.active{background:var(--sf);color:var(--ac);border-color:rgba(0,212,255,.3)}
+.src-panel{width:580px;max-width:100%;background:var(--sf);border:1px solid var(--br);border-radius:0 0 14px 14px;padding:28px}
+.src-panel.hidden{display:none}
+.gs-steps{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.gs-step{display:flex;gap:12px;align-items:flex-start}
+.gs-num{width:24px;height:24px;border-radius:50%;background:rgba(0,212,255,.15);border:1px solid rgba(0,212,255,.3);color:var(--ac);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.gs-text{font-size:13px;color:var(--tx2);line-height:1.6}
+.gs-text b{color:var(--tx)}.gs-text code{background:var(--sf3);padding:2px 6px;border-radius:4px;font-family:'Space Mono',monospace;font-size:11px;color:var(--ac)}
+.url-input{width:100%;background:var(--sf3);border:1px solid var(--br);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--tx);outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s;margin-bottom:10px}
+.url-input:focus{border-color:var(--ac2)}.url-input::placeholder{color:var(--tx3)}
+.load-btn{width:100%;padding:13px;border-radius:10px;border:none;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;margin-top:4px}
+.load-btn.gs{background:linear-gradient(135deg,#0f9d58,#059669);color:#fff}
+.load-btn.gs:hover{filter:brightness(1.1);transform:translateY(-1px)}.load-btn.gs:disabled{opacity:.4;cursor:not-allowed;transform:none}
+#dz{border:2px dashed rgba(0,212,255,.2);border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(0,212,255,.02);position:relative}
+#dz:hover,#dz.over{border-color:var(--ac);background:rgba(0,212,255,.05);transform:translateY(-2px)}
+#dz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.dicon{font-size:36px;margin-bottom:12px}.dtitle{font-size:15px;font-weight:600;margin-bottom:6px}
+.dsub{font-size:12px;color:var(--tx3);line-height:1.7}.dsub b{color:var(--ac)}
+#prog-wrap{display:none;width:580px;max-width:100%;margin-top:16px;background:var(--sf2);border-radius:8px;height:5px;overflow:hidden}
+#prog{height:100%;width:0%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:8px;transition:width .3s}
+#status-msg{text-align:center;font-size:12px;color:var(--tx3);margin-top:8px;min-height:18px}
+.err-box{display:none;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#f87171;margin-top:12px;line-height:1.6}
+.ok-badge{display:none;align-items:center;gap:8px;background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.2);border-radius:10px;padding:10px 14px;margin-top:12px;font-size:12px;color:#6ee7b7}
+.ok-badge .dot{width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399;flex-shrink:0}
+#dash{display:none}
+header{background:rgba(8,12,24,.96);border-bottom:1px solid var(--br);padding:0 24px;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(16px)}
+.hlogo{display:flex;align-items:center;gap:12px}
+.hlogo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--bg);text-align:center;line-height:1.2}
+.hlogo h1{font-size:15px;font-weight:600}
+.hlogo span{font-size:11px;color:var(--tx3);font-family:'Space Mono',monospace;display:block}
+.hright{display:flex;gap:8px;align-items:center}
+.hbadge{background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:5px 12px;font-size:12px;color:var(--tx2)}
+.hbadge strong{color:var(--ac);font-family:'Space Mono',monospace}
+.hbtn{background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:5px 12px;font-size:12px;color:var(--tx2);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.hbtn:hover{border-color:var(--ac);color:var(--ac)}
+.hbtn.gr{border-color:rgba(0,212,255,.3);color:var(--ac)}.hbtn.gr:hover{background:rgba(0,212,255,.08)}
+.lupd{font-size:10px;color:var(--tx3);font-family:'Space Mono',monospace}
+.main{display:flex}
+.sidebar{width:256px;min-width:256px;background:var(--sf);border-right:1px solid var(--br);padding:16px 0;height:calc(100vh - 62px);overflow-y:auto;position:sticky;top:62px}
+.sidebar::-webkit-scrollbar{width:3px}.sidebar::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+.ftitle{padding:8px 16px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--tx3);font-family:'Space Mono',monospace;display:flex;align-items:center;gap:8px}
+.ftitle::after{content:'';flex:1;height:1px;background:var(--br)}
+.fchips{padding:2px 10px 8px;display:flex;flex-wrap:wrap;gap:5px}
+.chip{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--br);background:transparent;color:var(--tx3);transition:all .15s;white-space:nowrap;user-select:none;font-family:'Space Mono',monospace}
+.chip:hover{border-color:var(--ac2);color:var(--tx2)}
+.chip.on{background:var(--ac2);border-color:var(--ac2);color:#fff}
+.chip.on.stc{background:var(--gr);border-color:var(--gr)}
+.chip.on.std{background:var(--rd);border-color:var(--rd)}
+.chip.on.stt{background:var(--yw);border-color:var(--yw)}
+.chip.on.fwu{background:#059669;border-color:#059669}
+.chip.on.fwo{background:#dc2626;border-color:#dc2626}
+.chip.on.fwk{background:#57534e;border-color:#57534e}
+.rbtn{margin:8px 16px 0;width:calc(100% - 32px);padding:7px;background:transparent;border:1px dashed rgba(255,255,255,.1);border-radius:8px;color:var(--tx3);font-size:11.5px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.rbtn:hover{border-color:var(--ac);color:var(--ac)}
+.content{flex:1;padding:22px 26px;overflow-y:auto;min-width:0}
+.krow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
+.krow2{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.kcard{background:var(--sf);border:1px solid var(--br);border-radius:14px;padding:14px 18px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s}
+.kcard:hover{transform:translateY(-1px)}
+.kcard::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:14px 0 0 14px}
+.tot::before{background:var(--ac)}.com::before{background:#059669}.dec::before{background:var(--rd)}.ter::before{background:var(--yw)}
+.fwup::before{background:#34d399}.fwod::before{background:#f87171}.fwuk::before{background:#78716c}
+.klabel{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;font-family:'Space Mono',monospace}
+.kval{font-size:30px;font-weight:700;font-family:'Space Mono',monospace;line-height:1}
+.tot .kval{color:var(--ac)}.com .kval{color:#34d399}.dec .kval{color:#f87171}.ter .kval{color:#fbbf24}
+.fwup .kval{color:#34d399}.fwod .kval{color:#f87171}.fwuk .kval{color:#a8a29e}
+.ksub{font-size:11px;color:var(--tx3);margin-top:4px}
+.crow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.ccard{background:var(--sf);border:1px solid var(--br);border-radius:14px;padding:18px 20px}
+.ctitle{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;font-family:'Space Mono',monospace}
+.brow{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.blabel{width:80px;font-size:10.5px;color:var(--tx2);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;font-family:'Space Mono',monospace}
+.btrack{flex:1;background:var(--sf3);border-radius:4px;height:18px;overflow:hidden}
+.bfill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:7px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.bfill span{font-size:10.5px;font-weight:700;font-family:'Space Mono',monospace;color:rgba(255,255,255,.9)}
+.dwrap{display:flex;align-items:center;gap:24px}
+.dleg{display:flex;flex-direction:column;gap:9px;flex:1}
+.li{display:flex;align-items:center;gap:8px;font-size:12px}
+.ldot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.ll{color:var(--tx2)}.lc{color:var(--tx);font-weight:700;font-family:'Space Mono',monospace;margin-left:auto}
+.tsec{background:var(--sf);border:1px solid var(--br);border-radius:14px;overflow:hidden}
+.thdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--br)}
+.ttitle{font-size:13px;font-weight:600}
+.tcnt{font-family:'Space Mono',monospace;font-size:11px;color:var(--tx3);margin-left:10px}
+.srch{background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:7px 12px;font-size:12px;color:var(--tx);outline:none;width:220px;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.srch::placeholder{color:var(--tx3)}.srch:focus{border-color:var(--ac2)}
+.tw{overflow-x:auto;max-height:460px;overflow-y:auto}
+.tw::-webkit-scrollbar{width:3px;height:3px}.tw::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead{position:sticky;top:0;z-index:2}thead tr{background:var(--sf2)}
+th{padding:9px 12px;text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);white-space:nowrap;font-family:'Space Mono',monospace;border-bottom:1px solid var(--br);cursor:pointer;user-select:none}
+th:hover{color:var(--tx2)}th.sorted{color:var(--ac)}
+td{padding:7px 12px;border-bottom:1px solid var(--br);vertical-align:middle;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none}
+.tg{font-family:'Space Mono',monospace;font-size:11px;color:var(--ac)}
+.rb{display:inline-flex;align-items:center;justify-content:center;background:var(--sf3);border-radius:5px;padding:2px 7px;font-family:'Space Mono',monospace;font-size:10px;color:var(--tx2)}
+.fw2{background:rgba(124,58,237,.15);color:#a78bfa;border-radius:4px;padding:2px 7px;font-family:'Space Mono',monospace;font-size:10px}
+.hv2{background:rgba(37,99,235,.12);color:#60a5fa;border-radius:4px;padding:2px 7px;font-family:'Space Mono',monospace;font-size:10px}
+.sb2{display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:500;white-space:nowrap}
+.sb2::before{content:'';width:5px;height:5px;border-radius:50%}
+.sbc{background:rgba(5,150,105,.15);color:#34d399}.sbc::before{background:#34d399;box-shadow:0 0 4px #34d399}
+.sbd{background:rgba(220,38,38,.15);color:#f87171}.sbd::before{background:#f87171}
+.sbt{background:rgba(217,119,6,.15);color:#fbbf24}.sbt::before{background:#fbbf24}
+.fwb{display:inline-flex;align-items:center;gap:4px;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:600}
+.fwb-u{background:rgba(5,150,105,.15);color:#34d399}.fwb-o{background:rgba(220,38,38,.15);color:#f87171}.fwb-k{background:rgba(120,113,108,.15);color:#a8a29e}
+.ab{display:inline-block;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:500}
+.abt{background:rgba(0,212,255,.12);color:var(--ac)}.abs{background:rgba(168,85,247,.12);color:#c084fc}
+.abu{background:rgba(249,115,22,.12);color:#fb923c}.abo{background:rgba(245,158,11,.12);color:#fbbf24}
+.pg{display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:10px 16px;border-top:1px solid var(--br)}
+.pgi{font-size:11px;color:var(--tx3);margin-right:8px;font-family:'Space Mono',monospace}
+.pb{width:28px;height:28px;border-radius:5px;background:var(--sf2);border:1px solid var(--br);color:var(--tx2);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.pb:hover:not(:disabled){border-color:var(--ac2);color:var(--tx)}.pb.on{background:var(--ac2);border-color:var(--ac2);color:#fff}.pb:disabled{opacity:.3;cursor:not-allowed}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.kcard{animation:fu .3s ease both}
+@keyframes sp{to{transform:rotate(360deg)}}.spinning{display:inline-block;animation:sp .8s linear infinite}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="home">
+  <div class="logo-box">FC<br>S600+</div>
+  <div class="home-title">FC S600+ PTT Dashboard</div>
+  <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
+
+  <div class="src-tabs">
+    <div class="src-tab active" onclick="switchTab('gs')">&#9654; Google Sheet</div>
+    <div class="src-tab" onclick="switchTab('xl')">&#128202; Excel File</div>
+  </div>
+
+  <div class="src-panel" id="panel-gs">
+    <div class="gs-steps">
+      <div class="gs-step"><div class="gs-num">1</div>
+        <div class="gs-text">Google Sheet &rarr; <b>File &rarr; Share &rarr; Publish to web</b> &rarr; เลือกชีต <b>Overall</b> &rarr; Format <b>CSV</b> &rarr; Publish</div></div>
+      <div class="gs-step"><div class="gs-num">2</div>
+        <div class="gs-text">Copy URL ที่ได้ แล้ววางด้านล่าง<br><code>https://docs.google.com/spreadsheets/d/.../pub?...output=csv</code></div></div>
+      <div class="gs-step"><div class="gs-num">3</div>
+        <div class="gs-text">กด <b>โหลด</b> &mdash; หลังจากนี้กด <b>Refresh</b> ใน Dashboard ทุกครั้งที่อัปเดต Sheet</div></div>
+    </div>
+    <input class="url-input" id="gs-url" type="text" placeholder="วาง Google Sheet URL หรือ CSV URL ที่นี่...">
+    <input class="url-input" id="gs-sheet" type="text" placeholder="ชื่อ Sheet (default: Overall)" value="Overall">
+    <button class="load-btn gs" id="gs-btn" onclick="loadGS()">&#9654; โหลดข้อมูลจาก Google Sheet</button>
+    <div class="err-box" id="gs-err"></div>
+    <div class="ok-badge" id="gs-ok"><span class="dot"></span><span id="gs-ok-txt"></span></div>
+  </div>
+
+  <div class="src-panel hidden" id="panel-xl">
+    <div id="dz">
+      <input type="file" accept=".xlsx,.xlsm,.xls" onchange="loadXL(this.files[0])">
+      <div class="dicon">&#128202;</div>
+      <div class="dtitle">ลากไฟล์ Excel มาวางที่นี่</div>
+      <div class="dsub">หรือ <b>คลิกเพื่อเลือกไฟล์</b><br>รองรับ .xlsx / .xlsm &middot; อ่านชีต Overall อัตโนมัติ</div>
+    </div>
+  </div>
+
+  <div id="prog-wrap"><div id="prog"></div></div>
+  <div id="status-msg"></div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dash">
+  <header>
+    <div class="hlogo">
+      <div class="hlogo-icon">FC<br>S600+</div>
+      <div><h1>PTT Metering Dashboard</h1><span id="hf">FC S600+ &middot; Overall</span></div>
+    </div>
+    <div class="hright">
+      <span class="lupd" id="h-upd"></span>
+      <div class="hbadge">Units: <strong id="ht">0</strong></div>
+      <button class="hbtn gr" id="ref-btn" onclick="refreshGS()">&#8635; Refresh</button>
+      <button class="hbtn" onclick="goHome()">&#8617; เปลี่ยนแหล่งข้อมูล</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <aside class="sidebar">
+      <div class="ftitle">Region</div><div class="fchips" id="fr"></div>
+      <div class="ftitle">Firmware Version</div><div class="fchips" id="ff"></div>
+      <div class="ftitle">Firmware Update</div><div class="fchips" id="ffu"></div>
+      <div class="ftitle">HART Version</div><div class="fchips" id="fh"></div>
+      <div class="ftitle">Status</div><div class="fchips" id="fs"></div>
+      <div class="ftitle">Application</div><div class="fchips" id="fa"></div>
+      <button class="rbtn" onclick="rst()">&#8634; Reset Filters</button>
+    </aside>
+
+    <div class="content">
+      <!-- KPI Row 1: Status -->
+      <div class="krow">
+        <div class="kcard tot"><div class="klabel">Total Units</div><div class="kval" id="kt">0</div><div class="ksub" id="ks"></div></div>
+        <div class="kcard com"><div class="klabel">Commissioned</div><div class="kval" id="kc">0</div><div class="ksub" id="kcp"></div></div>
+        <div class="kcard dec"><div class="klabel">Decommissioned</div><div class="kval" id="kd">0</div><div class="ksub" id="kdp"></div></div>
+      </div>
+      <!-- KPI Row 2: Firmware -->
+      <div class="krow2">
+        <div class="kcard ter"><div class="klabel">Terminated</div><div class="kval" id="kr">0</div><div class="ksub" id="krp"></div></div>
+        <div class="kcard fwup"><div class="klabel">&#9654; Firmware Up-to-date</div><div class="kval" id="kfu">0</div><div class="ksub" id="kfup"></div></div>
+        <div class="kcard fwod"><div class="klabel">&#9660; Firmware Outdated</div><div class="kval" id="kfo">0</div><div class="ksub" id="kfop"></div></div>
+      </div>
+
+      <div class="crow">
+        <div class="ccard"><div class="ctitle">Units by Region</div><div id="cr"></div></div>
+        <div class="ccard"><div class="ctitle">Application &amp; Firmware Status</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div>
+              <div style="font-size:9px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;font-family:'Space Mono',monospace">APPLICATION</div>
+              <div class="dleg" id="dl-app"></div>
+            </div>
+            <div>
+              <div style="font-size:9px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;font-family:'Space Mono',monospace">FIRMWARE</div>
+              <div class="dleg" id="dl-fw"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tsec">
+        <div class="thdr">
+          <div style="display:flex;align-items:center">
+            <span class="ttitle">Metering Units</span><span class="tcnt" id="tc"></span>
+          </div>
+          <input class="srch" id="si" type="text" placeholder="Search TAG, Site, Metering name..." oninput="sch()">
+        </div>
+        <div class="tw"><table>
+          <thead><tr>
+            <th onclick="srt('PTT Region')">Region <span id="sx0">&#8597;</span></th>
+            <th onclick="srt('Site')">Site <span id="sx1">&#8597;</span></th>
+            <th onclick="srt('TAG')">TAG <span id="sx2">&#8597;</span></th>
+            <th>Metering Name</th>
+            <th onclick="srt('Firmware')">Firmware <span id="sx4">&#8597;</span></th>
+            <th onclick="srt('Firmware Update')">FW Update <span id="sx5">&#8597;</span></th>
+            <th onclick="srt('Hart version')">HART <span id="sx6">&#8597;</span></th>
+            <th onclick="srt('Status')">Status <span id="sx7">&#8597;</span></th>
+            <th onclick="srt('Applications')">Application <span id="sx8">&#8597;</span></th>
+            <th onclick="srt('Last config installed date')">Config Date <span id="sx9">&#8597;</span></th>
+          </tr></thead>
+          <tbody id="tb"></tbody>
+        </table></div>
+        <div class="pg" id="pg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var RC=['#00d4ff','#3b82f6','#8b5cf6','#ec4899','#f97316','#f59e0b','#10b981','#14b8a6','#06b6d4','#84cc16','#a855f7','#ef4444','#6366f1','#d946ef'];
+var AC={Turbine:'#00d4ff',Supervisory:'#c084fc',USM:'#fb923c',Orifice:'#fbbf24'};
+var FWC={'Up-to-date':'#34d399',Outdated:'#f87171',Unknown:'#a8a29e'};
+var CM={'PTT Region':0,Site:1,TAG:2,Firmware:4,'Firmware Update':5,'Hart version':6,Status:7,Applications:8,'Last config installed date':9};
+var DATA=[],lastSrc=null;
+var ST={f:{r:new Set(),fw:new Set(),fwu:new Set(),hv:new Set(),st:new Set(),ap:new Set()},q:'',sc:null,sa:true,p:1,ps:20};
+
+// Tab
+function switchTab(t){
+  document.querySelectorAll('.src-tab').forEach(function(el,i){el.classList.toggle('active',(i===0&&t==='gs')||(i===1&&t==='xl'));});
+  document.getElementById('panel-gs').classList.toggle('hidden',t!=='gs');
+  document.getElementById('panel-xl').classList.toggle('hidden',t!=='xl');
+}
+
+// Drag-drop Excel
+var dz=document.getElementById('dz');
+dz.addEventListener('dragover',function(e){e.preventDefault();dz.classList.add('over');});
+dz.addEventListener('dragleave',function(){dz.classList.remove('over');});
+dz.addEventListener('drop',function(e){e.preventDefault();dz.classList.remove('over');if(e.dataTransfer.files[0])loadXL(e.dataTransfer.files[0]);});
+
+function setP(pct,msg){document.getElementById('prog-wrap').style.display='block';document.getElementById('prog').style.width=pct+'%';document.getElementById('status-msg').textContent=msg||'';}
+function clrP(){document.getElementById('prog-wrap').style.display='none';document.getElementById('prog').style.width='0%';document.getElementById('status-msg').textContent='';}
+function showErr(msg){var e=document.getElementById('gs-err');e.style.display='block';e.innerHTML='&#9888; '+msg;}
+function hideErr(){document.getElementById('gs-err').style.display='none';}
+
+function buildCsvUrl(raw,sheet){
+  raw=raw.trim();
+  if(raw.includes('output=csv'))return raw;
+  var m=raw.match(/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if(!m)return null;
+  return 'https://docs.google.com/spreadsheets/d/'+m[1]+'/gviz/tq?tqx=out:csv&sheet='+encodeURIComponent(sheet||'Overall');
+}
+
+function loadGS(){
+  var raw=document.getElementById('gs-url').value.trim();
+  var sheet=document.getElementById('gs-sheet').value.trim()||'Overall';
+  if(!raw){showErr('\u0e01\u0e23\u0e38\u0e13\u0e32\u0e43\u0e2a\u0e48 URL');return;}
+  var url=buildCsvUrl(raw,sheet);
+  if(!url){showErr('URL \u0e44\u0e21\u0e48\u0e16\u0e39\u0e01\u0e15\u0e49\u0e2d\u0e07');return;}
+  hideErr();
+  var btn=document.getElementById('gs-btn');
+  btn.disabled=true;btn.innerHTML='<span class="spinning">&#8635;</span> \u0e01\u0e33\u0e25\u0e31\u0e07\u0e42\u0e2b\u0e25\u0e14...';
+  setP(30,'\u0e01\u0e33\u0e25\u0e31\u0e07\u0e40\u0e0a\u0e37\u0e48\u0e2d\u0e21\u0e15\u0e48\u0e2d...');
+  doFetch(url,sheet,btn);
+}
+
+function doFetch(url,sheet,btn){
+  setP(50,'\u0e01\u0e33\u0e25\u0e31\u0e07\u0e14\u0e32\u0e27\u0e19\u0e4c\u0e42\u0e2b\u0e25\u0e14 CSV...');
+  fetch(url).then(function(r){
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    return r.text();
+  }).then(function(t){
+    finishGS(t,url,sheet,btn);
+  }).catch(function(e){
+    var proxy='https://api.allorigins.win/raw?url='+encodeURIComponent(url);
+    setP(60,'\u0e25\u0e2d\u0e07 proxy...');
+    fetch(proxy).then(function(r){return r.text();}).then(function(t){
+      finishGS(t,url,sheet,btn);
+    }).catch(function(e2){
+      clrP();showErr(e.message);
+      btn.disabled=false;btn.innerHTML='&#9654; \u0e42\u0e2b\u0e25\u0e14\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e08\u0e32\u0e01 Google Sheet';
+    });
+  });
+}
+
+function finishGS(csv,url,sheet,btn){
+  var rows=parseCSV(csv);
+  if(rows.length<2){clrP();showErr('\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25');btn.disabled=false;btn.innerHTML='&#9654; \u0e42\u0e2b\u0e25\u0e14';return;}
+  processRows(rows);
+  lastSrc={type:'gs',url:url,sheet:sheet};
+  setP(100,'');
+  setTimeout(function(){
+    clrP();
+    showDash(sheet+' (Google Sheet) &middot; '+DATA.length+' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23');
+    var ok=document.getElementById('gs-ok');ok.style.display='flex';
+    document.getElementById('gs-ok-txt').textContent='\u0e42\u0e2b\u0e25\u0e14\u0e2a\u0e33\u0e40\u0e23\u0e47\u0e08 '+DATA.length+' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23 \u2014 '+new Date().toLocaleTimeString('th-TH');
+    btn.disabled=false;btn.innerHTML='&#9654; \u0e42\u0e2b\u0e25\u0e14\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e08\u0e32\u0e01 Google Sheet';
+  },350);
+}
+
+function parseCSV(text){
+  var rows=[],cells=[],cur='',inQ=false;
+  for(var i=0;i<text.length;i++){
+    var ch=text[i];
+    if(ch==='"'){if(inQ&&text[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}
+    else if(ch===','&&!inQ){cells.push(cur);cur='';}
+    else if((ch==='\n'||ch==='\r')&&!inQ){cells.push(cur);cur='';if(cells.some(function(c){return c.trim()!=='';}))rows.push(cells);cells=[];if(ch==='\r'&&text[i+1]==='\n')i++;}
+    else cur+=ch;
+  }
+  if(cur||cells.length){cells.push(cur);if(cells.some(function(c){return c.trim()!=='';}))rows.push(cells);}
+  return rows;
+}
+
+function processRows(rows){
+  var hdrs=rows[0].map(function(h){return h.trim();});
+  DATA=[];
+  for(var i=1;i<rows.length;i++){
+    var row=rows[i],obj={};
+    hdrs.forEach(function(h,j){obj[h]=(row[j]||'').trim();});
+    if(!obj['Applications']&&obj['Column1'])obj['Applications']=obj['Column1'];
+    obj['Applications']=(obj['Applications']||'').trim();
+    var d=obj['Last config installed date']||'';
+    obj['Last config installed date']=d.replace(' 00:00:00','').replace('Invalid Date','').trim();
+    if(obj['PTT Region']||obj['Site']||obj['TAG'])DATA.push(obj);
+  }
+}
+
+function loadXL(file){
+  if(!file)return;
+  setP(20,'\u0e2d\u0e48\u0e32\u0e19\u0e44\u0e1f\u0e25\u0e4c Excel...');
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var wb=XLSX.read(e.target.result,{type:'array',cellDates:true,dateNF:'yyyy-mm-dd'});
+      var sn=wb.SheetNames.find(function(s){return s==='Overall';})||wb.SheetNames.find(function(s){return s.toLowerCase().includes('overall');})||wb.SheetNames[0];
+      setP(60,'\u0e1b\u0e23\u0e30\u0e21\u0e27\u0e25\u0e1c\u0e25...');
+      var rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{defval:'',raw:false,dateNF:'yyyy-mm-dd'});
+      DATA=rows.map(function(r){
+        if(!r['Applications']&&r['Column1'])r['Applications']=r['Column1'];
+        r['Applications']=(r['Applications']||'').toString().trim();
+        var d=r['Last config installed date']||'';
+        r['Last config installed date']=d.toString().replace(' 00:00:00','').replace('Invalid Date','').trim();
+        return r;
+      }).filter(function(r){return r['PTT Region']||r['Site']||r['TAG'];});
+      lastSrc={type:'xl',file:file,sheet:sn};
+      setP(100,'');
+      setTimeout(function(){clrP();showDash(file.name+' ('+sn+') &middot; '+DATA.length+' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23');},300);
+    }catch(err){clrP();alert('\u0e2d\u0e48\u0e32\u0e19\u0e44\u0e1f\u0e25\u0e4c\u0e44\u0e21\u0e48\u0e44\u0e14\u0e49: '+err.message);}
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function showDash(sub){
+  document.getElementById('home').style.display='none';
+  document.getElementById('dash').style.display='block';
+  document.getElementById('hf').innerHTML=sub;
+  document.getElementById('h-upd').textContent='Loaded '+new Date().toLocaleTimeString('th-TH');
+  document.getElementById('ref-btn').style.display=(lastSrc&&lastSrc.type==='gs')?'':'none';
+  buildF();render();
+}
+
+function goHome(){document.getElementById('home').style.display='flex';document.getElementById('dash').style.display='none';ST={f:{r:new Set(),fw:new Set(),fwu:new Set(),hv:new Set(),st:new Set(),ap:new Set()},q:'',sc:null,sa:true,p:1,ps:20};}
+
+function refreshGS(){
+  if(!lastSrc||lastSrc.type!=='gs'){alert('Refresh \u0e43\u0e0a\u0e49\u0e44\u0e14\u0e49\u0e40\u0e09\u0e1e\u0e32\u0e30 Google Sheet');return;}
+  var btn=document.getElementById('ref-btn');btn.innerHTML='<span class="spinning">&#8635;</span>';btn.disabled=true;
+  fetch(lastSrc.url).then(function(r){return r.text();})
+  .then(function(t){
+    var rows=parseCSV(t);processRows(rows);ST.p=1;buildF();render();
+    document.getElementById('h-upd').textContent='Updated '+new Date().toLocaleTimeString('th-TH');
+    document.getElementById('hf').innerHTML=lastSrc.sheet+' (Google Sheet) &middot; '+DATA.length+' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23';
+    btn.innerHTML='&#8635; Refresh';btn.disabled=false;
+  }).catch(function(e){
+    fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(lastSrc.url)).then(function(r){return r.text();}).then(function(t){
+      var rows=parseCSV(t);processRows(rows);ST.p=1;buildF();render();
+      document.getElementById('h-upd').textContent='Updated '+new Date().toLocaleTimeString('th-TH');
+      btn.innerHTML='&#8635; Refresh';btn.disabled=false;
+    }).catch(function(){btn.innerHTML='&#8635; Refresh';btn.disabled=false;});
+  });
+}
+
+var nv=function(v){return(v||'').toString().trim();};
+function fd(){
+  var d=DATA;
+  if(ST.f.r.size)d=d.filter(function(x){return ST.f.r.has(nv(x['PTT Region']));});
+  if(ST.f.fw.size)d=d.filter(function(x){return ST.f.fw.has(nv(x['Firmware']));});
+  if(ST.f.fwu.size)d=d.filter(function(x){return ST.f.fwu.has(nv(x['Firmware Update']));});
+  if(ST.f.hv.size)d=d.filter(function(x){return ST.f.hv.has(nv(x['Hart version']));});
+  if(ST.f.st.size)d=d.filter(function(x){return ST.f.st.has(nv(x['Status']));});
+  if(ST.f.ap.size)d=d.filter(function(x){return ST.f.ap.has(nv(x['Applications']));});
+  if(ST.q)d=d.filter(function(x){return nv(x['TAG']).toLowerCase().includes(ST.q)||nv(x['Site']).toLowerCase().includes(ST.q)||nv(x['Metering name']).toLowerCase().includes(ST.q);});
+  if(ST.sc)d=d.slice().sort(function(a,b){var va=nv(a[ST.sc]),vb=nv(b[ST.sc]);return ST.sa?va.localeCompare(vb,undefined,{numeric:true}):vb.localeCompare(va,undefined,{numeric:true});});
+  return d;
+}
+
+function buildF(){
+  var uniq=function(k,s){var v=[...new Set(DATA.map(function(r){return nv(r[k]);}).filter(Boolean))];return s?v.sort(s):v.sort();};
+  var rs=function(a,b){var na=parseInt(a),nb=parseInt(b);if(!isNaN(na)&&!isNaN(nb))return na-nb;if(!isNaN(na))return -1;if(!isNaN(nb))return 1;return a.localeCompare(b);};
+  var allR=uniq('PTT Region',rs);var cm={};allR.forEach(function(r,i){cm[r]=RC[i%RC.length];});
+  chips('fr',allR,'r',function(v){return 'R'+v;},cm);
+  chips('ff',uniq('Firmware'),'fw');
+  // FW Update chips with special colors
+  var fwuEl=document.getElementById('ffu');
+  fwuEl.innerHTML=['Up-to-date','Outdated','Unknown'].map(function(v){
+    var sc=v==='Up-to-date'?'fwu':v==='Outdated'?'fwo':'fwk';
+    return '<span class="chip '+sc+'" onclick="tog(\'fwu\',\''+v+'\',this)">'+v+'</span>';
+  }).join('');
+  chips('fh',uniq('Hart version'),'hv');
+  chips('fs',['Commissioned','Decommissioned','Terminated'],'st',null,null,true);
+  chips('fa',['Turbine','Supervisory','USM','Orifice'],'ap');
+}
+
+function chips(id,vals,fk,lb,cm,isSt){
+  document.getElementById(id).innerHTML=vals.map(function(v){
+    var l=lb?lb(v):v;
+    var sc=isSt?(v==='Commissioned'?'stc':v==='Decommissioned'?'std':'stt'):'';
+    return '<span class="chip '+sc+'" onclick="tog(\''+fk+'\',\''+v+'\',this)">'+l+'</span>';
+  }).join('');
+}
+
+function tog(k,v,el){var s=ST.f[k];s.has(v)?(s.delete(v),el.classList.remove('on')):(s.add(v),el.classList.add('on'));ST.p=1;render();}
+function rst(){Object.values(ST.f).forEach(function(s){s.clear();});ST.q='';ST.p=1;document.getElementById('si').value='';document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on');});render();}
+function sch(){ST.q=document.getElementById('si').value.toLowerCase();ST.p=1;render();}
+function srt(c){ST.sc=ST.sc===c?(ST.sa=!ST.sa,c):(ST.sa=true,c);render();}
+
+function render(){
+  var d=fd(),t=d.length;
+  var co=d.filter(function(x){return nv(x['Status'])==='Commissioned';}).length;
+  var de=d.filter(function(x){return nv(x['Status'])==='Decommissioned';}).length;
+  var te=d.filter(function(x){return nv(x['Status'])==='Terminated';}).length;
+  var fu=d.filter(function(x){return nv(x['Firmware Update'])==='Up-to-date';}).length;
+  var fo=d.filter(function(x){return nv(x['Firmware Update'])==='Outdated';}).length;
+  document.getElementById('kt').textContent=t;
+  document.getElementById('kc').textContent=co;document.getElementById('kd').textContent=de;
+  document.getElementById('kr').textContent=te;document.getElementById('kfu').textContent=fu;document.getElementById('kfo').textContent=fo;
+  document.getElementById('ks').textContent=[...new Set(d.map(function(x){return x['Site'];}))].length+' sites';
+  document.getElementById('kcp').textContent=t?(co/t*100).toFixed(1)+'%':'';
+  document.getElementById('kdp').textContent=t?(de/t*100).toFixed(1)+'%':'';
+  document.getElementById('krp').textContent=t?(te/t*100).toFixed(1)+'%':'';
+  document.getElementById('kfup').textContent=t?(fu/t*100).toFixed(1)+'% of total':'';
+  document.getElementById('kfop').textContent=t?(fo/t*100).toFixed(1)+'% of total':'';
+  document.getElementById('ht').textContent=t;
+  // Region chart
+  var cnt={};d.forEach(function(x){var k=nv(x['PTT Region'])||'?';cnt[k]=(cnt[k]||0)+1;});
+  var sorted=Object.entries(cnt).sort(function(a,b){return b[1]-a[1];}).slice(0,14);
+  var mx=sorted[0]?sorted[0][1]:1;
+  var allR=[...new Set(DATA.map(function(x){return nv(x['PTT Region']);}))].sort(function(a,b){var na=parseInt(a),nb=parseInt(b);if(!isNaN(na)&&!isNaN(nb))return na-nb;if(!isNaN(na))return -1;if(!isNaN(nb))return 1;return a.localeCompare(b);});
+  var rcm={};allR.forEach(function(r,i){rcm[r]=RC[i%RC.length];});
+  document.getElementById('cr').innerHTML=sorted.map(function(e){
+    return '<div class="brow"><div class="blabel">'+e[0]+'</div><div class="btrack"><div class="bfill" style="width:'+(e[1]/mx*100).toFixed(1)+'%;background:'+(rcm[e[0]]||'#3b82f6')+'"><span>'+e[1]+'</span></div></div></div>';
+  }).join('');
+  // App legend
+  var ac2={};d.forEach(function(x){var k=nv(x['Applications'])||'Other';ac2[k]=(ac2[k]||0)+1;});
+  var ents=Object.entries(ac2).sort(function(a,b){return b[1]-a[1];});
+  document.getElementById('dl-app').innerHTML=ents.map(function(e){
+    return '<div class="li"><div class="ldot" style="background:'+(AC[e[0]]||'#94a3b8')+'"></div><span class="ll">'+e[0]+'</span><span class="lc">'+e[1]+'</span></div>';
+  }).join('');
+  // FW legend
+  var fw2={};d.forEach(function(x){var k=nv(x['Firmware Update'])||'Unknown';fw2[k]=(fw2[k]||0)+1;});
+  var fents=Object.entries(fw2).sort(function(a,b){return b[1]-a[1];});
+  document.getElementById('dl-fw').innerHTML=fents.map(function(e){
+    return '<div class="li"><div class="ldot" style="background:'+(FWC[e[0]]||'#94a3b8')+'"></div><span class="ll">'+e[0]+'</span><span class="lc">'+e[1]+'</span></div>';
+  }).join('');
+  // Table
+  var st2=(ST.p-1)*ST.ps,pd=d.slice(st2,st2+ST.ps);
+  document.getElementById('tc').textContent=d.length+' records';
+  for(var i=0;i<=9;i++){var el=document.getElementById('sx'+i);if(el)el.innerHTML='&#8597;';}
+  document.querySelectorAll('th').forEach(function(th){th.classList.remove('sorted');});
+  if(ST.sc!==null){var idx=CM[ST.sc];if(idx!==undefined){var ths=document.querySelectorAll('thead th');ths[idx].classList.add('sorted');ths[idx].querySelector('span').innerHTML=ST.sa?'&#8593;':'&#8595;';}}
+  if(!pd.length){document.getElementById('tb').innerHTML='<tr><td colspan="10" style="text-align:center;padding:40px;color:#475569">\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25</td></tr>';rPg(0);return;}
+  document.getElementById('tb').innerHTML=pd.map(function(x){
+    var fw=nv(x['Firmware']),fwu=nv(x['Firmware Update']),st3=nv(x['Status']),ap=nv(x['Applications']);
+    var stc=st3==='Commissioned'?'sbc':st3==='Decommissioned'?'sbd':'sbt';
+    var apc=ap==='Turbine'?'abt':ap==='Supervisory'?'abs':ap==='USM'?'abu':'abo';
+    var fwuc=fwu==='Up-to-date'?'fwb-u':fwu==='Outdated'?'fwb-o':'fwb-k';
+    var fwuicon=fwu==='Up-to-date'?'&#9654;':fwu==='Outdated'?'&#9660;':'?';
+    var mn=nv(x['Metering name']);
+    var dt=nv(x['Last config installed date']).replace(' 00:00:00','');
+    return '<tr><td><span class="rb">R'+nv(x['PTT Region'])+'</span></td>'+
+      '<td>'+( nv(x['Site'])||'&mdash;')+'</td>'+
+      '<td class="tg">'+( nv(x['TAG'])||'&mdash;')+'</td>'+
+      '<td title="'+mn+'">'+mn.substring(0,34)+(mn.length>34?'&hellip;':'')+'</td>'+
+      '<td>'+(fw?'<span class="fw2">'+fw+'</span>':'<span style="color:#475569">&mdash;</span>')+'</td>'+
+      '<td><span class="fwb '+fwuc+'">'+fwuicon+' '+fwu+'</span></td>'+
+      '<td>'+(nv(x['Hart version'])?'<span class="hv2">'+nv(x['Hart version'])+'</span>':'<span style="color:#475569">&mdash;</span>')+'</td>'+
+      '<td><span class="sb2 '+stc+'">'+st3+'</span></td>'+
+      '<td><span class="ab '+apc+'">'+ap+'</span></td>'+
+      '<td style="color:#94a3b8;font-size:10px;font-family:Space Mono,monospace">'+(dt||'&mdash;')+'</td></tr>';
+  }).join('');
+  rPg(d.length);
+}
+
+function rPg(total){
+  var pages=Math.ceil(total/ST.ps)||1,cur=ST.p;
+  var h='<span class="pgi">'+(cur-1)*ST.ps+1+'&ndash;'+Math.min(cur*ST.ps,total)+'/'+total+'</span>';
+  h+='<button class="pb" onclick="gp('+(cur-1)+')" '+(cur<=1?'disabled':'')+'>&lsaquo;</button>';
+  var rng=[];for(var p2=1;p2<=pages;p2++){if(p2===1||p2===pages||Math.abs(p2-cur)<=1)rng.push(p2);else if(rng[rng.length-1]!=='...')rng.push('...');}
+  rng.forEach(function(p2){if(p2==='...')h+='<span class="pb" style="pointer-events:none">&hellip;</span>';else h+='<button class="pb '+(p2===cur?'on':'')+'" onclick="gp('+p2+')">'+p2+'</button>';});
+  h+='<button class="pb" onclick="gp('+(cur+1)+')" '+(cur>=pages?'disabled':'')+'>&rsaquo;</button>';
+  document.getElementById('pg').innerHTML=h;
+}
+function gp(p){var pages=Math.ceil(fd().length/ST.ps)||1;ST.p=Math.max(1,Math.min(p,pages));render();}
+</script>
+</body>
+</html>
