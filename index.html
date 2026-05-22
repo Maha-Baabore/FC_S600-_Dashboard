@@ -122,12 +122,8 @@ body,header,.sidebar,.content,.main{transition:background-color .3s ease,color .
   padding:5px 12px;font-size:12px;color:var(--tx2);cursor:pointer;
   transition:all .2s;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:6px}
 .theme-btn:hover{border-color:var(--ac);color:var(--ac)}
-.theme-toggle-wrap{position:fixed;bottom:24px;right:24px;z-index:200}
-.toggle-pill{display:flex;align-items:center;gap:0;background:var(--sf);
-  border:1px solid var(--br);border-radius:30px;padding:4px;box-shadow:0 4px 20px rgba(0,0,0,.2)}
-.tpill-btn{padding:6px 14px;border-radius:24px;font-size:12px;font-weight:600;
-  cursor:pointer;border:none;background:transparent;color:var(--tx3);
-  transition:all .2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.toggle-pill{display:flex;align-items:center;gap:0;background:var(--sf);border:1px solid var(--br);border-radius:30px;padding:3px}
+.tpill-btn{padding:5px 11px;border-radius:24px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--tx3);transition:all .2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
 .tpill-btn.active{background:var(--ac);color:#fff;box-shadow:0 2px 8px rgba(0,212,255,.3)}
 .light .toggle-pill{box-shadow:0 4px 20px rgba(0,0,0,.1)}
 .light .tpill-btn.active{background:var(--ac);color:#fff;box-shadow:0 2px 8px rgba(2,132,199,.3)}
@@ -316,6 +312,10 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
       <span class="lupd" id="h-upd"></span>
       <div class="hbadge">Units: <strong id="ht">0</strong></div>
       <button class="hbtn gr" id="ref-btn" onclick="refreshGS()">&#8635; Refresh</button>
+      <div class="toggle-pill" id="header-theme-toggle">
+        <button class="tpill-btn active" id="btn-dark" onclick="setTheme('dark')">&#9790; Dark</button>
+        <button class="tpill-btn" id="btn-light" onclick="setTheme('light')">&#9728; Light</button>
+      </div>
       <button class="hbtn" onclick="goHome()">&#8617; เปลี่ยนแหล่งข้อมูล</button>
     </div>
   </header>
@@ -712,12 +712,5 @@ function setTheme(mode){
 })();
 
 </script>
-<!-- Theme toggle pill -->
-<div class="theme-toggle-wrap">
-  <div class="toggle-pill">
-    <button class="tpill-btn active" id="btn-dark" onclick="setTheme('dark')">&#9790; Dark</button>
-    <button class="tpill-btn" id="btn-light" onclick="setTheme('light')">&#9728; Light</button>
-  </div>
-</div>
 </body>
 </html>
