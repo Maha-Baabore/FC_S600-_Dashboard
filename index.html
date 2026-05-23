@@ -333,16 +333,29 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 <!-- HOME -->
 <div id="home">
+
+  <!-- Theme toggle top-right -->
+  <div style="position:fixed;top:16px;right:20px;z-index:10">
+    <div class="toggle-pill" id="home-theme-toggle">
+      <button class="tpill-btn" id="home-btn-dark" onclick="setTheme('dark')">&#9790; Dark</button>
+      <button class="tpill-btn active" id="home-btn-light" onclick="setTheme('light')">&#9728; Light</button>
+    </div>
+  </div>
+
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="ver-badge" id="ver-badge">v1.2.0</div>
-  <!-- hidden inputs still needed by loadGS() internals -->
-  <input type="hidden" id="gs-url" value="https://docs.google.com/spreadsheets/d/e/2PACX-1vRBpy6JQSAFfIzYX8nPMaTlG3SqAdCfVOtgzbvKxvtXobvxRG_RgKll6uuV7jAXTA/pub?gid=838721591&single=true&output=csv">
+
+  <!-- Hidden inputs needed by loadGS() -->
+  <input type="hidden" id="gs-url"   value="https://docs.google.com/spreadsheets/d/e/2PACX-1vRBpy6JQSAFfIzYX8nPMaTlG3SqAdCfVOtgzbvKxvtXobvxRG_RgKll6uuV7jAXTA/pub?gid=838721591&single=true&output=csv">
   <input type="hidden" id="gs-sheet" value="Overall">
-  <button class="load-btn gs" id="gs-btn" onclick="autoEnter()" style="width:300px;margin-top:28px;font-size:15px;padding:16px 0">
+
+  <button class="load-btn gs" id="gs-btn"
+          onclick="enterDashboard()"
+          style="width:300px;margin-top:32px;font-size:15px;padding:16px 0">
     &#9654;&nbsp;&nbsp;เข้าสู่ Dashboard
   </button>
+
   <div class="err-box" id="gs-err" style="width:300px;margin-top:12px"></div>
   <div class="ok-badge" id="gs-ok"><span class="dot"></span><span id="gs-ok-txt"></span></div>
   <div id="prog-wrap" style="width:300px;margin-top:12px"><div id="prog"></div></div>
@@ -358,7 +371,6 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
     </div>
     <div class="hright">
       <span class="lupd" id="h-upd"></span>
-      <span class="lupd" style="opacity:0.45" id="h-ver">v1.2.0</span>
       <div class="hbadge">Units: <strong id="ht">0</strong></div>
       <button class="hbtn gr" id="ref-btn" onclick="refreshGS()">&#8635; Refresh</button>
       <!-- View mode toggle -->
@@ -495,13 +507,10 @@ var CM={'PTT Region':0,Site:1,TAG:2,Firmware:4,'Firmware Update':5,Status:6,Appl
 var DATA=[],lastSrc=null;
 var ST={f:{r:new Set(),fw:new Set(),fwu:new Set(),hv:new Set(),st:new Set(),ap:new Set()},q:'',sc:null,sa:true,p:1,ps:20};
 
-var APP_VERSION = 'v1.2.0';
-
 // Tab
-var PRESET_GS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRBpy6JQSAFfIzYX8nPMaTlG3SqAdCfVOtgzbvKxvtXobvxRG_RgKll6uuV7jAXTA/pub?gid=838721591&single=true&output=csv';
-
-function autoEnter(){
-  // gs-url hidden input already has the preset URL — use the standard loadGS() flow
+// ── Auto-connect function ──────────────────────────────────
+function enterDashboard() {
+  // gs-url hidden input already pre-filled; delegate to standard loadGS()
   loadGS();
 }
 
@@ -633,7 +642,6 @@ function loadXL(file){
 
 function showDash(sub){
   mapBuilt = false; // reset so map rebuilds with new data
-  setTheme('light'); // default light mode on entry
   document.getElementById('home').style.display='none';
   document.getElementById('dash').style.display='block';
   document.getElementById('hf').innerHTML=sub;
@@ -872,8 +880,8 @@ function setTheme(mode){
 (function(){
   try{
     var saved=localStorage.getItem('fc-theme');
-    if(saved==='light') setTheme('light');
-  }catch(e){}
+    setTheme(saved === 'dark' ? 'dark' : 'light'); // default: light
+  }catch(e){ setTheme('light'); }
 })();
 
 
