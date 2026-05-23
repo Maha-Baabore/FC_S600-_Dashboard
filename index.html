@@ -349,8 +349,8 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
     <!-- Theme toggle top-right -->
     <div class="landing-theme">
       <div class="toggle-pill">
-        <button class="tpill-btn" id="land-dark" onclick="setTheme('dark')">&#9790; Dark</button>
-        <button class="tpill-btn active" id="land-light" onclick="setTheme('light')">&#9728; Light</button>
+        <button class="tpill-btn active" id="land-dark" onclick="setTheme('dark')">&#9790; Dark</button>
+        <button class="tpill-btn" id="land-light" onclick="setTheme('light')">&#9728; Light</button>
       </div>
     </div>
 
@@ -878,10 +878,9 @@ function setTheme(mode){
 (function(){
   try{
     var saved=localStorage.getItem('fc-theme');
-    // Default light unless user explicitly chose dark
-    if(saved==='dark') setTheme('dark');
-    else setTheme('light');
-  }catch(e){ setTheme('light'); }
+    if(saved==='light') setTheme('light');
+    else setTheme('dark'); // default dark
+  }catch(e){ setTheme('dark'); }
 })();
 
 
@@ -1300,32 +1299,34 @@ function getOriginalPixelData() {
 var PRESET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRBpy6JQSAFfIzYX8nPMaTlG3SqAdCfVOtgzbvKxvtXobvxRG_RgKll6uuV7jAXTA/pub?gid=838721591&single=true&output=csv';
 
 function autoLoadAndEnter() {
-  // Pre-fill the existing Google Sheet input and call the original loadGS()
-  var urlInput = document.getElementById('gs-url');
-  var sheetInput = document.getElementById('gs-sheet');
-  if (urlInput) urlInput.value = PRESET_URL;
-  if (sheetInput) sheetInput.value = 'Overall';
-  // Swap UI: show loading on landing button
+  // Fill hidden inputs and reuse the original loadGS() which works on GitHub Pages
+  document.getElementById('gs-url').value = PRESET_URL;
+  document.getElementById('gs-sheet').value = 'Overall';
+  // Show loading state on landing button
   var btn = document.getElementById('enter-btn');
   var label = document.getElementById('enter-label');
   btn.disabled = true;
   label.innerHTML = '<span class="spinning">&#8635;</span>&nbsp; กำลังโหลด...';
-  hideErr();
-  // Use the existing loadGS logic directly
-  var url = PRESET_URL;
-  var sheet = 'Overall';
-  var fakebtn = { disabled: false, innerHTML: '' };
-  doFetch(url, sheet, fakebtn);
-  // Poll until dash is visible, then reset button
+  // Wrap original loadGS btn so it resets landing button on error
+  var origBtn = document.getElementById('gs-btn');
+  var origHtml = origBtn.innerHTML;
+  origBtn.disabled = true;
+  // Call the working loadGS directly
+  loadGS();
+  // Watch for success (dash visible) or error
+  var tries = 0;
   var poll = setInterval(function() {
-    if (document.getElementById('dash').style.display !== 'none') {
+    tries++;
+    var dash = document.getElementById('dash');
+    var err = document.getElementById('gs-err');
+    if (dash && dash.style.display !== 'none') {
       clearInterval(poll);
-    } else if (document.getElementById('gs-err').style.display === 'block') {
+    } else if ((err && err.style.display === 'block') || tries > 60) {
       clearInterval(poll);
       btn.disabled = false;
-      label.innerHTML = '&#9654;&nbsp;&nbsp;เข้าสู่ Dashboard';
+      label.innerHTML = '&#9654;&nbsp;&nbsp;ลองใหม่';
     }
-  }, 300);
+  }, 500);
 }
 </script>
 </body>
