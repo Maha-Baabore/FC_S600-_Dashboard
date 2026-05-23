@@ -878,8 +878,10 @@ function setTheme(mode){
 (function(){
   try{
     var saved=localStorage.getItem('fc-theme');
-    if(saved==='light') setTheme('light');
-  }catch(e){}
+    // Default light unless user explicitly chose dark
+    if(saved==='dark') setTheme('dark');
+    else setTheme('light');
+  }catch(e){ setTheme('light'); }
 })();
 
 
@@ -1304,38 +1306,38 @@ function autoLoadAndEnter() {
   label.innerHTML = '<span class="spinning">&#8635;</span>&nbsp; กำลังโหลด...';
   hideErr();
 
-  fetch(PRESET_URL)
-    .then(function(r) { if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
-    .then(function(t) {
-      var rows = parseCSV(t);
-      if(rows.length < 2) throw new Error('ไม่พบข้อมูล');
-      processRows(rows);
-      lastSrc = {type:'gs', url:PRESET_URL, sheet:'Overall'};
-      showDash('Overall (Google Sheet) &middot; '+DATA.length+' รายการ');
+  var proxies = [
+    PRESET_URL,
+    'https://corsproxy.io/?' + encodeURIComponent(PRESET_URL),
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent(PRESET_URL),
+    'https://cors-anywhere.herokuapp.com/' + PRESET_URL
+  ];
+
+  function tryNext(i) {
+    if (i >= proxies.length) {
+      showErr('โหลดไม่ได้ — กรุณาตรวจสอบการเชื่อมต่อหรือ CORS setting');
       btn.disabled = false;
       label.innerHTML = '&#9654;&nbsp;&nbsp;เข้าสู่ Dashboard';
-    })
-    .catch(function(e) {
-      // Try via proxy
-      fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(PRESET_URL))
-        .then(function(r) { return r.text(); })
-        .then(function(t) {
-          var rows = parseCSV(t);
-          if(rows.length < 2) throw new Error('ไม่พบข้อมูล');
-          processRows(rows);
-          lastSrc = {type:'gs', url:PRESET_URL, sheet:'Overall'};
-          showDash('Overall (Google Sheet) &middot; '+DATA.length+' รายการ');
-          btn.disabled = false;
-          label.innerHTML = '&#9654;&nbsp;&nbsp;เข้าสู่ Dashboard';
-        })
-        .catch(function(e2) {
-          showErr(e2.message || 'โหลดไม่ได้ กรุณาตรวจสอบ URL');
-          btn.disabled = false;
-          label.innerHTML = '&#9654;&nbsp;&nbsp;เข้าสู่ Dashboard';
-        });
-    });
+      return;
+    }
+    fetch(proxies[i])
+      .then(function(r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.text();
+      })
+      .then(function(t) {
+        var rows = parseCSV(t);
+        if (rows.length < 2) throw new Error('ไม่พบข้อมูล');
+        processRows(rows);
+        lastSrc = { type: 'gs', url: PRESET_URL, sheet: 'Overall' };
+        showDash('Overall (Google Sheet) &middot; ' + DATA.length + ' รายการ');
+        btn.disabled = false;
+        label.innerHTML = '&#9654;&nbsp;&nbsp;เข้าสู่ Dashboard';
+      })
+      .catch(function() { tryNext(i + 1); });
+  }
+  tryNext(0);
 }
-
 </script>
 </body>
 </html>
