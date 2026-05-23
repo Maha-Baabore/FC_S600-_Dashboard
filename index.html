@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.2.0</title>
+<title>FC S600+ PTT — Metering Dashboard v1.3.0</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -337,7 +337,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.2.0</div>
+  <div class="home-version">v1.3.0</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -347,21 +347,13 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   </div>
 
   <div class="src-panel" id="panel-gs">
-    <div class="gs-steps">
-      <div class="gs-step"><div class="gs-num">1</div>
-        <div class="gs-text">Google Sheet &rarr; <b>File &rarr; Share &rarr; Publish to web</b> &rarr; เลือกชีต <b>Overall</b> &rarr; Format <b>CSV</b> &rarr; Publish</div></div>
-      <div class="gs-step"><div class="gs-num">2</div>
-        <div class="gs-text">Copy URL ที่ได้ แล้ววางด้านล่าง<br><code>https://docs.google.com/spreadsheets/d/.../pub?...output=csv</code></div></div>
-      <div class="gs-step"><div class="gs-num">3</div>
-        <div class="gs-text">กด <b>โหลด</b> &mdash; หลังจากนี้กด <b>Refresh</b> ใน Dashboard ทุกครั้งที่อัปเดต Sheet</div></div>
-    </div>
-    <input class="url-input" id="gs-url" type="text" placeholder="วาง Google Sheet URL หรือ CSV URL ที่นี่...">
-    <input class="url-input" id="gs-sheet" type="text" placeholder="ชื่อ Sheet (default: Overall)" value="Overall">
-    <button class="load-btn gs" id="gs-btn" onclick="loadGS()">&#9654; โหลดข้อมูลจาก Google Sheet</button>
+    <!-- hidden inputs เก็บค่าไว้ให้ loadGS() ใช้งานได้ปกติ -->
+    <input type="hidden" id="gs-url" value="">
+    <input type="hidden" id="gs-sheet" value="Overall">
+    <button class="load-btn gs" id="gs-btn" onclick="loadGS()">&#9654; เข้าสู่ Dashboard</button>
     <div class="err-box" id="gs-err"></div>
     <div class="ok-badge" id="gs-ok"><span class="dot"></span><span id="gs-ok-txt"></span></div>
   </div>
-
 
   <div id="prog-wrap"><div id="prog"></div></div>
   <div id="status-msg"></div>
@@ -483,11 +475,11 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 <script>
 // ═══════════════════════════════════════════════
-//  CONFIG — แก้ไข URL และชื่อ Sheet ที่นี่
+//  CONFIG — URL และชื่อ Sheet ถูกฝังไว้ที่นี่
 // ═══════════════════════════════════════════════
 var CONFIG = {
-  sheetUrl:  'YOUR_GOOGLE_SHEET_CSV_URL_HERE',  // ← วาง URL ตรงนี้
-  sheetName: 'Overall'                           // ← ชื่อ Sheet
+  sheetUrl:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vRBpy6JQSAFfIzYX8nPMaTlG3SqAdCfVOtgzbvKxvtXobvxRG_RgKll6uuV7jAXTA/pub?gid=838721591&single=true&output=csv',
+  sheetName: 'Overall'
 };
 // ═══════════════════════════════════════════════
 
@@ -536,15 +528,15 @@ function buildCsvUrl(raw,sheet){
 }
 
 function loadGS(){
-  var raw=document.getElementById('gs-url').value.trim();
-  var sheet=document.getElementById('gs-sheet').value.trim()||'Overall';
-  if(!raw){showErr('\u0e01\u0e23\u0e38\u0e13\u0e32\u0e43\u0e2a\u0e48 URL');return;}
+  var raw=(CONFIG.sheetUrl||'').trim();
+  var sheet=(CONFIG.sheetName||'Overall').trim();
+  if(!raw){showErr('ไม่พบ URL ใน CONFIG');return;}
   var url=buildCsvUrl(raw,sheet);
-  if(!url){showErr('URL \u0e44\u0e21\u0e48\u0e16\u0e39\u0e01\u0e15\u0e49\u0e2d\u0e07');return;}
+  if(!url){showErr('URL ไม่ถูกต้อง');return;}
   hideErr();
   var btn=document.getElementById('gs-btn');
-  btn.disabled=true;btn.innerHTML='<span class="spinning">&#8635;</span> \u0e01\u0e33\u0e25\u0e31\u0e07\u0e42\u0e2b\u0e25\u0e14...';
-  setP(30,'\u0e01\u0e33\u0e25\u0e31\u0e07\u0e40\u0e0a\u0e37\u0e48\u0e2d\u0e21\u0e15\u0e48\u0e2d...');
+  btn.disabled=true;btn.innerHTML='<span class="spinning">&#8635;</span> กำลังโหลด...';
+  setP(30,'กำลังเชื่อมต่อ...');
   doFetch(url,sheet,btn);
 }
 
@@ -562,23 +554,23 @@ function doFetch(url,sheet,btn){
       finishGS(t,url,sheet,btn);
     }).catch(function(e2){
       clrP();showErr(e.message);
-      btn.disabled=false;btn.innerHTML='&#9654; \u0e42\u0e2b\u0e25\u0e14\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e08\u0e32\u0e01 Google Sheet';
+      btn.disabled=false;btn.innerHTML='&#9654; เข้าสู่ Dashboard';
     });
   });
 }
 
 function finishGS(csv,url,sheet,btn){
   var rows=parseCSV(csv);
-  if(rows.length<2){clrP();showErr('\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25');btn.disabled=false;btn.innerHTML='&#9654; \u0e42\u0e2b\u0e25\u0e14';return;}
+  if(rows.length<2){clrP();showErr('ไม่พบข้อมูล');btn.disabled=false;btn.innerHTML='&#9654; เข้าสู่ Dashboard';return;}
   processRows(rows);
   lastSrc={type:'gs',url:url,sheet:sheet};
   setP(100,'');
   setTimeout(function(){
     clrP();
-    showDash(sheet+' (Google Sheet) &middot; '+DATA.length+' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23');
+    showDash(sheet+' (Google Sheet) &middot; '+DATA.length+' รายการ');
     var ok=document.getElementById('gs-ok');ok.style.display='flex';
-    document.getElementById('gs-ok-txt').textContent='\u0e42\u0e2b\u0e25\u0e14\u0e2a\u0e33\u0e40\u0e23\u0e47\u0e08 '+DATA.length+' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23 \u2014 '+new Date().toLocaleTimeString('th-TH');
-    btn.disabled=false;btn.innerHTML='&#9654; \u0e42\u0e2b\u0e25\u0e14\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e08\u0e32\u0e01 Google Sheet';
+    document.getElementById('gs-ok-txt').textContent='โหลดสำเร็จ '+DATA.length+' รายการ — '+new Date().toLocaleTimeString('th-TH');
+    btn.disabled=false;btn.innerHTML='&#9654; เข้าสู่ Dashboard';
   },350);
 }
 
@@ -887,62 +879,10 @@ function setTheme(mode){
   }catch(e){ setTheme('light'); }
 })();
 
-// ── AUTO-LOAD ──
-// ถ้า CONFIG.sheetUrl ถูกกำหนดไว้ → โหลดข้อมูลอัตโนมัติ ข้ามหน้า Home
-(function(){
-  var url = (CONFIG.sheetUrl || '').trim();
-  if(!url || url === 'YOUR_GOOGLE_SHEET_CSV_URL_HERE') return; // ยังไม่ได้ตั้งค่า → แสดงหน้า Home ปกติ
-  var csvUrl = buildCsvUrl(url, CONFIG.sheetName);
-  if(!csvUrl) return;
-
-  var homeEl = document.getElementById('home');
-  var originalHTML = homeEl.innerHTML; // เก็บ HTML เดิมไว้
-
-  // แทนที่ด้วย loading screen
-  homeEl.innerHTML = [
-    '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:20px">',
-    '  <div class="logo-box" style="margin-bottom:0">FC<br>S600+</div>',
-    '  <div class="home-title" style="font-size:20px">กำลังโหลดข้อมูล...</div>',
-    '  <div id="prog-wrap" style="display:block;width:320px"><div id="prog" style="width:30%"></div></div>',
-    '  <div id="status-msg" style="font-size:12px;color:var(--tx3)">กำลังเชื่อมต่อ Google Sheet</div>',
-    '</div>'
-  ].join('');
-
-  function onSuccess(csvText) {
-    var rows = parseCSV(csvText);
-    if(rows.length < 2) { onFail('ไม่พบข้อมูลใน Sheet'); return; }
-    processRows(rows);
-    lastSrc = { type:'gs', url: csvUrl, sheet: CONFIG.sheetName };
-    showDash(CONFIG.sheetName + ' (Google Sheet) &middot; ' + DATA.length + ' รายการ');
-  }
-
-  function onFail(msg) {
-    // คืน Home HTML เดิม แล้วแสดง error + กรอก URL ไว้ให้
-    homeEl.innerHTML = originalHTML;
-    document.getElementById('gs-url').value = url;
-    document.getElementById('gs-sheet').value = CONFIG.sheetName;
-    var e = document.getElementById('gs-err');
-    e.style.display = 'block';
-    e.innerHTML = '&#9888; Auto-load ล้มเหลว: ' + msg + '<br><small>กรุณาตรวจสอบ URL หรือกด โหลด อีกครั้ง</small>';
-    // re-bind theme buttons ที่ถูก replace ไป
-    setTheme(document.documentElement.classList.contains('light') ? 'light' : 'dark');
-  }
-
-  document.getElementById('status-msg') && (document.getElementById('status-msg').textContent = 'กำลังเชื่อมต่อ...');
-  fetch(csvUrl)
-    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
-    .then(onSuccess)
-    .catch(function(){
-      var statusEl = document.getElementById('status-msg');
-      if(statusEl) statusEl.textContent = 'ลอง proxy...';
-      var progEl = document.getElementById('prog');
-      if(progEl) progEl.style.width = '60%';
-      fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(csvUrl))
-        .then(function(r){ return r.text(); })
-        .then(onSuccess)
-        .catch(function(e){ onFail(e.message); });
-    });
-})();
+// ── AUTO-LOAD: โหลดข้อมูลอัตโนมัติเมื่อเปิดหน้าเว็บ ──
+window.addEventListener('DOMContentLoaded', function(){
+  loadGS();
+});
 
 
 
