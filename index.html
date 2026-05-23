@@ -860,19 +860,19 @@ function gp(p){var pages=Math.ceil(fd().length/ST.ps)||1;ST.p=Math.max(1,Math.mi
 // \u2500\u2500 THEME TOGGLE \u2500\u2500
 function setTheme(mode){
   var root=document.documentElement;
-  var btnD=document.getElementById('btn-dark');
-  var btnL=document.getElementById('btn-light');
-  if(mode==='light'){
-    root.classList.add('light');
-    if(btnD) btnD.classList.remove('active');
-    if(btnL) btnL.classList.add('active');
-    try{localStorage.setItem('fc-theme','light');}catch(e){}
-  } else {
-    root.classList.remove('light');
-    if(btnD) btnD.classList.add('active');
-    if(btnL) btnL.classList.remove('active');
-    try{localStorage.setItem('fc-theme','dark');}catch(e){}
-  }
+  var isDark = mode==='dark';
+  if(isDark) root.classList.remove('light');
+  else root.classList.add('light');
+  // Update ALL theme toggle buttons (dashboard header + landing page)
+  ['btn-dark','land-dark'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.classList.toggle('active', isDark);
+  });
+  ['btn-light','land-light'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.classList.toggle('active', !isDark);
+  });
+  try{localStorage.setItem('fc-theme', isDark?'dark':'light');}catch(e){}
 }
 // restore saved theme on load
 (function(){
@@ -1315,12 +1315,12 @@ function autoLoadAndEnter() {
 
   function tryNext(i) {
     if (i >= proxies.length) {
-      showErr('โหลดไม่ได้ — กรุณาตรวจสอบการเชื่อมต่อหรือ CORS setting');
+      showErr('โหลดไม่ได้ — กรุณาตรวจสอบว่า Google Sheet ถูก Publish เป็น CSV แล้ว (File → Share → Publish to web → CSV)');
       btn.disabled = false;
       label.innerHTML = '&#9654;&nbsp;&nbsp;เข้าสู่ Dashboard';
       return;
     }
-    fetch(proxies[i])
+    fetch(proxies[i], {cache:'no-cache'})
       .then(function(r) {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.text();
