@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.1.0</title>
+<title>FC S600+ PTT — Metering Dashboard v1.2.0</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -337,7 +337,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.1.0</div>
+  <div class="home-version">v1.2.0</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -482,6 +482,15 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 </div>
 
 <script>
+// ═══════════════════════════════════════════════
+//  CONFIG — แก้ไข URL และชื่อ Sheet ที่นี่
+// ═══════════════════════════════════════════════
+var CONFIG = {
+  sheetUrl:  'YOUR_GOOGLE_SHEET_CSV_URL_HERE',  // ← วาง URL ตรงนี้
+  sheetName: 'Overall'                           // ← ชื่อ Sheet
+};
+// ═══════════════════════════════════════════════
+
 // Region color map built dynamically
 var REGION_COLOR_MAP = {};
 
@@ -876,6 +885,63 @@ function setTheme(mode){
     if(saved==='dark') setTheme('dark');
     else setTheme('light');
   }catch(e){ setTheme('light'); }
+})();
+
+// ── AUTO-LOAD ──
+// ถ้า CONFIG.sheetUrl ถูกกำหนดไว้ → โหลดข้อมูลอัตโนมัติ ข้ามหน้า Home
+(function(){
+  var url = (CONFIG.sheetUrl || '').trim();
+  if(!url || url === 'YOUR_GOOGLE_SHEET_CSV_URL_HERE') return; // ยังไม่ได้ตั้งค่า → แสดงหน้า Home ปกติ
+  var csvUrl = buildCsvUrl(url, CONFIG.sheetName);
+  if(!csvUrl) return;
+
+  var homeEl = document.getElementById('home');
+  var originalHTML = homeEl.innerHTML; // เก็บ HTML เดิมไว้
+
+  // แทนที่ด้วย loading screen
+  homeEl.innerHTML = [
+    '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:20px">',
+    '  <div class="logo-box" style="margin-bottom:0">FC<br>S600+</div>',
+    '  <div class="home-title" style="font-size:20px">กำลังโหลดข้อมูล...</div>',
+    '  <div id="prog-wrap" style="display:block;width:320px"><div id="prog" style="width:30%"></div></div>',
+    '  <div id="status-msg" style="font-size:12px;color:var(--tx3)">กำลังเชื่อมต่อ Google Sheet</div>',
+    '</div>'
+  ].join('');
+
+  function onSuccess(csvText) {
+    var rows = parseCSV(csvText);
+    if(rows.length < 2) { onFail('ไม่พบข้อมูลใน Sheet'); return; }
+    processRows(rows);
+    lastSrc = { type:'gs', url: csvUrl, sheet: CONFIG.sheetName };
+    showDash(CONFIG.sheetName + ' (Google Sheet) &middot; ' + DATA.length + ' รายการ');
+  }
+
+  function onFail(msg) {
+    // คืน Home HTML เดิม แล้วแสดง error + กรอก URL ไว้ให้
+    homeEl.innerHTML = originalHTML;
+    document.getElementById('gs-url').value = url;
+    document.getElementById('gs-sheet').value = CONFIG.sheetName;
+    var e = document.getElementById('gs-err');
+    e.style.display = 'block';
+    e.innerHTML = '&#9888; Auto-load ล้มเหลว: ' + msg + '<br><small>กรุณาตรวจสอบ URL หรือกด โหลด อีกครั้ง</small>';
+    // re-bind theme buttons ที่ถูก replace ไป
+    setTheme(document.documentElement.classList.contains('light') ? 'light' : 'dark');
+  }
+
+  document.getElementById('status-msg') && (document.getElementById('status-msg').textContent = 'กำลังเชื่อมต่อ...');
+  fetch(csvUrl)
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
+    .then(onSuccess)
+    .catch(function(){
+      var statusEl = document.getElementById('status-msg');
+      if(statusEl) statusEl.textContent = 'ลอง proxy...';
+      var progEl = document.getElementById('prog');
+      if(progEl) progEl.style.width = '60%';
+      fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(csvUrl))
+        .then(function(r){ return r.text(); })
+        .then(onSuccess)
+        .catch(function(e){ onFail(e.message); });
+    });
 })();
 
 
