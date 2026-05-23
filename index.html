@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<title>FC S600+ PTT — Metering Dashboard v1.1.0</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -140,13 +139,15 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);min-h
   display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.3;
   margin-bottom:28px;box-shadow:0 0 40px rgba(0,212,255,.25)}
 .home-title{font-size:30px;font-weight:700;margin-bottom:6px;text-align:center}
-.home-sub{font-size:13px;color:var(--tx3);margin-bottom:44px;font-family:'Space Mono',monospace}
+.home-sub{font-size:13px;color:var(--tx3);margin-bottom:8px;font-family:'Space Mono',monospace}
+.home-version{font-size:10px;font-family:'Space Mono',monospace;color:var(--tx3);background:var(--sf2);border:1px solid var(--br);border-radius:20px;padding:2px 10px;margin-bottom:20px;letter-spacing:.5px}
+.home-theme-row{margin-bottom:28px;display:flex;align-items:center;justify-content:center}
 .src-tabs{display:flex;width:580px;max-width:100%;border-radius:14px 14px 0 0;overflow:hidden}
 .src-tab{flex:1;padding:13px 0;text-align:center;font-size:13px;font-weight:600;cursor:pointer;
   background:var(--sf2);color:var(--tx3);border:1px solid var(--br);transition:all .2s;border-bottom:none}
 .src-tab:first-child{border-radius:14px 0 0 0}.src-tab:last-child{border-radius:0 14px 0 0}
 .src-tab.active{background:var(--sf);color:var(--ac);border-color:rgba(0,212,255,.3)}
-.src-panel{width:580px;max-width:100%;background:var(--sf);border:1px solid var(--br);border-radius:0 0 14px 14px;padding:28px}
+.src-panel{width:580px;max-width:100%;background:var(--sf);border:1px solid var(--br);border-radius:14px;padding:28px}
 .src-panel.hidden{display:none}
 .gs-steps{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
 .gs-step{display:flex;gap:12px;align-items:flex-start}
@@ -327,28 +328,25 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .mbfill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;min-width:18px;transition:width .4s ease}
 .mbfill span{font-size:10px;font-weight:700;font-family:'Space Mono',monospace;color:rgba(255,255,255,.95)}
 #map-hover-tip{position:fixed;background:var(--sf);border:1px solid var(--br);border-radius:8px;padding:5px 12px;font-size:11px;font-family:'Space Mono',monospace;font-weight:700;pointer-events:none;z-index:9999;opacity:0;transition:opacity .1s;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.5)}
-.ver-badge{font-family:'Space Mono',monospace;font-size:11px;color:var(--tx3);background:var(--sf2);border:1px solid var(--br);border-radius:20px;padding:3px 12px;margin-top:6px;letter-spacing:1px;display:inline-block}
 </style>
 </head>
 <body>
 
 <!-- HOME -->
 <div id="home">
+  <div class="logo-box">FC<br>S600+</div>
+  <div class="home-title">FC S600+ PTT Dashboard</div>
+  <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
+  <div class="home-version">v1.1.0</div>
 
-  <!-- Theme toggle — top right corner -->
-  <div style="position:fixed;top:18px;right:22px;z-index:10">
-    <div class="toggle-pill">
-      <button class="tpill-btn" id="home-btn-dark"  onclick="setTheme('dark')">&#9790; Dark</button>
+  <div class="home-theme-row">
+    <div class="toggle-pill" id="home-theme-toggle">
+      <button class="tpill-btn" id="home-btn-dark" onclick="setTheme('dark')">&#9790; Dark</button>
       <button class="tpill-btn active" id="home-btn-light" onclick="setTheme('light')">&#9728; Light</button>
     </div>
   </div>
 
-  <div class="logo-box">FC<br>S600+</div>
-  <div class="home-title">FC S600+ PTT Dashboard</div>
-  <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="ver-badge">v1.0.0</div>
-
-  <div class="src-panel" id="panel-gs" style="margin-top:28px">
+  <div class="src-panel" id="panel-gs">
     <div class="gs-steps">
       <div class="gs-step"><div class="gs-num">1</div>
         <div class="gs-text">Google Sheet &rarr; <b>File &rarr; Share &rarr; Publish to web</b> &rarr; เลือกชีต <b>Overall</b> &rarr; Format <b>CSV</b> &rarr; Publish</div></div>
@@ -364,6 +362,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
     <div class="ok-badge" id="gs-ok"><span class="dot"></span><span id="gs-ok-txt"></span></div>
   </div>
 
+
   <div id="prog-wrap"><div id="prog"></div></div>
   <div id="status-msg"></div>
 </div>
@@ -377,7 +376,6 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
     </div>
     <div class="hright">
       <span class="lupd" id="h-upd"></span>
-      <span class="lupd" style="opacity:0.4;margin-left:2px">v1.0.0</span>
       <div class="hbadge">Units: <strong id="ht">0</strong></div>
       <button class="hbtn gr" id="ref-btn" onclick="refreshGS()">&#8635; Refresh</button>
       <!-- View mode toggle -->
@@ -386,8 +384,8 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
         <button class="vpill-btn" id="btn-view-map" onclick="setView('map')">&#127757; Map</button>
       </div>
       <div class="toggle-pill" id="header-theme-toggle">
-        <button class="tpill-btn active" id="btn-dark" onclick="setTheme('dark')">&#9790; Dark</button>
-        <button class="tpill-btn" id="btn-light" onclick="setTheme('light')">&#9728; Light</button>
+        <button class="tpill-btn" id="btn-dark" onclick="setTheme('dark')">&#9790; Dark</button>
+        <button class="tpill-btn active" id="btn-light" onclick="setTheme('light')">&#9728; Light</button>
       </div>
       <button class="hbtn" onclick="goHome()">&#8617; เปลี่ยนแหล่งข้อมูล</button>
     </div>
@@ -514,18 +512,6 @@ var CM={'PTT Region':0,Site:1,TAG:2,Firmware:4,'Firmware Update':5,Status:6,Appl
 var DATA=[],lastSrc=null;
 var ST={f:{r:new Set(),fw:new Set(),fwu:new Set(),hv:new Set(),st:new Set(),ap:new Set()},q:'',sc:null,sa:true,p:1,ps:20};
 
-// Tab
-function switchTab(t){
-  document.querySelectorAll('.src-tab').forEach(function(el,i){el.classList.toggle('active',(i===0&&t==='gs')||(i===1&&t==='xl'));});
-  document.getElementById('panel-gs').classList.toggle('hidden',t!=='gs');
-  document.getElementById('panel-xl').classList.toggle('hidden',t!=='xl');
-}
-
-// Drag-drop Excel
-var dz=document.getElementById('dz');
-dz.addEventListener('dragover',function(e){e.preventDefault();dz.classList.add('over');});
-dz.addEventListener('dragleave',function(){dz.classList.remove('over');});
-dz.addEventListener('drop',function(e){e.preventDefault();dz.classList.remove('over');if(e.dataTransfer.files[0])loadXL(e.dataTransfer.files[0]);});
 
 function setP(pct,msg){document.getElementById('prog-wrap').style.display='block';document.getElementById('prog').style.width=pct+'%';document.getElementById('status-msg').textContent=msg||'';}
 function clrP(){document.getElementById('prog-wrap').style.display='none';document.getElementById('prog').style.width='0%';document.getElementById('status-msg').textContent='';}
@@ -860,32 +846,35 @@ function rPg(total){
 }
 function gp(p){var pages=Math.ceil(fd().length/ST.ps)||1;ST.p=Math.max(1,Math.min(p,pages));render();}
 
-// \u2500\u2500 THEME TOGGLE \u2500\u2500
+// ── THEME TOGGLE ──
 function setTheme(mode){
   var root=document.documentElement;
   var btnD=document.getElementById('btn-dark');
   var btnL=document.getElementById('btn-light');
+  var hbtnD=document.getElementById('home-btn-dark');
+  var hbtnL=document.getElementById('home-btn-light');
   if(mode==='light'){
     root.classList.add('light');
     if(btnD) btnD.classList.remove('active');
     if(btnL) btnL.classList.add('active');
-    var hD=document.getElementById('home-btn-dark'),hL=document.getElementById('home-btn-light');
-    if(hD)hD.classList.remove('active'); if(hL)hL.classList.add('active');
+    if(hbtnD) hbtnD.classList.remove('active');
+    if(hbtnL) hbtnL.classList.add('active');
     try{localStorage.setItem('fc-theme','light');}catch(e){}
   } else {
     root.classList.remove('light');
     if(btnD) btnD.classList.add('active');
     if(btnL) btnL.classList.remove('active');
-    var hD=document.getElementById('home-btn-dark'),hL=document.getElementById('home-btn-light');
-    if(hD)hD.classList.add('active'); if(hL)hL.classList.remove('active');
+    if(hbtnD) hbtnD.classList.add('active');
+    if(hbtnL) hbtnL.classList.remove('active');
     try{localStorage.setItem('fc-theme','dark');}catch(e){}
   }
 }
-// restore saved theme on load
+// restore saved theme on load — default is light
 (function(){
   try{
     var saved=localStorage.getItem('fc-theme');
-    setTheme(saved === 'dark' ? 'dark' : 'light'); // default: light
+    if(saved==='dark') setTheme('dark');
+    else setTheme('light');
   }catch(e){ setTheme('light'); }
 })();
 
