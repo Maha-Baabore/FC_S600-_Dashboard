@@ -327,6 +327,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .mbfill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;min-width:18px;transition:width .4s ease}
 .mbfill span{font-size:10px;font-weight:700;font-family:'Space Mono',monospace;color:rgba(255,255,255,.95)}
 #map-hover-tip{position:fixed;background:var(--sf);border:1px solid var(--br);border-radius:8px;padding:5px 12px;font-size:11px;font-family:'Space Mono',monospace;font-weight:700;pointer-events:none;z-index:9999;opacity:0;transition:opacity .1s;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.ver-badge{font-family:'Space Mono',monospace;font-size:11px;color:var(--tx3);background:var(--sf2);border:1px solid var(--br);border-radius:20px;padding:3px 12px;margin-top:6px;letter-spacing:1px;display:inline-block}
 </style>
 </head>
 <body>
@@ -334,10 +335,10 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 <!-- HOME -->
 <div id="home">
 
-  <!-- Theme toggle top-right -->
-  <div style="position:fixed;top:16px;right:20px;z-index:10">
-    <div class="toggle-pill" id="home-theme-toggle">
-      <button class="tpill-btn" id="home-btn-dark" onclick="setTheme('dark')">&#9790; Dark</button>
+  <!-- Theme toggle — top right corner -->
+  <div style="position:fixed;top:18px;right:22px;z-index:10">
+    <div class="toggle-pill">
+      <button class="tpill-btn" id="home-btn-dark"  onclick="setTheme('dark')">&#9790; Dark</button>
       <button class="tpill-btn active" id="home-btn-light" onclick="setTheme('light')">&#9728; Light</button>
     </div>
   </div>
@@ -345,20 +346,25 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
+  <div class="ver-badge">v1.0.0</div>
 
-  <!-- Hidden inputs needed by loadGS() -->
-  <input type="hidden" id="gs-url"   value="https://docs.google.com/spreadsheets/d/e/2PACX-1vRBpy6JQSAFfIzYX8nPMaTlG3SqAdCfVOtgzbvKxvtXobvxRG_RgKll6uuV7jAXTA/pub?gid=838721591&single=true&output=csv">
-  <input type="hidden" id="gs-sheet" value="Overall">
+  <div class="src-panel" id="panel-gs" style="margin-top:28px">
+    <div class="gs-steps">
+      <div class="gs-step"><div class="gs-num">1</div>
+        <div class="gs-text">Google Sheet &rarr; <b>File &rarr; Share &rarr; Publish to web</b> &rarr; เลือกชีต <b>Overall</b> &rarr; Format <b>CSV</b> &rarr; Publish</div></div>
+      <div class="gs-step"><div class="gs-num">2</div>
+        <div class="gs-text">Copy URL ที่ได้ แล้ววางด้านล่าง<br><code>https://docs.google.com/spreadsheets/d/.../pub?...output=csv</code></div></div>
+      <div class="gs-step"><div class="gs-num">3</div>
+        <div class="gs-text">กด <b>โหลด</b> &mdash; หลังจากนี้กด <b>Refresh</b> ใน Dashboard ทุกครั้งที่อัปเดต Sheet</div></div>
+    </div>
+    <input class="url-input" id="gs-url" type="text" placeholder="วาง Google Sheet URL หรือ CSV URL ที่นี่...">
+    <input class="url-input" id="gs-sheet" type="text" placeholder="ชื่อ Sheet (default: Overall)" value="Overall">
+    <button class="load-btn gs" id="gs-btn" onclick="loadGS()">&#9654; โหลดข้อมูลจาก Google Sheet</button>
+    <div class="err-box" id="gs-err"></div>
+    <div class="ok-badge" id="gs-ok"><span class="dot"></span><span id="gs-ok-txt"></span></div>
+  </div>
 
-  <button class="load-btn gs" id="gs-btn"
-          onclick="enterDashboard()"
-          style="width:300px;margin-top:32px;font-size:15px;padding:16px 0">
-    &#9654;&nbsp;&nbsp;เข้าสู่ Dashboard
-  </button>
-
-  <div class="err-box" id="gs-err" style="width:300px;margin-top:12px"></div>
-  <div class="ok-badge" id="gs-ok"><span class="dot"></span><span id="gs-ok-txt"></span></div>
-  <div id="prog-wrap" style="width:300px;margin-top:12px"><div id="prog"></div></div>
+  <div id="prog-wrap"><div id="prog"></div></div>
   <div id="status-msg"></div>
 </div>
 
@@ -371,6 +377,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
     </div>
     <div class="hright">
       <span class="lupd" id="h-upd"></span>
+      <span class="lupd" style="opacity:0.4;margin-left:2px">v1.0.0</span>
       <div class="hbadge">Units: <strong id="ht">0</strong></div>
       <button class="hbtn gr" id="ref-btn" onclick="refreshGS()">&#8635; Refresh</button>
       <!-- View mode toggle -->
@@ -508,12 +515,6 @@ var DATA=[],lastSrc=null;
 var ST={f:{r:new Set(),fw:new Set(),fwu:new Set(),hv:new Set(),st:new Set(),ap:new Set()},q:'',sc:null,sa:true,p:1,ps:20};
 
 // Tab
-// ── Auto-connect function ──────────────────────────────────
-function enterDashboard() {
-  // gs-url hidden input already pre-filled; delegate to standard loadGS()
-  loadGS();
-}
-
 function switchTab(t){
   document.querySelectorAll('.src-tab').forEach(function(el,i){el.classList.toggle('active',(i===0&&t==='gs')||(i===1&&t==='xl'));});
   document.getElementById('panel-gs').classList.toggle('hidden',t!=='gs');
@@ -868,11 +869,15 @@ function setTheme(mode){
     root.classList.add('light');
     if(btnD) btnD.classList.remove('active');
     if(btnL) btnL.classList.add('active');
+    var hD=document.getElementById('home-btn-dark'),hL=document.getElementById('home-btn-light');
+    if(hD)hD.classList.remove('active'); if(hL)hL.classList.add('active');
     try{localStorage.setItem('fc-theme','light');}catch(e){}
   } else {
     root.classList.remove('light');
     if(btnD) btnD.classList.add('active');
     if(btnL) btnL.classList.remove('active');
+    var hD=document.getElementById('home-btn-dark'),hL=document.getElementById('home-btn-light');
+    if(hD)hD.classList.add('active'); if(hL)hL.classList.remove('active');
     try{localStorage.setItem('fc-theme','dark');}catch(e){}
   }
 }
