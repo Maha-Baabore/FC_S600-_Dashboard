@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FC S600+ PTT — Metering Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/geodata/thailandLow.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -36,7 +41,7 @@ body,header,.sidebar,.content,.main{transition:background-color .3s ease,color .
 .light .chip{color:#475569!important;border-color:rgba(0,0,0,0.12)!important;background:#f8fafc!important}
 .light .chip:hover{background:rgba(37,99,235,.08)!important;border-color:var(--ac2)!important;color:#1d4ed8!important}
 /* Active chips in light mode — เข้ม ชัด มี shadow */
-.light .chip.on{background:#1d4ed8!important;border-color:#1d4ed8!important;color:#ffffff!important;font-weight:700!important;box-shadow:0 2px 8px rgba(29,78,216,.35)!important}
+.light .chip.on:not(.rc):not(.ap-t):not(.ap-s):not(.ap-u):not(.ap-o):not(.fwu):not(.fwo):not(.fwk):not(.stc):not(.std):not(.stt){background:#1d4ed8!important;border-color:#1d4ed8!important;color:#ffffff!important;font-weight:700!important;box-shadow:0 2px 8px rgba(29,78,216,.35)!important}
 .light .chip.on.stc{background:#059669!important;border-color:#059669!important;color:#fff!important;box-shadow:0 2px 8px rgba(5,150,105,.35)!important}
 .light .chip.on.std{background:#dc2626!important;border-color:#dc2626!important;color:#fff!important;box-shadow:0 2px 8px rgba(220,38,38,.35)!important}
 .light .chip.on.stt{background:#d97706!important;border-color:#d97706!important;color:#fff!important;box-shadow:0 2px 8px rgba(217,119,6,.35)!important}
@@ -192,6 +197,8 @@ header{background:rgba(8,12,24,.96);border-bottom:1px solid var(--br);padding:0 
 .chip.on.fwu{background:#059669;border-color:#059669}
 .chip.on.fwo{background:#dc2626;border-color:#dc2626}
 .chip.on.fwk{background:#57534e;border-color:#57534e}
+/* Region chip active: uses CSS custom property set by JS, beats !important */
+.chip.rc.on{background:var(--rc-bg,#3b82f6)!important;border-color:var(--rc-bd,#3b82f6)!important;color:var(--rc-tx,#fff)!important}
 .rbtn{margin:8px 16px 0;width:calc(100% - 32px);padding:7px;background:transparent;border:1px dashed rgba(255,255,255,.1);border-radius:8px;color:var(--tx3);font-size:11.5px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
 .rbtn:hover{border-color:var(--ac);color:var(--ac)}
 .content{flex:1;padding:22px 26px;overflow-y:auto;min-width:0}
@@ -249,7 +256,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .fwb-u{background:rgba(5,150,105,.15);color:#34d399}.fwb-o{background:rgba(220,38,38,.15);color:#f87171}.fwb-k{background:rgba(120,113,108,.15);color:#a8a29e}
 .ab{display:inline-block;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:500}
 .abt{background:rgba(0,212,255,.12);color:var(--ac)}.abs{background:rgba(168,85,247,.12);color:#c084fc}
-.abu{background:rgba(249,115,22,.12);color:#fb923c}.abo{background:rgba(245,158,11,.12);color:#fbbf24}
+.abu{background:rgba(34,211,238,.12);color:#10b981}.abo{background:rgba(245,158,11,.12);color:#fbbf24}
 .pg{display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:10px 16px;border-top:1px solid var(--br)}
 .pgi{font-size:11px;color:var(--tx3);margin-right:8px;font-family:'Space Mono',monospace}
 .pb{width:28px;height:28px;border-radius:5px;background:var(--sf2);border:1px solid var(--br);color:var(--tx2);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
@@ -257,6 +264,69 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 @keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .kcard{animation:fu .3s ease both}
 @keyframes sp{to{transform:rotate(360deg)}}.spinning{display:inline-block;animation:sp .8s linear infinite}
+
+/* App chip active colors */
+.chip.ap-t.on{background:#00d4ff!important;border-color:#00d4ff!important;color:#080c18!important}
+.chip.ap-s.on{background:#c084fc!important;border-color:#c084fc!important;color:#fff!important}
+.chip.ap-u.on{background:#10b981!important;border-color:#10b981!important;color:#080c18!important}
+.chip.ap-o.on{background:#fbbf24!important;border-color:#fbbf24!important;color:#080c18!important}
+/* View mode pill */
+.view-pill{display:flex;align-items:center;gap:0;background:var(--sf);border:1px solid var(--br);border-radius:30px;padding:3px}
+.vpill-btn{padding:5px 13px;border-radius:24px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--tx3);transition:all .2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.vpill-btn.active{background:var(--ac2);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.35)}
+/* Map view */
+#map-view{flex:1;overflow:hidden;position:relative;background:var(--bg);height:calc(100vh - 62px);overflow-y:auto}
+#map-view.hidden{display:none!important}
+#dash-content.hidden{display:none!important}
+.map-wrap{width:100%;height:100%;display:flex;align-items:flex-start;justify-content:center;padding:20px;gap:20px}
+.map-svg-container{flex:0 0 auto;max-width:420px}
+.map-svg-container svg{width:100%;height:auto;display:block}
+.map-tooltip{position:fixed;background:var(--sf);border:1px solid var(--br);border-radius:10px;padding:10px 14px;font-size:12px;pointer-events:none;z-index:200;min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,.4);transition:opacity .15s;opacity:0}
+.map-tooltip.show{opacity:1}
+.map-tt-title{font-weight:700;font-size:13px;margin-bottom:6px;font-family:'Space Mono',monospace}
+.map-tt-row{display:flex;justify-content:space-between;gap:16px;font-size:11px;color:var(--tx2);margin-top:3px}
+.map-tt-val{color:var(--tx);font-weight:600;font-family:'Space Mono',monospace}
+.map-legend{background:var(--sf);border:1px solid var(--br);border-radius:12px;padding:14px 16px;min-width:200px;flex-shrink:0;align-self:flex-start;margin-top:0}
+.map-legend-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--tx3);margin-bottom:10px;font-family:'Space Mono',monospace}
+.map-legend-item{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px;color:var(--tx2)}
+.map-legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.reg-path{cursor:pointer;transition:opacity .15s,filter .15s}
+.reg-path:hover{opacity:0.8;filter:brightness(1.2)}
+
+
+/* ===== MAP VIEW ===== */
+#map-view{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+#map-view.hidden{display:none!important}
+#dash-content.hidden{display:none!important}
+#map-kpi-bar{padding:8px 16px 6px;flex-shrink:0;display:flex;justify-content:flex-end}
+.mkpi-row{display:flex;flex-wrap:nowrap;gap:8px}
+.mkpi-card{background:var(--sf);border:1px solid var(--br);border-radius:12px;padding:12px 18px;min-width:120px;flex-shrink:0}
+.mkpi-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--tx3);font-family:'Space Mono',monospace;margin-bottom:4px}
+.mkpi-val{font-size:24px;font-weight:700;font-family:'Space Mono',monospace;line-height:1}
+.mkpi-sub{font-size:10px;color:var(--tx3);margin-top:2px}
+.mkpi-tot .mkpi-val{color:var(--ac)}
+.map-body{flex:1;min-height:0;display:flex;flex-direction:row;gap:12px;padding:0 16px 14px;overflow:hidden}
+#chartdiv{flex:1;min-width:0;height:100%;background:transparent}
+.map-right-panel{width:290px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;overflow-y:auto;align-self:flex-start;padding-top:2px}
+.map-info-card{background:var(--sf);border:1px solid var(--br);border-radius:12px;padding:14px 16px}
+.map-info-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--tx3);font-family:'Space Mono',monospace;margin-bottom:8px}
+.map-info-sub{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);font-family:'Space Mono',monospace;margin-bottom:6px}
+.map-reg-chips{display:flex;flex-wrap:wrap;gap:5px}
+.map-reg-chip{display:inline-flex;align-items:center;gap:4px;border-radius:6px;padding:3px 9px;font-size:10px;font-family:'Space Mono',monospace;font-weight:700;cursor:pointer;border:2px solid transparent;transition:all .15s}
+.map-reg-chip:hover{filter:brightness(1.2)}
+.map-reg-chip.sel{box-shadow:0 0 0 2px rgba(255,255,255,0.35)}
+.map-leg-row{display:flex;align-items:center;gap:7px;margin-bottom:6px;font-size:11px}
+.map-leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.map-leg-name{color:var(--tx2);flex:1;white-space:nowrap}
+.map-leg-cnt{color:var(--tx);font-weight:700;font-family:'Space Mono',monospace;font-size:11px}
+/* Map bar chart */
+.mbrow{display:flex;align-items:center;gap:8px;margin-bottom:6px;cursor:pointer;transition:opacity .15s}
+.mbrow:hover{opacity:1!important}
+.mblabel{width:60px;font-size:10px;text-align:right;white-space:nowrap;flex-shrink:0;font-family:'Space Mono',monospace;font-weight:700}
+.mbtrack{flex:1;background:var(--sf3);border-radius:4px;height:16px;overflow:hidden}
+.mbfill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;min-width:18px;transition:width .4s ease}
+.mbfill span{font-size:10px;font-weight:700;font-family:'Space Mono',monospace;color:rgba(255,255,255,.95)}
+#map-hover-tip{position:fixed;background:var(--sf);border:1px solid var(--br);border-radius:8px;padding:5px 12px;font-size:11px;font-family:'Space Mono',monospace;font-weight:700;pointer-events:none;z-index:9999;opacity:0;transition:opacity .1s;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.5)}
 </style>
 </head>
 <body>
@@ -302,7 +372,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 </div>
 
 <!-- DASHBOARD -->
-<div id="dash">
+<div id="dash" style="display:none">
   <header>
     <div class="hlogo">
       <div class="hlogo-icon">FC<br>S600+</div>
@@ -312,6 +382,11 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
       <span class="lupd" id="h-upd"></span>
       <div class="hbadge">Units: <strong id="ht">0</strong></div>
       <button class="hbtn gr" id="ref-btn" onclick="refreshGS()">&#8635; Refresh</button>
+      <!-- View mode toggle -->
+      <div class="view-pill">
+        <button class="vpill-btn active" id="btn-view-dash" onclick="setView('dash')">&#9783; Dashboard</button>
+        <button class="vpill-btn" id="btn-view-map" onclick="setView('map')">&#127757; Map</button>
+      </div>
       <div class="toggle-pill" id="header-theme-toggle">
         <button class="tpill-btn active" id="btn-dark" onclick="setTheme('dark')">&#9790; Dark</button>
         <button class="tpill-btn" id="btn-light" onclick="setTheme('light')">&#9728; Light</button>
@@ -330,7 +405,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
       <button class="rbtn" onclick="rst()">&#8634; Reset Filters</button>
     </aside>
 
-    <div class="content">
+    <div class="content" id="dash-content">
       <!-- KPI Row -->
       <div class="krow" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:20px">
         <div class="kcard tot"><div class="klabel">Total Units</div><div class="kval" id="kt">0</div><div class="ksub" id="ks"></div></div>
@@ -378,12 +453,64 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
         <div class="pg" id="pg"></div>
       </div>
     </div>
+
+    <!-- MAP VIEW -->
+    <div id="map-view" class="hidden">
+      <!-- KPI bar: full width at top -->
+      <div id="map-kpi-bar"></div>
+      <!-- Body row: map LEFT fills space, right panel RIGHT fixed width -->
+      <div class="map-body">
+        <div id="chartdiv"></div>
+        <div class="map-right-panel">
+          <div class="map-info-card" id="map-region-panel">
+            <div class="map-info-title">Units by Region</div>
+            <div id="map-region-list"></div>
+          </div>
+          <div class="map-info-card" id="map-appfw-panel">
+            <div class="map-info-title">Application &amp; Firmware Status</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+              <div>
+                <div class="map-info-sub">APPLICATION</div>
+                <div id="map-dl-app"></div>
+              </div>
+              <div>
+                <div class="map-info-sub">FIRMWARE</div>
+                <div id="map-dl-fw"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
+// Region color map built dynamically
+var REGION_COLOR_MAP = {};
+
+// Helper: display label for region (no R prefix for non-numeric)
+function regLabel(v) {
+  if (!v || v === '?') return v || '?';
+  return v; // just return the value as-is (1,2,...,GSP,OSP,OFFSHORE)
+}
+
+// Helper: is color light?
+function isLightColor(hex) {
+  if (!hex || hex[0] !== '#') return false;
+  var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return (r*299+g*587+b*114)/1000 > 155;
+}
+
+// Hex to rgba
+function hexToRgba(hex, alpha) {
+  if (!hex || hex[0] !== '#') return hex;
+  var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return 'rgba('+r+','+g+','+b+','+alpha+')';
+}
+
 var RC=['#00d4ff','#3b82f6','#8b5cf6','#ec4899','#f97316','#f59e0b','#10b981','#14b8a6','#06b6d4','#84cc16','#a855f7','#ef4444','#6366f1','#d946ef'];
-var AC={Turbine:'#00d4ff',Supervisory:'#c084fc',USM:'#fb923c',Orifice:'#fbbf24'};
+var AC={Turbine:'#00d4ff',Supervisory:'#c084fc',USM:'#10b981',Orifice:'#fbbf24'};
 var FWC={'Up-to-date':'#34d399',Outdated:'#f87171',Unknown:'#a8a29e'};
 var CM={'PTT Region':0,Site:1,TAG:2,Firmware:4,'Firmware Update':5,Status:6,Applications:7,'Last config installed date':8};
 var DATA=[],lastSrc=null;
@@ -517,6 +644,7 @@ function loadXL(file){
 }
 
 function showDash(sub){
+  mapBuilt = false; // reset so map rebuilds with new data
   document.getElementById('home').style.display='none';
   document.getElementById('dash').style.display='block';
   document.getElementById('hf').innerHTML=sub;
@@ -579,29 +707,64 @@ function fd(){
 function buildF(){
   var uniq=function(k,s){var v=Array.from(new Set(DATA.map(function(r){return nv(r[k]);}).filter(Boolean)));return s?v.sort(s):v.sort();};
   var rs=function(a,b){var na=parseInt(a),nb=parseInt(b);if(!isNaN(na)&&!isNaN(nb))return na-nb;if(!isNaN(na))return -1;if(!isNaN(nb))return 1;return a.localeCompare(b);};
-  var allR=uniq('PTT Region',rs);var cm={};allR.forEach(function(r,i){cm[r]=RC[i%RC.length];});
-  chips('fr',allR,'r',function(v){return 'R'+v;},cm);
+  var allR=uniq('PTT Region',rs);
+  REGION_COLOR_MAP = {};
+  allR.forEach(function(r,i){REGION_COLOR_MAP[r]=RC[i%RC.length];});
+  // Region chips with matching colors
+  var frEl=document.getElementById('fr');
+  frEl.innerHTML=allR.map(function(v){
+    var col=REGION_COLOR_MAP[v];
+    return '<span class="chip rc" data-region="'+v+'" data-color="'+col+'" onclick="togRC(&quot;r&quot;,&quot;'+v+'&quot;,this)">'+regLabel(v)+'</span>';
+  }).join('');;
   chips('ff',uniq('Firmware'),'fw');
   // FW Update chips with special colors
   var fwuEl=document.getElementById('ffu');
   fwuEl.innerHTML=['Up-to-date','Outdated','Unknown'].map(function(v){
     var sc=v==='Up-to-date'?'fwu':v==='Outdated'?'fwo':'fwk';
-    return '<span class="chip '+sc+'" onclick="tog(\'fwu\',\''+v+'\',this)">'+v+'</span>';
-  }).join('');
+    return '<span class="chip '+sc+'" onclick="tog(&quot;fwu&quot;,&quot;'+v+'&quot;,this)">'+v+'</span>';
+  }).join('');;
   chips('fs',['Commissioned','Decommissioned'],'st',null,null,true);
-  chips('fa',['Turbine','Supervisory','USM','Orifice'],'ap');
+  // Application chips with matching colors
+  var faEl=document.getElementById('fa');
+  faEl.innerHTML=['Turbine','Supervisory','USM','Orifice'].map(function(v){
+    var clsMap={Turbine:'ap-t',Supervisory:'ap-s',USM:'ap-u',Orifice:'ap-o'};
+    return '<span class="chip ap '+clsMap[v]+'" onclick="tog(&quot;ap&quot;,&quot;'+v+'&quot;,this)">'+v+'</span>';
+  }).join('');
+}
+
+// Region chip toggle with dynamic color
+function togRC(k,v,el){
+  var s=ST.f[k];
+  if(s.has(v)){
+    s.delete(v);
+    el.classList.remove('on');
+    el.style.removeProperty('--rc-bg');
+    el.style.removeProperty('--rc-bd');
+    el.style.removeProperty('--rc-tx');
+  } else {
+    s.add(v);
+    el.classList.add('on');
+    var col=el.getAttribute('data-color')||'#3b82f6';
+    el.style.setProperty('--rc-bg', col);
+    el.style.setProperty('--rc-bd', col);
+    el.style.setProperty('--rc-tx', isLightColor(col)?'#080c18':'#fff');
+  }
+  ST.p=1;render();
 }
 
 function chips(id,vals,fk,lb,cm,isSt){
   document.getElementById(id).innerHTML=vals.map(function(v){
     var l=lb?lb(v):v;
     var sc=isSt?(v==='Commissioned'?'stc':v==='Decommissioned'?'std':'stt'):'';
-    return '<span class="chip '+sc+'" onclick="tog(\''+fk+'\',\''+v+'\',this)">'+l+'</span>';
+    return '<span class="chip '+sc+'" onclick="tog(&quot;'+fk+'&quot;,&quot;'+v+'&quot;,this)">'+l+'</span>';
   }).join('');
 }
 
 function tog(k,v,el){var s=ST.f[k];s.has(v)?(s.delete(v),el.classList.remove('on')):(s.add(v),el.classList.add('on'));ST.p=1;render();}
-function rst(){Object.values(ST.f).forEach(function(s){s.clear();});ST.q='';ST.p=1;document.getElementById('si').value='';document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on');});render();}
+function rst(){Object.values(ST.f).forEach(function(s){s.clear();});ST.q='';ST.p=1;document.getElementById('si').value='';document.querySelectorAll('.chip').forEach(function(c){
+    c.classList.remove('on');
+    if(c.classList.contains('rc')){c.style.removeProperty('--rc-bg');c.style.removeProperty('--rc-bd');c.style.removeProperty('--rc-tx');}
+  });render();}
 function sch(){ST.q=document.getElementById('si').value.toLowerCase();ST.p=1;render();}
 function srt(c){ST.sc=ST.sc===c?(ST.sa=!ST.sa,c):(ST.sa=true,c);render();}
 
@@ -623,16 +786,17 @@ function render(){
   var regionOrder=['1','2','3','4','5','6','7','8','9','10','11','GSP','OFFSHORE','OSP'];
   var sorted=regionOrder.map(function(k){return[k,cnt[k]||0];});
   var mx=sorted.reduce(function(m,e){return Math.max(m,e[1]);},1);
-  var allR=Array.from(new Set(DATA.map(function(x){return nv(x['PTT Region']);}))).sort(function(a,b){var na=parseInt(a),nb=parseInt(b);if(!isNaN(na)&&!isNaN(nb))return na-nb;if(!isNaN(na))return -1;if(!isNaN(nb))return 1;return a.localeCompare(b);});
-  var rcm={};allR.forEach(function(r,i){rcm[r]=RC[i%RC.length];});
+  var _allR_=Array.from(new Set(DATA.map(function(x){return nv(x['PTT Region']);}))).sort(function(a,b){var na=parseInt(a),nb=parseInt(b);if(!isNaN(na)&&!isNaN(nb))return na-nb;if(!isNaN(na))return -1;if(!isNaN(nb))return 1;return a.localeCompare(b);});
+  // rcm uses REGION_COLOR_MAP built in buildF
+  var rcm=REGION_COLOR_MAP;
   document.getElementById('cr').innerHTML=sorted.map(function(e){
-    var regKey=e[0],regCount=e[1],regColor=rcm[regKey]||'#3b82f6';
+    var regKey=e[0],regCount=e[1],regColor=REGION_COLOR_MAP[regKey]||RC[0];
     if(regCount===0){
       if(ST.f.r.size>0) return '';
-      return '<div class="brow"><div class="blabel" style="color:var(--tx3)">R'+regKey+'</div><div class="btrack" style="position:relative;display:flex;align-items:center;padding-left:10px"><span class="na-label">N/A</span></div></div>';
+      return '<div class="brow"><div class="blabel" style="color:var(--tx3)">'+regLabel(regKey)+'</div><div class="btrack" style="position:relative;display:flex;align-items:center;padding-left:10px"><span class="na-label">N/A</span></div></div>';
     }
     var w=(regCount/mx*100).toFixed(1);
-    return '<div class="brow"><div class="blabel">R'+regKey+'</div><div class="btrack"><div class="bfill" style="width:'+w+'%;background:'+regColor+'"><span>'+regCount+'</span></div></div></div>';
+    return '<div class="brow"><div class="blabel" style="color:'+regColor+'">'+regLabel(regKey)+'</div><div class="btrack"><div class="bfill" style="width:'+w+'%;background:'+regColor+'"><span>'+regCount+'</span></div></div></div>';
   }).join('');
   // App legend
   var ac2={};d.forEach(function(x){var k=nv(x['Applications'])||'Other';ac2[k]=(ac2[k]||0)+1;});
@@ -661,7 +825,8 @@ function render(){
     var fwuicon=fwu==='Up-to-date'?'&#9654;':fwu==='Outdated'?'&#9660;':'?';
     var mn=nv(x['Metering name']);
     var dt=nv(x['Last config installed date']).replace(' 00:00:00','');
-    return '<tr><td><span class="rb">R'+nv(x['PTT Region'])+'</span></td>'+
+    var _reg=nv(x['PTT Region']);var _regCol=REGION_COLOR_MAP[_reg]||'#475569';
+    return '<tr><td><span class="rb" style="background:'+_regCol+';color:'+(isLightColor(_regCol)?'#080c18':'#fff')+'">'+regLabel(_reg)+'</span></td>'+
       '<td>'+( nv(x['Site'])||'&mdash;')+'</td>'+
       '<td class="tg">'+( nv(x['TAG'])||'&mdash;')+'</td>'+
       '<td title="'+mn+'">'+mn.substring(0,34)+(mn.length>34?'&hellip;':'')+'</td>'+
@@ -710,6 +875,379 @@ function setTheme(mode){
     if(saved==='light') setTheme('light');
   }catch(e){}
 })();
+
+
+
+// ===== VIEW MODE TOGGLE =====
+var currentView = 'dash';
+function setView(v) {
+  currentView = v;
+  document.getElementById('btn-view-dash').classList.toggle('active', v === 'dash');
+  document.getElementById('btn-view-map').classList.toggle('active', v === 'map');
+  document.getElementById('dash-content').classList.toggle('hidden', v !== 'dash');
+  document.getElementById('map-view').classList.toggle('hidden', v !== 'map');
+  if (v === 'map') {
+    if (!mapBuilt && DATA.length > 0) buildPixelMap();
+    renderMapKPI();
+    buildMapLegend();
+  }
+}
+
+// ===== PIXEL MAP (amCharts) =====
+// Region → province name mapping (English, matches amCharts geodata names)
+var REGION_PROVINCE_MAP = {
+  '1':  ['Chon Buri'],
+  '2':  ['Saraburi'],
+  '3':  ['Rayong'],
+  '4':  ['Khon Kaen'],
+  '5':  ['Ratchaburi','Nakhon Pathom'],
+  '6':  ['Samut Sakhon','Bangkok Metropolis','Samut Prakan','Pathum Thani'],
+  '7':  ['Songkhla','Nakhon Si Thammarat'],
+  '8':  ['Kanchanaburi'],
+  '9':  ['Pathum Thani'],
+  '10': ['Chachoengsao','Prachin Buri','Nakhon Nayok'],
+  '11': ['Phra Nakhon Si Ayutthaya','Ang Thong','Chai Nat'],
+  '12': ['Nakhon Ratchasima']
+};
+// Region 12 has no Flow Computer — render faint
+var REGION_FAINT = {'12': true};
+
+// Province → region lookup (built from above)
+var PROVINCE_REGION = {};
+Object.keys(REGION_PROVINCE_MAP).forEach(function(r) {
+  REGION_PROVINCE_MAP[r].forEach(function(p) { PROVINCE_REGION[p] = r; });
+});
+
+// Special zones (positioned in Gulf of Thailand)
+// GSP ≈ [101.5, 12.8], OFFSHORE ≈ [102.5, 11.5], OSP ≈ [103.2, 10.0]
+var SPECIAL_ZONES = [
+  {key:'GSP',     lng:103.5, lat:13.8},
+  {key:'OFFSHORE',lng:104.5, lat:11.8},
+  {key:'OSP',     lng:105.2, lat:9.5}
+];
+
+var mapBuilt = false;
+var amRoot = null;
+var amPolygonSeries = null;
+
+function buildPixelMap() {
+  mapBuilt = true;
+  var chartdiv = document.getElementById('chartdiv');
+  if (!chartdiv) return;
+
+  // Get colors from REGION_COLOR_MAP (built in buildF)
+  // RC array: index 0→region1, 1→region2... 11→region12, 12→GSP, 13→OFFSHORE, 14→OSP
+  var RC = ['#00d4ff','#3b82f6','#8b5cf6','#ec4899','#f97316','#f59e0b','#10b981','#14b8a6','#06b6d4','#84cc16','#a855f7','#ef4444','#6366f1','#d946ef','#38bdf8'];
+  var regionKeys = ['1','2','3','4','5','6','7','8','9','10','11','12','GSP','OFFSHORE','OSP'];
+  regionKeys.forEach(function(r, i) {
+    if (!REGION_COLOR_MAP[r]) REGION_COLOR_MAP[r] = RC[i % RC.length];
+  });
+
+  // Count units per region
+  var regCnt = {};
+  DATA.forEach(function(x){ var k = (x['PTT Region']||'').trim(); if(k) regCnt[k] = (regCnt[k]||0)+1; });
+
+  // Build pixel data: color each point based on province→region
+  // We'll re-color the points from the original data array, replacing colors
+  var originalData = getOriginalPixelData();
+  var coloredData = originalData.map(function(pt) {
+    var prov = pt.name;
+    var reg = PROVINCE_REGION[prov];
+    var col;
+    if (reg && !REGION_FAINT[reg]) {
+      col = REGION_COLOR_MAP[reg] || '#a3a3a3';
+    } else if (reg && REGION_FAINT[reg]) {
+      col = '#141c2e'; // region 12 faint - no FC
+    } else {
+      col = '#90a4ae'; // default no-region — light grey — nearly invisible
+    }
+    return { geometry: pt.geometry, color: col, name: pt.name, region: reg || '' };
+  });
+
+  // If amcharts already loaded, use it; otherwise load dynamically
+  if (typeof am5 !== 'undefined') {
+    _buildAmChart(coloredData, regCnt);
+  } else {
+    // Load amcharts scripts dynamically
+    var scripts = [
+      'https://cdn.amcharts.com/lib/5/index.js',
+      'https://cdn.amcharts.com/lib/5/map.js',
+      'https://cdn.amcharts.com/lib/5/themes/Animated.js',
+      'https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js',
+      'https://cdn.amcharts.com/lib/5/geodata/thailandLow.js'
+    ];
+    var loaded = 0;
+    function loadNext(i) {
+      if (i >= scripts.length) { _buildAmChart(coloredData, regCnt); return; }
+      if (i === 3) { // d3 already may exist
+        if (typeof d3 !== 'undefined') { loadNext(i+1); return; }
+      }
+      var s = document.createElement('script');
+      s.src = scripts[i];
+      s.onload = function() { loadNext(i+1); };
+      document.head.appendChild(s);
+    }
+    loadNext(0);
+  }
+
+  buildMapLegend();
+}
+
+function _buildAmChart(coloredData, regCnt) {
+  var chartdiv = document.getElementById('chartdiv');
+  if (!chartdiv || typeof am5 === 'undefined') return;
+  if (amRoot) { try { amRoot.dispose(); } catch(e){} }
+
+  amRoot = am5.Root.new('chartdiv');
+  if (typeof am5themes_Animated !== 'undefined') {
+    amRoot.setThemes([am5themes_Animated.new(amRoot)]);
+  }
+
+  var chart = amRoot.container.children.push(am5map.MapChart.new(amRoot, {
+    projection: typeof d3 !== 'undefined' ? d3.geoEquirectangular() : undefined,
+    panX: 'translateX', panY: 'translateY'
+  }));
+
+  // Province outlines (very faint)
+  if (typeof am5geodata_thailandLow !== 'undefined') {
+    var polySeries = chart.series.push(am5map.MapPolygonSeries.new(amRoot, {
+      geoJSON: am5geodata_thailandLow
+    }));
+    polySeries.mapPolygons.template.setAll({
+      fillOpacity: 0, strokeOpacity: 0.08,
+      stroke: am5.color('#2a3a52'), strokeWidth: 0.4
+    });
+  }
+
+  // Create hover tooltip div
+  var hoverDiv = document.getElementById('map-hover-tip');
+  if (!hoverDiv) {
+    hoverDiv = document.createElement('div');
+    hoverDiv.id = 'map-hover-tip';
+    document.body.appendChild(hoverDiv);
+  }
+
+  // ---- Pixel dot series ----
+  var pointSeries = chart.series.push(am5map.MapPointSeries.new(amRoot, { autoScale: true }));
+  pointSeries.bullets.push(function(_r, _s, dataItem) {
+    var ctx = dataItem.dataContext;
+    var isDimmed = false;
+    var circle = am5.Circle.new(amRoot, {
+      radius: 5,
+      fill: am5.color(ctx.color),
+      stroke: am5.color('#090e1a'),
+      strokeWidth: 0.25,
+      cursorOverStyle: ctx.region ? 'pointer' : 'default'
+    });
+
+    if (ctx.region) {
+      circle.events.on('pointerover', function(ev) {
+        // Show tooltip
+        var col = REGION_COLOR_MAP[ctx.region] || '#94a3b8';
+        hoverDiv.style.color = col;
+        hoverDiv.textContent = 'Region ' + ctx.region;
+        hoverDiv.style.opacity = '1';
+        hoverDiv.style.left = (ev.originalEvent.clientX + 14) + 'px';
+        hoverDiv.style.top  = (ev.originalEvent.clientY - 10) + 'px';
+        // Highlight same region, dim others
+        pointSeries.dataItems.forEach(function(di) {
+          var sp = di.get('sprite'); if (!sp) return;
+          if (di.dataContext.region === ctx.region) {
+            sp.set('fillOpacity', 1); sp.set('radius', 6.5);
+          } else {
+            sp.set('fillOpacity', 0.18);
+          }
+        });
+      });
+      circle.events.on('pointermove', function(ev) {
+        hoverDiv.style.left = (ev.originalEvent.clientX + 14) + 'px';
+        hoverDiv.style.top  = (ev.originalEvent.clientY - 10) + 'px';
+      });
+      circle.events.on('pointerout', function() {
+        hoverDiv.style.opacity = '0';
+        pointSeries.dataItems.forEach(function(di) {
+          var sp = di.get('sprite'); if (!sp) return;
+          sp.set('fillOpacity', 1); sp.set('radius', 5);
+        });
+      });
+      circle.events.on('click', function() {
+        _toggleRegionFilter(ctx.region);
+      });
+    }
+    return am5.Bullet.new(amRoot, { sprite: circle });
+  });
+  pointSeries.data.setAll(coloredData);
+
+  // ---- Special zone circles (GSP, OFFSHORE, OSP) — right side, outside Thailand ----
+  // Positions tuned to match image 3: stacked on the right side outside the land mass
+  var specialPositions = [
+    { key: 'GSP',      lng: 100.89793487581964, lat: 11.954478093985484 },
+    { key: 'OSP',      lng: 100.84414345905829, lat: 10.847166307240922 },
+    { key: 'OFFSHORE', lng: 100.80228422226682, lat: 9.30197496937747 }
+  ];
+  var specialSeries = chart.series.push(am5map.MapPointSeries.new(amRoot, {}));
+  specialSeries.bullets.push(function(_r, _s, dataItem) {
+    var ctx = dataItem.dataContext;
+    var col = REGION_COLOR_MAP[ctx.key] || '#6366f1';
+    var container = am5.Container.new(amRoot, { cursorOverStyle: 'pointer' });
+    container.children.push(am5.Circle.new(amRoot, {
+      radius: 13,
+      fill: am5.color(col), fillOpacity: 0.9,
+      stroke: am5.color('#fff'), strokeWidth: 1, strokeOpacity: 0.35
+    }));
+
+    container.events.on('pointerover', function(ev) {
+      hoverDiv.style.color = col;
+      hoverDiv.textContent = ctx.key;
+      hoverDiv.style.opacity = '1';
+      hoverDiv.style.left = (ev.originalEvent.clientX + 14) + 'px';
+      hoverDiv.style.top  = (ev.originalEvent.clientY - 10) + 'px';
+    });
+    container.events.on('pointermove', function(ev) {
+      hoverDiv.style.left = (ev.originalEvent.clientX + 14) + 'px';
+      hoverDiv.style.top  = (ev.originalEvent.clientY - 10) + 'px';
+    });
+    container.events.on('pointerout', function() { hoverDiv.style.opacity = '0'; });
+    container.events.on('click', function() { _toggleRegionFilter(ctx.key); });
+    return am5.Bullet.new(amRoot, { sprite: container });
+  });
+  specialSeries.data.setAll(specialPositions.map(function(z) {
+    return { geometry: { type: 'Point', coordinates: [z.lng, z.lat] }, key: z.key };
+  }));
+
+  chart.set('zoomControl', am5map.ZoomControl.new(amRoot, {}));
+  chart.appear(1000, 100);
+}
+
+// Toggle region filter chip from map click
+function _toggleRegionFilter(regionKey) {
+  var chipEl = document.querySelector('.chip.rc[data-region="' + regionKey + '"]');
+  if (chipEl) togRC('r', regionKey, chipEl);
+}
+
+// ---- Map right-panel rendering ----
+function buildMapLegend() {
+  var regList = document.getElementById('map-region-list');
+  if (!regList) return;
+  var d = fd();
+  var regCnt = {};
+  d.forEach(function(x){ var k=(x['PTT Region']||'').trim(); if(k) regCnt[k]=(regCnt[k]||0)+1; });
+  var regionOrder = ['1','2','3','4','5','6','7','8','9','10','11','GSP','OFFSHORE','OSP'];
+  var mx = regionOrder.reduce(function(m,r){ return Math.max(m,regCnt[r]||0); },1);
+  var html = '';
+  regionOrder.forEach(function(r){
+    var col=REGION_COLOR_MAP[r]; if(!col) return;
+    var cnt=regCnt[r]||0; if(cnt===0) return;
+    var w=(cnt/mx*100).toFixed(1);
+    var isSel=ST.f.r.has(r);
+    html+='<div class="mbrow" style="opacity:'+(isSel?'1':'0.85')+'" onclick="_toggleRegionFilter(&quot;'+r+'&quot;)">'+
+      '<div class="mblabel" style="color:'+col+'">'+regLabel(r)+'</div>'+
+      '<div class="mbtrack"><div class="mbfill" style="width:'+w+'%;background:'+col+(isSel?';box-shadow:0 0 6px '+col:'')+'">'+'<span>'+cnt+'</span></div></div></div>';
+  });
+  regList.innerHTML=html||'<div style="color:var(--tx3);font-size:11px;padding:4px">No data</div>';
+  var appEl=document.getElementById('map-dl-app');
+  var fwEl=document.getElementById('map-dl-fw');
+  if(!appEl||!fwEl) return;
+  var appCnt={},fwCnt={};
+  d.forEach(function(x){
+    var a=(x['Applications']||'').trim()||'Other';
+    var fw=(x['Firmware Update']||'').trim()||'Unknown';
+    appCnt[a]=(appCnt[a]||0)+1; fwCnt[fw]=(fwCnt[fw]||0)+1;
+  });
+  var AC_COLORS={Turbine:'#00d4ff',Supervisory:'#c084fc',USM:'#10b981',Orifice:'#fbbf24'};
+  var FW_COLORS={'Up-to-date':'#34d399',Outdated:'#f87171',Unknown:'#a8a29e'};
+  appEl.innerHTML=Object.entries(appCnt).sort(function(a,b){return b[1]-a[1];}).map(function(e){
+    return '<div class="map-leg-row"><div class="map-leg-dot" style="background:'+(AC_COLORS[e[0]]||'#94a3b8')+'"></div>'+
+      '<span class="map-leg-name">'+e[0]+'</span><span class="map-leg-cnt">'+e[1]+'</span></div>';
+  }).join('');
+  fwEl.innerHTML=Object.entries(fwCnt).sort(function(a,b){return b[1]-a[1];}).map(function(e){
+    return '<div class="map-leg-row"><div class="map-leg-dot" style="background:'+(FW_COLORS[e[0]]||'#94a3b8')+'"></div>'+
+      '<span class="map-leg-name">'+e[0]+'</span><span class="map-leg-cnt">'+e[1]+'</span></div>';
+  }).join('');
+}
+
+
+
+function renderMapKPI() {
+  var bar = document.getElementById('map-kpi-bar');
+  if (!bar) return;
+  var d = fd();
+  var t = d.length;
+  var fu = d.filter(function(x){return (x['Firmware Update']||'').trim()==='Up-to-date';}).length;
+  var fo = d.filter(function(x){return (x['Firmware Update']||'').trim()==='Outdated';}).length;
+  var sites = Array.from(new Set(d.map(function(x){return x['Site']||'';}).filter(Boolean))).length;
+  bar.innerHTML='<div class="mkpi-row">'+
+    '<div class="mkpi-card mkpi-tot"><div class="mkpi-label">Total Units</div>'+
+      '<div class="mkpi-val">'+t+'</div><div class="mkpi-sub">'+sites+' sites</div></div>'+
+    '<div class="mkpi-card"><div class="mkpi-label">&#9654; FW Up-to-date</div>'+
+      '<div class="mkpi-val" style="color:#34d399">'+fu+'</div>'+
+      '<div class="mkpi-sub">'+(t?(fu/t*100).toFixed(1)+'% of total':'0%')+'</div></div>'+
+    '<div class="mkpi-card"><div class="mkpi-label">&#9660; FW Outdated</div>'+
+      '<div class="mkpi-val" style="color:#f87171">'+fo+'</div>'+
+      '<div class="mkpi-sub">'+(t?(fo/t*100).toFixed(1)+'% of total':'0%')+'</div></div>'+
+    '</div>';
+}
+
+// Override render to also update map KPI if in map mode
+var _origRender = render;
+render = function() {
+  _origRender();
+  if (currentView === 'map') {
+    renderMapKPI();
+    buildMapLegend();
+  }
+};
+
+// showDash: reset map
+var _origShowDash = showDash;
+showDash = function(sub) {
+  mapBuilt = false;
+  if (amRoot) { try { amRoot.dispose(); amRoot = null; } catch(e){} }
+  _origShowDash(sub);
+};
+
+// ===== PIXEL DATA (from original map file) =====
+function getOriginalPixelData() {
+  return [{"geometry":{"type":"Point","coordinates":[99.67957861842106,20.194190131578946]},"name":"Chiang Rai"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,20.194190131578946]},"name":"Chiang Rai"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,20.194190131578946]},"name":"Chiang Rai"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,19.925580263157894]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,19.925580263157894]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,19.925580263157894]},"name":"Chiang Rai"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,19.925580263157894]},"name":"Chiang Rai"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,19.925580263157894]},"name":"Chiang Rai"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,19.925580263157894]},"name":"Chiang Rai"},{"geometry":{"type":"Point","coordinates":[98.06791940789476,19.65697039473684]},"name":"Mae Hong Son"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,19.65697039473684]},"name":"Mae Hong Son"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,19.65697039473684]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,19.65697039473684]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,19.65697039473684]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,19.65697039473684]},"name":"Chiang Rai"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,19.65697039473684]},"name":"Chiang Rai"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,19.65697039473684]},"name":"Chiang Rai"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,19.65697039473684]},"name":"Chiang Rai"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,19.65697039473684]},"name":"Nan"},{"geometry":{"type":"Point","coordinates":[98.06791940789476,19.38836052631579]},"name":"Mae Hong Son"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,19.38836052631579]},"name":"Mae Hong Son"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,19.38836052631579]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,19.38836052631579]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,19.38836052631579]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,19.38836052631579]},"name":"Chiang Rai"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,19.38836052631579]},"name":"Chiang Rai"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,19.38836052631579]},"name":"Phayao"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,19.38836052631579]},"name":"Phayao"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,19.38836052631579]},"name":"Phayao"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,19.38836052631579]},"name":"Nan"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,19.38836052631579]},"name":"Nan"},{"geometry":{"type":"Point","coordinates":[98.06791940789476,19.119750657894738]},"name":"Mae Hong Son"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,19.119750657894738]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,19.119750657894738]},"name":"Mae Hong Son"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,19.119750657894738]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,19.119750657894738]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,19.119750657894738]},"name":"Chiang Rai"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,19.119750657894738]},"name":"Lampang"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,19.119750657894738]},"name":"Phayao"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,19.119750657894738]},"name":"Phayao"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,19.119750657894738]},"name":"Phayao"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,19.119750657894738]},"name":"Nan"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,19.119750657894738]},"name":"Nan"},{"geometry":{"type":"Point","coordinates":[97.7993095394737,18.851140789473686]},"name":"Mae Hong Son"},{"geometry":{"type":"Point","coordinates":[98.06791940789476,18.851140789473686]},"name":"Mae Hong Son"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,18.851140789473686]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,18.851140789473686]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,18.851140789473686]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,18.851140789473686]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,18.851140789473686]},"name":"Lampang"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,18.851140789473686]},"name":"Lampang"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,18.851140789473686]},"name":"Lampang"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,18.851140789473686]},"name":"Phayao"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,18.851140789473686]},"name":"Nan"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,18.851140789473686]},"name":"Nan"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,18.851140789473686]},"name":"Nan"},{"geometry":{"type":"Point","coordinates":[97.7993095394737,18.58253092105263]},"name":"Mae Hong Son"},{"geometry":{"type":"Point","coordinates":[98.06791940789476,18.58253092105263]},"name":"Mae Hong Son"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,18.58253092105263]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,18.58253092105263]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,18.58253092105263]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,18.58253092105263]},"name":"Lamphun"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,18.58253092105263]},"name":"Lampang"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,18.58253092105263]},"name":"Lampang"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,18.58253092105263]},"name":"Lampang"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,18.58253092105263]},"name":"Phrae"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,18.58253092105263]},"name":"Nan"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,18.58253092105263]},"name":"Nan"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,18.58253092105263]},"name":"Nan"},{"geometry":{"type":"Point","coordinates":[97.53069967105266,18.313921052631578]},"name":"Mae Hong Son"},{"geometry":{"type":"Point","coordinates":[97.7993095394737,18.313921052631578]},"name":"Mae Hong Son"},{"geometry":{"type":"Point","coordinates":[98.06791940789476,18.313921052631578]},"name":"Mae Hong Son"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,18.313921052631578]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,18.313921052631578]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,18.313921052631578]},"name":"Lamphun"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,18.313921052631578]},"name":"Lamphun"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,18.313921052631578]},"name":"Lampang"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,18.313921052631578]},"name":"Lampang"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,18.313921052631578]},"name":"Phrae"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,18.313921052631578]},"name":"Phrae"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,18.313921052631578]},"name":"Nan"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,18.313921052631578]},"name":"Nan"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,18.313921052631578]},"name":"Uttaradit"},{"geometry":{"type":"Point","coordinates":[103.4401167763158,18.313921052631578]},"name":"Bueng Kan"},{"geometry":{"type":"Point","coordinates":[103.70872664473687,18.313921052631578]},"name":"Bueng Kan"},{"geometry":{"type":"Point","coordinates":[103.97733651315791,18.313921052631578]},"name":"Bueng Kan"},{"geometry":{"type":"Point","coordinates":[97.7993095394737,18.045311184210526]},"name":"Mae Hong Son"},{"geometry":{"type":"Point","coordinates":[98.06791940789476,18.045311184210526]},"name":"Mae Hong Son"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,18.045311184210526]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,18.045311184210526]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,18.045311184210526]},"name":"Lamphun"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,18.045311184210526]},"name":"Lampang"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,18.045311184210526]},"name":"Lampang"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,18.045311184210526]},"name":"Phrae"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,18.045311184210526]},"name":"Phrae"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,18.045311184210526]},"name":"Phrae"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,18.045311184210526]},"name":"Nan"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,18.045311184210526]},"name":"Nan"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,18.045311184210526]},"name":"Uttaradit"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,18.045311184210526]},"name":"Loei"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,18.045311184210526]},"name":"Udon Thani"},{"geometry":{"type":"Point","coordinates":[103.17150690789477,18.045311184210526]},"name":"Nong Khai"},{"geometry":{"type":"Point","coordinates":[103.4401167763158,18.045311184210526]},"name":"Bueng Kan"},{"geometry":{"type":"Point","coordinates":[103.70872664473687,18.045311184210526]},"name":"Bueng Kan"},{"geometry":{"type":"Point","coordinates":[103.97733651315791,18.045311184210526]},"name":"Bueng Kan"},{"geometry":{"type":"Point","coordinates":[97.7993095394737,17.776701315789474]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[98.06791940789476,17.776701315789474]},"name":"Mae Hong Son"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,17.776701315789474]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,17.776701315789474]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,17.776701315789474]},"name":"Lamphun"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,17.776701315789474]},"name":"Lampang"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,17.776701315789474]},"name":"Phrae"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,17.776701315789474]},"name":"Sukhothai"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,17.776701315789474]},"name":"Uttaradit"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,17.776701315789474]},"name":"Uttaradit"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,17.776701315789474]},"name":"Uttaradit"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,17.776701315789474]},"name":"Uttaradit"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,17.776701315789474]},"name":"Loei"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,17.776701315789474]},"name":"Loei"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,17.776701315789474]},"name":"Udon Thani"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,17.776701315789474]},"name":"Udon Thani"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,17.776701315789474]},"name":"Nong Khai"},{"geometry":{"type":"Point","coordinates":[102.9028970394737,17.776701315789474]},"name":"Udon Thani"},{"geometry":{"type":"Point","coordinates":[103.17150690789477,17.776701315789474]},"name":"Udon Thani"},{"geometry":{"type":"Point","coordinates":[103.4401167763158,17.776701315789474]},"name":"Sakon Nakhon"},{"geometry":{"type":"Point","coordinates":[103.70872664473687,17.776701315789474]},"name":"Sakon Nakhon"},{"geometry":{"type":"Point","coordinates":[103.97733651315791,17.776701315789474]},"name":"Sakon Nakhon"},{"geometry":{"type":"Point","coordinates":[104.24594638157896,17.776701315789474]},"name":"Nakhon Phanom"},{"geometry":{"type":"Point","coordinates":[98.06791940789476,17.508091447368418]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,17.508091447368418]},"name":"Chiang Mai"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,17.508091447368418]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,17.508091447368418]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,17.508091447368418]},"name":"Lampang"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,17.508091447368418]},"name":"Lampang"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,17.508091447368418]},"name":"Sukhothai"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,17.508091447368418]},"name":"Uttaradit"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,17.508091447368418]},"name":"Uttaradit"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,17.508091447368418]},"name":"Uttaradit"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,17.508091447368418]},"name":"Phitsanulok"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,17.508091447368418]},"name":"Loei"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,17.508091447368418]},"name":"Loei"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,17.508091447368418]},"name":"Loei"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,17.508091447368418]},"name":"Loei"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,17.508091447368418]},"name":"Loei"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,17.508091447368418]},"name":"Udon Thani"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,17.508091447368418]},"name":"Udon Thani"},{"geometry":{"type":"Point","coordinates":[102.9028970394737,17.508091447368418]},"name":"Udon Thani"},{"geometry":{"type":"Point","coordinates":[103.17150690789477,17.508091447368418]},"name":"Udon Thani"},{"geometry":{"type":"Point","coordinates":[103.4401167763158,17.508091447368418]},"name":"Sakon Nakhon"},{"geometry":{"type":"Point","coordinates":[103.70872664473687,17.508091447368418]},"name":"Sakon Nakhon"},{"geometry":{"type":"Point","coordinates":[103.97733651315791,17.508091447368418]},"name":"Sakon Nakhon"},{"geometry":{"type":"Point","coordinates":[104.24594638157896,17.508091447368418]},"name":"Nakhon Phanom"},{"geometry":{"type":"Point","coordinates":[104.51455625000003,17.508091447368418]},"name":"Nakhon Phanom"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,17.239481578947366]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,17.239481578947366]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,17.239481578947366]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,17.239481578947366]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,17.239481578947366]},"name":"Lampang"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,17.239481578947366]},"name":"Sukhothai"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,17.239481578947366]},"name":"Sukhothai"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,17.239481578947366]},"name":"Uttaradit"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,17.239481578947366]},"name":"Phitsanulok"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,17.239481578947366]},"name":"Phitsanulok"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,17.239481578947366]},"name":"Phitsanulok"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,17.239481578947366]},"name":"Loei"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,17.239481578947366]},"name":"Loei"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,17.239481578947366]},"name":"Loei"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,17.239481578947366]},"name":"Nong Bua Lam Phu"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,17.239481578947366]},"name":"Nong Bua Lam Phu"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,17.239481578947366]},"name":"Udon Thani"},{"geometry":{"type":"Point","coordinates":[102.9028970394737,17.239481578947366]},"name":"Udon Thani"},{"geometry":{"type":"Point","coordinates":[103.17150690789477,17.239481578947366]},"name":"Udon Thani"},{"geometry":{"type":"Point","coordinates":[103.4401167763158,17.239481578947366]},"name":"Sakon Nakhon"},{"geometry":{"type":"Point","coordinates":[103.70872664473687,17.239481578947366]},"name":"Sakon Nakhon"},{"geometry":{"type":"Point","coordinates":[103.97733651315791,17.239481578947366]},"name":"Sakon Nakhon"},{"geometry":{"type":"Point","coordinates":[104.24594638157896,17.239481578947366]},"name":"Sakon Nakhon"},{"geometry":{"type":"Point","coordinates":[104.51455625000003,17.239481578947366]},"name":"Nakhon Phanom"},{"geometry":{"type":"Point","coordinates":[104.78316611842106,17.239481578947366]},"name":"Nakhon Phanom"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,16.970871710526314]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,16.970871710526314]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,16.970871710526314]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,16.970871710526314]},"name":"Sukhothai"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,16.970871710526314]},"name":"Sukhothai"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,16.970871710526314]},"name":"Sukhothai"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,16.970871710526314]},"name":"Phitsanulok"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,16.970871710526314]},"name":"Phitsanulok"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,16.970871710526314]},"name":"Phitsanulok"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,16.970871710526314]},"name":"Phitsanulok"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,16.970871710526314]},"name":"Phetchabun"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,16.970871710526314]},"name":"Phetchabun"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,16.970871710526314]},"name":"Loei"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,16.970871710526314]},"name":"Nong Bua Lam Phu"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,16.970871710526314]},"name":"Nong Bua Lam Phu"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,16.970871710526314]},"name":"Nong Bua Lam Phu"},{"geometry":{"type":"Point","coordinates":[102.9028970394737,16.970871710526314]},"name":"Udon Thani"},{"geometry":{"type":"Point","coordinates":[103.17150690789477,16.970871710526314]},"name":"Udon Thani"},{"geometry":{"type":"Point","coordinates":[103.4401167763158,16.970871710526314]},"name":"Udon Thani"},{"geometry":{"type":"Point","coordinates":[103.70872664473687,16.970871710526314]},"name":"Kalasin"},{"geometry":{"type":"Point","coordinates":[103.97733651315791,16.970871710526314]},"name":"Sakon Nakhon"},{"geometry":{"type":"Point","coordinates":[104.24594638157896,16.970871710526314]},"name":"Sakon Nakhon"},{"geometry":{"type":"Point","coordinates":[104.51455625000003,16.970871710526314]},"name":"Nakhon Phanom"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,16.702261842105262]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,16.702261842105262]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,16.702261842105262]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,16.702261842105262]},"name":"Kamphaeng Phet"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,16.702261842105262]},"name":"Kamphaeng Phet"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,16.702261842105262]},"name":"Phitsanulok"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,16.702261842105262]},"name":"Phitsanulok"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,16.702261842105262]},"name":"Phitsanulok"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,16.702261842105262]},"name":"Phitsanulok"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,16.702261842105262]},"name":"Phetchabun"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,16.702261842105262]},"name":"Phetchabun"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,16.702261842105262]},"name":"Chaiyaphum"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,16.702261842105262]},"name":"Khon Kaen"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,16.702261842105262]},"name":"Khon Kaen"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,16.702261842105262]},"name":"Khon Kaen"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,16.702261842105262]},"name":"Khon Kaen"},{"geometry":{"type":"Point","coordinates":[102.9028970394737,16.702261842105262]},"name":"Khon Kaen"},{"geometry":{"type":"Point","coordinates":[103.17150690789477,16.702261842105262]},"name":"Kalasin"},{"geometry":{"type":"Point","coordinates":[103.4401167763158,16.702261842105262]},"name":"Kalasin"},{"geometry":{"type":"Point","coordinates":[103.70872664473687,16.702261842105262]},"name":"Kalasin"},{"geometry":{"type":"Point","coordinates":[103.97733651315791,16.702261842105262]},"name":"Kalasin"},{"geometry":{"type":"Point","coordinates":[104.24594638157896,16.702261842105262]},"name":"Mukdahan"},{"geometry":{"type":"Point","coordinates":[104.51455625000003,16.702261842105262]},"name":"Mukdahan"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,16.43365197368421]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,16.43365197368421]},"name":"Kamphaeng Phet"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,16.43365197368421]},"name":"Kamphaeng Phet"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,16.43365197368421]},"name":"Kamphaeng Phet"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,16.43365197368421]},"name":"Kamphaeng Phet"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,16.43365197368421]},"name":"Phichit"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,16.43365197368421]},"name":"Phichit"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,16.43365197368421]},"name":"Phitsanulok"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,16.43365197368421]},"name":"Phetchabun"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,16.43365197368421]},"name":"Phetchabun"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,16.43365197368421]},"name":"Chaiyaphum"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,16.43365197368421]},"name":"Chaiyaphum"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,16.43365197368421]},"name":"Chaiyaphum"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,16.43365197368421]},"name":"Chaiyaphum"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,16.43365197368421]},"name":"Khon Kaen"},{"geometry":{"type":"Point","coordinates":[102.9028970394737,16.43365197368421]},"name":"Khon Kaen"},{"geometry":{"type":"Point","coordinates":[103.17150690789477,16.43365197368421]},"name":"Maha Sarakham"},{"geometry":{"type":"Point","coordinates":[103.4401167763158,16.43365197368421]},"name":"Kalasin"},{"geometry":{"type":"Point","coordinates":[103.70872664473687,16.43365197368421]},"name":"Kalasin"},{"geometry":{"type":"Point","coordinates":[103.97733651315791,16.43365197368421]},"name":"Roi Et"},{"geometry":{"type":"Point","coordinates":[104.24594638157896,16.43365197368421]},"name":"Mukdahan"},{"geometry":{"type":"Point","coordinates":[104.51455625000003,16.43365197368421]},"name":"Mukdahan"},{"geometry":{"type":"Point","coordinates":[104.78316611842106,16.43365197368421]},"name":"Mukdahan"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,16.165042105263158]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,16.165042105263158]},"name":"Kamphaeng Phet"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,16.165042105263158]},"name":"Kamphaeng Phet"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,16.165042105263158]},"name":"Kamphaeng Phet"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,16.165042105263158]},"name":"Kamphaeng Phet"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,16.165042105263158]},"name":"Phichit"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,16.165042105263158]},"name":"Phichit"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,16.165042105263158]},"name":"Phetchabun"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,16.165042105263158]},"name":"Phetchabun"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,16.165042105263158]},"name":"Phetchabun"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,16.165042105263158]},"name":"Chaiyaphum"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,16.165042105263158]},"name":"Chaiyaphum"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,16.165042105263158]},"name":"Chaiyaphum"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,16.165042105263158]},"name":"Khon Kaen"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,16.165042105263158]},"name":"Khon Kaen"},{"geometry":{"type":"Point","coordinates":[102.9028970394737,16.165042105263158]},"name":"Maha Sarakham"},{"geometry":{"type":"Point","coordinates":[103.17150690789477,16.165042105263158]},"name":"Maha Sarakham"},{"geometry":{"type":"Point","coordinates":[103.4401167763158,16.165042105263158]},"name":"Maha Sarakham"},{"geometry":{"type":"Point","coordinates":[103.70872664473687,16.165042105263158]},"name":"Roi Et"},{"geometry":{"type":"Point","coordinates":[103.97733651315791,16.165042105263158]},"name":"Roi Et"},{"geometry":{"type":"Point","coordinates":[104.24594638157896,16.165042105263158]},"name":"Yasothon"},{"geometry":{"type":"Point","coordinates":[104.51455625000003,16.165042105263158]},"name":"Yasothon"},{"geometry":{"type":"Point","coordinates":[104.78316611842106,16.165042105263158]},"name":"Yasothon"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,15.896432236842104]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,15.896432236842104]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,15.896432236842104]},"name":"Nakhon Sawan"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,15.896432236842104]},"name":"Nakhon Sawan"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,15.896432236842104]},"name":"Kamphaeng Phet"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,15.896432236842104]},"name":"Nakhon Sawan"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,15.896432236842104]},"name":"Nakhon Sawan"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,15.896432236842104]},"name":"Nakhon Sawan"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,15.896432236842104]},"name":"Nakhon Sawan"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,15.896432236842104]},"name":"Phetchabun"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,15.896432236842104]},"name":"Phetchabun"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,15.896432236842104]},"name":"Chaiyaphum"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,15.896432236842104]},"name":"Chaiyaphum"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,15.896432236842104]},"name":"Chaiyaphum"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,15.896432236842104]},"name":"Khon Kaen"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,15.896432236842104]},"name":"Khon Kaen"},{"geometry":{"type":"Point","coordinates":[102.9028970394737,15.896432236842104]},"name":"Khon Kaen"},{"geometry":{"type":"Point","coordinates":[103.17150690789477,15.896432236842104]},"name":"Maha Sarakham"},{"geometry":{"type":"Point","coordinates":[103.4401167763158,15.896432236842104]},"name":"Maha Sarakham"},{"geometry":{"type":"Point","coordinates":[103.70872664473687,15.896432236842104]},"name":"Roi Et"},{"geometry":{"type":"Point","coordinates":[103.97733651315791,15.896432236842104]},"name":"Roi Et"},{"geometry":{"type":"Point","coordinates":[104.24594638157896,15.896432236842104]},"name":"Yasothon"},{"geometry":{"type":"Point","coordinates":[104.51455625000003,15.896432236842104]},"name":"Amnat Charoen"},{"geometry":{"type":"Point","coordinates":[104.78316611842106,15.896432236842104]},"name":"Amnat Charoen"},{"geometry":{"type":"Point","coordinates":[105.05177598684213,15.896432236842104]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[105.32038585526317,15.896432236842104]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,15.627822368421052]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,15.627822368421052]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,15.627822368421052]},"name":"Uthai Thani"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,15.627822368421052]},"name":"Nakhon Sawan"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,15.627822368421052]},"name":"Uthai Thani"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,15.627822368421052]},"name":"Nakhon Sawan"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,15.627822368421052]},"name":"Nakhon Sawan"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,15.627822368421052]},"name":"Nakhon Sawan"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,15.627822368421052]},"name":"Nakhon Sawan"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,15.627822368421052]},"name":"Phetchabun"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,15.627822368421052]},"name":"Phetchabun"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,15.627822368421052]},"name":"Chaiyaphum"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,15.627822368421052]},"name":"Chaiyaphum"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,15.627822368421052]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,15.627822368421052]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,15.627822368421052]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.9028970394737,15.627822368421052]},"name":"Buri Ram"},{"geometry":{"type":"Point","coordinates":[103.17150690789477,15.627822368421052]},"name":"Maha Sarakham"},{"geometry":{"type":"Point","coordinates":[103.4401167763158,15.627822368421052]},"name":"Roi Et"},{"geometry":{"type":"Point","coordinates":[103.70872664473687,15.627822368421052]},"name":"Roi Et"},{"geometry":{"type":"Point","coordinates":[103.97733651315791,15.627822368421052]},"name":"Roi Et"},{"geometry":{"type":"Point","coordinates":[104.24594638157896,15.627822368421052]},"name":"Yasothon"},{"geometry":{"type":"Point","coordinates":[104.51455625000003,15.627822368421052]},"name":"Amnat Charoen"},{"geometry":{"type":"Point","coordinates":[104.78316611842106,15.627822368421052]},"name":"Amnat Charoen"},{"geometry":{"type":"Point","coordinates":[105.05177598684213,15.627822368421052]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[105.32038585526317,15.627822368421052]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[105.58899572368423,15.627822368421052]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,15.359212499999998]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,15.359212499999998]},"name":"Tak"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,15.359212499999998]},"name":"Uthai Thani"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,15.359212499999998]},"name":"Uthai Thani"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,15.359212499999998]},"name":"Uthai Thani"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,15.359212499999998]},"name":"Uthai Thani"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,15.359212499999998]},"name":"Nakhon Sawan"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,15.359212499999998]},"name":"Nakhon Sawan"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,15.359212499999998]},"name":"Lop Buri"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,15.359212499999998]},"name":"Phetchabun"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,15.359212499999998]},"name":"Lop Buri"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,15.359212499999998]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,15.359212499999998]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,15.359212499999998]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,15.359212499999998]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,15.359212499999998]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.9028970394737,15.359212499999998]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[103.17150690789477,15.359212499999998]},"name":"Surin"},{"geometry":{"type":"Point","coordinates":[103.4401167763158,15.359212499999998]},"name":"Surin"},{"geometry":{"type":"Point","coordinates":[103.70872664473687,15.359212499999998]},"name":"Surin"},{"geometry":{"type":"Point","coordinates":[103.97733651315791,15.359212499999998]},"name":"Surin"},{"geometry":{"type":"Point","coordinates":[104.24594638157896,15.359212499999998]},"name":"Si Sa Ket"},{"geometry":{"type":"Point","coordinates":[104.51455625000003,15.359212499999998]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[104.78316611842106,15.359212499999998]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[105.05177598684213,15.359212499999998]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[105.32038585526317,15.359212499999998]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,15.090602631578946]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,15.090602631578946]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,15.090602631578946]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,15.090602631578946]},"name":"Uthai Thani"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,15.090602631578946]},"name":"Uthai Thani"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,15.090602631578946]},"name":"Uthai Thani"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,15.090602631578946]},"name":"Chai Nat"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,15.090602631578946]},"name":"Chai Nat"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,15.090602631578946]},"name":"Lop Buri"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,15.090602631578946]},"name":"Lop Buri"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,15.090602631578946]},"name":"Lop Buri"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,15.090602631578946]},"name":"Lop Buri"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,15.090602631578946]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,15.090602631578946]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,15.090602631578946]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,15.090602631578946]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,15.090602631578946]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.9028970394737,15.090602631578946]},"name":"Buri Ram"},{"geometry":{"type":"Point","coordinates":[103.17150690789477,15.090602631578946]},"name":"Buri Ram"},{"geometry":{"type":"Point","coordinates":[103.4401167763158,15.090602631578946]},"name":"Surin"},{"geometry":{"type":"Point","coordinates":[103.70872664473687,15.090602631578946]},"name":"Surin"},{"geometry":{"type":"Point","coordinates":[103.97733651315791,15.090602631578946]},"name":"Surin"},{"geometry":{"type":"Point","coordinates":[104.24594638157896,15.090602631578946]},"name":"Si Sa Ket"},{"geometry":{"type":"Point","coordinates":[104.51455625000003,15.090602631578946]},"name":"Si Sa Ket"},{"geometry":{"type":"Point","coordinates":[104.78316611842106,15.090602631578946]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[105.05177598684213,15.090602631578946]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[105.32038585526317,15.090602631578946]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,14.821992763157892]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,14.821992763157892]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,14.821992763157892]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,14.821992763157892]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,14.821992763157892]},"name":"Suphan Buri"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,14.821992763157892]},"name":"Suphan Buri"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,14.821992763157892]},"name":"Suphan Buri"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,14.821992763157892]},"name":"Suphan Buri"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,14.821992763157892]},"name":"Lop Buri"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,14.821992763157892]},"name":"Lop Buri"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,14.821992763157892]},"name":"Lop Buri"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,14.821992763157892]},"name":"Saraburi"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,14.821992763157892]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,14.821992763157892]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,14.821992763157892]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,14.821992763157892]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,14.821992763157892]},"name":"Buri Ram"},{"geometry":{"type":"Point","coordinates":[102.9028970394737,14.821992763157892]},"name":"Buri Ram"},{"geometry":{"type":"Point","coordinates":[103.17150690789477,14.821992763157892]},"name":"Buri Ram"},{"geometry":{"type":"Point","coordinates":[103.4401167763158,14.821992763157892]},"name":"Surin"},{"geometry":{"type":"Point","coordinates":[103.70872664473687,14.821992763157892]},"name":"Surin"},{"geometry":{"type":"Point","coordinates":[103.97733651315791,14.821992763157892]},"name":"Si Sa Ket"},{"geometry":{"type":"Point","coordinates":[104.24594638157896,14.821992763157892]},"name":"Si Sa Ket"},{"geometry":{"type":"Point","coordinates":[104.51455625000003,14.821992763157892]},"name":"Si Sa Ket"},{"geometry":{"type":"Point","coordinates":[104.78316611842106,14.821992763157892]},"name":"Si Sa Ket"},{"geometry":{"type":"Point","coordinates":[105.05177598684213,14.821992763157892]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[105.32038585526317,14.821992763157892]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,14.55338289473684]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,14.55338289473684]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,14.55338289473684]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,14.55338289473684]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,14.55338289473684]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,14.55338289473684]},"name":"Suphan Buri"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,14.55338289473684]},"name":"Ang Thong"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,14.55338289473684]},"name":"Ang Thong"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,14.55338289473684]},"name":"Phra Nakhon Si Ayutthaya"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,14.55338289473684]},"name":"Saraburi"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,14.55338289473684]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,14.55338289473684]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,14.55338289473684]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,14.55338289473684]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,14.55338289473684]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,14.55338289473684]},"name":"Buri Ram"},{"geometry":{"type":"Point","coordinates":[102.9028970394737,14.55338289473684]},"name":"Buri Ram"},{"geometry":{"type":"Point","coordinates":[103.17150690789477,14.55338289473684]},"name":"Buri Ram"},{"geometry":{"type":"Point","coordinates":[103.4401167763158,14.55338289473684]},"name":"Surin"},{"geometry":{"type":"Point","coordinates":[103.70872664473687,14.55338289473684]},"name":"Surin"},{"geometry":{"type":"Point","coordinates":[103.97733651315791,14.55338289473684]},"name":"Surin"},{"geometry":{"type":"Point","coordinates":[104.24594638157896,14.55338289473684]},"name":"Si Sa Ket"},{"geometry":{"type":"Point","coordinates":[104.51455625000003,14.55338289473684]},"name":"Si Sa Ket"},{"geometry":{"type":"Point","coordinates":[104.78316611842106,14.55338289473684]},"name":"Si Sa Ket"},{"geometry":{"type":"Point","coordinates":[105.05177598684213,14.55338289473684]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[105.32038585526317,14.55338289473684]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,14.284773026315788]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,14.284773026315788]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,14.284773026315788]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,14.284773026315788]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,14.284773026315788]},"name":"Suphan Buri"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,14.284773026315788]},"name":"Suphan Buri"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,14.284773026315788]},"name":"Phra Nakhon Si Ayutthaya"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,14.284773026315788]},"name":"Phra Nakhon Si Ayutthaya"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,14.284773026315788]},"name":"Nakhon Nayok"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,14.284773026315788]},"name":"Nakhon Nayok"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,14.284773026315788]},"name":"Prachin Buri"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,14.284773026315788]},"name":"Prachin Buri"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,14.284773026315788]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,14.284773026315788]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,14.284773026315788]},"name":"Nakhon Ratchasima"},{"geometry":{"type":"Point","coordinates":[102.9028970394737,14.284773026315788]},"name":"Buri Ram"},{"geometry":{"type":"Point","coordinates":[105.05177598684213,14.284773026315788]},"name":"Ubon Ratchathani"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,14.016163157894736]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,14.016163157894736]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,14.016163157894736]},"name":"Kanchanaburi"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,14.016163157894736]},"name":"Nakhon Pathom"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,14.016163157894736]},"name":"Nakhon Pathom"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,14.016163157894736]},"name":"Pathum Thani"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,14.016163157894736]},"name":"Pathum Thani"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,14.016163157894736]},"name":"Nakhon Nayok"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,14.016163157894736]},"name":"Prachin Buri"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,14.016163157894736]},"name":"Prachin Buri"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,14.016163157894736]},"name":"Prachin Buri"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,14.016163157894736]},"name":"Sa Kaeo"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,14.016163157894736]},"name":"Sa Kaeo"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,14.016163157894736]},"name":"Sa Kaeo"},{"geometry":{"type":"Point","coordinates":[102.9028970394737,14.016163157894736]},"name":"Sa Kaeo"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,13.747553289473682]},"name":"Ratchaburi"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,13.747553289473682]},"name":"Ratchaburi"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,13.747553289473682]},"name":"Nakhon Pathom"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,13.747553289473682]},"name":"Nakhon Pathom"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,13.747553289473682]},"name":"Bangkok Metropolis"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,13.747553289473682]},"name":"Bangkok Metropolis"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,13.747553289473682]},"name":"Chachoengsao"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,13.747553289473682]},"name":"Chachoengsao"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,13.747553289473682]},"name":"Chachoengsao"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,13.747553289473682]},"name":"Prachin Buri"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,13.747553289473682]},"name":"Sa Kaeo"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,13.747553289473682]},"name":"Sa Kaeo"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,13.747553289473682]},"name":"Sa Kaeo"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,13.47894342105263]},"name":"Ratchaburi"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,13.47894342105263]},"name":"Ratchaburi"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,13.47894342105263]},"name":"Samut Songkhram"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,13.47894342105263]},"name":"Samut Sakhon"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,13.47894342105263]},"name":"Chachoengsao"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,13.47894342105263]},"name":"Chon Buri"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,13.47894342105263]},"name":"Chachoengsao"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,13.47894342105263]},"name":"Chachoengsao"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,13.47894342105263]},"name":"Sa Kaeo"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,13.210333552631578]},"name":"Ratchaburi"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,13.210333552631578]},"name":"Phetchaburi"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,13.210333552631578]},"name":"Phetchaburi"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,13.210333552631578]},"name":"Chon Buri"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,13.210333552631578]},"name":"Chon Buri"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,13.210333552631578]},"name":"Chon Buri"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,13.210333552631578]},"name":"Chanthaburi"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,13.210333552631578]},"name":"Chanthaburi"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,13.210333552631578]},"name":"Chanthaburi"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,12.941723684210524]},"name":"Phetchaburi"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,12.941723684210524]},"name":"Phetchaburi"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,12.941723684210524]},"name":"Phetchaburi"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,12.941723684210524]},"name":"Chon Buri"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,12.941723684210524]},"name":"Rayong"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,12.941723684210524]},"name":"Rayong"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,12.941723684210524]},"name":"Chanthaburi"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,12.941723684210524]},"name":"Chanthaburi"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,12.941723684210524]},"name":"Chanthaburi"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,12.673113815789472]},"name":"Phetchaburi"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,12.673113815789472]},"name":"Phetchaburi"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,12.673113815789472]},"name":"Phetchaburi"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,12.673113815789472]},"name":"Rayong"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,12.673113815789472]},"name":"Rayong"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,12.673113815789472]},"name":"Rayong"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,12.673113815789472]},"name":"Chanthaburi"},{"geometry":{"type":"Point","coordinates":[102.09706743421054,12.673113815789472]},"name":"Chanthaburi"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,12.673113815789472]},"name":"Chanthaburi"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,12.404503947368418]},"name":"Prachuap Khiri Khan"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,12.404503947368418]},"name":"Prachuap Khiri Khan"},{"geometry":{"type":"Point","coordinates":[102.3656773026316,12.404503947368418]},"name":"Trat"},{"geometry":{"type":"Point","coordinates":[102.63428717105266,12.404503947368418]},"name":"Trat"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,12.135894078947368]},"name":"Prachuap Khiri Khan"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,12.135894078947368]},"name":"Prachuap Khiri Khan"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,11.867284210526314]},"name":"Prachuap Khiri Khan"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,11.598674342105262]},"name":"Prachuap Khiri Khan"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,11.330064473684208]},"name":"Prachuap Khiri Khan"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,11.061454605263156]},"name":"Prachuap Khiri Khan"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,10.792844736842104]},"name":"Chumphon"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,10.792844736842104]},"name":"Chumphon"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,10.52423486842105]},"name":"Ranong"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,10.52423486842105]},"name":"Chumphon"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,10.255624999999998]},"name":"Ranong"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,10.255624999999998]},"name":"Chumphon"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,9.987015131578945]},"name":"Ranong"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,9.987015131578945]},"name":"Chumphon"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,9.987015131578945]},"name":"Chumphon"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,9.718405263157893]},"name":"Ranong"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,9.718405263157893]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,9.718405263157893]},"name":"Chumphon"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,9.44979539473684]},"name":"Ranong"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,9.44979539473684]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,9.44979539473684]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,9.44979539473684]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,9.181185526315788]},"name":"Phangnga"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,9.181185526315788]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,9.181185526315788]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,9.181185526315788]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,9.181185526315788]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,9.181185526315788]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,8.912575657894735]},"name":"Phangnga"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,8.912575657894735]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,8.912575657894735]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,8.912575657894735]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,8.912575657894735]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,8.912575657894735]},"name":"Nakhon Si Thammarat"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,8.643965789473683]},"name":"Phangnga"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,8.643965789473683]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,8.643965789473683]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,8.643965789473683]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,8.643965789473683]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,8.643965789473683]},"name":"Nakhon Si Thammarat"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,8.643965789473683]},"name":"Nakhon Si Thammarat"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,8.375355921052629]},"name":"Phangnga"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,8.375355921052629]},"name":"Krabi"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,8.375355921052629]},"name":"Surat Thani"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,8.375355921052629]},"name":"Nakhon Si Thammarat"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,8.375355921052629]},"name":"Nakhon Si Thammarat"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,8.375355921052629]},"name":"Nakhon Si Thammarat"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,8.375355921052629]},"name":"Nakhon Si Thammarat"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,8.106746052631577]},"name":"Phuket"},{"geometry":{"type":"Point","coordinates":[98.60513914473685,8.106746052631577]},"name":"Phangnga"},{"geometry":{"type":"Point","coordinates":[98.87374901315792,8.106746052631577]},"name":"Krabi"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,8.106746052631577]},"name":"Krabi"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,8.106746052631577]},"name":"Nakhon Si Thammarat"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,8.106746052631577]},"name":"Nakhon Si Thammarat"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,8.106746052631577]},"name":"Nakhon Si Thammarat"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,8.106746052631577]},"name":"Nakhon Si Thammarat"},{"geometry":{"type":"Point","coordinates":[98.3365292763158,7.838136184210525]},"name":"Phuket"},{"geometry":{"type":"Point","coordinates":[99.14235888157896,7.838136184210525]},"name":"Krabi"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,7.838136184210525]},"name":"Trang"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,7.838136184210525]},"name":"Trang"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,7.838136184210525]},"name":"Phatthalung"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,7.838136184210525]},"name":"Songkhla"},{"geometry":{"type":"Point","coordinates":[99.41096875000002,7.569526315789472]},"name":"Trang"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,7.569526315789472]},"name":"Trang"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,7.569526315789472]},"name":"Phatthalung"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,7.569526315789472]},"name":"Songkhla Lake"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,7.300916447368419]},"name":"Trang"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,7.300916447368419]},"name":"Phatthalung"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,7.300916447368419]},"name":"Phatthalung"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,7.300916447368419]},"name":"Songkhla"},{"geometry":{"type":"Point","coordinates":[99.67957861842106,7.032306578947367]},"name":"Satun"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,7.032306578947367]},"name":"Satun"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,7.032306578947367]},"name":"Songkhla"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,7.032306578947367]},"name":"Songkhla"},{"geometry":{"type":"Point","coordinates":[99.94818848684213,6.763696710526313]},"name":"Satun"},{"geometry":{"type":"Point","coordinates":[100.21679835526317,6.763696710526313]},"name":"Songkhla"},{"geometry":{"type":"Point","coordinates":[100.48540822368423,6.763696710526313]},"name":"Songkhla"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,6.763696710526313]},"name":"Songkhla"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,6.763696710526313]},"name":"Songkhla"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,6.763696710526313]},"name":"Pattani"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,6.763696710526313]},"name":"Pattani"},{"geometry":{"type":"Point","coordinates":[100.75401809210528,6.495086842105261]},"name":"Songkhla"},{"geometry":{"type":"Point","coordinates":[101.02262796052634,6.495086842105261]},"name":"Yala"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,6.495086842105261]},"name":"Yala"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,6.495086842105261]},"name":"Yala"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,6.226476973684208]},"name":"Yala"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,6.226476973684208]},"name":"Narathiwat"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,6.226476973684208]},"name":"Narathiwat"},{"geometry":{"type":"Point","coordinates":[101.29123782894739,5.957867105263155]},"name":"Yala"},{"geometry":{"type":"Point","coordinates":[101.55984769736844,5.957867105263155]},"name":"Narathiwat"},{"geometry":{"type":"Point","coordinates":[101.82845756578949,5.957867105263155]},"name":"Narathiwat"}]  // Special zone circles — right side, outside Thailand land mass (matches image 4)
+  var specialPositions = [
+    { key: 'GSP',      lng: 100.89793487581964, lat: 11.954478093985484 },
+    { key: 'OSP',      lng: 100.84414345905829, lat: 10.847166307240922 },
+    { key: 'OFFSHORE', lng: 100.80228422226682, lat: 9.30197496937747 }
+  ];
+  var specialSeries = chart.series.push(am5map.MapPointSeries.new(amRoot, {}));
+  specialSeries.bullets.push(function(_r, _s, dataItem) {
+    var ctx = dataItem.dataContext;
+    var col = REGION_COLOR_MAP[ctx.key] || '#6366f1';
+    var container = am5.Container.new(amRoot, { cursorOverStyle: 'pointer' });
+    container.children.push(am5.Circle.new(amRoot, {
+      radius: 13,
+      fill: am5.color(col), fillOpacity: 0.9,
+      stroke: am5.color('#fff'), strokeWidth: 1, strokeOpacity: 0.35
+    }));
+    container.events.on('pointerover', function(ev) {
+      hoverDiv.style.color = col;
+      hoverDiv.textContent = ctx.key;
+      hoverDiv.style.opacity = '1';
+      hoverDiv.style.left = (ev.originalEvent.clientX + 14) + 'px';
+      hoverDiv.style.top  = (ev.originalEvent.clientY - 10) + 'px';
+    });
+    container.events.on('pointermove', function(ev) {
+      hoverDiv.style.left = (ev.originalEvent.clientX + 14) + 'px';
+      hoverDiv.style.top  = (ev.originalEvent.clientY - 10) + 'px';
+    });
+    container.events.on('pointerout', function() { hoverDiv.style.opacity = '0'; });
+    container.events.on('click', function() { _toggleRegionFilter(ctx.key); });
+    return am5.Bullet.new(amRoot, { sprite: container });
+  });
+  specialSeries.data.setAll(specialPositions.map(function(z) {
+    return { geometry: { type: 'Point', coordinates: [z.lng, z.lat] }, key: z.key };
+  }));
+
+  chart.set('zoomControl', am5map.ZoomControl.new(amRoot, {}));
+  chart.appear(1000, 100);
+}
+
+// Toggle region filter chip from map click
 
 </script>
 </body>
