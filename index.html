@@ -633,6 +633,7 @@ function loadXL(file){
 
 function showDash(sub){
   mapBuilt = false; // reset so map rebuilds with new data
+  setTheme('light'); // default light mode on entry
   document.getElementById('home').style.display='none';
   document.getElementById('dash').style.display='block';
   document.getElementById('hf').innerHTML=sub;
