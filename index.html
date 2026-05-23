@@ -336,6 +336,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
+  <div class="ver-badge" id="ver-badge">v1.2.0</div>
   <!-- hidden inputs still needed by loadGS() internals -->
   <input type="hidden" id="gs-url" value="https://docs.google.com/spreadsheets/d/e/2PACX-1vRBpy6JQSAFfIzYX8nPMaTlG3SqAdCfVOtgzbvKxvtXobvxRG_RgKll6uuV7jAXTA/pub?gid=838721591&single=true&output=csv">
   <input type="hidden" id="gs-sheet" value="Overall">
@@ -357,6 +358,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
     </div>
     <div class="hright">
       <span class="lupd" id="h-upd"></span>
+      <span class="lupd" style="opacity:0.45" id="h-ver">v1.2.0</span>
       <div class="hbadge">Units: <strong id="ht">0</strong></div>
       <button class="hbtn gr" id="ref-btn" onclick="refreshGS()">&#8635; Refresh</button>
       <!-- View mode toggle -->
@@ -493,16 +495,14 @@ var CM={'PTT Region':0,Site:1,TAG:2,Firmware:4,'Firmware Update':5,Status:6,Appl
 var DATA=[],lastSrc=null;
 var ST={f:{r:new Set(),fw:new Set(),fwu:new Set(),hv:new Set(),st:new Set(),ap:new Set()},q:'',sc:null,sa:true,p:1,ps:20};
 
+var APP_VERSION = 'v1.2.0';
+
 // Tab
 var PRESET_GS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRBpy6JQSAFfIzYX8nPMaTlG3SqAdCfVOtgzbvKxvtXobvxRG_RgKll6uuV7jAXTA/pub?gid=838721591&single=true&output=csv';
 
 function autoEnter(){
-  var btn = document.getElementById('gs-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinning">&#8635;</span> กำลังเชื่อมต่อ...';
-  setP(30, 'กำลังเชื่อมต่อ...');
-  lastSrc = {type:'gs', url: PRESET_GS_URL, sheet:'Overall'};
-  doFetch(PRESET_GS_URL, 'Overall', btn);
+  // gs-url hidden input already has the preset URL — use the standard loadGS() flow
+  loadGS();
 }
 
 function switchTab(t){
