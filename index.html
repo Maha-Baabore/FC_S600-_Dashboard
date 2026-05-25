@@ -596,7 +596,8 @@ function processRows(rows){
     if(!obj['Applications']&&obj['Column1'])obj['Applications']=obj['Column1'];
     obj['Applications']=(obj['Applications']||'').trim();
         obj['Hart version']=fixHart(obj['Hart version']||'');
-    if(!obj['Firmware Update']||obj['Firmware Update'].trim()==='')obj['Firmware Update']='Unknown';
+    if(!obj['Firmware Update']||obj['Firmware Update'].trim()===''||obj['Firmware Update'].trim()==='Unknow')obj['Firmware Update']='Unknown';
+    // DEBUG: log unique Firmware Update values (remove after fix)
     var d=obj['Last config installed date']||'';
     obj['Last config installed date']=d.replace(' 00:00:00','').replace('Invalid Date','').trim();
     if(obj['PTT Region']||obj['Site']||obj['TAG'])DATA.push(obj);
