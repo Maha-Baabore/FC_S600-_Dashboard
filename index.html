@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.8.0</title>
+<title>FC S600+ PTT — Metering Dashboard v1.8.1</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -519,7 +519,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.8.0</div>
+  <div class="home-version">v1.8.1</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -1845,7 +1845,8 @@ function renderPlanList(){
   }).join('');
 }
 
-// ── CUSTOM GANTT (Option 2) ──
+
+// ── CUSTOM GANTT — Daily Load View ──
 var GC_VIEW = 'week';
 var GC_OPEN = {};
 
@@ -1878,7 +1879,7 @@ function renderGantt(){
     return;
   }
   var SC={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444'};
-  var SL={planned:'Planned',inprogress:'In Progress',done:'Done',cancelled:'Cancelled'};
+  var SL={planned:'P',inprogress:'IP',done:'D',cancelled:'X'};
   var today=new Date(); today.setHours(0,0,0,0);
 
   // Group by region
@@ -1887,9 +1888,11 @@ function renderGantt(){
     var row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag&&(x['Site']||'').trim()===p.site; })
           ||DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; })||{};
     var reg=(row['PTT Region']||'').trim()||p.site||'Unknown';
+    p._region=reg;
     if(!byRegion[reg]) byRegion[reg]=[];
     byRegion[reg].push(p);
   });
+
   var regions=Object.keys(byRegion).sort(function(a,b){
     var na=parseInt(a),nb=parseInt(b);
     if(!isNaN(na)&&!isNaN(nb)) return na-nb;
@@ -1898,14 +1901,14 @@ function renderGantt(){
   });
   regions.forEach(function(r){ if(GC_OPEN[r]===undefined) GC_OPEN[r]=true; });
 
-  // Date range
+  // Date range from all plans
   var allD=PLANS.map(function(p){ return new Date(p.date); });
   var minD=new Date(Math.min.apply(null,allD));
   var maxD=new Date(Math.max.apply(null,allD));
   var pad=GC_VIEW==='month'?30:GC_VIEW==='week'?7:3;
   minD.setDate(minD.getDate()-pad); maxD.setDate(maxD.getDate()+pad);
 
-  // Build columns
+  // Build columns based on view
   var cols=[]; var cur=new Date(minD);
   var MONTH_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   if(GC_VIEW==='month'){
@@ -1917,87 +1920,127 @@ function renderGantt(){
   } else {
     while(cur<=maxD){ cols.push(new Date(cur)); cur.setDate(cur.getDate()+1); }
   }
-  var COL_W=GC_VIEW==='month'?80:GC_VIEW==='week'?64:28;
+  var COL_W=GC_VIEW==='month'?72:GC_VIEW==='week'?56:32;
   var totalW=cols.length*COL_W;
+  var LABEL_W=140;
+  var ROW_H=34;
+  var GRP_H=28;
+  var HDR_H=36;
 
-  function colIdx(dateStr){
-    var d=new Date(dateStr);
-    for(var i=0;i<cols.length;i++){
-      if(GC_VIEW==='month'&&cols[i].getFullYear()===d.getFullYear()&&cols[i].getMonth()===d.getMonth()) return i;
-      if(GC_VIEW==='week'){ var we=new Date(cols[i]); we.setDate(we.getDate()+6); if(d>=cols[i]&&d<=we) return i; }
-      if(GC_VIEW==='day'&&cols[i].toDateString()===d.toDateString()) return i;
-    }
-    return -1;
+  // Helper: check if a plan falls in a column
+  function planInCol(p, col){
+    var d=new Date(p.date);
+    if(GC_VIEW==='month') return d.getFullYear()===col.getFullYear()&&d.getMonth()===col.getMonth();
+    if(GC_VIEW==='week'){ var we=new Date(col); we.setDate(we.getDate()+6); return d>=col&&d<=we; }
+    return d.toDateString()===col.toDateString();
   }
+
   function isTodayCol(col){
     if(GC_VIEW==='month') return col.getFullYear()===today.getFullYear()&&col.getMonth()===today.getMonth();
     if(GC_VIEW==='week'){ var we=new Date(col); we.setDate(we.getDate()+6); return today>=col&&today<=we; }
     return col.toDateString()===today.toDateString();
   }
+
   function colLabel(col){
-    if(GC_VIEW==='month') return MONTH_EN[col.getMonth()]+String(col.getFullYear()).slice(2);
-    if(GC_VIEW==='week'){ var d2=col.getDate(),m2=col.getMonth()+1; return (d2<10?'0'+d2:d2)+'/'+(m2<10?'0'+m2:m2); }
+    if(GC_VIEW==='month') return MONTH_EN[col.getMonth()]+' '+String(col.getFullYear()).slice(2);
+    if(GC_VIEW==='week'){
+      var d2=col.getDate(),m2=col.getMonth()+1;
+      return (d2<10?'0'+d2:d2)+'/'+(m2<10?'0'+m2:m2);
+    }
+    // day: show date, bold if has plans
     return String(col.getDate());
   }
 
-  var todayIdx=colIdx(today.toISOString().slice(0,10));
-  var todayX=todayIdx>=0?todayIdx*COL_W+COL_W/2:-1;
-  var ROW_H=32, GRP_H=28, HDR_H=36;
-  var LABEL_W=160;
+  // Today column index for vertical line
+  var todayColIdx=-1;
+  for(var ci=0;ci<cols.length;ci++){ if(isTodayCol(cols[ci])){ todayColIdx=ci; break; } }
+  var todayX = todayColIdx>=0 ? todayColIdx*COL_W + COL_W/2 : -1;
 
-  // Build label + bar rows
-  var labelRows=[], barRows=[];
+  // Build HTML sections
+  var labelHTML='';
+  var chartHTML='';
 
-  // Header
-  labelRows.push('<div style="height:'+HDR_H+'px;border-bottom:1px solid var(--br);background:var(--sf2);display:flex;align-items:center;padding:0 10px;font-size:9px;font-family:Space Mono,monospace;color:var(--tx3);font-weight:700;letter-spacing:.8px;text-transform:uppercase">REGION / TAG</div>');
-  barRows.push('<div style="display:flex;height:'+HDR_H+'px;background:var(--sf2);border-bottom:1px solid var(--br);width:'+totalW+'px">'+
-    cols.map(function(col){ var tc=isTodayCol(col); return '<div style="width:'+COL_W+'px;flex-shrink:0;height:100%;border-right:1px solid var(--br);display:flex;align-items:center;justify-content:center;font-size:9px;font-family:Space Mono,monospace;font-weight:700;color:'+(tc?'var(--ac)':'var(--tx3)')+'">'+colLabel(col)+'</div>'; }).join('')+
-  '</div>');
+  // Header row
+  labelHTML+='<div style="height:'+HDR_H+'px;flex-shrink:0;display:flex;align-items:center;padding:0 10px;background:var(--sf2);border-bottom:1px solid var(--br);font-size:9px;font-family:Space Mono,monospace;color:var(--tx3);font-weight:700;letter-spacing:.8px;text-transform:uppercase">Region</div>';
+
+  var hdrCells=cols.map(function(col,i){
+    var isT=isTodayCol(col);
+    var style='width:'+COL_W+'px;flex-shrink:0;height:'+HDR_H+'px;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--br);font-size:9px;font-family:Space Mono,monospace;font-weight:700;';
+    style+=isT?'color:var(--ac);background:rgba(99,102,241,.1)':'color:var(--tx3)';
+    return '<div style="'+style+'">'+colLabel(col)+'</div>';
+  }).join('');
+  chartHTML+='<div style="display:flex;height:'+HDR_H+'px;flex-shrink:0;background:var(--sf2);border-bottom:1px solid var(--br);width:'+totalW+'px">'+hdrCells+'</div>';
 
   regions.forEach(function(reg){
     var isOpen=GC_OPEN[reg];
     var regColor=REGION_COLOR_MAP[reg]||'#6366f1';
-    var ps=byRegion[reg].slice().sort(function(a,b){ return a.date.localeCompare(b.date); });
-    var done=ps.filter(function(p){ return p.status==='done'; }).length;
+    var ps=byRegion[reg];
+    var doneCount=ps.filter(function(p){ return p.status==='done'; }).length;
 
-    // Group row
-    labelRows.push('<div style="height:'+GRP_H+'px;background:var(--sf2);border-bottom:1px solid var(--br);display:flex;align-items:center;padding:0 8px;gap:5px;cursor:pointer" onclick="gcToggle(&quot;'+reg+'&quot;)">'+
-      '<span style="font-size:9px;color:var(--tx3);transition:transform .15s;display:inline-block;'+(isOpen?'transform:rotate(90deg)':'')+'">&#9654;</span>'+
+    // ── Region group row ──
+    labelHTML+='<div style="height:'+GRP_H+'px;flex-shrink:0;display:flex;align-items:center;padding:0 8px;gap:5px;background:var(--sf2);border-bottom:1px solid var(--br);cursor:pointer" onclick="gcToggle(\''+reg+'\')">'+
+      '<span style="font-size:9px;color:var(--tx3);display:inline-block;transition:transform .15s;'+(isOpen?'transform:rotate(90deg)':'')+'">&#9654;</span>'+
       '<span style="font-size:10px;font-weight:700;font-family:Space Mono,monospace;color:'+regColor+'">'+reg+'</span>'+
-      '<span style="font-size:9px;color:var(--tx3);font-family:Space Mono,monospace;margin-left:auto">'+done+'/'+ps.length+'</span>'+
-    '</div>');
-    barRows.push('<div style="height:'+GRP_H+'px;background:var(--sf2);border-bottom:1px solid var(--br);position:relative;width:'+totalW+'px;cursor:pointer" onclick="gcToggle(&quot;'+reg+'&quot;)">'+
-      cols.map(function(col){ return '<div style="position:absolute;top:0;bottom:0;width:1px;background:rgba(128,128,128,.06);left:'+(cols.indexOf(col)*COL_W+COL_W-1)+'px"></div>'; }).join('')+
-    '</div>');
+      '<span style="font-size:9px;color:var(--tx3);font-family:Space Mono,monospace;margin-left:auto">'+doneCount+'/'+ps.length+'</span>'+
+    '</div>';
 
+    // Group bar row: stacked mini-bars per column showing total load
+    var grpCells=cols.map(function(col,ci){
+      var inCol=ps.filter(function(p){ return planInCol(p,col); });
+      var isT=isTodayCol(col);
+      var bg=isT?'rgba(99,102,241,.06)':'transparent';
+      if(!inCol.length) return '<div style="width:'+COL_W+'px;flex-shrink:0;height:'+GRP_H+'px;border-right:1px solid rgba(128,128,128,.06);background:'+bg+'"></div>';
+      var cnt=inCol.length;
+      var statCnt={planned:0,inprogress:0,done:0,cancelled:0};
+      inCol.forEach(function(p){ statCnt[p.status]=(statCnt[p.status]||0)+1; });
+      // stacked bar segments
+      var segs=['done','inprogress','planned','cancelled'].map(function(st){
+        if(!statCnt[st]) return '';
+        return '<div style="flex:'+(statCnt[st]/cnt)+';background:'+SC[st]+';min-width:1px"></div>';
+      }).join('');
+      var tip=inCol.map(function(p){ return p.tag+'('+p.status[0].toUpperCase()+')'; }).join(', ');
+      return '<div style="width:'+COL_W+'px;flex-shrink:0;height:'+GRP_H+'px;border-right:1px solid rgba(128,128,128,.06);background:'+bg+';display:flex;flex-direction:column;justify-content:center;padding:0 3px" title="'+tip+'" onclick="gcToggle(\''+reg+'\')" >'+
+        '<div style="display:flex;height:8px;border-radius:3px;overflow:hidden;gap:1px">'+segs+'</div>'+
+        '<div style="font-size:8px;font-family:Space Mono,monospace;color:var(--tx3);text-align:center;margin-top:1px">'+cnt+'</div>'+
+      '</div>';
+    }).join('');
+    chartHTML+='<div style="display:flex;height:'+GRP_H+'px;flex-shrink:0;border-bottom:1px solid var(--br);width:'+totalW+'px;cursor:pointer" onclick="gcToggle(\''+reg+'\')">'+grpCells+'</div>';
+
+    // ── Expanded: each plan = 1 row ──
     if(isOpen){
-      ps.forEach(function(p){
-        var ci=colIdx(p.date);
-        var barL=ci>=0?ci*COL_W+2:0;
-        var barW=Math.max(COL_W-4,6);
+      var sorted=ps.slice().sort(function(a,b){ return a.date.localeCompare(b.date); });
+      sorted.forEach(function(p){
         var col=SC[p.status]||'#6366f1';
-        labelRows.push('<div style="height:'+ROW_H+'px;border-bottom:1px solid var(--br);display:flex;align-items:center;padding:0 8px 0 22px;cursor:pointer" onclick="openEditPlan('+p.id+')">'+
+        labelHTML+='<div style="height:'+ROW_H+'px;flex-shrink:0;display:flex;align-items:center;padding:0 8px 0 20px;border-bottom:1px solid var(--br);cursor:pointer;border-left:2px solid '+col+'" onclick="openEditPlan('+p.id+')">'+
           '<span style="font-size:10px;font-weight:600;font-family:Space Mono,monospace;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+p.tag+' — '+p.site+'">'+p.tag+'</span>'+
-        '</div>');
-        barRows.push('<div style="height:'+ROW_H+'px;border-bottom:1px solid var(--br);position:relative;width:'+totalW+'px">'+
-          (ci>=0?'<div class="gc-bar" style="left:'+barL+'px;width:'+barW+'px;background:'+col+'" onclick="openEditPlan('+p.id+')" title="'+p.tag+' | '+SL[p.status]+' | '+p.date+'">'+
-            (COL_W>20?'<span style="color:#fff;font-size:9px;overflow:hidden;text-overflow:ellipsis;max-width:'+(barW-8)+'px;display:block">'+p.tag+'</span>':'')
-          +'</div>':'')+
-        '</div>');
+        '</div>';
+
+        var rowCells=cols.map(function(col2){
+          var isT=isTodayCol(col2);
+          var bg=isT?'rgba(99,102,241,.06)':'transparent';
+          var inThis=planInCol(p,col2);
+          return '<div style="width:'+COL_W+'px;flex-shrink:0;height:'+ROW_H+'px;border-right:1px solid rgba(128,128,128,.06);background:'+bg+';display:flex;align-items:center;justify-content:center">'+
+            (inThis?'<div style="width:'+(COL_W-6)+'px;height:18px;border-radius:4px;background:'+SC[p.status]+';display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.2)" onclick="openEditPlan('+p.id+')" title="'+p.tag+' | '+p.date+'">'+
+              '<span style="font-size:8px;font-weight:700;font-family:Space Mono,monospace;color:#fff;overflow:hidden;text-overflow:ellipsis;max-width:'+(COL_W-10)+'px;white-space:nowrap;padding:0 2px">'+
+              (COL_W>=32?p.tag:'')+'</span></div>':'')+
+          '</div>';
+        }).join('');
+        chartHTML+='<div style="display:flex;height:'+ROW_H+'px;flex-shrink:0;border-bottom:1px solid var(--br);width:'+totalW+'px">'+rowCells+'</div>';
       });
     }
   });
 
   // Combine into synced layout
-  var labH=labelRows.join('');
-  var barH=barRows.join('');
   el.innerHTML='<div style="display:flex;height:100%;min-height:0;overflow:hidden">'+
-    '<div id="gc-labels" style="flex-shrink:0;width:'+LABEL_W+'px;border-right:1px solid var(--br);overflow:hidden;display:flex;flex-direction:column">'+labH+'</div>'+
+    '<div id="gc-labels" style="flex-shrink:0;width:'+LABEL_W+'px;border-right:1px solid var(--br);display:flex;flex-direction:column;overflow:hidden">'+
+      labelHTML+
+    '</div>'+
     '<div id="gc-chart" style="flex:1;overflow:auto;display:flex;flex-direction:column;position:relative">'+
-      (todayX>=0?'<div style="position:absolute;top:0;bottom:0;width:2px;background:var(--ac);opacity:.5;z-index:6;pointer-events:none;left:'+todayX+'px"></div>':'')+
-      barH+
+      (todayX>=0?'<div style="position:absolute;top:0;bottom:0;width:2px;background:var(--ac);opacity:.45;z-index:6;pointer-events:none;left:'+todayX+'px"></div>':'')+
+      '<div style="min-width:'+totalW+'px">'+chartHTML+'</div>'+
     '</div>'+
   '</div>';
+
   // Sync vertical scroll
   var chartEl=document.getElementById('gc-chart');
   var labEl=document.getElementById('gc-labels');
@@ -2005,7 +2048,6 @@ function renderGantt(){
     chartEl.addEventListener('scroll',function(){ labEl.scrollTop=chartEl.scrollTop; });
   }
 }
-
 
 
 function clearAllPlans(){
