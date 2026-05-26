@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.4.0</title>
-<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<title>FC S600+ PTT — Metering Dashboard v1.5.0</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css">
+<script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -366,6 +367,26 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .gantt-month-group{font-size:10px;font-weight:700;color:var(--tx2);font-family:'Space Mono',monospace;padding:10px 8px 4px;background:var(--sf2);border-bottom:1px solid var(--br)}
 .gantt-progress-text{font-size:9px;color:var(--tx3);font-family:'Space Mono',monospace;margin-top:2px}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.hidden{display:none!important}
+.modal-box{background:var(--sf);border:1px solid var(--br);border-radius:18px;width:100%;max-width:460px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.modal-box-wide{max-width:680px}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--br);flex-shrink:0}
+.modal-title{font-size:13px;font-weight:700;color:var(--tx);font-family:'Space Mono',monospace}
+.modal-close{background:none;border:none;color:var(--tx3);font-size:16px;cursor:pointer;padding:4px 6px;border-radius:6px;transition:color .15s}
+.modal-close:hover{color:var(--tx)}
+.modal-body{padding:18px 20px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.modal-footer{padding:14px 20px 18px;border-top:1px solid var(--br);display:flex;justify-content:flex-end;gap:10px;flex-shrink:0}
+.modal-btn-cancel{background:var(--sf2);border:1px solid var(--br);color:var(--tx2);border-radius:10px;padding:9px 18px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.modal-btn-save{background:var(--ac);border:none;color:#fff;border-radius:10px;padding:9px 18px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s}
+.modal-btn-save:hover{opacity:.85}
+.modal-btn-save:disabled{opacity:.5;cursor:not-allowed}
+.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.report-apps-status{font-size:11px;font-family:'Space Mono',monospace;padding:8px 10px;border-radius:8px;min-height:28px}
+.report-apps-status.ok{background:rgba(16,185,129,.12);color:#10b981}
+.report-apps-status.err{background:rgba(239,68,68,.12);color:#ef4444}
+.report-apps-status.loading{background:rgba(99,102,241,.12);color:#6366f1}
 #map-kpi-bar{padding:8px 16px 6px;flex-shrink:0;display:flex;justify-content:flex-end}
 .mkpi-row{display:flex;flex-wrap:nowrap;gap:8px}
 .mkpi-card{background:var(--sf);border:1px solid var(--br);border-radius:12px;padding:12px 18px;min-width:120px;flex-shrink:0}
@@ -404,7 +425,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.4.0</div>
+  <div class="home-version">v1.5.0</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -615,14 +636,15 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
           <!-- Gantt chart -->
           <div class="sched-section">
-            <div class="sched-subtitle">&#9646; Gantt Chart — ภาพรวม Progress</div>
-            <div class="gantt-legend">
-              <span class="gantt-leg-item"><span class="gantt-leg-dot planned"></span>Planned</span>
-              <span class="gantt-leg-item"><span class="gantt-leg-dot inprogress"></span>In Progress</span>
-              <span class="gantt-leg-item"><span class="gantt-leg-dot done"></span>Done</span>
-              <span class="gantt-leg-item"><span class="gantt-leg-dot cancelled"></span>Cancelled</span>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+              <div class="sched-subtitle">&#9646; Gantt Chart — ภาพรวม Progress</div>
+              <div style="display:flex;gap:6px">
+                <button class="sf-sm-btn" onclick="setGanttView('Day')">Day</button>
+                <button class="sf-sm-btn" onclick="setGanttView('Week')">Week</button>
+                <button class="sf-sm-btn" onclick="setGanttView('Month')">Month</button>
+              </div>
             </div>
-            <div class="gantt-wrap" id="gantt-wrap"></div>
+            <div id="gantt-wrap" style="overflow-x:auto;min-height:60px"></div>
           </div>
 
         </div>
@@ -632,13 +654,87 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   </div>
 </div>
 
-<script>
+<!-- MODAL: Edit Plan -->
+<div class="modal-overlay hidden" id="modal-edit-plan">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">&#9998; แก้ไขแผน</span>
+      <button class="modal-close" onclick="closeModal('modal-edit-plan')">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-plan-id">
+      <div class="sf-row"><label class="sf-label">สถานี (Site)</label>
+        <select class="sf-input" id="edit-sf-site"></select></div>
+      <div class="sf-row"><label class="sf-label">TAG</label>
+        <select class="sf-input" id="edit-sf-tag"></select></div>
+      <div class="sf-row"><label class="sf-label">Firmware เป้าหมาย</label>
+        <input class="sf-input" id="edit-sf-fw-target" type="text"></div>
+      <div class="sf-row"><label class="sf-label">วันที่</label>
+        <input class="sf-input" id="edit-sf-date" type="date"></div>
+      <div class="sf-row"><label class="sf-label">เวลาเริ่ม</label>
+        <input class="sf-input" id="edit-sf-time-start" type="time"></div>
+      <div class="sf-row"><label class="sf-label">เวลาสิ้นสุด</label>
+        <input class="sf-input" id="edit-sf-time-end" type="time"></div>
+      <div class="sf-row"><label class="sf-label">หมายเหตุ</label>
+        <input class="sf-input" id="edit-sf-note" type="text"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn-cancel" onclick="closeModal('modal-edit-plan')">ยกเลิก</button>
+      <button class="modal-btn-save" onclick="saveEditPlan()">&#10003; บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Report Update -->
+<div class="modal-overlay hidden" id="modal-report">
+  <div class="modal-box modal-box-wide">
+    <div class="modal-header">
+      <span class="modal-title">&#128196; รายงานผลการอัปเดต Firmware</span>
+      <button class="modal-close" onclick="closeModal('modal-report')">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div class="report-grid">
+        <div class="sf-row"><label class="sf-label">PTT Region</label>
+          <input class="sf-input" id="rpt-region" type="text" readonly></div>
+        <div class="sf-row"><label class="sf-label">Site</label>
+          <input class="sf-input" id="rpt-site" type="text" readonly></div>
+        <div class="sf-row"><label class="sf-label">Metering Name</label>
+          <input class="sf-input" id="rpt-name" type="text"></div>
+        <div class="sf-row"><label class="sf-label">TAG</label>
+          <input class="sf-input" id="rpt-tag" type="text" readonly></div>
+        <div class="sf-row"><label class="sf-label">IP Address</label>
+          <input class="sf-input" id="rpt-ip" type="text" placeholder="xxx.xxx.xxx.xxx"></div>
+        <div class="sf-row"><label class="sf-label">Serial No.</label>
+          <input class="sf-input" id="rpt-serial" type="text"></div>
+        <div class="sf-row"><label class="sf-label">Firmware</label>
+          <input class="sf-input" id="rpt-firmware" type="text"></div>
+        <div class="sf-row"><label class="sf-label">Firmware Update</label>
+          <select class="sf-input" id="rpt-fw-update">
+            <option value="Up-to-date">&#9654; Up-to-date</option>
+            <option value="Outdated">&#9660; Outdated</option>
+          </select></div>
+        <div class="sf-row"><label class="sf-label">Hart Version</label>
+          <input class="sf-input" id="rpt-hart" type="text"></div>
+        <div class="sf-row"><label class="sf-label">Config Name</label>
+          <input class="sf-input" id="rpt-config-name" type="text"></div>
+        <div class="sf-row"><label class="sf-label">Last Config Installed Date</label>
+          <input class="sf-input" id="rpt-config-date" type="date"></div>
+      </div>
+      <div class="report-apps-status" id="rpt-api-status"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn-cancel" onclick="closeModal('modal-report')">ยกเลิก</button>
+      <button class="modal-btn-save" onclick="submitReport()" id="rpt-submit-btn">&#8679; ส่งไปยัง Google Sheet</button>
+    </div>
+  </div>
+</div>
 // ═══════════════════════════════════════════════
 //  CONFIG — URL และชื่อ Sheet ถูกฝังไว้ที่นี่
 // ═══════════════════════════════════════════════
 var CONFIG = {
-  sheetUrl:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vRBpy6JQSAFfIzYX8nPMaTlG3SqAdCfVOtgzbvKxvtXobvxRG_RgKll6uuV7jAXTA/pub?gid=838721591&single=true&output=csv',
-  sheetName: 'Overall'
+  sheetUrl:       'https://docs.google.com/spreadsheets/d/e/2PACX-1vRBpy6JQSAFfIzYX8nPMaTlG3SqAdCfVOtgzbvKxvtXobvxRG_RgKll6uuV7jAXTA/pub?gid=838721591&single=true&output=csv',
+  sheetName:      'Overall',
+  appsScriptUrl:  'https://script.google.com/macros/s/AKfycbxKQt-kWxCMs8tpOAa9s-il8sxdsxACF3D5fZGoYCbuSi8-uaARdMNNc_BbMREApxyN/exec'   // ← วาง Web App URL จาก Apps Script ตรงนี้
 };
 // ═══════════════════════════════════════════════
 
@@ -1604,6 +1700,7 @@ function renderPlanList(){
   el.innerHTML=ps.map(function(p){
     var d=p.date.split('-');
     var dl=d[2]+'/'+d[1]+'/'+(parseInt(d[0])+543);
+    var isDone = p.status==='done';
     return '<div class="plan-item">'+
       '<div>'+
         '<div class="plan-item-tag">'+p.tag+'</div>'+
@@ -1612,48 +1709,78 @@ function renderPlanList(){
       '</div>'+
       '<div class="plan-item-right">'+
         '<button class="plan-status-badge badge-'+p.status+'" onclick="cyclePlanStatus('+p.id+')" title="คลิกเพื่อเปลี่ยนสถานะ">'+lbl[p.status]+'</button>'+
-        '<button class="plan-del-btn" onclick="deletePlan('+p.id+')" title="ลบ">&#10005;</button>'+
+        '<div style="display:flex;gap:4px;margin-top:3px">'+
+          (isDone?'<button class="sf-sm-btn" style="font-size:9px;padding:3px 7px" onclick="openReport('+p.id+')" title="รายงานผล">&#128196; Report</button>':'')+
+          '<button class="sf-sm-btn" style="font-size:9px;padding:3px 7px" onclick="openEditPlan('+p.id+')" title="แก้ไข">&#9998;</button>'+
+          '<button class="plan-del-btn" onclick="deletePlan('+p.id+')" title="ลบ">&#10005;</button>'+
+        '</div>'+
       '</div>'+
     '</div>';
   }).join('');
 }
 
+var frappeGanttInst = null;
+var ganttViewMode = 'Week';
+function setGanttView(mode){ ganttViewMode=mode; renderGantt(); }
+
 function renderGantt(){
   var el=document.getElementById('gantt-wrap');
   if(!el) return;
-  if(!PLANS.length){ el.innerHTML='<div class="plan-empty">ยังไม่มีแผน</div>'; return; }
-  var byMonth={};
-  PLANS.forEach(function(p){ var mk=p.date.substring(0,7); if(!byMonth[mk]) byMonth[mk]=[]; byMonth[mk].push(p); });
-  var months=Object.keys(byMonth).sort();
-  var lbl={planned:'Planned',inprogress:'In Progress',done:'Done',cancelled:'Cancelled'};
-  var html='<table class="gantt-table"><thead><tr>'+
-    '<th style="width:100px">TAG</th><th style="width:60px">Date</th>'+
-    '<th style="width:85px">Time</th><th>Progress</th><th style="width:75px">Status</th>'+
-    '</tr></thead><tbody>';
-  months.forEach(function(mk){
-    var parts=mk.split('-');
-    var mLabel=MONTH_TH[parseInt(parts[1])-1]+' '+(parseInt(parts[0])+543);
-    var ps=byMonth[mk].sort(function(a,b){ return a.date.localeCompare(b.date); });
-    var done=ps.filter(function(p){ return p.status==='done'; }).length;
-    html+='<tr><td colspan="5" class="gantt-month-group">'+mLabel+' — '+done+'/'+ps.length+' Done</td></tr>';
-    ps.forEach(function(p){
-      var d=p.date.split('-');
-      var pct=p.status==='done'?100:p.status==='inprogress'?50:p.status==='cancelled'?100:8;
-      html+='<tr>'+
-        '<td><div class="gantt-label" title="'+p.tag+'">'+p.tag+'</div><div class="gantt-progress-text">'+p.site+'</div></td>'+
-        '<td class="gantt-date-cell">'+d[2]+'/'+d[1]+'</td>'+
-        '<td class="gantt-date-cell">'+p.timeStart+'–'+p.timeEnd+'</td>'+
-        '<td class="gantt-bar-cell">'+
-          '<div class="gantt-bar-bg"><div class="gantt-bar-fill '+p.status+'" style="width:'+pct+'%"></div></div>'+
-          (p.fwTarget?'<div class="gantt-progress-text">&rarr; '+p.fwTarget+'</div>':'')+
-        '</td>'+
-        '<td><span class="plan-status-badge badge-'+p.status+'" style="cursor:default;font-size:8px">'+lbl[p.status]+'</span></td>'+
-      '</tr>';
-    });
+  if(!PLANS.length){ el.innerHTML='<div class="plan-empty">ยังไม่มีแผน</div>'; frappeGanttInst=null; return; }
+  var statusColors={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444'};
+  var sorted=PLANS.slice().sort(function(a,b){ return a.date.localeCompare(b.date); });
+  var tasks=sorted.map(function(p){
+    // frappe needs end >= start; add 1 day for same-day tasks
+    var ed=new Date(p.date); ed.setDate(ed.getDate()+1);
+    var endStr=ed.getFullYear()+'-'+String(ed.getMonth()+1).padStart(2,'0')+'-'+String(ed.getDate()).padStart(2,'0');
+    return {
+      id:String(p.id),
+      name:p.tag,
+      start:p.date, end:endStr,
+      progress:p.status==='done'?100:p.status==='inprogress'?50:0,
+      custom_class:'gantt-bar-'+p.status
+    };
   });
-  html+='</tbody></table>';
-  el.innerHTML=html;
+  el.innerHTML='<svg id="gantt-svg"></svg>';
+  try{
+    frappeGanttInst=new Gantt('#gantt-svg',tasks,{
+      view_mode:ganttViewMode,
+      date_format:'YYYY-MM-DD',
+      bar_height:24,
+      padding:14,
+      on_click:function(task){ openEditPlan(parseInt(task.id)); },
+      on_progress_change:function(task,progress){
+        var p=PLANS.find(function(x){ return String(x.id)===task.id; });
+        if(p){ p.status=progress>=100?'done':progress>0?'inprogress':'planned'; savePlans(); renderCal(); renderPlanList(); }
+      },
+      custom_popup_html:function(task){
+        var p=PLANS.find(function(x){ return String(x.id)===task.id; });
+        if(!p) return '';
+        var lbl={planned:'Planned',inprogress:'In Progress',done:'Done',cancelled:'Cancelled'};
+        var col=statusColors[p.status]||'#6366f1';
+        return '<div style="padding:10px 14px;min-width:180px;font-family:DM Sans,sans-serif">'+
+          '<b style="font-size:13px">'+p.tag+'</b><br>'+
+          '<span style="font-size:11px;color:#888">'+p.site+(p.fwTarget?' → '+p.fwTarget:'')+'</span><br><br>'+
+          '<span style="font-size:11px">📅 '+p.date+'</span><br>'+
+          '<span style="font-size:11px">🕐 '+p.timeStart+'–'+p.timeEnd+'</span><br><br>'+
+          '<span style="background:'+col+'22;color:'+col+';font-size:9px;font-weight:700;padding:2px 9px;border-radius:20px;text-transform:uppercase">'+lbl[p.status]+'</span>'+
+          (p.note?'<br><span style="font-size:10px;color:#888;margin-top:4px;display:block">'+p.note+'</span>':'')+
+        '</div>';
+      }
+    });
+    // color bars by status
+    setTimeout(function(){
+      sorted.forEach(function(p){
+        var col=statusColors[p.status]||'#6366f1';
+        var bars=document.querySelectorAll('.gantt-bar-'+p.status+' .bar');
+        bars.forEach(function(b){ b.setAttribute('fill',col); b.style.fill=col; });
+        var progs=document.querySelectorAll('.gantt-bar-'+p.status+' .bar-progress');
+        progs.forEach(function(b){ b.setAttribute('fill',col); b.style.fill=col; b.style.opacity='.7'; });
+      });
+    },80);
+  }catch(e){ el.innerHTML='<div class="plan-empty">Gantt error: '+e.message+'</div>'; }
 }
+
 
 function exportPlanCSV(){
   if(!PLANS.length){ alert('ยังไม่มีแผน'); return; }
@@ -1668,6 +1795,124 @@ function exportPlanCSV(){
 }
 
 -e 
+// ── MODAL HELPERS ──
+function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
+function openModal(id){ document.getElementById(id).classList.remove('hidden'); }
+
+// ── EDIT PLAN ──
+function openEditPlan(id){
+  var p=PLANS.find(function(x){ return x.id===id; });
+  if(!p) return;
+  document.getElementById('edit-plan-id').value=id;
+  // populate site dropdown
+  var siteEl=document.getElementById('edit-sf-site');
+  var tagEl=document.getElementById('edit-sf-tag');
+  var sites=[]; DATA.forEach(function(x){ var s=(x['Site']||'').trim(); if(s&&sites.indexOf(s)<0) sites.push(s); }); sites.sort();
+  siteEl.innerHTML=sites.map(function(s){ return '<option value="'+s+'"'+(s===p.site?' selected':'')+'>'+s+'</option>'; }).join('');
+  // populate tag for current site
+  function fillTags(site){
+    var tags=[]; DATA.forEach(function(x){ if((x['Site']||'').trim()===site){ var t=(x['TAG']||'').trim(); if(t&&tags.indexOf(t)<0) tags.push(t); } }); tags.sort();
+    tagEl.innerHTML=tags.map(function(t){ return '<option value="'+t+'"'+(t===p.tag?' selected':'')+'>'+t+'</option>'; }).join('');
+  }
+  fillTags(p.site);
+  siteEl.onchange=function(){ fillTags(siteEl.value); };
+  document.getElementById('edit-sf-fw-target').value=p.fwTarget||'';
+  document.getElementById('edit-sf-date').value=p.date;
+  document.getElementById('edit-sf-time-start').value=p.timeStart;
+  document.getElementById('edit-sf-time-end').value=p.timeEnd;
+  document.getElementById('edit-sf-note').value=p.note||'';
+  openModal('modal-edit-plan');
+}
+
+function saveEditPlan(){
+  var id=parseInt(document.getElementById('edit-plan-id').value);
+  var p=PLANS.find(function(x){ return x.id===id; });
+  if(!p) return;
+  p.site=document.getElementById('edit-sf-site').value;
+  p.tag=document.getElementById('edit-sf-tag').value;
+  p.fwTarget=document.getElementById('edit-sf-fw-target').value.trim();
+  p.date=document.getElementById('edit-sf-date').value;
+  p.timeStart=document.getElementById('edit-sf-time-start').value;
+  p.timeEnd=document.getElementById('edit-sf-time-end').value;
+  p.note=document.getElementById('edit-sf-note').value.trim();
+  savePlans();
+  closeModal('modal-edit-plan');
+  renderCal(); renderPlanList(); renderGantt();
+}
+
+// ── REPORT MODAL ──
+function openReport(id){
+  var p=PLANS.find(function(x){ return x.id===id; });
+  if(!p) return;
+  // find row from DATA
+  var row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; })||{};
+  document.getElementById('rpt-region').value=row['PTT Region']||'';
+  document.getElementById('rpt-site').value=row['Site']||p.site;
+  document.getElementById('rpt-name').value=row['Metering name']||row['metering name']||'';
+  document.getElementById('rpt-tag').value=p.tag;
+  document.getElementById('rpt-ip').value=row['IP Address']||row['IP']||'';
+  document.getElementById('rpt-serial').value=row['Serial No.']||row['Serial No']||'';
+  document.getElementById('rpt-firmware').value=p.fwTarget||row['Firmware']||'';
+  document.getElementById('rpt-fw-update').value='Up-to-date';
+  document.getElementById('rpt-hart').value=row['Hart version']||'';
+  document.getElementById('rpt-config-name').value=row['Config name']||'';
+  // default config date = today
+  var today=new Date(); var iso=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  document.getElementById('rpt-config-date').value=row['Last config installed date']||iso;
+  document.getElementById('rpt-api-status').className='report-apps-status';
+  document.getElementById('rpt-api-status').textContent='';
+  document.getElementById('rpt-submit-btn').disabled=false;
+  document.getElementById('rpt-submit-btn').textContent='⇧ ส่งไปยัง Google Sheet';
+  openModal('modal-report');
+}
+
+function submitReport(){
+  var url=(CONFIG.appsScriptUrl||'https://script.google.com/macros/s/AKfycbxKQt-kWxCMs8tpOAa9s-il8sxdsxACF3D5fZGoYCbuSi8-uaARdMNNc_BbMREApxyN/exec').trim();
+  if(!url){
+    var st=document.getElementById('rpt-api-status');
+    st.className='report-apps-status err';
+    st.textContent='⚠ ยังไม่ได้ตั้งค่า CONFIG.appsScriptUrl — กรุณาใส่ Web App URL ใน CONFIG';
+    return;
+  }
+  var payload={
+    'PTT Region': document.getElementById('rpt-region').value,
+    'Site':       document.getElementById('rpt-site').value,
+    'Metering name': document.getElementById('rpt-name').value,
+    'TAG':        document.getElementById('rpt-tag').value,
+    'IP Address': document.getElementById('rpt-ip').value,
+    'Serial No.': document.getElementById('rpt-serial').value,
+    'Firmware':   document.getElementById('rpt-firmware').value,
+    'Firmware Update': document.getElementById('rpt-fw-update').value,
+    'Hart version':    document.getElementById('rpt-hart').value,
+    'Config name':     document.getElementById('rpt-config-name').value,
+    'Last config installed date': document.getElementById('rpt-config-date').value
+  };
+  var btn=document.getElementById('rpt-submit-btn');
+  var st=document.getElementById('rpt-api-status');
+  btn.disabled=true; btn.textContent='⏳ กำลังส่ง...';
+  st.className='report-apps-status loading'; st.textContent='กำลังเชื่อมต่อ Google Sheet...';
+  fetch(url,{method:'POST',body:JSON.stringify(payload)})
+    .then(function(r){ return r.json(); })
+    .then(function(res){
+      if(res.ok){
+        st.className='report-apps-status ok';
+        st.textContent='✓ อัปเดต Google Sheet สำเร็จ! TAG: '+payload['TAG'];
+        btn.textContent='✓ ส่งแล้ว';
+        // update local DATA too
+        var row=DATA.find(function(x){ return (x['TAG']||'').trim()===payload['TAG']; });
+        if(row){ Object.assign(row, payload); }
+        setTimeout(function(){ closeModal('modal-report'); render(); },1800);
+      } else {
+        throw new Error(res.msg||'Unknown error');
+      }
+    })
+    .catch(function(e){
+      st.className='report-apps-status err';
+      st.textContent='✗ ส่งไม่สำเร็จ: '+e.message;
+      btn.disabled=false; btn.textContent='⇧ ลองใหม่';
+    });
+}
+
 </script>
 </body>
 </html>
