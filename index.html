@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.6.8</title>
+<title>FC S600+ PTT — Metering Dashboard v1.6.9</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css">
 <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
@@ -390,10 +390,14 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .light .gantt .bar-label{fill:#fff!important;font-weight:700!important}
 .light .gantt-container .popup-wrapper{background:#fff!important;border:1px solid #e2e8f0!important;box-shadow:0 4px 16px rgba(0,0,0,.1)!important}
 /* sched-plans scrollbar */
-.sched-plans::-webkit-scrollbar{width:3px}
+.sched-plans::-webkit-scrollbar{width:3px;height:3px}
 .sched-plans::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
-.sched-left::-webkit-scrollbar{width:3px}
+.sched-plans::-webkit-scrollbar-track{background:transparent}
+.sched-left::-webkit-scrollbar{width:3px;height:3px}
 .sched-left::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+.sched-left::-webkit-scrollbar-track{background:transparent}
+/* bar-label: white on dark, dark on light */
+.light .gantt .bar-label{fill:#1e293b!important;font-weight:700!important}
 .sched-active .sidebar{display:none!important}
 .sched-active #dash-content{display:none!important}
 .sched-active #map-view{display:none!important}
@@ -407,14 +411,12 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 :root:not(.light) .gantt .today-highlight{fill:rgba(99,102,241,.08)}
 :root:not(.light) .gantt text{fill:#94a3b8}
 :root:not(.light) .gantt .lower-text,:root:not(.light) .gantt .upper-text{fill:#94a3b8}
-:root:not(.light) .gantt .bar-label{fill:#fff}
 :root:not(.light) .gantt-container .popup-wrapper{background:#151d2e;border:1px solid #1e2d45;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .light .gantt .grid-background{fill:#f8fafc}
 .light .gantt .grid-header{fill:#f1f5f9}
 .light .gantt .grid-row{fill:#fff}
 .light .gantt .grid-row:nth-child(even){fill:#f8fafc}
 .light .gantt text{fill:#475569}
-.light .gantt .bar-label{fill:#fff}
 .gantt-table{width:100%;border-collapse:collapse;min-width:500px}
 .gantt-table th{font-size:9px;color:var(--tx3);font-family:'Space Mono',monospace;text-transform:uppercase;padding:5px 8px;border-bottom:1px solid var(--br);white-space:nowrap;font-weight:600;text-align:left}
 .gantt-table td{padding:5px 8px;border-bottom:1px solid var(--br);vertical-align:middle}
@@ -488,7 +490,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.6.8</div>
+  <div class="home-version">v1.6.9</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -1872,9 +1874,10 @@ function renderGantt(){
         document.querySelectorAll('.gantt-bar-'+p.status+' .bar-progress').forEach(function(b){
           b.setAttribute('fill',col); b.style.fill=col; b.style.opacity='.75';
         });
-        // force label white regardless of theme
+        // force label color based on theme
         document.querySelectorAll('.gantt-bar-'+p.status+' .bar-label').forEach(function(b){
-          b.setAttribute('fill','#fff'); b.style.fill='#fff';
+          var labelCol = isLight ? '#1e293b' : '#fff';
+          b.setAttribute('fill', labelCol); b.style.fill = labelCol;
           b.style.fontWeight='700'; b.style.fontSize='11px';
         });
       });
