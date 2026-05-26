@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.8.3</title>
+<title>FC S600+ PTT — Metering Dashboard v1.8.4</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -530,7 +530,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.8.3</div>
+  <div class="home-version">v1.8.4</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -573,7 +573,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
         <button class="tpill-btn" id="btn-dark" onclick="setTheme('dark')">&#9790; Dark</button>
         <button class="tpill-btn active" id="btn-light" onclick="setTheme('light')">&#9728; Light</button>
       </div>
-      <button class="hbtn" onclick="goHome()">&#8617; กลับไปหน้าแรก</button>
+      <button class="hbtn" onclick="goHome()">&#8617; Back to Home</button>
     </div>
   </header>
 
@@ -2069,50 +2069,208 @@ function renderGantt(){
 
 
 function gcExport(){
-  var wrap = document.getElementById('gantt-wrap');
-  if(!wrap){ alert('No gantt to export'); return; }
-  // Temporarily expand scroll to show full content
-  var chartEl = wrap.querySelector('#gc-chart');
-  var labEl   = wrap.querySelector('#gc-labels');
-  var origChartH = chartEl ? chartEl.style.overflowY : '';
-  var origWrapH  = wrap.style.maxHeight;
-  // Remove scroll constraints temporarily
-  if(chartEl){ chartEl.style.overflowY='visible'; chartEl.style.height='auto'; }
-  wrap.style.overflow='visible'; wrap.style.height='auto';
+  if(!PLANS.length){ alert('No plans to export'); return; }
 
-  function doCapture(){
-    html2canvas(wrap, {
-      backgroundColor: document.documentElement.classList.contains('light') ? '#ffffff' : '#0d1220',
-      scale: 2,
-      useCORS: true,
-      logging: false,
-      scrollX: 0, scrollY: 0,
-      width: wrap.scrollWidth,
-      height: wrap.scrollHeight
-    }).then(function(canvas){
-      // Restore scroll
-      if(chartEl){ chartEl.style.overflowY=origChartH; chartEl.style.height=''; }
-      wrap.style.overflow=''; wrap.style.height='';
-      var a = document.createElement('a');
-      a.download = 'gantt_chart.png';
-      a.href = canvas.toDataURL('image/png');
-      a.click();
-    }).catch(function(e){
-      if(chartEl){ chartEl.style.overflowY=origChartH; chartEl.style.height=''; }
-      wrap.style.overflow=''; wrap.style.height='';
-      alert('Export failed: '+e.message);
-    });
-  }
+  var isLight = document.documentElement.classList.contains('light');
+  var BG     = isLight?'#ffffff':'#0d1220';
+  var HEADER = isLight?'#f1f5f9':'#151d2e';
+  var ROW_ALT= isLight?'#f8fafc':'#111827';
+  var BORDER = isLight?'#e2e8f0':'#1e2d45';
+  var TXT    = isLight?'#475569':'#94a3b8';
+  var TXT2   = isLight?'#0f172a':'#e2e8f0';
+  var TODAY_C= isLight?'rgba(99,102,241,0.3)':'rgba(99,102,241,0.4)';
+  var SC={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444'};
+  var MONTH_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-  if(typeof html2canvas !== 'undefined'){
-    setTimeout(doCapture, 100);
+  // Reuse same grouping logic
+  var byRegion={};
+  PLANS.forEach(function(p){
+    var row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag&&(x['Site']||'').trim()===p.site; })
+          ||DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; })||{};
+    var reg=(row['PTT Region']||'').trim()||p.site||'Unknown';
+    if(!byRegion[reg]) byRegion[reg]=[];
+    byRegion[reg].push(p);
+  });
+  var regions=Object.keys(byRegion).sort(function(a,b){
+    var na=parseInt(a),nb=parseInt(b);
+    if(!isNaN(na)&&!isNaN(nb)) return na-nb;
+    if(!isNaN(na)) return -1; if(!isNaN(nb)) return 1;
+    return a.localeCompare(b);
+  });
+
+  // Date range
+  var allD=PLANS.map(function(p){ return new Date(p.date); });
+  var minD=new Date(Math.min.apply(null,allD)); minD.setDate(minD.getDate()-2);
+  var maxD=new Date(Math.max.apply(null,allD)); maxD.setDate(maxD.getDate()+2);
+  var cols=[]; var cur=new Date(minD);
+  if(GC_VIEW==='month'){
+    cur=new Date(minD.getFullYear(),minD.getMonth(),1);
+    while(cur<=maxD){ cols.push(new Date(cur)); cur.setMonth(cur.getMonth()+1); }
+  } else if(GC_VIEW==='week'){
+    var wd=cur.getDay(); cur.setDate(cur.getDate()-(wd===0?6:wd-1));
+    while(cur<=maxD){ cols.push(new Date(cur)); cur.setDate(cur.getDate()+7); }
   } else {
-    var s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
-    s.onload = function(){ setTimeout(doCapture,100); };
-    s.onerror = function(){ alert('Cannot load html2canvas library'); };
-    document.head.appendChild(s);
+    while(cur<=maxD){ cols.push(new Date(cur)); cur.setDate(cur.getDate()+1); }
   }
+
+  function planInCol(p,col){
+    var d=new Date(p.date);
+    if(GC_VIEW==='month') return d.getFullYear()===col.getFullYear()&&d.getMonth()===col.getMonth();
+    if(GC_VIEW==='week'){ var we=new Date(col); we.setDate(we.getDate()+6); return d>=col&&d<=we; }
+    return d.toDateString()===col.toDateString();
+  }
+
+  // Layout
+  var LABEL_W=160, COL_W=GC_VIEW==='day'?38:GC_VIEW==='week'?70:90;
+  var HDR_H=GC_VIEW==='day'?48:34, GRP_H=28, ROW_H=32;
+  var SCALE=2;
+
+  // Count total rows
+  var totalRows=0;
+  regions.forEach(function(reg){
+    totalRows++; // group row
+    if(GC_OPEN[reg]!==false) totalRows+=byRegion[reg].length;
+  });
+
+  var totalW=LABEL_W+cols.length*COL_W;
+  var totalH=HDR_H+regions.reduce(function(acc,reg){
+    return acc+GRP_H+(GC_OPEN[reg]!==false?byRegion[reg].length*ROW_H:0);
+  },0);
+
+  var canvas=document.createElement('canvas');
+  canvas.width=totalW*SCALE; canvas.height=totalH*SCALE;
+  var ctx=canvas.getContext('2d');
+  ctx.scale(SCALE,SCALE);
+
+  function rect(x,y,w,h,fill){ ctx.fillStyle=fill; ctx.fillRect(x,y,w,h); }
+  function line(x1,y1,x2,y2,color,lw){
+    ctx.strokeStyle=color; ctx.lineWidth=lw||0.5;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  }
+  function text(str,x,y,color,size,align,bold){
+    ctx.fillStyle=color; ctx.font=(bold?'bold ':'')+size+'px "Space Mono",monospace';
+    ctx.textAlign=align||'left'; ctx.textBaseline='middle';
+    ctx.fillText(str,x,y);
+  }
+
+  var today=new Date(); today.setHours(0,0,0,0);
+  function isTodayCol(col){
+    if(GC_VIEW==='month') return col.getFullYear()===today.getFullYear()&&col.getMonth()===today.getMonth();
+    if(GC_VIEW==='week'){ var we=new Date(col); we.setDate(we.getDate()+6); return today>=col&&today<=we; }
+    return col.toDateString()===today.toDateString();
+  }
+
+  // Draw background
+  rect(0,0,totalW,totalH,BG);
+
+  // Draw header
+  rect(0,0,LABEL_W,HDR_H,HEADER);
+  text('REGION',LABEL_W/2,HDR_H/2,TXT,8,'center',true);
+  line(0,HDR_H,totalW,HDR_H,BORDER);
+  line(LABEL_W,0,LABEL_W,totalH,BORDER);
+
+  cols.forEach(function(col,i){
+    var x=LABEL_W+i*COL_W;
+    var isT=isTodayCol(col);
+    rect(x,0,COL_W,HDR_H,isT?'rgba(99,102,241,0.15)':HEADER);
+    var label=GC_VIEW==='day'?String(col.getDate()):
+              GC_VIEW==='week'?(function(){ var d=col.getDate(),m=col.getMonth()+1; return (d<10?'0'+d:d)+'/'+(m<10?'0'+m:m); })():
+              MONTH_EN[col.getMonth()]+' '+String(col.getFullYear()).slice(2);
+    var cx=x+COL_W/2;
+    if(GC_VIEW==='day'){
+      text(String(col.getDate()),cx,HDR_H/2-6,isT?'#6366f1':TXT,9,'center',true);
+      text(MONTH_EN[col.getMonth()],cx,HDR_H/2+8,isT?'#6366f1':TXT,7,'center');
+    } else {
+      text(label,cx,HDR_H/2,isT?'#6366f1':TXT,9,'center',true);
+    }
+    line(x+COL_W,0,x+COL_W,totalH,BORDER);
+  });
+
+  // Draw rows
+  var y=HDR_H;
+  regions.forEach(function(reg){
+    var regColor=REGION_COLOR_MAP[reg]||'#6366f1';
+    var ps=byRegion[reg];
+    var done=ps.filter(function(p){ return p.status==='done'; }).length;
+    var isOpen=GC_OPEN[reg]!==false;
+
+    // Group row
+    rect(0,y,totalW,GRP_H,HEADER);
+    // chevron
+    ctx.fillStyle=TXT; ctx.font='9px sans-serif'; ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillText(isOpen?'▼':'▶',8,y+GRP_H/2);
+    text(reg,22,y+GRP_H/2,regColor,10,'left',true);
+    text(done+'/'+ps.length,LABEL_W-8,y+GRP_H/2,TXT,8,'right');
+    // load bars per col
+    cols.forEach(function(col,i){
+      var x=LABEL_W+i*COL_W;
+      var inCol=ps.filter(function(p){ return planInCol(p,col); });
+      if(!inCol.length) return;
+      var cnt=inCol.length, bw=COL_W-6, bx=x+3, by=y+GRP_H/2-4;
+      // stacked bar
+      var seg_x=bx;
+      ['done','inprogress','planned','cancelled'].forEach(function(st){
+        var n=inCol.filter(function(p){ return p.status===st; }).length;
+        if(!n) return;
+        var sw=Math.round(bw*(n/cnt));
+        rect(seg_x,by,sw,8,SC[st]);
+        seg_x+=sw;
+      });
+      // count
+      text(String(cnt),x+COL_W/2,y+GRP_H/2+7,TXT,7,'center');
+    });
+    line(0,y+GRP_H,totalW,y+GRP_H,BORDER);
+    y+=GRP_H;
+
+    if(isOpen){
+      ps.slice().sort(function(a,b){ return a.date.localeCompare(b.date); }).forEach(function(p,ri){
+        rect(0,y,totalW,ROW_H,ri%2===0?BG:ROW_ALT);
+        // label
+        ctx.save(); ctx.rect(2,y,LABEL_W-4,ROW_H); ctx.clip();
+        text(p.tag,20,y+ROW_H/2,TXT2,10,'left',true);
+        ctx.restore();
+        // bar
+        cols.forEach(function(col,i){
+          if(!planInCol(p,col)) return;
+          var x=LABEL_W+i*COL_W+2;
+          var bw=COL_W-4, bh=18, by=y+(ROW_H-bh)/2;
+          // rounded rect
+          var r=4;
+          ctx.fillStyle=SC[p.status]||'#6366f1';
+          ctx.beginPath(); ctx.moveTo(x+r,by);
+          ctx.lineTo(x+bw-r,by); ctx.quadraticCurveTo(x+bw,by,x+bw,by+r);
+          ctx.lineTo(x+bw,by+bh-r); ctx.quadraticCurveTo(x+bw,by+bh,x+bw-r,by+bh);
+          ctx.lineTo(x+r,by+bh); ctx.quadraticCurveTo(x,by+bh,x,by+bh-r);
+          ctx.lineTo(x,by+r); ctx.quadraticCurveTo(x,by,x+r,by);
+          ctx.closePath(); ctx.fill();
+          // tag label on bar
+          if(COL_W>=32){
+            ctx.save(); ctx.rect(x,by,bw,bh); ctx.clip();
+            text(p.tag,x+bw/2,by+bh/2,'#fff',8,'center',true);
+            ctx.restore();
+          }
+        });
+        line(0,y+ROW_H,totalW,y+ROW_H,BORDER);
+        y+=ROW_H;
+      });
+    }
+  });
+
+  // Today vertical line
+  var todayColIdx=-1;
+  for(var ci=0;ci<cols.length;ci++){ if(isTodayCol(cols[ci])){ todayColIdx=ci; break; } }
+  if(todayColIdx>=0){
+    var tx=LABEL_W+todayColIdx*COL_W+COL_W/2;
+    ctx.strokeStyle='rgba(99,102,241,0.6)'; ctx.lineWidth=2; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(tx,0); ctx.lineTo(tx,totalH); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Download
+  var a=document.createElement('a');
+  a.download='gantt_chart.png';
+  a.href=canvas.toDataURL('image/png');
+  a.click();
 }
 
 function clearMonthPlans(){
