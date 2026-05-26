@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.7.0</title>
+<title>FC S600+ PTT — Metering Dashboard v1.7.1</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -509,7 +509,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.7.0</div>
+  <div class="home-version">v1.7.1</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -1697,7 +1697,9 @@ function populateSiteDropdown(){
     }
   };
   tagEl.onchange = function(){
-    var row=DATA.find(function(x){ return (x['TAG']||'').trim()===tagEl.value; });
+    var site=siteEl.value;
+    var row=DATA.find(function(x){ return (x['TAG']||'').trim()===tagEl.value && (x['Site']||'').trim()===site; });
+    if(!row) row=DATA.find(function(x){ return (x['TAG']||'').trim()===tagEl.value; });
     if(row) document.getElementById('sf-fw-target').value = row['Firmware']||'';
   };
 }
@@ -1802,8 +1804,10 @@ function renderPlanList(){
   el.innerHTML=ps.map(function(p){
     var d=p.date.split('-');
     var dl=d[2]+'/'+d[1]+'/'+(parseInt(d[0])+543);
-    // lookup extra info from DATA
-    var row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; })||{};
+    // lookup extra info from DATA — match TAG + Site
+    var row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag && (x['Site']||'').trim()===p.site; });
+    if(!row) row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; });
+    if(!row) row={};
     var app=(row['Applications']||'').trim()||'—';
     var fwCurrent=(row['Firmware']||'').trim()||'—';
     return '<div class="plan-item">'+
@@ -1857,8 +1861,11 @@ function renderGantt(){
   // Group plans by region (lookup from DATA)
   var byRegion={};
   PLANS.forEach(function(p){
-    var row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; })||{};
-    var reg=(row['PTT Region']||p.site||'Unknown').trim();
+    var row=DATA.find(function(x){
+      return (x['TAG']||'').trim()===p.tag && (x['Site']||'').trim()===p.site;
+    });
+    if(!row) row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; });
+    var reg=row?(row['PTT Region']||'').trim()||p.site:p.site||'Unknown';
     if(!byRegion[reg]) byRegion[reg]=[];
     byRegion[reg].push(p);
   });
@@ -1996,8 +2003,13 @@ function saveEditPlan(){
 function openReport(id){
   var p=PLANS.find(function(x){ return x.id===id; });
   if(!p) return;
-  // find row from DATA
-  var row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; })||{};
+  // Match by TAG + Site to avoid duplicate TAG collision across regions
+  var row=DATA.find(function(x){
+    return (x['TAG']||'').trim()===p.tag && (x['Site']||'').trim()===p.site;
+  });
+  // fallback: TAG only if no site match
+  if(!row) row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; });
+  if(!row) row={};
   document.getElementById('rpt-region').value=row['PTT Region']||'';
   document.getElementById('rpt-site').value=row['Site']||p.site;
   document.getElementById('rpt-name').value=row['Metering name']||row['metering name']||'';
