@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.7.1</title>
+<title>FC S600+ PTT — Metering Dashboard v1.8.0</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -395,26 +395,36 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .light .gantt .bar-label{fill:#fff!important;font-weight:700!important}
 .light .gantt-container .popup-wrapper{background:#fff!important;border:1px solid #e2e8f0!important;box-shadow:0 4px 16px rgba(0,0,0,.1)!important}
 /* sched-plans scrollbar */
-/* Timeline Summary */
-.tl-region-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;cursor:pointer;margin-bottom:4px;border:1px solid var(--br);background:var(--bg);transition:background .15s;user-select:none}
-.tl-region-row:hover{background:var(--sf2)}
-.tl-region-chevron{font-size:10px;color:var(--tx3);transition:transform .2s;flex-shrink:0;width:12px}
-.tl-region-chevron.open{transform:rotate(90deg)}
-.tl-region-label{font-size:11px;font-weight:700;font-family:'Space Mono',monospace;width:60px;flex-shrink:0}
-.tl-region-bars{flex:1;display:flex;gap:3px;align-items:center}
-.tl-stat-pill{font-size:9px;font-weight:700;border-radius:12px;padding:2px 7px;font-family:'Space Mono',monospace;white-space:nowrap}
-.tl-stat-total{background:var(--sf2);color:var(--tx2);border:1px solid var(--br)}
-.tl-progress-bar{flex:1;height:8px;background:var(--sf2);border-radius:4px;overflow:hidden;display:flex;gap:1px}
-.tl-seg{height:100%;min-width:2px;border-radius:2px;transition:width .3s}
-.tl-items{display:none;padding:0 0 6px 22px}
-.tl-items.open{display:block}
-.tl-item{display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:6px;margin-bottom:2px;cursor:pointer;transition:background .15s;border-left:2px solid var(--br)}
-.tl-item:hover{background:var(--sf2)}
-.tl-item-tag{font-size:11px;font-weight:700;font-family:'Space Mono',monospace;color:var(--tx);min-width:90px}
-.tl-item-date{font-size:10px;color:var(--tx3);font-family:'Space Mono',monospace;min-width:80px}
-.tl-item-fw{font-size:10px;color:var(--tx3);flex:1}
-.tl-item-badge{font-size:8px;font-weight:700;border-radius:20px;padding:2px 8px;text-transform:uppercase;font-family:'Space Mono',monospace;flex-shrink:0}
-#gantt-wrap::-webkit-scrollbar{width:3px}
+/* Custom Gantt */
+.gc-wrap{display:flex;height:100%;min-height:0}
+.gc-labels{flex-shrink:0;width:160px;border-right:1px solid var(--br);overflow:hidden}
+.gc-chart{flex:1;overflow-x:auto;overflow-y:hidden;position:relative}
+.gc-chart::-webkit-scrollbar{height:3px}
+.gc-chart::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+.gc-chart::-webkit-scrollbar-track{background:transparent}
+.gc-header-row{display:flex;height:36px;border-bottom:1px solid var(--br);background:var(--sf2);position:sticky;top:0;z-index:5}
+.gc-header-cell{font-size:9px;font-family:'Space Mono',monospace;color:var(--tx3);display:flex;align-items:center;justify-content:center;border-right:1px solid var(--br);flex-shrink:0;font-weight:700}
+.gc-header-cell.today-col{background:rgba(99,102,241,.12);color:var(--ac)}
+.gc-label-header{height:36px;border-bottom:1px solid var(--br);background:var(--sf2);display:flex;align-items:center;padding:0 10px;font-size:9px;font-family:'Space Mono',monospace;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+.gc-row{display:flex;height:32px;border-bottom:1px solid var(--br);align-items:center;transition:background .12s}
+.gc-row:hover{background:var(--sf2)}
+.gc-row.gc-group-row{height:28px;background:var(--sf2);cursor:pointer}
+.gc-row.gc-group-row:hover{background:var(--sf3)}
+.gc-label-cell{width:160px;flex-shrink:0;padding:0 8px 0 10px;display:flex;align-items:center;gap:5px;border-right:1px solid var(--br);height:100%}
+.gc-label-tag{font-size:10px;font-family:'Space Mono',monospace;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.gc-label-group{font-size:10px;font-family:'Space Mono',monospace;font-weight:700;white-space:nowrap}
+.gc-chevron{font-size:9px;color:var(--tx3);transition:transform .15s;flex-shrink:0}
+.gc-chevron.open{transform:rotate(90deg)}
+.gc-body{position:relative}
+.gc-bar-row{display:flex;height:32px;align-items:center;position:relative;border-bottom:1px solid var(--br)}
+.gc-bar-row.gc-group-bar-row{height:28px;background:var(--sf2)}
+.gc-cell{flex-shrink:0;height:100%;border-right:1px solid rgba(128,128,128,.06)}
+.gc-cell.today-col{background:rgba(99,102,241,.06)}
+.gc-bar{position:absolute;height:18px;border-radius:4px;top:50%;transform:translateY(-50%);cursor:pointer;display:flex;align-items:center;padding:0 6px;font-size:9px;font-family:'Space Mono',monospace;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:filter .15s;z-index:2;min-width:4px;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.gc-bar:hover{filter:brightness(1.15)}
+.gc-today-line{position:absolute;top:0;bottom:0;width:2px;background:var(--ac);opacity:.6;z-index:6;pointer-events:none}
+.gc-empty{display:flex;align-items:center;justify-content:center;height:100%;color:var(--tx3);font-size:12px;font-family:'Space Mono',monospace}
+#gantt-wrap::-webkit-scrollbar{width:3px;height:3px}
 #gantt-wrap::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
 .light .gantt .bar-label{fill:#1e293b!important;font-weight:700!important}
 .sched-active .sidebar{display:none!important}
@@ -509,7 +519,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.7.1</div>
+  <div class="home-version">v1.8.0</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -721,24 +731,26 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
           <!-- Plan list scrollable -->
           <div class="sched-plans" id="plan-list"></div>
 
-          <!-- Timeline Summary -->
+          <!-- Custom Gantt Chart -->
           <div class="sched-section sched-gantt">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-shrink:0">
-              <div class="sched-subtitle">&#9646; Timeline Summary — by Region</div>
-              <div style="display:flex;gap:6px;align-items:center">
-                <span style="font-size:9px;color:var(--tx3);font-family:'Space Mono',monospace">Click region to expand</span>
-                <button class="sf-sm-btn" onclick="tlExpandAll()">Expand All</button>
-                <button class="sf-sm-btn" onclick="tlCollapseAll()">Collapse All</button>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-shrink:0">
+              <div class="sched-subtitle">&#9646; Gantt Chart — by Region</div>
+              <div style="display:flex;gap:5px;align-items:center">
+                <div class="toggle-pill" style="padding:2px">
+                  <button class="vpill-btn active" id="gc-btn-day"   onclick="gcSetView('day')">Day</button>
+                  <button class="vpill-btn"         id="gc-btn-week"  onclick="gcSetView('week')">Week</button>
+                  <button class="vpill-btn"         id="gc-btn-month" onclick="gcSetView('month')">Month</button>
+                </div>
+                <button class="sf-sm-btn" onclick="gcExpandAll()">&#8645; All</button>
               </div>
             </div>
-            <!-- Legend -->
-            <div class="gantt-legend" style="flex-shrink:0;margin-bottom:8px">
+            <div class="gantt-legend" style="flex-shrink:0;margin-bottom:6px">
               <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#6366f1"></span>Planned</span>
               <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#f59e0b"></span>In Progress</span>
               <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#10b981"></span>Done</span>
               <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#ef4444"></span>Cancelled</span>
             </div>
-            <div id="gantt-wrap" style="flex:1;overflow-y:auto;overflow-x:hidden;min-height:0"></div>
+            <div id="gantt-wrap" style="flex:1;overflow:auto;min-height:0;position:relative"></div>
           </div>
 
         </div>
@@ -1833,106 +1845,167 @@ function renderPlanList(){
   }).join('');
 }
 
-// ── TIMELINE SUMMARY (Option 3) ──
-var TL_OPEN = {}; // track which regions are expanded
+// ── CUSTOM GANTT (Option 2) ──
+var GC_VIEW = 'week';
+var GC_OPEN = {};
 
-function tlExpandAll(){
-  Object.keys(TL_OPEN).forEach(function(k){ TL_OPEN[k]=true; });
+function gcSetView(v){
+  GC_VIEW = v;
+  ['day','week','month'].forEach(function(m){
+    var b=document.getElementById('gc-btn-'+m);
+    if(b) b.classList.toggle('active', m===v);
+  });
   renderGantt();
 }
-function tlCollapseAll(){
-  Object.keys(TL_OPEN).forEach(function(k){ TL_OPEN[k]=false; });
+
+function gcExpandAll(){
+  var regions=Object.keys(GC_OPEN);
+  var allOpen=regions.length>0&&regions.every(function(r){ return GC_OPEN[r]; });
+  regions.forEach(function(r){ GC_OPEN[r]=!allOpen; });
   renderGantt();
 }
-function tlToggle(region){
-  TL_OPEN[region] = !TL_OPEN[region];
+
+function gcToggle(reg){
+  GC_OPEN[reg]=!GC_OPEN[reg];
   renderGantt();
 }
 
 function renderGantt(){
   var el=document.getElementById('gantt-wrap');
   if(!el) return;
-  if(!PLANS.length){ el.innerHTML='<div class="plan-empty">No plans yet.<br>Add plans using the form on the left.</div>'; return; }
-
+  if(!PLANS.length){
+    el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--tx3);font-size:12px;font-family:Space Mono,monospace">No plans yet. Add plans using the form on the left.</div>';
+    return;
+  }
   var SC={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444'};
   var SL={planned:'Planned',inprogress:'In Progress',done:'Done',cancelled:'Cancelled'};
-  var SB={planned:'badge-planned',inprogress:'badge-inprogress',done:'badge-done',cancelled:'badge-cancelled'};
+  var today=new Date(); today.setHours(0,0,0,0);
 
-  // Group plans by region (lookup from DATA)
+  // Group by region
   var byRegion={};
   PLANS.forEach(function(p){
-    var row=DATA.find(function(x){
-      return (x['TAG']||'').trim()===p.tag && (x['Site']||'').trim()===p.site;
-    });
-    if(!row) row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; });
-    var reg=row?(row['PTT Region']||'').trim()||p.site:p.site||'Unknown';
+    var row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag&&(x['Site']||'').trim()===p.site; })
+          ||DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; })||{};
+    var reg=(row['PTT Region']||'').trim()||p.site||'Unknown';
     if(!byRegion[reg]) byRegion[reg]=[];
     byRegion[reg].push(p);
   });
-
-  // Sort regions numerically then alpha
   var regions=Object.keys(byRegion).sort(function(a,b){
     var na=parseInt(a),nb=parseInt(b);
     if(!isNaN(na)&&!isNaN(nb)) return na-nb;
-    if(!isNaN(na)) return -1;
-    if(!isNaN(nb)) return 1;
+    if(!isNaN(na)) return -1; if(!isNaN(nb)) return 1;
     return a.localeCompare(b);
   });
+  regions.forEach(function(r){ if(GC_OPEN[r]===undefined) GC_OPEN[r]=true; });
 
-  // Ensure all regions have TL_OPEN state
-  regions.forEach(function(r){ if(TL_OPEN[r]===undefined) TL_OPEN[r]=false; });
+  // Date range
+  var allD=PLANS.map(function(p){ return new Date(p.date); });
+  var minD=new Date(Math.min.apply(null,allD));
+  var maxD=new Date(Math.max.apply(null,allD));
+  var pad=GC_VIEW==='month'?30:GC_VIEW==='week'?7:3;
+  minD.setDate(minD.getDate()-pad); maxD.setDate(maxD.getDate()+pad);
 
-  var html='';
+  // Build columns
+  var cols=[]; var cur=new Date(minD);
+  var MONTH_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  if(GC_VIEW==='month'){
+    cur=new Date(minD.getFullYear(),minD.getMonth(),1);
+    while(cur<=maxD){ cols.push(new Date(cur)); cur.setMonth(cur.getMonth()+1); }
+  } else if(GC_VIEW==='week'){
+    var wd=cur.getDay(); cur.setDate(cur.getDate()-(wd===0?6:wd-1));
+    while(cur<=maxD){ cols.push(new Date(cur)); cur.setDate(cur.getDate()+7); }
+  } else {
+    while(cur<=maxD){ cols.push(new Date(cur)); cur.setDate(cur.getDate()+1); }
+  }
+  var COL_W=GC_VIEW==='month'?80:GC_VIEW==='week'?64:28;
+  var totalW=cols.length*COL_W;
+
+  function colIdx(dateStr){
+    var d=new Date(dateStr);
+    for(var i=0;i<cols.length;i++){
+      if(GC_VIEW==='month'&&cols[i].getFullYear()===d.getFullYear()&&cols[i].getMonth()===d.getMonth()) return i;
+      if(GC_VIEW==='week'){ var we=new Date(cols[i]); we.setDate(we.getDate()+6); if(d>=cols[i]&&d<=we) return i; }
+      if(GC_VIEW==='day'&&cols[i].toDateString()===d.toDateString()) return i;
+    }
+    return -1;
+  }
+  function isTodayCol(col){
+    if(GC_VIEW==='month') return col.getFullYear()===today.getFullYear()&&col.getMonth()===today.getMonth();
+    if(GC_VIEW==='week'){ var we=new Date(col); we.setDate(we.getDate()+6); return today>=col&&today<=we; }
+    return col.toDateString()===today.toDateString();
+  }
+  function colLabel(col){
+    if(GC_VIEW==='month') return MONTH_EN[col.getMonth()]+String(col.getFullYear()).slice(2);
+    if(GC_VIEW==='week'){ var d2=col.getDate(),m2=col.getMonth()+1; return (d2<10?'0'+d2:d2)+'/'+(m2<10?'0'+m2:m2); }
+    return String(col.getDate());
+  }
+
+  var todayIdx=colIdx(today.toISOString().slice(0,10));
+  var todayX=todayIdx>=0?todayIdx*COL_W+COL_W/2:-1;
+  var ROW_H=32, GRP_H=28, HDR_H=36;
+  var LABEL_W=160;
+
+  // Build label + bar rows
+  var labelRows=[], barRows=[];
+
+  // Header
+  labelRows.push('<div style="height:'+HDR_H+'px;border-bottom:1px solid var(--br);background:var(--sf2);display:flex;align-items:center;padding:0 10px;font-size:9px;font-family:Space Mono,monospace;color:var(--tx3);font-weight:700;letter-spacing:.8px;text-transform:uppercase">REGION / TAG</div>');
+  barRows.push('<div style="display:flex;height:'+HDR_H+'px;background:var(--sf2);border-bottom:1px solid var(--br);width:'+totalW+'px">'+
+    cols.map(function(col){ var tc=isTodayCol(col); return '<div style="width:'+COL_W+'px;flex-shrink:0;height:100%;border-right:1px solid var(--br);display:flex;align-items:center;justify-content:center;font-size:9px;font-family:Space Mono,monospace;font-weight:700;color:'+(tc?'var(--ac)':'var(--tx3)')+'">'+colLabel(col)+'</div>'; }).join('')+
+  '</div>');
+
   regions.forEach(function(reg){
-    var ps=byRegion[reg].slice().sort(function(a,b){ return a.date.localeCompare(b.date); });
-    var cnt={planned:0,inprogress:0,done:0,cancelled:0};
-    ps.forEach(function(p){ if(cnt[p.status]!==undefined) cnt[p.status]++; });
-    var total=ps.length;
-    var doneTotal=cnt.done+cnt.inprogress;
-    var pct=total?Math.round(doneTotal/total*100):0;
-    var isOpen=TL_OPEN[reg];
+    var isOpen=GC_OPEN[reg];
     var regColor=REGION_COLOR_MAP[reg]||'#6366f1';
+    var ps=byRegion[reg].slice().sort(function(a,b){ return a.date.localeCompare(b.date); });
+    var done=ps.filter(function(p){ return p.status==='done'; }).length;
 
-    // Region summary row
-    html+='<div class="tl-region-row" onclick="tlToggle(\''+reg+'\')">'+
-      '<span class="tl-region-chevron'+(isOpen?' open':'')+'">&#9654;</span>'+
-      '<span class="tl-region-label" style="color:'+regColor+'">'+reg+'</span>'+
-      '<div class="tl-region-bars">'+
-        // stacked progress bar
-        '<div class="tl-progress-bar" title="'+pct+'% complete">'+
-          (cnt.done?'<div class="tl-seg" style="background:#10b981;width:'+(cnt.done/total*100).toFixed(1)+'%"></div>':'')+
-          (cnt.inprogress?'<div class="tl-seg" style="background:#f59e0b;width:'+(cnt.inprogress/total*100).toFixed(1)+'%"></div>':'')+
-          (cnt.planned?'<div class="tl-seg" style="background:#6366f1;width:'+(cnt.planned/total*100).toFixed(1)+'%"></div>':'')+
-          (cnt.cancelled?'<div class="tl-seg" style="background:#ef4444;opacity:.4;width:'+(cnt.cancelled/total*100).toFixed(1)+'%"></div>':'')+
-        '</div>'+
-        '<span style="font-size:9px;color:var(--tx3);font-family:Space Mono,monospace;margin-left:6px;white-space:nowrap">'+pct+'%</span>'+
-      '</div>'+
-      // stat pills
-      (cnt.done?'<span class="tl-stat-pill" style="background:rgba(16,185,129,.15);color:#10b981">&#10003; '+cnt.done+'</span>':'')+
-      (cnt.inprogress?'<span class="tl-stat-pill" style="background:rgba(245,158,11,.15);color:#f59e0b">&#9654; '+cnt.inprogress+'</span>':'')+
-      (cnt.planned?'<span class="tl-stat-pill" style="background:rgba(99,102,241,.15);color:#6366f1">'+cnt.planned+'</span>':'')+
-      (cnt.cancelled?'<span class="tl-stat-pill" style="background:rgba(239,68,68,.15);color:#ef4444">'+cnt.cancelled+'</span>':'')+
-      '<span class="tl-stat-pill tl-stat-total">'+total+' total</span>'+
-    '</div>';
+    // Group row
+    labelRows.push('<div style="height:'+GRP_H+'px;background:var(--sf2);border-bottom:1px solid var(--br);display:flex;align-items:center;padding:0 8px;gap:5px;cursor:pointer" onclick="gcToggle(&quot;'+reg+'&quot;)">'+
+      '<span style="font-size:9px;color:var(--tx3);transition:transform .15s;display:inline-block;'+(isOpen?'transform:rotate(90deg)':'')+'">&#9654;</span>'+
+      '<span style="font-size:10px;font-weight:700;font-family:Space Mono,monospace;color:'+regColor+'">'+reg+'</span>'+
+      '<span style="font-size:9px;color:var(--tx3);font-family:Space Mono,monospace;margin-left:auto">'+done+'/'+ps.length+'</span>'+
+    '</div>');
+    barRows.push('<div style="height:'+GRP_H+'px;background:var(--sf2);border-bottom:1px solid var(--br);position:relative;width:'+totalW+'px;cursor:pointer" onclick="gcToggle(&quot;'+reg+'&quot;)">'+
+      cols.map(function(col){ return '<div style="position:absolute;top:0;bottom:0;width:1px;background:rgba(128,128,128,.06);left:'+(cols.indexOf(col)*COL_W+COL_W-1)+'px"></div>'; }).join('')+
+    '</div>');
 
-    // Expandable item rows
-    html+='<div class="tl-items'+(isOpen?' open':'')+'">'+
-      ps.map(function(p){
-        var d=p.date.split('-');
-        var dl=d[2]+'/'+d[1]+'/'+(parseInt(d[0])+543);
-        return '<div class="tl-item" onclick="openEditPlan('+p.id+')" style="border-left-color:'+SC[p.status]+'">'+
-          '<div class="tl-item-tag">'+p.tag+'</div>'+
-          '<div class="tl-item-date">'+dl+'</div>'+
-          '<div class="tl-item-fw">'+(p.fwTarget?'&rarr; <b>'+p.fwTarget+'</b>':'')+(p.note?' &middot; '+p.note:'')+'</div>'+
-          '<span class="tl-item-badge '+SB[p.status]+'" style="cursor:default">'+SL[p.status]+'</span>'+
-          '<button class="plan-del-btn" onclick="event.stopPropagation();cyclePlanStatus('+p.id+')" title="Change status" style="font-size:10px">&#8635;</button>'+
-        '</div>';
-      }).join('')+
-    '</div>';
+    if(isOpen){
+      ps.forEach(function(p){
+        var ci=colIdx(p.date);
+        var barL=ci>=0?ci*COL_W+2:0;
+        var barW=Math.max(COL_W-4,6);
+        var col=SC[p.status]||'#6366f1';
+        labelRows.push('<div style="height:'+ROW_H+'px;border-bottom:1px solid var(--br);display:flex;align-items:center;padding:0 8px 0 22px;cursor:pointer" onclick="openEditPlan('+p.id+')">'+
+          '<span style="font-size:10px;font-weight:600;font-family:Space Mono,monospace;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+p.tag+' — '+p.site+'">'+p.tag+'</span>'+
+        '</div>');
+        barRows.push('<div style="height:'+ROW_H+'px;border-bottom:1px solid var(--br);position:relative;width:'+totalW+'px">'+
+          (ci>=0?'<div class="gc-bar" style="left:'+barL+'px;width:'+barW+'px;background:'+col+'" onclick="openEditPlan('+p.id+')" title="'+p.tag+' | '+SL[p.status]+' | '+p.date+'">'+
+            (COL_W>20?'<span style="color:#fff;font-size:9px;overflow:hidden;text-overflow:ellipsis;max-width:'+(barW-8)+'px;display:block">'+p.tag+'</span>':'')
+          +'</div>':'')+
+        '</div>');
+      });
+    }
   });
 
-  el.innerHTML=html;
+  // Combine into synced layout
+  var labH=labelRows.join('');
+  var barH=barRows.join('');
+  el.innerHTML='<div style="display:flex;height:100%;min-height:0;overflow:hidden">'+
+    '<div id="gc-labels" style="flex-shrink:0;width:'+LABEL_W+'px;border-right:1px solid var(--br);overflow:hidden;display:flex;flex-direction:column">'+labH+'</div>'+
+    '<div id="gc-chart" style="flex:1;overflow:auto;display:flex;flex-direction:column;position:relative">'+
+      (todayX>=0?'<div style="position:absolute;top:0;bottom:0;width:2px;background:var(--ac);opacity:.5;z-index:6;pointer-events:none;left:'+todayX+'px"></div>':'')+
+      barH+
+    '</div>'+
+  '</div>';
+  // Sync vertical scroll
+  var chartEl=document.getElementById('gc-chart');
+  var labEl=document.getElementById('gc-labels');
+  if(chartEl&&labEl){
+    chartEl.addEventListener('scroll',function(){ labEl.scrollTop=chartEl.scrollTop; });
+  }
 }
+
 
 
 function clearAllPlans(){
