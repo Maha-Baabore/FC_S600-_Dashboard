@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.3.0</title>
+<title>FC S600+ PTT — Metering Dashboard v1.4.0</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -299,6 +299,73 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 #map-view{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
 #map-view.hidden{display:none!important}
 #dash-content.hidden{display:none!important}
+#sched-view{flex:1;overflow-y:auto;background:var(--bg)}
+#sched-view.hidden{display:none!important}
+.sched-layout{display:grid;grid-template-columns:340px 1fr;gap:20px;padding:20px;align-items:start}
+.sched-left{display:flex;flex-direction:column;gap:16px}
+.sched-right{display:flex;flex-direction:column;gap:16px}
+.sched-section{background:var(--sf);border:1px solid var(--br);border-radius:14px;padding:18px}
+.sched-title{font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:1px;margin-bottom:14px;text-transform:uppercase;font-family:'Space Mono',monospace}
+.sched-subtitle{font-size:10px;font-weight:700;color:var(--tx2);letter-spacing:.8px;text-transform:uppercase;font-family:'Space Mono',monospace}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-nav-btn{background:var(--sf2);border:1px solid var(--br);color:var(--tx);border-radius:8px;width:28px;height:28px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .15s;line-height:1}
+.cal-nav-btn:hover{background:var(--ac);color:#fff;border-color:var(--ac)}
+.cal-month-label{font-size:13px;font-weight:700;color:var(--tx);font-family:'Space Mono',monospace}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:10px}
+.cal-day-name{font-size:9px;color:var(--tx3);text-align:center;padding:4px 0;font-family:'Space Mono',monospace}
+.cal-day{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--tx);border:1.5px solid transparent;transition:all .15s;position:relative}
+.cal-day:hover{background:var(--sf2);border-color:var(--br)}
+.cal-day.today{border-color:var(--ac);color:var(--ac);font-weight:700}
+.cal-day.selected{background:var(--ac)!important;color:#fff!important;border-color:var(--ac)!important}
+.cal-day.other-month{opacity:.28}
+.cal-dot-row{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;margin-top:2px;min-height:6px}
+.cal-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.cal-selected-date{font-size:11px;color:var(--ac);font-family:'Space Mono',monospace;text-align:center;font-weight:600;min-height:18px}
+.sched-form{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.sf-row{display:flex;flex-direction:column;gap:4px}
+.sf-label{font-size:9px;color:var(--tx3);font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:.5px}
+.sf-input{background:var(--bg);border:1px solid var(--br);border-radius:8px;padding:7px 10px;color:var(--tx);font-size:12px;outline:none;transition:border .15s;font-family:'DM Sans',sans-serif;width:100%;box-sizing:border-box}
+.sf-input:focus{border-color:var(--ac)}
+.sf-add-btn{background:var(--ac);color:#fff;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s;font-family:'DM Sans',sans-serif;margin-top:4px}
+.sf-add-btn:hover{opacity:.85}
+.sf-sm-btn{background:var(--sf2);border:1px solid var(--br);color:var(--tx2);border-radius:8px;padding:5px 10px;font-size:10px;cursor:pointer;font-family:'Space Mono',monospace;transition:background .15s}
+.sf-sm-btn:hover{background:var(--br)}
+.plan-item{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start;padding:10px 12px;border-radius:10px;border:1px solid var(--br);margin-bottom:8px;background:var(--bg)}
+.plan-item-tag{font-size:12px;font-weight:700;color:var(--tx);font-family:'Space Mono',monospace}
+.plan-item-site{font-size:11px;color:var(--tx3);margin-top:1px}
+.plan-item-meta{font-size:10px;color:var(--tx3);font-family:'Space Mono',monospace;margin-top:3px}
+.plan-item-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.plan-status-badge{font-size:9px;font-weight:700;letter-spacing:.5px;border-radius:20px;padding:3px 9px;text-transform:uppercase;font-family:'Space Mono',monospace;cursor:pointer;border:none}
+.badge-planned{background:rgba(99,102,241,.15);color:#6366f1}
+.badge-inprogress{background:rgba(245,158,11,.15);color:#f59e0b}
+.badge-done{background:rgba(16,185,129,.15);color:#10b981}
+.badge-cancelled{background:rgba(239,68,68,.15);color:#ef4444}
+.plan-del-btn{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:14px;padding:2px 5px;border-radius:4px}
+.plan-del-btn:hover{color:#ef4444}
+.plan-empty{text-align:center;color:var(--tx3);font-size:12px;padding:24px;font-family:'Space Mono',monospace}
+.gantt-legend{display:flex;gap:14px;margin:10px 0 14px;flex-wrap:wrap}
+.gantt-leg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--tx3);font-family:'Space Mono',monospace}
+.gantt-leg-dot{width:10px;height:10px;border-radius:3px}
+.gantt-leg-dot.planned{background:#6366f1}
+.gantt-leg-dot.inprogress{background:#f59e0b}
+.gantt-leg-dot.done{background:#10b981}
+.gantt-leg-dot.cancelled{background:#ef4444}
+.gantt-wrap{overflow-x:auto}
+.gantt-table{width:100%;border-collapse:collapse;min-width:500px}
+.gantt-table th{font-size:9px;color:var(--tx3);font-family:'Space Mono',monospace;text-transform:uppercase;padding:5px 8px;border-bottom:1px solid var(--br);white-space:nowrap;font-weight:600;text-align:left}
+.gantt-table td{padding:5px 8px;border-bottom:1px solid var(--br);vertical-align:middle}
+.gantt-label{font-size:11px;color:var(--tx);font-family:'Space Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100px}
+.gantt-date-cell{font-size:10px;color:var(--tx3);white-space:nowrap;font-family:'Space Mono',monospace}
+.gantt-bar-cell{min-width:180px}
+.gantt-bar-bg{height:14px;background:var(--sf2);border-radius:4px;overflow:hidden}
+.gantt-bar-fill{height:100%;border-radius:4px;min-width:4px}
+.gantt-bar-fill.planned{background:#6366f1}
+.gantt-bar-fill.inprogress{background:linear-gradient(90deg,#f59e0b,#fbbf24);background-size:200% 100%;animation:shimmer 1.5s infinite}
+.gantt-bar-fill.done{background:#10b981}
+.gantt-bar-fill.cancelled{background:#ef4444;opacity:.4}
+.gantt-month-group{font-size:10px;font-weight:700;color:var(--tx2);font-family:'Space Mono',monospace;padding:10px 8px 4px;background:var(--sf2);border-bottom:1px solid var(--br)}
+.gantt-progress-text{font-size:9px;color:var(--tx3);font-family:'Space Mono',monospace;margin-top:2px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 #map-kpi-bar{padding:8px 16px 6px;flex-shrink:0;display:flex;justify-content:flex-end}
 .mkpi-row{display:flex;flex-wrap:nowrap;gap:8px}
 .mkpi-card{background:var(--sf);border:1px solid var(--br);border-radius:12px;padding:12px 18px;min-width:120px;flex-shrink:0}
@@ -337,7 +404,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.3.0</div>
+  <div class="home-version">v1.4.0</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -374,6 +441,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
       <div class="view-pill">
         <button class="vpill-btn active" id="btn-view-dash" onclick="setView('dash')">&#9783; Dashboard</button>
         <button class="vpill-btn" id="btn-view-map" onclick="setView('map')">&#127757; Map</button>
+        <button class="vpill-btn" id="btn-view-sched" onclick="setView('sched')">&#128197; Schedule</button>
       </div>
       <div class="toggle-pill" id="header-theme-toggle">
         <button class="tpill-btn" id="btn-dark" onclick="setTheme('dark')">&#9790; Dark</button>
@@ -470,6 +538,97 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
         </div>
       </div>
     </div>
+
+    <!-- SCHEDULE VIEW -->
+    <div id="sched-view" class="hidden">
+      <div class="sched-layout">
+
+        <!-- LEFT: Calendar + Add form -->
+        <div class="sched-left">
+          <div class="sched-section">
+            <div class="sched-title">&#128197; แผนการอัปเดต Firmware</div>
+
+            <!-- Month navigator -->
+            <div class="cal-nav">
+              <button class="cal-nav-btn" onclick="calPrev()">&#8249;</button>
+              <span class="cal-month-label" id="cal-month-label"></span>
+              <button class="cal-nav-btn" onclick="calNext()">&#8250;</button>
+            </div>
+
+            <!-- Calendar grid -->
+            <div class="cal-grid" id="cal-grid"></div>
+
+            <!-- Selected date indicator -->
+            <div class="cal-selected-date" id="cal-selected-label">เลือกวันที่ต้องการวางแผน</div>
+          </div>
+
+          <!-- Add plan form -->
+          <div class="sched-section" id="sched-form-section">
+            <div class="sched-subtitle">&#10133; เพิ่มแผนอัปเดต</div>
+            <div class="sched-form">
+              <div class="sf-row">
+                <label class="sf-label">สถานี (Site)</label>
+                <select class="sf-input" id="sf-site">
+                  <option value="">-- เลือกสถานี --</option>
+                </select>
+              </div>
+              <div class="sf-row">
+                <label class="sf-label">TAG</label>
+                <select class="sf-input" id="sf-tag">
+                  <option value="">-- เลือก TAG --</option>
+                </select>
+              </div>
+              <div class="sf-row">
+                <label class="sf-label">Firmware เป้าหมาย</label>
+                <input class="sf-input" id="sf-fw-target" type="text" placeholder="เช่น 06.31">
+              </div>
+              <div class="sf-row">
+                <label class="sf-label">เวลาเริ่ม</label>
+                <input class="sf-input" id="sf-time-start" type="time" value="08:00">
+              </div>
+              <div class="sf-row">
+                <label class="sf-label">เวลาสิ้นสุด</label>
+                <input class="sf-input" id="sf-time-end" type="time" value="17:00">
+              </div>
+              <div class="sf-row">
+                <label class="sf-label">หมายเหตุ</label>
+                <input class="sf-input" id="sf-note" type="text" placeholder="optional">
+              </div>
+              <button class="sf-add-btn" onclick="addPlan()">&#43; เพิ่มแผน</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Plan list + Gantt -->
+        <div class="sched-right">
+
+          <!-- Plan list for selected month -->
+          <div class="sched-section">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <div class="sched-subtitle" id="plan-list-title">แผนประจำเดือน</div>
+              <div style="display:flex;gap:8px">
+                <button class="sf-sm-btn" onclick="exportPlanCSV()">&#8595; Export CSV</button>
+              </div>
+            </div>
+            <div id="plan-list"></div>
+          </div>
+
+          <!-- Gantt chart -->
+          <div class="sched-section">
+            <div class="sched-subtitle">&#9646; Gantt Chart — ภาพรวม Progress</div>
+            <div class="gantt-legend">
+              <span class="gantt-leg-item"><span class="gantt-leg-dot planned"></span>Planned</span>
+              <span class="gantt-leg-item"><span class="gantt-leg-dot inprogress"></span>In Progress</span>
+              <span class="gantt-leg-item"><span class="gantt-leg-dot done"></span>Done</span>
+              <span class="gantt-leg-item"><span class="gantt-leg-dot cancelled"></span>Cancelled</span>
+            </div>
+            <div class="gantt-wrap" id="gantt-wrap"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -596,8 +755,6 @@ function processRows(rows){
     if(!obj['Applications']&&obj['Column1'])obj['Applications']=obj['Column1'];
     obj['Applications']=(obj['Applications']||'').trim();
         obj['Hart version']=fixHart(obj['Hart version']||'');
-    if(!obj['Firmware Update']||obj['Firmware Update'].trim()===''||obj['Firmware Update'].trim()==='Unknow')obj['Firmware Update']='Unknown';
-    // DEBUG: log unique Firmware Update values (remove after fix)
     var d=obj['Last config installed date']||'';
     obj['Last config installed date']=d.replace(' 00:00:00','').replace('Invalid Date','').trim();
     if(obj['PTT Region']||obj['Site']||obj['TAG'])DATA.push(obj);
@@ -894,14 +1051,17 @@ function setView(v) {
   currentView = v;
   document.getElementById('btn-view-dash').classList.toggle('active', v === 'dash');
   document.getElementById('btn-view-map').classList.toggle('active', v === 'map');
+  document.getElementById('btn-view-sched').classList.toggle('active', v === 'sched');
   document.getElementById('dash-content').classList.toggle('hidden', v !== 'dash');
   document.getElementById('map-view').classList.toggle('hidden', v !== 'map');
+  document.getElementById('sched-view').classList.toggle('hidden', v !== 'sched');
   if (v === 'map') {
     if (!mapBuilt && DATA.length > 0) buildPixelMap();
     renderMapKPI();
     buildMapLegend();
     setTimeout(updateMapGlow, 300);
   }
+  if (v === 'sched') { initSched(); }
 }
 
 // ===== PIXEL MAP (amCharts) =====
@@ -1298,6 +1458,216 @@ function getOriginalPixelData() {
 
 // Toggle region filter chip from map click
 
+// Toggle region filter chip from map click
+
+// ══════════════════════════════════════════
+//  SCHEDULE PLAN
+// ══════════════════════════════════════════
+var PLANS = JSON.parse(localStorage.getItem('fc-plans') || '[]');
+var calYear, calMonth, selectedDate = null;
+
+function savePlans(){ try{ localStorage.setItem('fc-plans', JSON.stringify(PLANS)); }catch(e){} }
+
+function initSched(){
+  var now = new Date();
+  if(!calYear){ calYear = now.getFullYear(); calMonth = now.getMonth(); }
+  populateSiteDropdown();
+  renderCal();
+  renderPlanList();
+  renderGantt();
+}
+
+function populateSiteDropdown(){
+  var siteEl = document.getElementById('sf-site');
+  var tagEl  = document.getElementById('sf-tag');
+  if(!siteEl || !DATA.length) return;
+  var sites = [];
+  DATA.forEach(function(x){ var s=(x['Site']||'').trim(); if(s&&sites.indexOf(s)<0) sites.push(s); });
+  sites.sort();
+  siteEl.innerHTML = '<option value="">-- เลือกสถานี --</option>' +
+    sites.map(function(s){ return '<option value="'+s+'">'+s+'</option>'; }).join('');
+  siteEl.onchange = function(){
+    var site = siteEl.value;
+    var tags = [];
+    DATA.forEach(function(x){ if((x['Site']||'').trim()===site){ var t=(x['TAG']||'').trim(); if(t&&tags.indexOf(t)<0) tags.push(t); } });
+    tags.sort();
+    tagEl.innerHTML = '<option value="">-- เลือก TAG --</option>' +
+      tags.map(function(t){ return '<option value="'+t+'">'+t+'</option>'; }).join('');
+    if(tags.length){
+      var row=DATA.find(function(x){ return (x['TAG']||'').trim()===tags[0]; });
+      if(row) document.getElementById('sf-fw-target').value = row['Firmware']||'';
+    }
+  };
+  tagEl.onchange = function(){
+    var row=DATA.find(function(x){ return (x['TAG']||'').trim()===tagEl.value; });
+    if(row) document.getElementById('sf-fw-target').value = row['Firmware']||'';
+  };
+}
+
+function calPrev(){ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCal(); renderPlanList(); }
+function calNext(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCal(); renderPlanList(); }
+
+var MONTH_TH=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+var SCHED_STATUS_COLORS={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444'};
+
+function renderCal(){
+  document.getElementById('cal-month-label').textContent = MONTH_TH[calMonth]+' '+(calYear+543);
+  var grid=document.getElementById('cal-grid');
+  var dayNames=['อา','จ','อ','พ','พฤ','ศ','ส'];
+  var html=dayNames.map(function(d){ return '<div class="cal-day-name">'+d+'</div>'; }).join('');
+  var first=new Date(calYear,calMonth,1).getDay();
+  var total=new Date(calYear,calMonth+1,0).getDate();
+  var todayTs=new Date(); todayTs.setHours(0,0,0,0); todayTs=todayTs.getTime();
+  var prevTotal=new Date(calYear,calMonth,0).getDate();
+  for(var i=first-1;i>=0;i--){
+    var ds=fmtDate(calYear,calMonth-1,prevTotal-i);
+    html+='<div class="cal-day other-month" onclick="selectDate(\''+ds+'\')"><span>'+(prevTotal-i)+'</span>'+calDots(ds)+'</div>';
+  }
+  for(var d=1;d<=total;d++){
+    var ds=fmtDate(calYear,calMonth,d);
+    var dt=new Date(calYear,calMonth,d); dt.setHours(0,0,0,0);
+    var cls='cal-day'+(dt.getTime()===todayTs?' today':'')+(selectedDate===ds?' selected':'');
+    html+='<div class="'+cls+'" onclick="selectDate(\''+ds+'\')"><span>'+d+'</span>'+calDots(ds)+'</div>';
+  }
+  var rem=42-first-total;
+  for(var n=1;n<=rem;n++){
+    var ds=fmtDate(calYear,calMonth+1,n);
+    html+='<div class="cal-day other-month" onclick="selectDate(\''+ds+'\')"><span>'+n+'</span>'+calDots(ds)+'</div>';
+  }
+  grid.innerHTML=html;
+}
+
+function calDots(ds){
+  var ps=PLANS.filter(function(p){ return p.date===ds; });
+  if(!ps.length) return '<div class="cal-dot-row"></div>';
+  return '<div class="cal-dot-row">'+ps.slice(0,4).map(function(p){
+    return '<span class="cal-dot" style="background:'+(SCHED_STATUS_COLORS[p.status]||'#6366f1')+'"></span>';
+  }).join('')+'</div>';
+}
+
+function fmtDate(y,m,d){
+  var adj=((m%12)+12)%12; var yr=y+Math.floor(m/12);
+  if(m<0){yr=y-1;adj=(12+m%12)%12;}
+  return yr+'-'+String(adj+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+}
+
+function selectDate(ds){
+  selectedDate=ds;
+  var parts=ds.split('-');
+  var y=parseInt(parts[0]),m=parseInt(parts[1])-1,d=parseInt(parts[2]);
+  var names=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+  var dt=new Date(y,m,d);
+  var el=document.getElementById('cal-selected-label');
+  if(el) el.textContent=names[dt.getDay()]+' '+d+' '+MONTH_TH[m]+' '+(y+543);
+  renderCal(); renderPlanList();
+}
+
+function addPlan(){
+  if(!selectedDate){alert('กรุณาเลือกวันที่ก่อน');return;}
+  var site=document.getElementById('sf-site').value;
+  var tag=document.getElementById('sf-tag').value;
+  var fw=document.getElementById('sf-fw-target').value.trim();
+  var ts=document.getElementById('sf-time-start').value;
+  var te=document.getElementById('sf-time-end').value;
+  var note=document.getElementById('sf-note').value.trim();
+  if(!site||!tag){alert('กรุณาเลือกสถานีและ TAG');return;}
+  PLANS.push({id:Date.now(),date:selectedDate,site:site,tag:tag,fwTarget:fw,timeStart:ts,timeEnd:te,note:note,status:'planned'});
+  savePlans();
+  document.getElementById('sf-note').value='';
+  renderCal(); renderPlanList(); renderGantt();
+}
+
+function deletePlan(id){
+  if(!confirm('ลบแผนนี้?')) return;
+  PLANS=PLANS.filter(function(p){ return p.id!==id; });
+  savePlans(); renderCal(); renderPlanList(); renderGantt();
+}
+
+function cyclePlanStatus(id){
+  var cycle=['planned','inprogress','done','cancelled'];
+  var p=PLANS.find(function(p){ return p.id===id; });
+  if(!p) return;
+  p.status=cycle[(cycle.indexOf(p.status)+1)%cycle.length];
+  savePlans(); renderCal(); renderPlanList(); renderGantt();
+}
+
+function renderPlanList(){
+  var el=document.getElementById('plan-list');
+  var titleEl=document.getElementById('plan-list-title');
+  if(!el) return;
+  var mk=calYear+'-'+String(calMonth+1).padStart(2,'0');
+  var ps=PLANS.filter(function(p){ return p.date.startsWith(mk); })
+              .sort(function(a,b){ return a.date.localeCompare(b.date)||a.timeStart.localeCompare(b.timeStart); });
+  if(titleEl) titleEl.textContent='แผนประจำ'+MONTH_TH[calMonth]+' ('+ps.length+' รายการ)';
+  var lbl={planned:'Planned',inprogress:'In Progress',done:'Done',cancelled:'Cancelled'};
+  if(!ps.length){ el.innerHTML='<div class="plan-empty">ยังไม่มีแผนในเดือนนี้<br>เลือกวันที่และกด + เพิ่มแผน</div>'; return; }
+  el.innerHTML=ps.map(function(p){
+    var d=p.date.split('-');
+    var dl=d[2]+'/'+d[1]+'/'+(parseInt(d[0])+543);
+    return '<div class="plan-item">'+
+      '<div>'+
+        '<div class="plan-item-tag">'+p.tag+'</div>'+
+        '<div class="plan-item-site">'+p.site+(p.fwTarget?' &rarr; <b>'+p.fwTarget+'</b>':'')+'</div>'+
+        '<div class="plan-item-meta">'+dl+' '+p.timeStart+'–'+p.timeEnd+(p.note?' · '+p.note:'')+'</div>'+
+      '</div>'+
+      '<div class="plan-item-right">'+
+        '<button class="plan-status-badge badge-'+p.status+'" onclick="cyclePlanStatus('+p.id+')" title="คลิกเพื่อเปลี่ยนสถานะ">'+lbl[p.status]+'</button>'+
+        '<button class="plan-del-btn" onclick="deletePlan('+p.id+')" title="ลบ">&#10005;</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function renderGantt(){
+  var el=document.getElementById('gantt-wrap');
+  if(!el) return;
+  if(!PLANS.length){ el.innerHTML='<div class="plan-empty">ยังไม่มีแผน</div>'; return; }
+  var byMonth={};
+  PLANS.forEach(function(p){ var mk=p.date.substring(0,7); if(!byMonth[mk]) byMonth[mk]=[]; byMonth[mk].push(p); });
+  var months=Object.keys(byMonth).sort();
+  var lbl={planned:'Planned',inprogress:'In Progress',done:'Done',cancelled:'Cancelled'};
+  var html='<table class="gantt-table"><thead><tr>'+
+    '<th style="width:100px">TAG</th><th style="width:60px">Date</th>'+
+    '<th style="width:85px">Time</th><th>Progress</th><th style="width:75px">Status</th>'+
+    '</tr></thead><tbody>';
+  months.forEach(function(mk){
+    var parts=mk.split('-');
+    var mLabel=MONTH_TH[parseInt(parts[1])-1]+' '+(parseInt(parts[0])+543);
+    var ps=byMonth[mk].sort(function(a,b){ return a.date.localeCompare(b.date); });
+    var done=ps.filter(function(p){ return p.status==='done'; }).length;
+    html+='<tr><td colspan="5" class="gantt-month-group">'+mLabel+' — '+done+'/'+ps.length+' Done</td></tr>';
+    ps.forEach(function(p){
+      var d=p.date.split('-');
+      var pct=p.status==='done'?100:p.status==='inprogress'?50:p.status==='cancelled'?100:8;
+      html+='<tr>'+
+        '<td><div class="gantt-label" title="'+p.tag+'">'+p.tag+'</div><div class="gantt-progress-text">'+p.site+'</div></td>'+
+        '<td class="gantt-date-cell">'+d[2]+'/'+d[1]+'</td>'+
+        '<td class="gantt-date-cell">'+p.timeStart+'–'+p.timeEnd+'</td>'+
+        '<td class="gantt-bar-cell">'+
+          '<div class="gantt-bar-bg"><div class="gantt-bar-fill '+p.status+'" style="width:'+pct+'%"></div></div>'+
+          (p.fwTarget?'<div class="gantt-progress-text">&rarr; '+p.fwTarget+'</div>':'')+
+        '</td>'+
+        '<td><span class="plan-status-badge badge-'+p.status+'" style="cursor:default;font-size:8px">'+lbl[p.status]+'</span></td>'+
+      '</tr>';
+    });
+  });
+  html+='</tbody></table>';
+  el.innerHTML=html;
+}
+
+function exportPlanCSV(){
+  if(!PLANS.length){ alert('ยังไม่มีแผน'); return; }
+  var rows=[['Date','Site','TAG','FW Target','Time Start','Time End','Status','Note']];
+  PLANS.slice().sort(function(a,b){ return a.date.localeCompare(b.date); }).forEach(function(p){
+    rows.push([p.date,p.site,p.tag,p.fwTarget,p.timeStart,p.timeEnd,p.status,p.note]);
+  });
+  var csv=rows.map(function(r){ return r.map(function(c){ return '"'+(c||'').replace(/"/g,'""')+'"'; }).join(','); }).join('\n');
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}));
+  a.download='fw_update_plan.csv'; a.click();
+}
+
+-e 
 </script>
 </body>
 </html>
