@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.6.5</title>
+<title>FC S600+ PTT — Metering Dashboard v1.6.6</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css">
 <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
@@ -355,7 +355,40 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .gantt-leg-dot.cancelled{background:#ef4444}
 .gantt-wrap{overflow-x:auto}
 .gantt-wrap-scroll{overflow-x:auto;overflow-y:auto;max-height:400px;border:1px solid var(--br);border-radius:10px;background:var(--bg)}
-/* Hide sidebar when schedule is active */
+/* Gantt scrollbar — matches .tw scrollbar */
+#gantt-wrap::-webkit-scrollbar{width:3px;height:3px}
+#gantt-wrap::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+#gantt-wrap::-webkit-scrollbar-track{background:transparent}
+/* Frappe Gantt dark mode — force override */
+:root:not(.light) .gantt-container{background:#0d1220}
+:root:not(.light) .gantt .grid-background{fill:#0d1220!important}
+:root:not(.light) .gantt .grid-header{fill:#151d2e!important}
+:root:not(.light) .gantt .grid-row{fill:#0d1220!important}
+:root:not(.light) .gantt .grid-row:nth-child(even){fill:#111827!important}
+:root:not(.light) .gantt .row-line{stroke:#1e2d45!important}
+:root:not(.light) .gantt .tick{stroke:#1e2d45!important;opacity:.4}
+:root:not(.light) .gantt .today-highlight{fill:rgba(99,102,241,.08)!important}
+:root:not(.light) .gantt text{fill:#94a3b8!important}
+:root:not(.light) .gantt .lower-text,:root:not(.light) .gantt .upper-text{fill:#94a3b8!important}
+:root:not(.light) .gantt .bar-label{fill:#fff!important}
+:root:not(.light) .gantt-container .popup-wrapper{background:#151d2e!important;border:1px solid #1e2d45!important;color:#e2e8f0!important}
+:root:not(.light) .gantt-container .popup-wrapper *{color:#e2e8f0}
+/* Frappe Gantt light mode */
+.light .gantt-container{background:#fff}
+.light .gantt .grid-background{fill:#f8fafc!important}
+.light .gantt .grid-header{fill:#f1f5f9!important}
+.light .gantt .grid-row{fill:#fff!important}
+.light .gantt .grid-row:nth-child(even){fill:#f8fafc!important}
+.light .gantt .row-line{stroke:#e2e8f0!important}
+.light .gantt .tick{stroke:#e2e8f0!important}
+.light .gantt text{fill:#475569!important}
+.light .gantt .bar-label{fill:#fff!important}
+.light .gantt-container .popup-wrapper{background:#fff!important;border:1px solid #e2e8f0!important;box-shadow:0 4px 16px rgba(0,0,0,.1)!important}
+/* sched-plans scrollbar */
+.sched-plans::-webkit-scrollbar{width:3px}
+.sched-plans::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+.sched-left::-webkit-scrollbar{width:3px}
+.sched-left::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
 .sched-active .sidebar{display:none!important}
 .sched-active #dash-content{display:none!important}
 .sched-active #map-view{display:none!important}
@@ -450,7 +483,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.6.5</div>
+  <div class="home-version">v1.6.6</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -1161,6 +1194,10 @@ function setTheme(mode){
     if(hbtnL) hbtnL.classList.remove('active');
     try{localStorage.setItem('fc-theme','dark');}catch(e){}
   }
+  // re-render gantt when theme changes so colors update
+  if(typeof renderGantt === 'function' && document.getElementById('gantt-wrap')){
+    setTimeout(renderGantt, 50);
+  }
 }
 // restore saved theme on load — default is light
 (function(){
@@ -1816,27 +1853,38 @@ function renderGantt(){
         '</div>';
       }
     });
-    // color bars by status + apply theme
+    // color bars + apply theme after render
     setTimeout(function(){
       var isLight=document.documentElement.classList.contains('light');
+      // color bars by status
       sorted.forEach(function(p){
         var col=statusColors[p.status]||'#6366f1';
-        var bars=document.querySelectorAll('.gantt-bar-'+p.status+' .bar');
-        bars.forEach(function(b){ b.setAttribute('fill',col); b.style.fill=col; });
-        var progs=document.querySelectorAll('.gantt-bar-'+p.status+' .bar-progress');
-        progs.forEach(function(b){ b.setAttribute('fill',col); b.style.fill=col; b.style.opacity='.7'; });
-      });
-      // theme text colors
-      var ganttSvg=document.querySelector('#gantt-wrap svg');
-      if(ganttSvg){
-        ganttSvg.querySelectorAll('text').forEach(function(t){
-          if(!t.classList.contains('bar-label')) t.style.fill=isLight?'#475569':'#94a3b8';
+        document.querySelectorAll('.gantt-bar-'+p.status+' .bar').forEach(function(b){
+          b.setAttribute('fill',col); b.style.fill=col;
         });
-        ganttSvg.querySelectorAll('.grid-header').forEach(function(r){ r.style.fill=isLight?'#f1f5f9':'#151d2e'; });
-        ganttSvg.querySelectorAll('.grid-row').forEach(function(r,i){ r.style.fill=isLight?(i%2===0?'#fff':'#f8fafc'):(i%2===0?'#0d1220':'#111827'); });
-        ganttSvg.querySelectorAll('.row-line,.tick').forEach(function(r){ r.style.stroke=isLight?'#e2e8f0':'#1e2d45'; });
-      }
-    },80);
+        document.querySelectorAll('.gantt-bar-'+p.status+' .bar-progress').forEach(function(b){
+          b.setAttribute('fill',col); b.style.fill=col; b.style.opacity='.75';
+        });
+      });
+      // apply theme colors to SVG elements
+      var ganttSvg=document.querySelector('#gantt-wrap svg');
+      if(!ganttSvg) return;
+      var bg=isLight?'#f8fafc':'#0d1220';
+      var hdr=isLight?'#f1f5f9':'#151d2e';
+      var rowE=isLight?'#f8fafc':'#111827';
+      var rowO=isLight?'#ffffff':'#0d1220';
+      var stroke=isLight?'#e2e8f0':'#1e2d45';
+      var txtCol=isLight?'#475569':'#94a3b8';
+      ganttSvg.querySelectorAll('.grid-background').forEach(function(el){ el.setAttribute('fill',bg); });
+      ganttSvg.querySelectorAll('.grid-header').forEach(function(el){ el.setAttribute('fill',hdr); });
+      ganttSvg.querySelectorAll('.grid-row').forEach(function(el,i){
+        el.setAttribute('fill', i%2===0 ? rowO : rowE);
+      });
+      ganttSvg.querySelectorAll('.row-line,.tick').forEach(function(el){ el.setAttribute('stroke',stroke); });
+      ganttSvg.querySelectorAll('text').forEach(function(el){
+        if(!el.classList.contains('bar-label')) el.setAttribute('fill',txtCol);
+      });
+    },120);
   }catch(e){ el.innerHTML='<div class="plan-empty">Gantt error: '+e.message+'</div>'; }
 }
 
