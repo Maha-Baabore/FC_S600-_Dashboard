@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.6.9</title>
+<title>FC S600+ PTT — Metering Dashboard v1.6.10</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css">
 <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
@@ -303,11 +303,18 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 #sched-view{flex:1;overflow-y:auto;background:var(--bg);height:calc(100vh - 62px)}
 #sched-view.hidden{display:none!important}
 .sched-layout{display:grid;grid-template-columns:340px 1fr;gap:0;height:100%}
-.sched-left{display:flex;flex-direction:column;gap:0;border-right:1px solid var(--br);overflow-y:auto;height:calc(100vh - 62px)}
+.sched-left{display:flex;flex-direction:column;gap:0;border-right:1px solid var(--br);overflow:hidden;height:calc(100vh - 62px)}
 .sched-right{display:flex;flex-direction:column;overflow:hidden;height:calc(100vh - 62px)}
 .sched-section{background:var(--sf);border-bottom:1px solid var(--br);padding:16px 18px;flex-shrink:0}
 .sched-section.sched-gantt{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
 .sched-plans{flex:1;overflow-y:auto;padding:0 18px 12px;min-height:0}
+/* thin scrollbar for all sched scroll areas */
+.sched-left::-webkit-scrollbar,.sched-plans::-webkit-scrollbar,
+#sched-form-section::-webkit-scrollbar{width:3px;height:3px}
+.sched-left::-webkit-scrollbar-thumb,.sched-plans::-webkit-scrollbar-thumb,
+#sched-form-section::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+.sched-left::-webkit-scrollbar-track,.sched-plans::-webkit-scrollbar-track,
+#sched-form-section::-webkit-scrollbar-track{background:transparent}
 .sched-title{font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:1px;margin-bottom:14px;text-transform:uppercase;font-family:'Space Mono',monospace}
 .sched-subtitle{font-size:10px;font-weight:700;color:var(--tx2);letter-spacing:.8px;text-transform:uppercase;font-family:'Space Mono',monospace}
 .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
@@ -390,12 +397,6 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .light .gantt .bar-label{fill:#fff!important;font-weight:700!important}
 .light .gantt-container .popup-wrapper{background:#fff!important;border:1px solid #e2e8f0!important;box-shadow:0 4px 16px rgba(0,0,0,.1)!important}
 /* sched-plans scrollbar */
-.sched-plans::-webkit-scrollbar{width:3px;height:3px}
-.sched-plans::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
-.sched-plans::-webkit-scrollbar-track{background:transparent}
-.sched-left::-webkit-scrollbar{width:3px;height:3px}
-.sched-left::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
-.sched-left::-webkit-scrollbar-track{background:transparent}
 /* bar-label: white on dark, dark on light */
 .light .gantt .bar-label{fill:#1e293b!important;font-weight:700!important}
 .sched-active .sidebar{display:none!important}
@@ -490,7 +491,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.6.9</div>
+  <div class="home-version">v1.6.10</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
