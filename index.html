@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.6.11</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css">
-<script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.js"></script>
+<title>FC S600+ PTT — Metering Dashboard v1.7.0</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -397,7 +395,27 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .light .gantt .bar-label{fill:#fff!important;font-weight:700!important}
 .light .gantt-container .popup-wrapper{background:#fff!important;border:1px solid #e2e8f0!important;box-shadow:0 4px 16px rgba(0,0,0,.1)!important}
 /* sched-plans scrollbar */
-/* bar-label: white on dark, dark on light */
+/* Timeline Summary */
+.tl-region-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;cursor:pointer;margin-bottom:4px;border:1px solid var(--br);background:var(--bg);transition:background .15s;user-select:none}
+.tl-region-row:hover{background:var(--sf2)}
+.tl-region-chevron{font-size:10px;color:var(--tx3);transition:transform .2s;flex-shrink:0;width:12px}
+.tl-region-chevron.open{transform:rotate(90deg)}
+.tl-region-label{font-size:11px;font-weight:700;font-family:'Space Mono',monospace;width:60px;flex-shrink:0}
+.tl-region-bars{flex:1;display:flex;gap:3px;align-items:center}
+.tl-stat-pill{font-size:9px;font-weight:700;border-radius:12px;padding:2px 7px;font-family:'Space Mono',monospace;white-space:nowrap}
+.tl-stat-total{background:var(--sf2);color:var(--tx2);border:1px solid var(--br)}
+.tl-progress-bar{flex:1;height:8px;background:var(--sf2);border-radius:4px;overflow:hidden;display:flex;gap:1px}
+.tl-seg{height:100%;min-width:2px;border-radius:2px;transition:width .3s}
+.tl-items{display:none;padding:0 0 6px 22px}
+.tl-items.open{display:block}
+.tl-item{display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:6px;margin-bottom:2px;cursor:pointer;transition:background .15s;border-left:2px solid var(--br)}
+.tl-item:hover{background:var(--sf2)}
+.tl-item-tag{font-size:11px;font-weight:700;font-family:'Space Mono',monospace;color:var(--tx);min-width:90px}
+.tl-item-date{font-size:10px;color:var(--tx3);font-family:'Space Mono',monospace;min-width:80px}
+.tl-item-fw{font-size:10px;color:var(--tx3);flex:1}
+.tl-item-badge{font-size:8px;font-weight:700;border-radius:20px;padding:2px 8px;text-transform:uppercase;font-family:'Space Mono',monospace;flex-shrink:0}
+#gantt-wrap::-webkit-scrollbar{width:3px}
+#gantt-wrap::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
 .light .gantt .bar-label{fill:#1e293b!important;font-weight:700!important}
 .sched-active .sidebar{display:none!important}
 .sched-active #dash-content{display:none!important}
@@ -491,7 +509,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.6.11</div>
+  <div class="home-version">v1.7.0</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -703,25 +721,24 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
           <!-- Plan list scrollable -->
           <div class="sched-plans" id="plan-list"></div>
 
-          <!-- Gantt chart -->
+          <!-- Timeline Summary -->
           <div class="sched-section sched-gantt">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-shrink:0">
-              <div class="sched-subtitle">&#9646; Gantt Chart — Progress Overview</div>
-              <div style="display:flex;gap:6px">
-                <button class="sf-sm-btn" onclick="setGanttView('Day')">Day</button>
-                <button class="sf-sm-btn" onclick="setGanttView('Week')">Week</button>
-                <button class="sf-sm-btn" onclick="setGanttView('Month')">Month</button>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-shrink:0">
+              <div class="sched-subtitle">&#9646; Timeline Summary — by Region</div>
+              <div style="display:flex;gap:6px;align-items:center">
+                <span style="font-size:9px;color:var(--tx3);font-family:'Space Mono',monospace">Click region to expand</span>
+                <button class="sf-sm-btn" onclick="tlExpandAll()">Expand All</button>
+                <button class="sf-sm-btn" onclick="tlCollapseAll()">Collapse All</button>
               </div>
             </div>
             <!-- Legend -->
-            <div class="gantt-legend" style="flex-shrink:0">
+            <div class="gantt-legend" style="flex-shrink:0;margin-bottom:8px">
               <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#6366f1"></span>Planned</span>
               <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#f59e0b"></span>In Progress</span>
               <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#10b981"></span>Done</span>
               <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#ef4444"></span>Cancelled</span>
-              <span style="font-size:9px;color:var(--tx3);font-family:'Space Mono',monospace;margin-left:6px">Click bar to edit</span>
             </div>
-            <div id="gantt-wrap" style="flex:1;overflow:auto;min-height:0"></div>
+            <div id="gantt-wrap" style="flex:1;overflow-y:auto;overflow-x:hidden;min-height:0"></div>
           </div>
 
         </div>
@@ -1202,7 +1219,7 @@ function setTheme(mode){
     if(hbtnL) hbtnL.classList.remove('active');
     try{localStorage.setItem('fc-theme','dark');}catch(e){}
   }
-  // re-render gantt when theme changes so colors update
+  // re-render gantt when theme changes
   if(typeof renderGantt === 'function' && document.getElementById('gantt-wrap')){
     setTimeout(renderGantt, 50);
   }
@@ -1812,96 +1829,102 @@ function renderPlanList(){
   }).join('');
 }
 
-var frappeGanttInst = null;
-var ganttViewMode = 'Week';
-function setGanttView(mode){ ganttViewMode=mode; renderGantt(); }
+// ── TIMELINE SUMMARY (Option 3) ──
+var TL_OPEN = {}; // track which regions are expanded
+
+function tlExpandAll(){
+  Object.keys(TL_OPEN).forEach(function(k){ TL_OPEN[k]=true; });
+  renderGantt();
+}
+function tlCollapseAll(){
+  Object.keys(TL_OPEN).forEach(function(k){ TL_OPEN[k]=false; });
+  renderGantt();
+}
+function tlToggle(region){
+  TL_OPEN[region] = !TL_OPEN[region];
+  renderGantt();
+}
 
 function renderGantt(){
   var el=document.getElementById('gantt-wrap');
   if(!el) return;
-  if(!PLANS.length){ el.innerHTML='<div class="plan-empty">No plans yet</div>'; frappeGanttInst=null; return; }
-  var statusColors={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444'};
-  var sorted=PLANS.slice().sort(function(a,b){ return a.date.localeCompare(b.date); });
-  var tasks=sorted.map(function(p){
-    // frappe needs end >= start; add 1 day for same-day tasks
-    var ed=new Date(p.date); ed.setDate(ed.getDate()+1);
-    var endStr=ed.getFullYear()+'-'+String(ed.getMonth()+1).padStart(2,'0')+'-'+String(ed.getDate()).padStart(2,'0');
-    return {
-      id:String(p.id),
-      name:p.tag,
-      start:p.date, end:endStr,
-      progress:p.status==='done'?100:p.status==='inprogress'?50:0,
-      custom_class:'gantt-bar-'+p.status
-    };
+  if(!PLANS.length){ el.innerHTML='<div class="plan-empty">No plans yet.<br>Add plans using the form on the left.</div>'; return; }
+
+  var SC={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444'};
+  var SL={planned:'Planned',inprogress:'In Progress',done:'Done',cancelled:'Cancelled'};
+  var SB={planned:'badge-planned',inprogress:'badge-inprogress',done:'badge-done',cancelled:'badge-cancelled'};
+
+  // Group plans by region (lookup from DATA)
+  var byRegion={};
+  PLANS.forEach(function(p){
+    var row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; })||{};
+    var reg=(row['PTT Region']||p.site||'Unknown').trim();
+    if(!byRegion[reg]) byRegion[reg]=[];
+    byRegion[reg].push(p);
   });
-  el.innerHTML='<svg id="gantt-svg"></svg>';
-  try{
-    frappeGanttInst=new Gantt('#gantt-svg',tasks,{
-      view_mode:ganttViewMode,
-      date_format:'YYYY-MM-DD',
-      bar_height:24,
-      padding:14,
-      on_click:function(task){ openEditPlan(parseInt(task.id)); },
-      on_progress_change:function(task,progress){
-        var p=PLANS.find(function(x){ return String(x.id)===task.id; });
-        if(p){ p.status=progress>=100?'done':progress>0?'inprogress':'planned'; savePlans(); renderCal(); renderPlanList(); }
-      },
-      custom_popup_html:function(task){
-        var p=PLANS.find(function(x){ return String(x.id)===task.id; });
-        if(!p) return '';
-        var lbl={planned:'Planned',inprogress:'In Progress',done:'Done',cancelled:'Cancelled'};
-        var col=statusColors[p.status]||'#6366f1';
-        return '<div style="padding:10px 14px;min-width:180px;font-family:DM Sans,sans-serif">'+
-          '<b style="font-size:13px">'+p.tag+'</b><br>'+
-          '<span style="font-size:11px;color:#888">'+p.site+(p.fwTarget?' → '+p.fwTarget:'')+'</span><br><br>'+
-          '<span style="font-size:11px">📅 '+p.date+'</span><br>'+
-          '<span style="font-size:11px">🕐 '+p.timeStart+'–'+p.timeEnd+'</span><br><br>'+
-          '<span style="background:'+col+'22;color:'+col+';font-size:9px;font-weight:700;padding:2px 9px;border-radius:20px;text-transform:uppercase">'+lbl[p.status]+'</span>'+
-          (p.note?'<br><span style="font-size:10px;color:#888;margin-top:4px;display:block">'+p.note+'</span>':'')+
+
+  // Sort regions numerically then alpha
+  var regions=Object.keys(byRegion).sort(function(a,b){
+    var na=parseInt(a),nb=parseInt(b);
+    if(!isNaN(na)&&!isNaN(nb)) return na-nb;
+    if(!isNaN(na)) return -1;
+    if(!isNaN(nb)) return 1;
+    return a.localeCompare(b);
+  });
+
+  // Ensure all regions have TL_OPEN state
+  regions.forEach(function(r){ if(TL_OPEN[r]===undefined) TL_OPEN[r]=false; });
+
+  var html='';
+  regions.forEach(function(reg){
+    var ps=byRegion[reg].slice().sort(function(a,b){ return a.date.localeCompare(b.date); });
+    var cnt={planned:0,inprogress:0,done:0,cancelled:0};
+    ps.forEach(function(p){ if(cnt[p.status]!==undefined) cnt[p.status]++; });
+    var total=ps.length;
+    var doneTotal=cnt.done+cnt.inprogress;
+    var pct=total?Math.round(doneTotal/total*100):0;
+    var isOpen=TL_OPEN[reg];
+    var regColor=REGION_COLOR_MAP[reg]||'#6366f1';
+
+    // Region summary row
+    html+='<div class="tl-region-row" onclick="tlToggle(\''+reg+'\')">'+
+      '<span class="tl-region-chevron'+(isOpen?' open':'')+'">&#9654;</span>'+
+      '<span class="tl-region-label" style="color:'+regColor+'">'+reg+'</span>'+
+      '<div class="tl-region-bars">'+
+        // stacked progress bar
+        '<div class="tl-progress-bar" title="'+pct+'% complete">'+
+          (cnt.done?'<div class="tl-seg" style="background:#10b981;width:'+(cnt.done/total*100).toFixed(1)+'%"></div>':'')+
+          (cnt.inprogress?'<div class="tl-seg" style="background:#f59e0b;width:'+(cnt.inprogress/total*100).toFixed(1)+'%"></div>':'')+
+          (cnt.planned?'<div class="tl-seg" style="background:#6366f1;width:'+(cnt.planned/total*100).toFixed(1)+'%"></div>':'')+
+          (cnt.cancelled?'<div class="tl-seg" style="background:#ef4444;opacity:.4;width:'+(cnt.cancelled/total*100).toFixed(1)+'%"></div>':'')+
+        '</div>'+
+        '<span style="font-size:9px;color:var(--tx3);font-family:Space Mono,monospace;margin-left:6px;white-space:nowrap">'+pct+'%</span>'+
+      '</div>'+
+      // stat pills
+      (cnt.done?'<span class="tl-stat-pill" style="background:rgba(16,185,129,.15);color:#10b981">&#10003; '+cnt.done+'</span>':'')+
+      (cnt.inprogress?'<span class="tl-stat-pill" style="background:rgba(245,158,11,.15);color:#f59e0b">&#9654; '+cnt.inprogress+'</span>':'')+
+      (cnt.planned?'<span class="tl-stat-pill" style="background:rgba(99,102,241,.15);color:#6366f1">'+cnt.planned+'</span>':'')+
+      (cnt.cancelled?'<span class="tl-stat-pill" style="background:rgba(239,68,68,.15);color:#ef4444">'+cnt.cancelled+'</span>':'')+
+      '<span class="tl-stat-pill tl-stat-total">'+total+' total</span>'+
+    '</div>';
+
+    // Expandable item rows
+    html+='<div class="tl-items'+(isOpen?' open':'')+'">'+
+      ps.map(function(p){
+        var d=p.date.split('-');
+        var dl=d[2]+'/'+d[1]+'/'+(parseInt(d[0])+543);
+        return '<div class="tl-item" onclick="openEditPlan('+p.id+')" style="border-left-color:'+SC[p.status]+'">'+
+          '<div class="tl-item-tag">'+p.tag+'</div>'+
+          '<div class="tl-item-date">'+dl+'</div>'+
+          '<div class="tl-item-fw">'+(p.fwTarget?'&rarr; <b>'+p.fwTarget+'</b>':'')+(p.note?' &middot; '+p.note:'')+'</div>'+
+          '<span class="tl-item-badge '+SB[p.status]+'" style="cursor:default">'+SL[p.status]+'</span>'+
+          '<button class="plan-del-btn" onclick="event.stopPropagation();cyclePlanStatus('+p.id+')" title="Change status" style="font-size:10px">&#8635;</button>'+
         '</div>';
-      }
-    });
-    // color bars + apply theme after render
-    setTimeout(function(){
-      var isLight=document.documentElement.classList.contains('light');
-      // color bars by status
-      sorted.forEach(function(p){
-        var col=statusColors[p.status]||'#6366f1';
-        document.querySelectorAll('.gantt-bar-'+p.status+' .bar').forEach(function(b){
-          b.setAttribute('fill',col); b.style.fill=col;
-          b.setAttribute('stroke', isLight ? 'rgba(0,0,0,0.15)' : 'rgba(0,0,0,0.3)');
-          b.setAttribute('stroke-width','1');
-        });
-        document.querySelectorAll('.gantt-bar-'+p.status+' .bar-progress').forEach(function(b){
-          b.setAttribute('fill',col); b.style.fill=col; b.style.opacity='.75';
-        });
-        // force label color based on theme
-        document.querySelectorAll('.gantt-bar-'+p.status+' .bar-label').forEach(function(b){
-          var labelCol = isLight ? '#1e293b' : '#fff';
-          b.setAttribute('fill', labelCol); b.style.fill = labelCol;
-          b.style.fontWeight='700'; b.style.fontSize='11px';
-        });
-      });
-      // apply theme colors to SVG elements
-      var ganttSvg=document.querySelector('#gantt-wrap svg');
-      if(!ganttSvg) return;
-      var bg=isLight?'#f8fafc':'#0d1220';
-      var hdr=isLight?'#f1f5f9':'#151d2e';
-      var rowE=isLight?'#f8fafc':'#111827';
-      var rowO=isLight?'#ffffff':'#0d1220';
-      var stroke=isLight?'#e2e8f0':'#1e2d45';
-      var txtCol=isLight?'#475569':'#94a3b8';
-      ganttSvg.querySelectorAll('.grid-background').forEach(function(el){ el.setAttribute('fill',bg); });
-      ganttSvg.querySelectorAll('.grid-header').forEach(function(el){ el.setAttribute('fill',hdr); });
-      ganttSvg.querySelectorAll('.grid-row').forEach(function(el,i){
-        el.setAttribute('fill', i%2===0 ? rowO : rowE);
-      });
-      ganttSvg.querySelectorAll('.row-line,.tick').forEach(function(el){ el.setAttribute('stroke',stroke); });
-      ganttSvg.querySelectorAll('text').forEach(function(el){
-        if(!el.classList.contains('bar-label')) el.setAttribute('fill',txtCol);
-      });
-    },120);
-  }catch(e){ el.innerHTML='<div class="plan-empty">Gantt error: '+e.message+'</div>'; }
+      }).join('')+
+    '</div>';
+  });
+
+  el.innerHTML=html;
 }
 
 
