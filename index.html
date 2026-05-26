@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.6.10</title>
+<title>FC S600+ PTT — Metering Dashboard v1.6.11</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css">
 <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
@@ -491,7 +491,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.6.10</div>
+  <div class="home-version">v1.6.11</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -1979,7 +1979,7 @@ function openReport(id){
   document.getElementById('rpt-site').value=row['Site']||p.site;
   document.getElementById('rpt-name').value=row['Metering name']||row['metering name']||'';
   document.getElementById('rpt-tag').value=p.tag;
-  document.getElementById('rpt-ip').value=row['IP Address']||row['IP']||'';
+  document.getElementById('rpt-ip').value=row['IP : Address']||row['IP Address']||row['IP:Address']||row['IP']||'';
   document.getElementById('rpt-serial').value=row['Serial No.']||row['Serial No']||'';
   document.getElementById('rpt-firmware').value=p.fwTarget||row['Firmware']||'';
   document.getElementById('rpt-fw-update').value='Up-to-date';
@@ -2008,7 +2008,7 @@ function submitReport(){
     'Site':       document.getElementById('rpt-site').value,
     'Metering name': document.getElementById('rpt-name').value,
     'TAG':        document.getElementById('rpt-tag').value,
-    'IP Address': document.getElementById('rpt-ip').value,
+    'IP : Address': document.getElementById('rpt-ip').value,
     'Serial No.': document.getElementById('rpt-serial').value,
     'Firmware':   document.getElementById('rpt-firmware').value,
     'Firmware Update': document.getElementById('rpt-fw-update').value,
