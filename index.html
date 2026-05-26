@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.6.6</title>
+<title>FC S600+ PTT — Metering Dashboard v1.6.8</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css">
 <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
@@ -359,6 +359,11 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 #gantt-wrap::-webkit-scrollbar{width:3px;height:3px}
 #gantt-wrap::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
 #gantt-wrap::-webkit-scrollbar-track{background:transparent}
+/* Frappe Gantt actual scroll container */
+.gantt-container::-webkit-scrollbar{width:3px;height:3px}
+.gantt-container::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+.gantt-container::-webkit-scrollbar-track{background:transparent}
+.gantt-container::-webkit-scrollbar-corner{background:transparent}
 /* Frappe Gantt dark mode — force override */
 :root:not(.light) .gantt-container{background:#0d1220}
 :root:not(.light) .gantt .grid-background{fill:#0d1220!important}
@@ -382,7 +387,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .light .gantt .row-line{stroke:#e2e8f0!important}
 .light .gantt .tick{stroke:#e2e8f0!important}
 .light .gantt text{fill:#475569!important}
-.light .gantt .bar-label{fill:#fff!important}
+.light .gantt .bar-label{fill:#fff!important;font-weight:700!important}
 .light .gantt-container .popup-wrapper{background:#fff!important;border:1px solid #e2e8f0!important;box-shadow:0 4px 16px rgba(0,0,0,.1)!important}
 /* sched-plans scrollbar */
 .sched-plans::-webkit-scrollbar{width:3px}
@@ -483,7 +488,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.6.6</div>
+  <div class="home-version">v1.6.8</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -1861,9 +1866,16 @@ function renderGantt(){
         var col=statusColors[p.status]||'#6366f1';
         document.querySelectorAll('.gantt-bar-'+p.status+' .bar').forEach(function(b){
           b.setAttribute('fill',col); b.style.fill=col;
+          b.setAttribute('stroke', isLight ? 'rgba(0,0,0,0.15)' : 'rgba(0,0,0,0.3)');
+          b.setAttribute('stroke-width','1');
         });
         document.querySelectorAll('.gantt-bar-'+p.status+' .bar-progress').forEach(function(b){
           b.setAttribute('fill',col); b.style.fill=col; b.style.opacity='.75';
+        });
+        // force label white regardless of theme
+        document.querySelectorAll('.gantt-bar-'+p.status+' .bar-label').forEach(function(b){
+          b.setAttribute('fill','#fff'); b.style.fill='#fff';
+          b.style.fontWeight='700'; b.style.fontSize='11px';
         });
       });
       // apply theme colors to SVG elements
