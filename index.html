@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.5.0</title>
+<title>FC S600+ PTT — Metering Dashboard v1.6.0</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css">
 <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
@@ -352,6 +352,29 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .gantt-leg-dot.done{background:#10b981}
 .gantt-leg-dot.cancelled{background:#ef4444}
 .gantt-wrap{overflow-x:auto}
+.gantt-wrap-scroll{overflow-x:auto;overflow-y:auto;max-height:400px;border:1px solid var(--br);border-radius:10px;background:var(--bg)}
+/* Hide sidebar when schedule is active */
+.sched-active .sidebar{display:none!important}
+.sched-active #dash-content{display:none!important}
+.sched-active #map-view{display:none!important}
+/* Frappe Gantt dark mode */
+:root:not(.light) .gantt .grid-background{fill:#0d1220}
+:root:not(.light) .gantt .grid-header{fill:#151d2e}
+:root:not(.light) .gantt .grid-row{fill:#0d1220}
+:root:not(.light) .gantt .grid-row:nth-child(even){fill:#111827}
+:root:not(.light) .gantt .row-line{stroke:#1e2d45}
+:root:not(.light) .gantt .tick{stroke:#1e2d45}
+:root:not(.light) .gantt .today-highlight{fill:rgba(99,102,241,.08)}
+:root:not(.light) .gantt text{fill:#94a3b8}
+:root:not(.light) .gantt .lower-text,:root:not(.light) .gantt .upper-text{fill:#94a3b8}
+:root:not(.light) .gantt .bar-label{fill:#fff}
+:root:not(.light) .gantt-container .popup-wrapper{background:#151d2e;border:1px solid #1e2d45;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.light .gantt .grid-background{fill:#f8fafc}
+.light .gantt .grid-header{fill:#f1f5f9}
+.light .gantt .grid-row{fill:#fff}
+.light .gantt .grid-row:nth-child(even){fill:#f8fafc}
+.light .gantt text{fill:#475569}
+.light .gantt .bar-label{fill:#fff}
 .gantt-table{width:100%;border-collapse:collapse;min-width:500px}
 .gantt-table th{font-size:9px;color:var(--tx3);font-family:'Space Mono',monospace;text-transform:uppercase;padding:5px 8px;border-bottom:1px solid var(--br);white-space:nowrap;font-weight:600;text-align:left}
 .gantt-table td{padding:5px 8px;border-bottom:1px solid var(--br);vertical-align:middle}
@@ -425,7 +448,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.5.0</div>
+  <div class="home-version">v1.6.0</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -567,7 +590,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
         <!-- LEFT: Calendar + Add form -->
         <div class="sched-left">
           <div class="sched-section">
-            <div class="sched-title">&#128197; แผนการอัปเดต Firmware</div>
+            <div class="sched-title">&#128197; Firmware Update Plan</div>
 
             <!-- Month navigator -->
             <div class="cal-nav">
@@ -580,42 +603,42 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
             <div class="cal-grid" id="cal-grid"></div>
 
             <!-- Selected date indicator -->
-            <div class="cal-selected-date" id="cal-selected-label">เลือกวันที่ต้องการวางแผน</div>
+            <div class="cal-selected-date" id="cal-selected-label">Select a date to plan</div>
           </div>
 
           <!-- Add plan form -->
           <div class="sched-section" id="sched-form-section">
-            <div class="sched-subtitle">&#10133; เพิ่มแผนอัปเดต</div>
+            <div class="sched-subtitle">&#10133; Add Update Plan</div>
             <div class="sched-form">
               <div class="sf-row">
-                <label class="sf-label">สถานี (Site)</label>
+                <label class="sf-label">Site</label>
                 <select class="sf-input" id="sf-site">
-                  <option value="">-- เลือกสถานี --</option>
+                  <option value="">-- Select Site --</option>
                 </select>
               </div>
               <div class="sf-row">
                 <label class="sf-label">TAG</label>
                 <select class="sf-input" id="sf-tag">
-                  <option value="">-- เลือก TAG --</option>
+                  <option value="">-- Select TAG --</option>
                 </select>
               </div>
               <div class="sf-row">
-                <label class="sf-label">Firmware เป้าหมาย</label>
-                <input class="sf-input" id="sf-fw-target" type="text" placeholder="เช่น 06.31">
+                <label class="sf-label">Target Firmware</label>
+                <input class="sf-input" id="sf-fw-target" type="text" placeholder="e.g. 06.31">
               </div>
               <div class="sf-row">
-                <label class="sf-label">เวลาเริ่ม</label>
+                <label class="sf-label">Start Time</label>
                 <input class="sf-input" id="sf-time-start" type="time" value="08:00">
               </div>
               <div class="sf-row">
-                <label class="sf-label">เวลาสิ้นสุด</label>
+                <label class="sf-label">End Time</label>
                 <input class="sf-input" id="sf-time-end" type="time" value="17:00">
               </div>
               <div class="sf-row">
-                <label class="sf-label">หมายเหตุ</label>
+                <label class="sf-label">Note</label>
                 <input class="sf-input" id="sf-note" type="text" placeholder="optional">
               </div>
-              <button class="sf-add-btn" onclick="addPlan()">&#43; เพิ่มแผน</button>
+              <button class="sf-add-btn" onclick="addPlan()">&#43; Add Plan</button>
             </div>
           </div>
         </div>
@@ -626,9 +649,10 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
           <!-- Plan list for selected month -->
           <div class="sched-section">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-              <div class="sched-subtitle" id="plan-list-title">แผนประจำเดือน</div>
+              <div class="sched-subtitle" id="plan-list-title">Monthly Plan</div>
               <div style="display:flex;gap:8px">
                 <button class="sf-sm-btn" onclick="exportPlanCSV()">&#8595; Export CSV</button>
+                <button class="sf-sm-btn" style="color:#ef4444;border-color:#ef444433" onclick="clearAllPlans()">&#128465; Clear All</button>
               </div>
             </div>
             <div id="plan-list"></div>
@@ -637,14 +661,22 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
           <!-- Gantt chart -->
           <div class="sched-section">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-              <div class="sched-subtitle">&#9646; Gantt Chart — ภาพรวม Progress</div>
+              <div class="sched-subtitle">&#9646; Gantt Chart — Progress Overview</div>
               <div style="display:flex;gap:6px">
                 <button class="sf-sm-btn" onclick="setGanttView('Day')">Day</button>
                 <button class="sf-sm-btn" onclick="setGanttView('Week')">Week</button>
                 <button class="sf-sm-btn" onclick="setGanttView('Month')">Month</button>
               </div>
             </div>
-            <div id="gantt-wrap" style="overflow-x:auto;min-height:60px"></div>
+            <!-- Legend -->
+            <div class="gantt-legend">
+              <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#6366f1"></span>Planned</span>
+              <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#f59e0b"></span>In Progress</span>
+              <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#10b981"></span>Done</span>
+              <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#ef4444"></span>Cancelled</span>
+              <span style="font-size:9px;color:var(--tx3);font-family:'Space Mono',monospace;margin-left:6px">Click bar to edit</span>
+            </div>
+            <div id="gantt-wrap" class="gantt-wrap-scroll"></div>
           </div>
 
         </div>
@@ -728,7 +760,6 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
     </div>
   </div>
 </div>
-<script>
 // ═══════════════════════════════════════════════
 //  CONFIG — URL และชื่อ Sheet ถูกฝังไว้ที่นี่
 // ═══════════════════════════════════════════════
@@ -1152,6 +1183,9 @@ function setView(v) {
   document.getElementById('dash-content').classList.toggle('hidden', v !== 'dash');
   document.getElementById('map-view').classList.toggle('hidden', v !== 'map');
   document.getElementById('sched-view').classList.toggle('hidden', v !== 'sched');
+  // hide sidebar when schedule view is active
+  var mainEl = document.querySelector('.main');
+  if(mainEl) mainEl.classList.toggle('sched-active', v === 'sched');
   if (v === 'map') {
     if (!mapBuilt && DATA.length > 0) buildPixelMap();
     renderMapKPI();
@@ -1695,25 +1729,33 @@ function renderPlanList(){
   var mk=calYear+'-'+String(calMonth+1).padStart(2,'0');
   var ps=PLANS.filter(function(p){ return p.date.startsWith(mk); })
               .sort(function(a,b){ return a.date.localeCompare(b.date)||a.timeStart.localeCompare(b.timeStart); });
-  if(titleEl) titleEl.textContent='แผนประจำ'+MONTH_TH[calMonth]+' ('+ps.length+' รายการ)';
+  if(titleEl) titleEl.textContent=MONTH_TH[calMonth]+' Plan ('+ps.length+' items)';
   var lbl={planned:'Planned',inprogress:'In Progress',done:'Done',cancelled:'Cancelled'};
-  if(!ps.length){ el.innerHTML='<div class="plan-empty">ยังไม่มีแผนในเดือนนี้<br>เลือกวันที่และกด + เพิ่มแผน</div>'; return; }
+  if(!ps.length){ el.innerHTML='<div class="plan-empty">No plans this month.<br>Select a date and add a plan.</div>'; return; }
   el.innerHTML=ps.map(function(p){
     var d=p.date.split('-');
     var dl=d[2]+'/'+d[1]+'/'+(parseInt(d[0])+543);
-    var isDone = p.status==='done';
+    // lookup extra info from DATA
+    var row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; })||{};
+    var app=(row['Applications']||'').trim()||'—';
+    var fwCurrent=(row['Firmware']||'').trim()||'—';
     return '<div class="plan-item">'+
-      '<div>'+
+      '<div style="flex:1;min-width:0">'+
         '<div class="plan-item-tag">'+p.tag+'</div>'+
-        '<div class="plan-item-site">'+p.site+(p.fwTarget?' &rarr; <b>'+p.fwTarget+'</b>':'')+'</div>'+
-        '<div class="plan-item-meta">'+dl+' '+p.timeStart+'–'+p.timeEnd+(p.note?' · '+p.note:'')+'</div>'+
+        '<div class="plan-item-site">'+p.site+'</div>'+
+        '<div class="plan-item-meta" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">'+
+          '<span>&#128337; '+dl+' '+p.timeStart+'–'+p.timeEnd+'</span>'+
+          '<span>App: <b>'+app+'</b></span>'+
+          '<span>FW: <b>'+fwCurrent+'</b> &rarr; <b style="color:var(--ac)">'+( p.fwTarget||'—')+'</b></span>'+
+          (p.note?'<span>'+p.note+'</span>':'')+
+        '</div>'+
       '</div>'+
       '<div class="plan-item-right">'+
-        '<button class="plan-status-badge badge-'+p.status+'" onclick="cyclePlanStatus('+p.id+')" title="คลิกเพื่อเปลี่ยนสถานะ">'+lbl[p.status]+'</button>'+
-        '<div style="display:flex;gap:4px;margin-top:3px">'+
-          (isDone?'<button class="sf-sm-btn" style="font-size:9px;padding:3px 7px" onclick="openReport('+p.id+')" title="รายงานผล">&#128196; Report</button>':'')+
-          '<button class="sf-sm-btn" style="font-size:9px;padding:3px 7px" onclick="openEditPlan('+p.id+')" title="แก้ไข">&#9998;</button>'+
-          '<button class="plan-del-btn" onclick="deletePlan('+p.id+')" title="ลบ">&#10005;</button>'+
+        '<button class="plan-status-badge badge-'+p.status+'" onclick="cyclePlanStatus('+p.id+')" title="Click to change status">'+lbl[p.status]+'</button>'+
+        '<div style="display:flex;gap:4px;margin-top:4px">'+
+          '<button class="sf-sm-btn" style="font-size:9px;padding:3px 7px;color:#10b981;border-color:#10b98133" onclick="openReport('+p.id+')" title="Report update result">&#128196; Report</button>'+
+          '<button class="sf-sm-btn" style="font-size:9px;padding:3px 7px" onclick="openEditPlan('+p.id+')" title="Edit">&#9998;</button>'+
+          '<button class="plan-del-btn" onclick="deletePlan('+p.id+')" title="Delete">&#10005;</button>'+
         '</div>'+
       '</div>'+
     '</div>';
@@ -1769,8 +1811,9 @@ function renderGantt(){
         '</div>';
       }
     });
-    // color bars by status
+    // color bars by status + apply theme
     setTimeout(function(){
+      var isLight=document.documentElement.classList.contains('light');
       sorted.forEach(function(p){
         var col=statusColors[p.status]||'#6366f1';
         var bars=document.querySelectorAll('.gantt-bar-'+p.status+' .bar');
@@ -1778,12 +1821,29 @@ function renderGantt(){
         var progs=document.querySelectorAll('.gantt-bar-'+p.status+' .bar-progress');
         progs.forEach(function(b){ b.setAttribute('fill',col); b.style.fill=col; b.style.opacity='.7'; });
       });
+      // theme text colors
+      var ganttSvg=document.querySelector('#gantt-wrap svg');
+      if(ganttSvg){
+        ganttSvg.querySelectorAll('text').forEach(function(t){
+          if(!t.classList.contains('bar-label')) t.style.fill=isLight?'#475569':'#94a3b8';
+        });
+        ganttSvg.querySelectorAll('.grid-header').forEach(function(r){ r.style.fill=isLight?'#f1f5f9':'#151d2e'; });
+        ganttSvg.querySelectorAll('.grid-row').forEach(function(r,i){ r.style.fill=isLight?(i%2===0?'#fff':'#f8fafc'):(i%2===0?'#0d1220':'#111827'); });
+        ganttSvg.querySelectorAll('.row-line,.tick').forEach(function(r){ r.style.stroke=isLight?'#e2e8f0':'#1e2d45'; });
+      }
     },80);
   }catch(e){ el.innerHTML='<div class="plan-empty">Gantt error: '+e.message+'</div>'; }
 }
 
 
-function exportPlanCSV(){
+function clearAllPlans(){
+  if(!confirm('Delete ALL plans? This cannot be undone.')) return;
+  PLANS=[];
+  savePlans();
+  renderCal(); renderPlanList(); renderGantt();
+}
+
+
   if(!PLANS.length){ alert('ยังไม่มีแผน'); return; }
   var rows=[['Date','Site','TAG','FW Target','Time Start','Time End','Status','Note']];
   PLANS.slice().sort(function(a,b){ return a.date.localeCompare(b.date); }).forEach(function(p){
