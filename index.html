@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.11.7</title>
+<title>FC S600+ PTT — Metering Dashboard v1.11.8</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -593,7 +593,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.11.7 — visionOS-inspired
+   LIQUID GLASS v1.11.8 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1774,7 +1774,7 @@ html, html.light, html:not(.light){background: transparent !important}
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.11.7</div>
+  <div class="home-version">v1.11.8</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -3591,7 +3591,7 @@ function gcExport(){
       ps.slice().sort(function(a,b){ return a.date.localeCompare(b.date); }).forEach(function(p,ri){
         rect(0,y,totalW,ROW_H,ri%2===0?BG:ROW_ALT);
         // label
-        ctx.save(); ctx.rect(2,y,LABEL_W-4,ROW_H); ctx.clip();
+        ctx.save(); ctx.beginPath(); ctx.rect(2,y,LABEL_W-4,ROW_H); ctx.clip();
         text(p.tag,20,y+ROW_H/2,TXT2,10,'left',true);
         ctx.restore();
         // bar
@@ -3610,7 +3610,8 @@ function gcExport(){
           ctx.closePath(); ctx.fill();
           // tag label on bar
           if(COL_W>=32){
-            ctx.save(); ctx.rect(x,by,bw,bh); ctx.clip();
+            ctx.save();
+            ctx.beginPath(); ctx.rect(x+2,by,bw-4,bh); ctx.clip();
             text(p.tag,x+bw/2,by+bh/2,'#fff',8,'center',true);
             ctx.restore();
           }
@@ -3802,7 +3803,7 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge" style="width: 232px">v1.11.7</div>
+<div class="version-badge" style="width: 232px">v1.11.8</div>
 </body>
 </html>
 
