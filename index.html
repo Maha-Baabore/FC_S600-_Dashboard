@@ -1956,7 +1956,24 @@ html:not(.light) .map-panel {
       <!-- Body row: map LEFT fills space, right panel RIGHT fixed width -->
       <div class="map-body">
         <div id="chartdiv"></div>
-
+        <div class="map-right-panel">
+          <div style="margin-bottom:10px">
+            <div class="ccard"><div class="ctitle">Units by Region</div><div id="map-cr"></div></div>
+          </div>
+          <div class="ccard" style="margin-bottom:0">
+            <div class="ctitle">Application &amp; Firmware Status</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px">
+              <div>
+                <div style="font-size:9px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;font-family:'Space Mono',monospace">APPLICATION</div>
+                <div class="dleg" id="map-dl-app"></div>
+              </div>
+              <div>
+                <div style="font-size:9px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;font-family:'Space Mono',monospace">FIRMWARE</div>
+                <div class="dleg" id="map-dl-fw"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -2496,6 +2513,13 @@ function render(){
   document.getElementById('dl-fw').innerHTML=fents.map(function(e){
     return '<div class="li"><div class="ldot" style="background:'+(FWC[e[0]]||'#94a3b8')+'"></div><span class="ll">'+e[0]+'</span><span class="lc">'+e[1]+'</span></div>';
   }).join('');
+  // Sync to map right panel
+  var mapCr=document.getElementById('map-cr');
+  if(mapCr) mapCr.innerHTML=document.getElementById('cr').innerHTML;
+  var mapDlApp=document.getElementById('map-dl-app');
+  if(mapDlApp) mapDlApp.innerHTML=document.getElementById('dl-app').innerHTML;
+  var mapDlFw=document.getElementById('map-dl-fw');
+  if(mapDlFw) mapDlFw.innerHTML=document.getElementById('dl-fw').innerHTML;
   // Table
   var st2=(ST.p-1)*ST.ps,pd=d.slice(st2,st2+ST.ps);
   document.getElementById('tc').textContent=d.length+' records';
