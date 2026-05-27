@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.12.10</title>
+<title>FC S600+ PTT — Metering Dashboard v1.12.12</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -583,7 +583,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .map-body{flex:1;min-height:0;display:flex;flex-direction:row;gap:12px;padding:0 16px 14px;overflow:hidden;max-height:100%}
 #chartdiv{flex:1;min-width:0;height:100%;background:transparent}
 .map-right-panel{width:290px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;overflow-y:auto;align-self:flex-start;padding-top:2px;max-height:100%}
-.map-info-card{background:var(--sf);border:1px solid var(--br);border-radius:12px;padding:14px 16px}
+.map-info-card{border:1px solid var(--br);border-radius:12px;padding:14px 16px}
 .map-info-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--tx3);font-family:'Space Mono',monospace;margin-bottom:8px}
 .map-info-sub{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);font-family:'Space Mono',monospace;margin-bottom:6px}
 .map-reg-chips{display:flex;flex-wrap:wrap;gap:5px}
@@ -605,7 +605,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.12.10 — visionOS-inspired
+   LIQUID GLASS v1.12.12 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -862,20 +862,14 @@ html.light .chip.on, html:not(.light) .chip.on{
   box-shadow: 0 8px 24px rgba(2,132,199,.3), inset 0 1px 0 rgba(255,255,255,.5) !important;
 }
 
-/* Map info cards — same white-tinted glass as KPI cards */
+/* Map info cards — minimal glass, no blur halo */
 .map-info-card, .map-info-card-tall{
-  background: rgba(255,255,255,0.06) !important;
-  backdrop-filter: blur(32px) saturate(200%);
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
-  border: 1px solid rgba(255,255,255,0.18) !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.15) !important;
+  background: var(--lg-bg) !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid var(--lg-bd) !important;
+  box-shadow: var(--lg-shadow) !important;
   border-radius: 12px !important;
-}
-:root.light .map-info-card,
-:root.light .map-info-card-tall{
-  background: rgba(255,255,255,0.45) !important;
-  border-color: rgba(255,255,255,0.65) !important;
-  box-shadow: 0 8px 32px rgba(15,23,42,.06), inset 0 1px 0 rgba(255,255,255,.70) !important;
 }
 
 /* Schedule drawer — heavy glass */
@@ -1078,6 +1072,14 @@ html:not(.light) .ksum, html:not(.light) .kcard, html:not(.light) .ccard{
   background: var(--lg-bg-strong) !important;
   backdrop-filter: var(--lg-blur) !important;
   -webkit-backdrop-filter: var(--lg-blur) !important;
+  border: 1px solid var(--lg-bd) !important;
+  box-shadow: var(--lg-shadow) !important;
+}
+html.light .map-info-card, html.light .map-info-card-tall,
+html:not(.light) .map-info-card, html:not(.light) .map-info-card-tall{
+  background: var(--lg-bg) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border: 1px solid var(--lg-bd) !important;
   box-shadow: var(--lg-shadow) !important;
 }
@@ -1771,7 +1773,7 @@ html, html.light, html:not(.light){background: transparent !important}
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.12.10</div>
+  <div class="home-version">v1.12.12</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -3857,7 +3859,7 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge">v1.12.10</div>
+<div class="version-badge">v1.12.12</div>
 </body>
 </html>
 
