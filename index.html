@@ -49,7 +49,7 @@ body,header,.sidebar,.content,.main{transition:background-color .3s ease,color .
 .light .rbtn{color:#94a3b8!important;border-color:rgba(0,0,0,0.1)!important}
 .light .kcard{background:#ffffff!important;box-shadow:0 1px 6px rgba(0,0,0,0.06)!important}
 .light .ccard{background:#ffffff!important;box-shadow:0 1px 6px rgba(0,0,0,0.06)!important}
-
+/* Map right panel cards: frosted glass, not solid white */
 .light .tsec{background:#ffffff!important;box-shadow:0 1px 6px rgba(0,0,0,0.06)!important}
 .light thead tr{background:#f1f5f9!important}
 .light .tw{background:#ffffff}
@@ -583,7 +583,6 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .mkpi-tot .mkpi-val{color:var(--ac)}
 .map-body{flex:1;min-height:0;display:flex;flex-direction:row;gap:12px;padding:0 16px 14px;overflow:hidden;max-height:100%}
 #chartdiv{flex:1;min-width:0;height:100%;background:transparent}
-
 .map-info-card{border-radius:12px;padding:14px 16px}
 .map-info-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--tx3);font-family:'Space Mono',monospace;margin-bottom:8px}
 .map-info-sub{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);font-family:'Space Mono',monospace;margin-bottom:6px}
@@ -659,7 +658,7 @@ html, html.light, html:not(.light), body, html.light body, html:not(.light) body
   --lg-hl: rgba(255,255,255,0.18);
   --lg-blur: blur(32px) saturate(180%);
   --lg-blur-heavy: blur(48px) saturate(200%);
-  --lg-shadow: none;
+  --lg-shadow: 0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
   --lg-shadow-lift: 0 20px 60px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.14);
 }
 :root.light{
@@ -669,7 +668,7 @@ html, html.light, html:not(.light), body, html.light body, html:not(.light) body
   --lg-bd: rgba(255,255,255,0.45);
   --lg-bd-strong: rgba(255,255,255,0.65);
   --lg-hl: rgba(255,255,255,0.85);
-  --lg-shadow: none;
+  --lg-shadow: 0 8px 32px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.55);
   --lg-shadow-lift: 0 20px 60px rgba(15,23,42,.12), inset 0 1px 0 rgba(255,255,255,.75);
 }
 
@@ -1076,7 +1075,7 @@ html:not(.light) .ksum, html:not(.light) .kcard, html:not(.light) .ccard{
   border: 1px solid var(--lg-bd) !important;
   box-shadow: var(--lg-shadow) !important;
 }
-
+/* Map right panel ccards — frosted glass, NOT solid white */
 html.light .map-info-card, html.light .map-info-card-tall, html.light .mkpi-card,
 html:not(.light) .map-info-card, html:not(.light) .map-info-card-tall, html:not(.light) .mkpi-card{
   background: var(--lg-bg-strong) !important;
@@ -1605,6 +1604,8 @@ html.light .vpbtn.active, html.light .vp-btn.active{
   box-shadow: 0 8px 32px rgba(15,23,42,.06), inset 0 1px 0 rgba(255,255,255,.60) !important;
 }
 
+:root.light .sched-right,
+:root.light .sched-left{background:transparent !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;border:none !important;box-shadow:none !important}
 :root.light #map-kpi-bar{background:transparent !important;box-shadow:none !important;border:none !important;backdrop-filter:none !important}
 
 /* Light mode: kill solid-white inner bg on table sub-elements */
@@ -1753,7 +1754,14 @@ html, html.light, html:not(.light){background: transparent !important}
 
 /* ═══ END FINAL OVERRIDES ═══ */
 
-
+/* mkpi-card (map KPI bar) — liquid glass matching ccard */
+html.light .mkpi-card {
+  background: rgba(255,255,255,0.12) !important;
+  backdrop-filter: blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+  border: 1px solid rgba(255,255,255,0.30) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06) !important;
+}
 html:not(.light) .mkpi-card {
   background: rgba(255,255,255,0.06) !important;
   backdrop-filter: blur(24px) saturate(180%) !important;
@@ -1777,14 +1785,330 @@ html:not(.light) .mkpi-card {
   box-shadow: 0 4px 20px rgba(0,0,0,0.06);
 }
 html:not(.light) .map-panel {
-  background: rgba(255,255,255,0.04);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: none;
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
 }
+</style>
+</head>
+<body>
+<!-- LIQUID GLASS: mesh gradient backdrop layer -->
+<div class="lg-mesh" aria-hidden="true">
+  <div class="lg-blob lg-blob-1"></div>
+  <div class="lg-blob lg-blob-2"></div>
+  <div class="lg-blob lg-blob-3"></div>
+  <div class="lg-blob lg-blob-4"></div>
+  <div class="lg-blob lg-blob-5"></div>
+  <div class="lg-noise"></div>
+</div>
 
-;
+<!-- HOME -->
+<div id="home">
+  <div class="logo-box">FC<br>S600+</div>
+  <div class="home-title">FC S600+ PTT Dashboard</div>
+  <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
+  <div class="home-version">v1.12.14</div>
+
+  <div class="home-theme-row">
+    <div class="toggle-pill" id="home-theme-toggle">
+      <button class="tpill-btn" id="home-btn-dark" onclick="setTheme('dark')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4A6.5 6.5 0 0 0 20 14.5Z"/></svg> Dark</button>
+      <button class="tpill-btn active" id="home-btn-light" onclick="setTheme('light')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><circle cx="12" cy="12" r="4"/><path d="M12 2V4M12 20V22M4.7 4.7L6.1 6.1M17.9 17.9L19.3 19.3M2 12H4M20 12H22M4.7 19.3L6.1 17.9M17.9 6.1L19.3 4.7"/></svg> Light</button>
+    </div>
+  </div>
+
+  <div class="src-panel" id="panel-gs">
+    <!-- hidden inputs เก็บค่าไว้ให้ loadGS() ใช้งานได้ปกติ -->
+    <input type="hidden" id="gs-url" value="">
+    <input type="hidden" id="gs-sheet" value="Overall">
+    <button class="load-btn gs" id="gs-btn" onclick="loadGS()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> เข้าสู่ Dashboard</button>
+    <div class="err-box" id="gs-err"></div>
+    <div class="ok-badge" id="gs-ok"><span class="dot"></span><span id="gs-ok-txt"></span></div>
+  </div>
+
+  <div id="prog-wrap"><div id="prog"></div></div>
+  <div id="status-msg"></div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dash" style="display:none">
+  <header>
+    <div class="hlogo">
+      <div class="hlogo-icon">FC<br>S600+</div>
+      <div><h1>PTT Metering Dashboard</h1><span id="hf">FC S600+ &middot; Overall</span></div>
+    </div>
+    <div class="hright">
+      <span class="lupd" id="h-upd"></span>
+      <button class="hbtn gr" id="ref-btn" onclick="refreshGS()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 12A8 8 0 1 1 17.5 6.5"/><path d="M20 3.5V8H15.5"/></svg> Refresh</button>
+      <!-- View mode toggle -->
+      <div class="view-pill">
+        <button class="vpill-btn active" id="btn-view-dash" onclick="setView('dash')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><rect x="3.5" y="3.5" width="7.5" height="9" rx="1"/><rect x="13" y="3.5" width="7.5" height="5" rx="1"/><rect x="3.5" y="14" width="7.5" height="6.5" rx="1"/><rect x="13" y="10" width="7.5" height="10.5" rx="1"/></svg> Dashboard</button>
+        <button class="vpill-btn" id="btn-view-map" onclick="setView('map')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M3.5 6.5L9 4.5L15 6.5L20.5 4.5V17.5L15 19.5L9 17.5L3.5 19.5V6.5Z"/><path d="M9 4.5V17.5"/><path d="M15 6.5V19.5"/></svg> Map</button>
+        <button class="vpill-btn" id="btn-view-table" onclick="setView('table')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><rect x="3.5" y="3.5" width="17" height="17" rx="1.5"/><path d="M3.5 8.5H20.5"/><path d="M9 8.5V20.5"/></svg> Table</button>
+        <button class="vpill-btn" id="btn-view-sched" onclick="setView('sched')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><rect x="3.5" y="5" width="17" height="15.5" rx="1.5"/><path d="M3.5 9.5H20.5M8 3V7M16 3V7"/></svg> Schedule</button>
+      </div>
+      <div class="toggle-pill" id="header-theme-toggle">
+        <button class="tpill-btn" id="btn-dark" onclick="setTheme('dark')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4A6.5 6.5 0 0 0 20 14.5Z"/></svg> Dark</button>
+        <button class="tpill-btn active" id="btn-light" onclick="setTheme('light')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><circle cx="12" cy="12" r="4"/><path d="M12 2V4M12 20V22M4.7 4.7L6.1 6.1M17.9 17.9L19.3 19.3M2 12H4M20 12H22M4.7 19.3L6.1 17.9M17.9 6.1L19.3 4.7"/></svg> Light</button>
+      </div>
+      <button class="hbtn" onclick="goHome()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M10 5L4 12L10 19"/><path d="M4 12H20"/></svg> กลับไปหน้าแรก</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <aside class="sidebar">
+      <div class="ftitle">Region</div><div class="fchips" id="fr"></div>
+      <div class="ftitle">Firmware Version</div><div class="fchips" id="ff"></div>
+      <div class="ftitle">Firmware Update</div><div class="fchips" id="ffu"></div>
+      <div class="ftitle">Status</div><div class="fchips" id="fs"></div>
+      <div class="ftitle">Application</div><div class="fchips" id="fa"></div>
+      <button class="rbtn" onclick="rst()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 12A8 8 0 1 1 17.5 6.5"/><path d="M20 3.5V8H15.5"/></svg> Reset Filters</button>
+    </aside>
+
+    <div class="content" id="dash-content">
+      <!-- KPI Row -->
+      <div class="krow" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:20px">
+        <div class="kcard tot"><div class="klabel">Total Units</div><div class="kval" id="kt" style="color: rgb(2, 132, 199)">0</div><div class="ksub" id="ks"></div></div>
+        <div class="kcard fwup"><div class="klabel"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 5L20.5 19H3.5L12 5Z"/></svg> Firmware Up-to-date</div><div class="kval" id="kfu">0</div><div class="ksub" id="kfup"></div></div>
+        <div class="kcard fwod"><div class="klabel"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 19L3.5 5H20.5L12 19Z"/></svg> Firmware Outdated</div><div class="kval" id="kfo">0</div><div class="ksub" id="kfop"></div></div>
+      </div>
+
+      <div style="margin-bottom:20px">
+        <div class="ccard"><div class="ctitle">Units by Region</div><div id="cr"></div></div>
+      </div>
+      <div class="ccard" style="margin-bottom:0">
+        <div class="ctitle">Application &amp; Firmware Status</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px">
+          <div>
+            <div style="font-size:9px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;font-family:'Space Mono',monospace">APPLICATION</div>
+            <div class="dleg" id="dl-app"></div>
+          </div>
+          <div>
+            <div style="font-size:9px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;font-family:'Space Mono',monospace">FIRMWARE</div>
+            <div class="dleg" id="dl-fw"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /#dash-content -->
+
+    <!-- TABLE VIEW -->
+    <div class="content hidden" id="table-view">
+      <!-- KPI Row (same as dashboard) -->
+      <div class="krow" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:12px;flex-shrink:0">
+        <div class="kcard tot"><div class="klabel">Total Units</div><div class="kval" id="kt2" style="color:rgb(2,132,199)">0</div><div class="ksub" id="ks2"></div></div>
+        <div class="kcard fwup"><div class="klabel"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 5L20.5 19H3.5L12 5Z"/></svg> Firmware Up-to-date</div><div class="kval" id="kfu2">0</div><div class="ksub" id="kfup2"></div></div>
+        <div class="kcard fwod"><div class="klabel"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 19L3.5 5H20.5L12 19Z"/></svg> Firmware Outdated</div><div class="kval" id="kfo2">0</div><div class="ksub" id="kfop2"></div></div>
+      </div>
+      <div class="tsec" style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0">
+        <div class="filter-bar hidden" id="filter-bar-table"></div>
+        <div class="thdr">
+          <div style="display:flex;align-items:center">
+            <span class="ttitle">Metering Units</span><span class="tcnt" id="tc"></span>
+          </div>
+          <input class="srch" id="si" type="text" placeholder="Search TAG, Site, Metering name..." oninput="sch()">
+        </div>
+        <div class="tw"><table>
+          <thead><tr>
+            <th onclick="srt('PTT Region')" style="color: rgb(0, 0, 0)">Region <span id="sx0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
+            <th onclick="srt('Site')">Site <span class="th-sub">/ TAG</span> <span id="sx1"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
+            <th>Metering Name</th>
+            <th onclick="srt('Firmware')">Firmware <span class="th-sub">/ FW Update</span> <span id="sx3"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
+            <th onclick="srt('Status')">Status <span id="sx4"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
+            <th onclick="srt('Applications')">Application <span id="sx5"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
+            <th onclick="srt('Last config installed date')">Config Date <span id="sx6"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
+          </tr></thead>
+          <tbody id="tb"></tbody>
+        </table></div>
+        <div class="pg" id="pg"></div>
+      </div>
+    </div>
+
+    <!-- MAP VIEW -->
+    <div id="map-view" class="hidden">
+      <!-- KPI bar: full width at top -->
+      <div id="map-kpi-bar"></div>
+      <!-- Body row: map LEFT fills space, right panel RIGHT fixed width -->
+      <div class="map-body">
+        <div id="chartdiv"></div>
+
+      </div>
+    </div>
+
+    <!-- SCHEDULE VIEW -->
+    <div id="sched-view" class="hidden">
+      <div class="sched-layout">
+
+        <!-- LEFT: Calendar + Add button inside card (fixed, same width as sidebar) -->
+        <div class="sched-left">
+          <div class="sched-section">
+            <div class="sched-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><rect x="3.5" y="5" width="17" height="15.5" rx="1.5"/><path d="M3.5 9.5H20.5M8 3V7M16 3V7"/></svg> Firmware Update Plan</div>
+            <div class="cal-nav">
+              <button class="cal-nav-btn" onclick="calPrev()"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M14.5 5L7.5 12L14.5 19"/></svg></button>
+              <span class="cal-month-label" id="cal-month-label"></span>
+              <button class="cal-nav-btn" onclick="calNext()"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M9.5 5L16.5 12L9.5 19"/></svg></button>
+            </div>
+            <div class="cal-grid" id="cal-grid"></div>
+            <div class="cal-selected-date" id="cal-selected-label" style="margin-bottom:12px">Select a date to plan</div>
+            <button class="sf-add-btn drawer-trigger" onclick="openPlanDrawer()" style="width:100%"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg> Add Update Plan</button>
+          </div>
+        </div>
+
+        <!-- RIGHT: Plan list + Gantt -->
+        <div class="sched-right">
+
+          <!-- Plan list with scrollable box -->
+          <div class="sched-plans-box">
+            <div class="sched-plans-header">
+              <div class="sched-subtitle" id="plan-list-title">Monthly Plan</div>
+              <div style="display:flex;gap:8px">
+                <button class="sf-sm-btn" style="color:#ef4444;border-color:#ef444433" onclick="clearMonthPlans()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M4 6.5H20"/><path d="M9.5 6.5V4.5H14.5V6.5"/><path d="M5.5 6.5L6.5 20H17.5L18.5 6.5"/><path d="M10 10.5V16M14 10.5V16"/></svg> Clear Month</button>
+              </div>
+            </div>
+            <div class="sched-plans" id="plan-list"></div>
+          </div>
+
+          <!-- Gantt Chart -->
+          <div class="sched-section sched-gantt">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-shrink:0">
+              <div class="sched-subtitle"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M3 5H10M7 10H16M11 15H20M5 20H13"/></svg> Gantt Chart — by Region</div>
+              <div style="display:flex;gap:5px;align-items:center">
+                <div class="toggle-pill" style="padding:2px">
+                  <button class="vpill-btn active" id="gc-btn-day"   onclick="gcSetView('day')">Day</button>
+                  <button class="vpill-btn"         id="gc-btn-week"  onclick="gcSetView('week')">Week</button>
+                  <button class="vpill-btn"         id="gc-btn-month" onclick="gcSetView('month')">Month</button>
+                </div>
+                <button class="sf-sm-btn" onclick="gcExpandAll()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 3L12 7L16 3"/><path d="M8 21L12 17L16 21"/><path d="M4 12H20"/></svg> All</button>
+                <button class="sf-sm-btn" onclick="gcExport()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 3V15"/><path d="M6.5 9.5L12 15L17.5 9.5"/><path d="M4 19H20"/></svg> PNG</button>
+              </div>
+            </div>
+            <div class="gantt-legend" style="flex-shrink:0;margin-bottom:6px">
+              <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#6366f1"></span>Planned</span>
+              <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#f59e0b"></span>In Progress</span>
+              <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#10b981"></span>Done</span>
+              <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#ef4444"></span>Cancelled</span>
+            </div>
+            <div id="gantt-wrap" style="flex:1;overflow:auto;min-height:0;position:relative"></div>
+          </div>
+
+        </div>
+      </div><!-- /.sched-layout -->
+
+    </div><!-- /#sched-view -->
+
+  </div>
+</div>
+
+<!-- MODAL: Edit Plan -->
+<div class="modal-overlay hidden" id="modal-edit-plan">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M15.5 4L20 8.5L9.5 19H5V14.5L15.5 4Z"/><path d="M13 6.5L17.5 11"/></svg> Edit Plan</span>
+      <button class="modal-close" onclick="closeModal('modal-edit-plan')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M5.5 5.5L18.5 18.5"/><path d="M18.5 5.5L5.5 18.5"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-plan-id">
+      <div class="sf-row"><label class="sf-label">Site</label>
+        <select class="sf-input" id="edit-sf-site"></select></div>
+      <div class="sf-row"><label class="sf-label">TAG</label>
+        <select class="sf-input" id="edit-sf-tag"></select></div>
+      <div class="sf-row"><label class="sf-label">Target Firmware</label>
+        <input class="sf-input" id="edit-sf-fw-target" type="text"></div>
+      <div class="sf-row"><label class="sf-label">Date</label>
+        <input class="sf-input" id="edit-sf-date" type="date"></div>
+      <div class="sf-row"><label class="sf-label">Start Time</label>
+        <input class="sf-input" id="edit-sf-time-start" type="time"></div>
+      <div class="sf-row"><label class="sf-label">End Time</label>
+        <input class="sf-input" id="edit-sf-time-end" type="time"></div>
+      <div class="sf-row"><label class="sf-label">Note (optional)</label>
+        <input class="sf-input" id="edit-sf-note" type="text"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn-cancel" onclick="closeModal('modal-edit-plan')">Cancel</button>
+      <button class="modal-btn-save" onclick="saveEditPlan()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M4.5 12.5L9.5 17.5L19.5 6.5"/></svg> Save</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL: Add Update Plan -->
+<div class="modal-overlay hidden" id="modal-add-plan">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg> Add Update Plan</span>
+      <button class="modal-close" onclick="closePlanDrawer()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M5.5 5.5L18.5 18.5"/><path d="M18.5 5.5L5.5 18.5"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="drawer-date-display" id="drawer-date-display">Select a date on the calendar</div>
+      <div class="sf-row"><label class="sf-label">Site</label>
+        <select class="sf-input" id="sf-site"><option value="">-- Select Site --</option></select></div>
+      <div class="sf-row"><label class="sf-label">TAG</label>
+        <select class="sf-input" id="sf-tag"><option value="">-- Select TAG --</option></select></div>
+      <div class="sf-row"><label class="sf-label">Target Firmware</label>
+        <input class="sf-input" id="sf-fw-target" type="text" placeholder="e.g. 06.31"></div>
+      <div class="sf-row"><label class="sf-label">Performed By</label>
+        <input class="sf-input" id="sf-performed-by" type="text" placeholder="Engineer name"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn-cancel" onclick="closePlanDrawer()">Cancel</button>
+      <button class="modal-btn-save" onclick="addPlanFromDrawer()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg> Add Plan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Report Update -->
+<div class="modal-overlay hidden" id="modal-report">
+  <div class="modal-box modal-box-wide">
+    <div class="modal-header">
+      <span class="modal-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M6 3H14L19 8V20A1 1 0 0 1 18 21H6A1 1 0 0 1 5 20V4A1 1 0 0 1 6 3Z"/><path d="M14 3V8H19"/><path d="M8.5 14L10.5 16L15 11.5"/></svg> Firmware Update Report</span>
+      <button class="modal-close" onclick="closeModal('modal-report')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M5.5 5.5L18.5 18.5"/><path d="M18.5 5.5L5.5 18.5"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="report-grid">
+        <div class="sf-row"><label class="sf-label">PTT Region</label>
+          <input class="sf-input" id="rpt-region" type="text" readonly></div>
+        <div class="sf-row"><label class="sf-label">Site</label>
+          <input class="sf-input" id="rpt-site" type="text" readonly></div>
+        <div class="sf-row"><label class="sf-label">Metering Name</label>
+          <input class="sf-input" id="rpt-name" type="text"></div>
+        <div class="sf-row"><label class="sf-label">TAG</label>
+          <input class="sf-input" id="rpt-tag" type="text" readonly></div>
+        <div class="sf-row"><label class="sf-label">IP Address</label>
+          <input class="sf-input" id="rpt-ip" type="text" placeholder="xxx.xxx.xxx.xxx"></div>
+        <div class="sf-row"><label class="sf-label">Serial No.</label>
+          <input class="sf-input" id="rpt-serial" type="text"></div>
+        <div class="sf-row"><label class="sf-label">Firmware</label>
+          <input class="sf-input" id="rpt-firmware" type="text"></div>
+        <div class="sf-row"><label class="sf-label">Firmware Update</label>
+          <select class="sf-input" id="rpt-fw-update">
+            <option value="Up-to-date">Up-to-date</option>
+            <option value="Outdated">Outdated</option>
+          </select></div>
+        <div class="sf-row"><label class="sf-label">Hart Version</label>
+          <input class="sf-input" id="rpt-hart" type="text"></div>
+        <div class="sf-row"><label class="sf-label">Config Name</label>
+          <input class="sf-input" id="rpt-config-name" type="text"></div>
+        <div class="sf-row"><label class="sf-label">Last Config Installed Date</label>
+          <input class="sf-input" id="rpt-config-date" type="date"></div>
+      </div>
+      <div class="report-apps-status" id="rpt-api-status"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn-cancel" onclick="closeModal('modal-report')">Cancel</button>
+      <button class="modal-btn-save" onclick="submitReport()" id="rpt-submit-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 15V3"/><path d="M6.5 8.5L12 3L17.5 8.5"/><path d="M4 19H20"/></svg> Send to Google Sheet</button>
+    </div>
+  </div>
+</div>
+<script>
+// ═══════════════════════════════════════════════
+//  CONFIG — URL และชื่อ Sheet ถูกฝังไว้ที่นี่
+// ═══════════════════════════════════════════════
+var CONFIG = {
+  sheetUrl:       'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0MbcggGsP6MfD9uxVFfvsmCANy7lyqm0ngIBHaozHYF4SelcQeAM4IAaTLCy9Zcj0Chfemm00xZrp/pub?gid=838721591&single=true&output=csv',
+  sheetName:      'Overall',
+  appsScriptUrl:  'https://script.google.com/macros/s/AKfycbwL92RaTHjMspTp4Ty_01hL9UkW2xK1PozdJiWEdlySkEW4olHGGcsPN9rADV9EDkxN/exec'   // ← วาง Web App URL จาก Apps Script ตรงนี้
+};
 // ═══════════════════════════════════════════════
 
 // Region color map built dynamically
@@ -2154,7 +2478,13 @@ function render(){
   document.getElementById('dl-fw').innerHTML=fents.map(function(e){
     return '<div class="li"><div class="ldot" style="background:'+(FWC[e[0]]||'#94a3b8')+'"></div><span class="ll">'+e[0]+'</span><span class="lc">'+e[1]+'</span></div>';
   }).join('');
-
+  // Sync to map right panel
+  var mapCr=document.getElementById('map-cr');
+  if(mapCr) mapCr.innerHTML=document.getElementById('cr').innerHTML;
+  var mapDlApp=document.getElementById('map-dl-app');
+  if(mapDlApp) mapDlApp.innerHTML=document.getElementById('dl-app').innerHTML;
+  var mapDlFw=document.getElementById('map-dl-fw');
+  if(mapDlFw) mapDlFw.innerHTML=document.getElementById('dl-fw').innerHTML;
   // Table
   var st2=(ST.p-1)*ST.ps,pd=d.slice(st2,st2+ST.ps);
   document.getElementById('tc').textContent=d.length+' records';
@@ -2222,11 +2552,7 @@ function setTheme(mode){
   // re-render gantt when theme changes
   if(typeof renderGantt === 'function' && document.getElementById('gantt-wrap')){
     setTimeout(renderGantt, 50);
-  }
-  // Update map panel inline styles for glass effect
-  var panelStyle = mode==='light' ? 'background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:none!important;box-shadow:none!important;border-radius:0;padding:0;box-sizing:border-box;width:100%' : 'background:var(--lg-bg)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid var(--lg-bd)!important;box-shadow:0 4px 20px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.08)!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%';
-  mapPanels.forEach(function(el){ el.setAttribute('style', panelStyle + (el.id==='' && el.style.marginBottom ? ';margin-bottom:'+el.style.marginBottom : '')); });
-}
+  }}
 
 // ── ADD-PLAN DRAWER ──
 function openPlanDrawer(){
