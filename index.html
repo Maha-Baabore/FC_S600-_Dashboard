@@ -3253,13 +3253,13 @@ function addPlan(){
 
 function deletePlan(id){
   if(!confirm('Delete this plan?')) return;
-  PLANS=PLANS.filter(function(p){ return p.id!==id; });
+  PLANS=PLANS.filter(function(p){ return String(p.id)!==String(id); });
   savePlans(); renderCal(); renderPlanList(); renderGantt();
 }
 
 function cyclePlanStatus(id){
   var cycle=['planned','inprogress','done','cancelled'];
-  var p=PLANS.find(function(p){ return p.id===id; });
+  var p=PLANS.find(function(p){ return String(p.id)===String(id); });
   if(!p) return;
   p.status=cycle[(cycle.indexOf(p.status)+1)%cycle.length];
   savePlans(); renderCal(); renderPlanList(); renderGantt();
@@ -3304,11 +3304,11 @@ function renderPlanList(){
         '</div>'+
       '</div>'+
       '<div class="plan-item-right">'+
-        '<button class="plan-status-badge badge-'+p.status+'" onclick="cyclePlanStatus('+p.id+')" title="Click to change status">'+lbl[p.status]+'</button>'+
+        '<button class="plan-status-badge badge-'+p.status+'" onclick="cyclePlanStatus(\''+p.id+'\')" title="Click to change status">'+lbl[p.status]+'</button>'+
         '<div style="display:flex;gap:6px;margin-top:6px;align-items:center">'+
-          (p.status==='done'?'<button class="plan-action-btn report-btn" onclick="openReport('+p.id+')" title="Report update result"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3H14L19 8V20A1 1 0 0 1 18 21H6A1 1 0 0 1 5 20V4A1 1 0 0 1 6 3Z"/><path d="M14 3V8H19"/><path d="M8.5 14L10.5 16L15 11.5"/></svg></button>':'')+
-          '<button class="plan-action-btn edit-btn" onclick="openEditPlan('+p.id+')" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:middle"><path d="M15.5 4L20 8.5L9.5 19H5V14.5L15.5 4Z"/><path d="M13 6.5L17.5 11"/></svg></button>'+
-          '<button class="plan-action-btn delete-btn" onclick="deletePlan('+p.id+')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:middle"><path d="M4 6.5H20"/><path d="M9.5 6.5V4.5H14.5V6.5"/><path d="M5.5 6.5L6.5 20H17.5L18.5 6.5"/><path d="M10 10.5V16M14 10.5V16"/></svg></button>'+
+          (p.status==='done'?'<button class="plan-action-btn report-btn" onclick="openReport(\''+p.id+'\')" title="Report update result"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3H14L19 8V20A1 1 0 0 1 18 21H6A1 1 0 0 1 5 20V4A1 1 0 0 1 6 3Z"/><path d="M14 3V8H19"/><path d="M8.5 14L10.5 16L15 11.5"/></svg></button>':'')+
+          '<button class="plan-action-btn edit-btn" onclick="openEditPlan(\''+p.id+'\')" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:middle"><path d="M15.5 4L20 8.5L9.5 19H5V14.5L15.5 4Z"/><path d="M13 6.5L17.5 11"/></svg></button>'+
+          '<button class="plan-action-btn delete-btn" onclick="deletePlan(\''+p.id+'\')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:middle"><path d="M4 6.5H20"/><path d="M9.5 6.5V4.5H14.5V6.5"/><path d="M5.5 6.5L6.5 20H17.5L18.5 6.5"/><path d="M10 10.5V16M14 10.5V16"/></svg></button>'+
         '</div>'+
       '</div>'+
     '</div>';
@@ -3488,7 +3488,7 @@ function renderGantt(){
       var sorted=ps.slice().sort(function(a,b){ return a.date.localeCompare(b.date); });
       sorted.forEach(function(p){
         var col=SC[p.status]||'#6366f1';
-        labelHTML+='<div data-region="'+reg+'" data-type="item" data-status="'+p.status+'" style="height:'+ROW_H+'px;flex-shrink:0;display:flex;align-items:center;padding:0 8px 0 20px;border-bottom:1px solid var(--br);cursor:pointer;border-left:2px solid '+col+(isOpen?'':'display:none')+'" onclick="openEditPlan('+p.id+')">'+
+        labelHTML+='<div data-region="'+reg+'" data-type="item" data-status="'+p.status+'" style="height:'+ROW_H+'px;flex-shrink:0;display:flex;align-items:center;padding:0 8px 0 20px;border-bottom:1px solid var(--br);cursor:pointer;border-left:2px solid '+col+(isOpen?'':'display:none')+'" onclick="openEditPlan(\''+p.id+'\')">'+
           '<span style="font-size:10px;font-weight:600;font-family:Space Mono,monospace;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(p.tag||'').replace(/"/g,'&quot;')+'\u2014'+(p.site||'').replace(/"/g,'&quot;')+'">'+p.tag+'</span>'+
         '</div>';
 
@@ -3497,7 +3497,7 @@ function renderGantt(){
           var bg=isT?'rgba(99,102,241,.06)':'transparent';
           var inThis=planInCol(p,col2);
           return '<div style="width:'+COL_W+'px;flex-shrink:0;height:'+ROW_H+'px;border-right:1px solid rgba(128,128,128,.06);background:'+bg+';display:flex;align-items:center;justify-content:center">'+
-            (inThis?'<div style="width:'+(COL_W-6)+'px;height:18px;border-radius:4px;background:'+SC[p.status]+';display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.2)" onclick="openEditPlan('+p.id+')" title="'+p.tag+' | '+p.date+'">'+
+            (inThis?'<div style="width:'+(COL_W-6)+'px;height:18px;border-radius:4px;background:'+SC[p.status]+';display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.2)" onclick="openEditPlan(\''+p.id+'\')" title="'+p.tag+' | '+p.date+'">'+
               '<span style="font-size:8px;font-weight:700;font-family:Space Mono,monospace;color:#fff;overflow:hidden;text-overflow:ellipsis;max-width:'+(COL_W-10)+'px;white-space:nowrap;padding:0 2px">'+
               (COL_W>=32?shortTag(p.tag):'')+'</span></div>':'')+
           '</div>';
@@ -3784,7 +3784,7 @@ function openModal(id){ document.getElementById(id).classList.remove('hidden'); 
 
 // ── EDIT PLAN ──
 function openEditPlan(id){
-  var p=PLANS.find(function(x){ return x.id===id; });
+  var p=PLANS.find(function(x){ return String(x.id)===String(id); });
   if(!p) return;
   document.getElementById('edit-plan-id').value=id;
   // populate site dropdown
@@ -3809,7 +3809,7 @@ function openEditPlan(id){
 
 function saveEditPlan(){
   var id=parseInt(document.getElementById('edit-plan-id').value);
-  var p=PLANS.find(function(x){ return x.id===id; });
+  var p=PLANS.find(function(x){ return String(x.id)===String(id); });
   if(!p) return;
   p.site=document.getElementById('edit-sf-site').value;
   p.tag=document.getElementById('edit-sf-tag').value;
@@ -3825,7 +3825,7 @@ function saveEditPlan(){
 
 // ── REPORT MODAL ──
 function openReport(id){
-  var p=PLANS.find(function(x){ return x.id===id; });
+  var p=PLANS.find(function(x){ return String(x.id)===String(id); });
   if(!p) return;
   // Match by TAG + Site to avoid duplicate TAG collision across regions
   var row=DATA.find(function(x){
