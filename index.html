@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.12.3</title>
+<title>FC S600+ PTT — Metering Dashboard v1.12.4</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -319,9 +319,11 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 #map-view{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);max-height:calc(100vh - 62px)}
 #map-view.hidden{display:none!important}
 #dash-content.hidden{display:none!important}
+#table-view{flex:1;padding:22px 26px;overflow-y:auto;min-width:0}
+#table-view.hidden{display:none!important}
 #sched-view{flex:1;overflow:hidden;background:var(--bg);height:calc(100vh - 62px)}
 #sched-view.hidden{display:none!important}
-.sched-layout{display:block;height:100%;padding:12px 26px 12px 308px;box-sizing:border-box}
+.sched-layout{display:block;height:100%;padding:12px 26px 12px 288px;box-sizing:border-box}
 .sched-left{position:fixed;top:74px;left:20px;width:256px;bottom:56px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;z-index:10}
 .sched-left::-webkit-scrollbar{width:3px}
 .sched-left::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
@@ -451,12 +453,12 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .drawer-trigger-hint{font-size:10.5px;color:var(--tx3);text-align:center;line-height:1.5;font-family:'DM Sans',sans-serif;padding:0 12px}
 .modal-btn-cancel{flex:0 0 auto}
 
-/* Version badge — bottom left */
+/* Version badge — centered within sidebar width (20px left + 256px wide) */
 .version-badge{
   position: fixed !important;
   bottom: 18px;
   left: 20px;
-  width: 216px;
+  width: 256px;
   text-align: center;
   font-size: 9px;
   font-family: 'Space Mono', monospace;
@@ -468,8 +470,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   border-radius: 12px;
   border: 1px solid var(--br);
 }
-/* Schedule page — match sched-left width */
-.sched-active .version-badge{ width: 216px; left: 20px; }
+.sched-active .version-badge{ width: 256px; left: 20px; }
 /* Plan list — give breathing room below the "Monthly Plan" header */
 .sched-plans{ padding-top: 10px !important; }
 /* Custom Gantt */
@@ -594,7 +595,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.12.3 — visionOS-inspired
+   LIQUID GLASS v1.12.4 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1717,6 +1718,7 @@ html.light .vpbtn.active, html.light .vp-btn.active{
 :root:not(.light) .main, :root.light .main,
 :root:not(.light) .content, :root.light .content,
 :root:not(.light) #dash-content, :root.light #dash-content,
+:root:not(.light) #table-view, :root.light #table-view,
 :root:not(.light) .map-body, :root.light .map-body,
 :root:not(.light) #sched-view, :root.light #sched-view,
 :root:not(.light) .sched-layout, :root.light .sched-layout,
@@ -1768,7 +1770,7 @@ html, html.light, html:not(.light){background: transparent !important}
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.12.3</div>
+  <div class="home-version">v1.12.4</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -1804,6 +1806,7 @@ html, html.light, html:not(.light){background: transparent !important}
       <div class="view-pill">
         <button class="vpill-btn active" id="btn-view-dash" onclick="setView('dash')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><rect x="3.5" y="3.5" width="7.5" height="9" rx="1"/><rect x="13" y="3.5" width="7.5" height="5" rx="1"/><rect x="3.5" y="14" width="7.5" height="6.5" rx="1"/><rect x="13" y="10" width="7.5" height="10.5" rx="1"/></svg> Dashboard</button>
         <button class="vpill-btn" id="btn-view-map" onclick="setView('map')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M3.5 6.5L9 4.5L15 6.5L20.5 4.5V17.5L15 19.5L9 17.5L3.5 19.5V6.5Z"/><path d="M9 4.5V17.5"/><path d="M15 6.5V19.5"/></svg> Map</button>
+        <button class="vpill-btn" id="btn-view-table" onclick="setView('table')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><rect x="3.5" y="3.5" width="17" height="17" rx="1.5"/><path d="M3.5 8.5H20.5"/><path d="M9 8.5V20.5"/></svg> Table</button>
         <button class="vpill-btn" id="btn-view-sched" onclick="setView('sched')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><rect x="3.5" y="5" width="17" height="15.5" rx="1.5"/><path d="M3.5 9.5H20.5M8 3V7M16 3V7"/></svg> Schedule</button>
       </div>
       <div class="toggle-pill" id="header-theme-toggle">
@@ -1848,10 +1851,13 @@ html, html.light, html:not(.light){background: transparent !important}
         </div>
       </div>
 
+    </div><!-- /#dash-content -->
+
+    <!-- TABLE VIEW -->
+    <div class="content hidden" id="table-view">
       <div class="tsec">
-        <!-- Active filter summary -->
-        <div class="filter-bar hidden" id="filter-bar"></div>
-                <div class="thdr">
+        <div class="filter-bar hidden" id="filter-bar-table"></div>
+        <div class="thdr">
           <div style="display:flex;align-items:center">
             <span class="ttitle">Metering Units</span><span class="tcnt" id="tc"></span>
           </div>
@@ -2580,13 +2586,17 @@ function setView(v) {
   currentView = v;
   document.getElementById('btn-view-dash').classList.toggle('active', v === 'dash');
   document.getElementById('btn-view-map').classList.toggle('active', v === 'map');
+  document.getElementById('btn-view-table').classList.toggle('active', v === 'table');
   document.getElementById('btn-view-sched').classList.toggle('active', v === 'sched');
   document.getElementById('dash-content').classList.toggle('hidden', v !== 'dash');
   document.getElementById('map-view').classList.toggle('hidden', v !== 'map');
+  document.getElementById('table-view').classList.toggle('hidden', v !== 'table');
   document.getElementById('sched-view').classList.toggle('hidden', v !== 'sched');
-  // hide sidebar when schedule view is active
   var mainEl = document.querySelector('.main');
   if(mainEl) mainEl.classList.toggle('sched-active', v === 'sched');
+  // show sidebar for dash, map, table; hide for sched (sched-active handles it)
+  var sb = document.querySelector('.sidebar');
+  if(sb) sb.style.display = (v === 'sched') ? 'none' : '';
   if (v === 'map') {
     if (!mapBuilt && DATA.length > 0) buildPixelMap();
     renderMapKPI();
@@ -2594,6 +2604,7 @@ function setView(v) {
     setTimeout(updateMapGlow, 300);
   }
   if (v === 'sched') { initSched(); }
+  if (v === 'table') { render(); }
 }
 
 // ===== PIXEL MAP (amCharts) =====
@@ -3830,7 +3841,7 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge" style="width: 232px">v1.12.3</div>
+<div class="version-badge" style="width: 232px">v1.12.4</div>
 </body>
 </html>
 
