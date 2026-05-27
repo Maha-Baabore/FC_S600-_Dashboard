@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.12.5</title>
+<title>FC S600+ PTT — Metering Dashboard v1.12.6</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -201,7 +201,7 @@ header{background:rgba(8,12,24,.96);border-bottom:1px solid var(--br);padding:0 
 .chip.rc.on{background:var(--rc-bg,#3b82f6)!important;border-color:var(--rc-bd,#3b82f6)!important;color:var(--rc-tx,#fff)!important}
 .rbtn{margin:8px 16px 0;width:calc(100% - 32px);padding:7px;background:transparent;border:1px dashed rgba(255,255,255,.1);border-radius:8px;color:var(--tx3);font-size:11.5px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
 .rbtn:hover{border-color:var(--ac);color:var(--ac)}
-.content{flex:1;padding:22px 26px;overflow-y:auto;min-width:0}
+.content{flex:1;padding:12px 26px 22px;overflow-y:auto;min-width:0}
 .krow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
 .krow2{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
 .kcard{background:var(--sf);border:1px solid var(--br);border-radius:14px;padding:14px 18px;position:relative;overflow:hidden;transition:background-color .3s ease,border-color .2s,transform .2s}
@@ -596,7 +596,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.12.5 — visionOS-inspired
+   LIQUID GLASS v1.12.6 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1079,8 +1079,6 @@ html.light .tsec, html:not(.light) .tsec,
 html.light .header, html:not(.light) .header,
 html.light .sb, html:not(.light) .sb,
 html.light .home-card, html:not(.light) .home-card,
-html.light .map-info-card, html:not(.light) .map-info-card,
-html.light .map-info-card-tall, html:not(.light) .map-info-card-tall,
 html.light .sched-section, html:not(.light) .sched-section,
 html.light .sched-plans-box, html:not(.light) .sched-plans-box,
 html.light .sched-gantt, html:not(.light) .sched-gantt,
@@ -1306,8 +1304,6 @@ html.light .vpbtn.active, html.light .vp-btn.active{
 :root:not(.light) .sidebar,
 :root:not(.light) .ccard,
 :root:not(.light) .tsec,
-:root:not(.light) .map-info-card,
-:root:not(.light) .map-info-card-tall,
 :root:not(.light) .sched-section,
 :root:not(.light) .sched-plans-box,
 :root:not(.light) .sched-gantt,
@@ -1320,6 +1316,14 @@ html.light .vpbtn.active, html.light .vp-btn.active{
   -webkit-backdrop-filter: blur(32px) saturate(220%) !important;
   border-color: rgba(255,255,255,0.10) !important;
   box-shadow: 0 8px 32px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.10) !important;
+}
+:root:not(.light) .map-info-card,
+:root:not(.light) .map-info-card-tall{
+  background: rgba(13,18,32,0.55) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08) !important;
 }
 /* sched-right/left are transparent containers */
 :root:not(.light) .sched-right,
@@ -1587,8 +1591,6 @@ html.light .vpbtn.active, html.light .vp-btn.active{
 :root.light .ccard,
 :root.light .tsec,
 :root.light .mkpi-card,
-:root.light .map-info-card,
-:root.light .map-info-card-tall,
 :root.light .sched-section,
 :root.light .sched-plans-box,
 :root.light .sched-gantt,
@@ -1601,6 +1603,14 @@ html.light .vpbtn.active, html.light .vp-btn.active{
   -webkit-backdrop-filter: blur(32px) saturate(180%) !important;
   border-color: rgba(255,255,255,0.55) !important;
   box-shadow: 0 8px 32px rgba(15,23,42,.06), inset 0 1px 0 rgba(255,255,255,.60) !important;
+}
+:root.light .map-info-card,
+:root.light .map-info-card-tall{
+  background: rgba(255,255,255,0.55) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-color: rgba(255,255,255,0.70) !important;
+  box-shadow: 0 4px 16px rgba(15,23,42,.04), inset 0 1px 0 rgba(255,255,255,.80) !important;
 }
 :root.light .sched-right,
 :root.light .sched-left{background:transparent !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;border:none !important;box-shadow:none !important}
@@ -1771,7 +1781,7 @@ html, html.light, html:not(.light){background: transparent !important}
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.12.5</div>
+  <div class="home-version">v1.12.6</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -3857,7 +3867,7 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge" style="width: 232px">v1.12.5</div>
+<div class="version-badge">v1.12.6</div>
 </body>
 </html>
 
