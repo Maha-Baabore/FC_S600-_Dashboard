@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.10.0</title>
+<title>FC S600+ PTT — Metering Dashboard v1.11.2</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -134,19 +134,19 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);min-h
 #home{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
   background:radial-gradient(ellipse at 50% 0%,rgba(0,212,255,.08) 0%,transparent 65%),var(--bg);padding:40px 20px}
 .logo-box{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--bg);
-  background:linear-gradient(135deg,var(--ac),var(--ac2));width:60px;height:60px;border-radius:16px;
+  background:linear-gradient(135deg,var(--ac),var(--ac2));width:60px;height:60px;border-radius:20px;
   display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.3;
   margin-bottom:28px;box-shadow:0 0 40px rgba(0,212,255,.25)}
 .home-title{font-size:30px;font-weight:700;margin-bottom:6px;text-align:center}
 .home-sub{font-size:13px;color:var(--tx3);margin-bottom:8px;font-family:'Space Mono',monospace}
 .home-version{font-size:10px;font-family:'Space Mono',monospace;color:var(--tx3);background:var(--sf2);border:1px solid var(--br);border-radius:20px;padding:2px 10px;margin-bottom:20px;letter-spacing:.5px}
 .home-theme-row{margin-bottom:28px;display:flex;align-items:center;justify-content:center}
-.src-tabs{display:flex;width:580px;max-width:100%;border-radius:14px 14px 0 0;overflow:hidden}
+.src-tabs{display:flex;width:580px;max-width:100%;border-radius:22px 22px 0 0;overflow:hidden}
 .src-tab{flex:1;padding:13px 0;text-align:center;font-size:13px;font-weight:600;cursor:pointer;
   background:var(--sf2);color:var(--tx3);border:1px solid var(--br);transition:all .2s;border-bottom:none}
-.src-tab:first-child{border-radius:14px 0 0 0}.src-tab:last-child{border-radius:0 14px 0 0}
+.src-tab:first-child{border-radius:22px 0 0 0}.src-tab:last-child{border-radius:0 22px 0 0}
 .src-tab.active{background:var(--sf);color:var(--ac);border-color:rgba(0,212,255,.3)}
-.src-panel{width:580px;max-width:100%;background:var(--sf);border:1px solid var(--br);border-radius:14px;padding:28px}
+.src-panel{width:580px;max-width:100%;background:var(--sf);border:1px solid var(--br);border-radius:22px;padding:28px}
 .src-panel.hidden{display:none}
 .gs-steps{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
 .gs-step{display:flex;gap:12px;align-items:flex-start}
@@ -321,7 +321,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 #dash-content.hidden{display:none!important}
 #sched-view{flex:1;overflow-y:auto;background:var(--bg);height:calc(100vh - 62px)}
 #sched-view.hidden{display:none!important}
-.sched-layout{display:grid;grid-template-columns:340px 1fr;gap:0;height:100%}
+.sched-layout{display:grid;grid-template-columns:256px 1fr;gap:0;height:100%}
 .sched-left{display:flex;flex-direction:column;gap:0;border-right:1px solid var(--br);overflow:hidden;height:calc(100vh - 62px)}
 .sched-right{display:flex;flex-direction:column;overflow:hidden;height:calc(100vh - 62px)}
 .sched-section{background:var(--sf);border-bottom:1px solid var(--br);padding:16px 18px;flex-shrink:0}
@@ -450,32 +450,50 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .drawer-trigger-hint{font-size:10.5px;color:var(--tx3);text-align:center;line-height:1.5;font-family:'DM Sans',sans-serif;padding:0 12px}
 .modal-btn-cancel{flex:0 0 auto}
 
-/* sched-plans scrollbar */
-/* Version badge fixed bottom-left */
-.version-badge{position:fixed;bottom:10px;left:10px;font-size:9px;font-family:'Space Mono',monospace;color:var(--tx3);background:var(--sf);border:1px solid var(--br);border-radius:8px;padding:3px 8px;z-index:500;pointer-events:none;opacity:.7;letter-spacing:.5px}
+/* Version badge — bottom left, fits left sidebar width, centered text */
+.version-badge{
+  position: fixed;
+  bottom: 10px;
+  left: 12px;
+  width: 232px;  /* dashboard sidebar (256) minus 24px margins */
+  text-align: center;
+  font-size: 9px;
+  font-family: 'Space Mono', monospace;
+  color: var(--tx3);
+  padding: 5px 8px;
+  letter-spacing: 1px;
+  z-index: 50;
+  background: var(--sf);
+  border-radius: 12px;
+  border: 1px solid var(--br);
+}
+/* Schedule page has wider left column (340px) */
+.sched-active .version-badge{ width: 232px; }
+/* Plan list — give breathing room below the "Monthly Plan" header */
+.sched-plans{ padding-top: 10px !important; }
 /* Custom Gantt */
 .gc-wrap{display:flex;height:100%;min-height:0}
-.gc-labels{flex-shrink:0;width:160px;border-right:1px solid var(--br);overflow:hidden}
+.gc-labels{flex-shrink:0;width:160px;border-right:1px solid var(--lg-bd);overflow:hidden}
 .gc-chart{flex:1;overflow-x:auto;overflow-y:hidden;position:relative}
 .gc-chart::-webkit-scrollbar{height:3px}
 .gc-chart::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
 .gc-chart::-webkit-scrollbar-track{background:transparent}
-.gc-header-row{display:flex;height:36px;border-bottom:1px solid var(--br);background:var(--sf2);position:sticky;top:0;z-index:5}
-.gc-header-cell{font-size:9px;font-family:'Space Mono',monospace;color:var(--tx3);display:flex;align-items:center;justify-content:center;border-right:1px solid var(--br);flex-shrink:0;font-weight:700}
+.gc-header-row{display:flex;height:36px;border-bottom:1px solid var(--lg-bd);background:var(--lg-bg);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);position:sticky;top:0;z-index:5}
+.gc-header-cell{font-size:9px;font-family:'Space Mono',monospace;color:var(--tx3);display:flex;align-items:center;justify-content:center;border-right:1px solid var(--lg-bd);flex-shrink:0;font-weight:700;background:transparent}
 .gc-header-cell.today-col{background:rgba(99,102,241,.12);color:var(--ac)}
-.gc-label-header{height:36px;border-bottom:1px solid var(--br);background:var(--sf2);display:flex;align-items:center;padding:0 10px;font-size:9px;font-family:'Space Mono',monospace;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.8px}
-.gc-row{display:flex;height:32px;border-bottom:1px solid var(--br);align-items:center;transition:background .12s}
-.gc-row:hover{background:var(--sf2)}
-.gc-row.gc-group-row{height:28px;background:var(--sf2);cursor:pointer}
-.gc-row.gc-group-row:hover{background:var(--sf3)}
-.gc-label-cell{width:160px;flex-shrink:0;padding:0 8px 0 10px;display:flex;align-items:center;gap:5px;border-right:1px solid var(--br);height:100%}
+.gc-label-header{height:36px;border-bottom:1px solid var(--lg-bd);background:var(--lg-bg);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;padding:0 10px;font-size:9px;font-family:'Space Mono',monospace;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+.gc-row{display:flex;height:32px;border-bottom:1px solid var(--lg-bd);align-items:center;transition:background .12s}
+.gc-row:hover{background:var(--lg-bg)}
+.gc-row.gc-group-row{height:28px;background:var(--lg-bg);cursor:pointer}
+.gc-row.gc-group-row:hover{background:var(--lg-bg-strong)}
+.gc-label-cell{width:160px;flex-shrink:0;padding:0 8px 0 10px;display:flex;align-items:center;gap:5px;border-right:1px solid var(--lg-bd);height:100%}
 .gc-label-tag{font-size:10px;font-family:'Space Mono',monospace;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
 .gc-label-group{font-size:10px;font-family:'Space Mono',monospace;font-weight:700;white-space:nowrap}
 .gc-chevron{font-size:9px;color:var(--tx3);transition:transform .15s;flex-shrink:0}
 .gc-chevron.open{transform:rotate(90deg)}
 .gc-body{position:relative}
-.gc-bar-row{display:flex;height:32px;align-items:center;position:relative;border-bottom:1px solid var(--br)}
-.gc-bar-row.gc-group-bar-row{height:28px;background:var(--sf2)}
+.gc-bar-row{display:flex;height:32px;align-items:center;position:relative;border-bottom:1px solid var(--lg-bd)}
+.gc-bar-row.gc-group-bar-row{height:28px;background:var(--lg-bg)}
 .gc-cell{flex-shrink:0;height:100%;border-right:1px solid rgba(128,128,128,.06)}
 .gc-cell.today-col{background:rgba(99,102,241,.06)}
 .gc-bar{position:absolute;height:18px;border-radius:4px;top:50%;transform:translateY(-50%);cursor:pointer;display:flex;align-items:center;padding:0 6px;font-size:9px;font-family:'Space Mono',monospace;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:filter .15s;z-index:2;min-width:4px;box-shadow:0 1px 3px rgba(0,0,0,.2)}
@@ -572,16 +590,1174 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .mbfill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;min-width:18px;transition:width .4s ease}
 .mbfill span{font-size:10px;font-weight:700;font-family:'Space Mono',monospace;color:rgba(255,255,255,.95)}
 #map-hover-tip{position:fixed;background:var(--sf);border:1px solid var(--br);border-radius:8px;padding:5px 12px;font-size:11px;font-family:'Space Mono',monospace;font-weight:700;pointer-events:none;z-index:9999;opacity:0;transition:opacity .1s;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   LIQUID GLASS v1.11.2 — visionOS-inspired
+   Static mesh gradient backdrop + frosted surfaces + colored light bleeds
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Mesh gradient backdrop (static, fixed full-viewport) ── */
+.lg-mesh{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.lg-blob{position:absolute;border-radius:50%;filter:blur(70px);will-change:transform}
+/* Place all body content above mesh */
+body > *:not(.lg-mesh){position:relative;z-index:1}
+
+/* DARK theme blobs — softer aurora, won't fight with text */
+:root:not(.light) .lg-blob-1{top:-25%;left:-15%;width:90vw;height:90vw;background:radial-gradient(circle,#00d4ff 0%,transparent 60%);opacity:.45}
+:root:not(.light) .lg-blob-2{top:-10%;right:-20%;width:80vw;height:80vw;background:radial-gradient(circle,#7c3aed 0%,transparent 60%);opacity:.40}
+:root:not(.light) .lg-blob-3{bottom:-30%;left:5%;width:95vw;height:95vw;background:radial-gradient(circle,#2563eb 0%,transparent 60%);opacity:.40}
+:root:not(.light) .lg-blob-4{bottom:-25%;right:-5%;width:80vw;height:80vw;background:radial-gradient(circle,#ec4899 0%,transparent 60%);opacity:.25}
+:root:not(.light) .lg-blob-5{top:30%;left:20%;width:60vw;height:60vw;background:radial-gradient(circle,#06b6d4 0%,transparent 60%);opacity:.30}
+
+/* LIGHT theme blobs — softer pastel */
+:root.light .lg-blob-1{top:-25%;left:-15%;width:90vw;height:90vw;background:radial-gradient(circle,#7dd3fc 0%,transparent 60%);opacity:.55}
+:root.light .lg-blob-2{top:-10%;right:-20%;width:80vw;height:80vw;background:radial-gradient(circle,#c4b5fd 0%,transparent 60%);opacity:.50}
+:root.light .lg-blob-3{bottom:-30%;left:5%;width:95vw;height:95vw;background:radial-gradient(circle,#bae6fd 0%,transparent 60%);opacity:.50}
+:root.light .lg-blob-4{bottom:-25%;right:-5%;width:80vw;height:80vw;background:radial-gradient(circle,#fbcfe8 0%,transparent 60%);opacity:.40}
+:root.light .lg-blob-5{top:30%;left:20%;width:60vw;height:60vw;background:radial-gradient(circle,#fde68a 0%,transparent 60%);opacity:.35}
+
+/* Mesh base — dark navy / pearl */
+:root:not(.light) .lg-mesh{background:#0a0f1c !important}
+:root.light .lg-mesh{background:#e8eef5 !important}
+
+/* Subtle noise texture on top of blobs */
+.lg-noise{position:absolute;inset:0;opacity:.04;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+
+/* ── Base body & html: fully transparent so mesh shows through ── */
+html, html.light, html:not(.light), body, html.light body, html:not(.light) body{
+  background: transparent !important;
+  background-color: transparent !important;
+}
+/* Base color sits on the mesh layer itself (z:-1 fixed full-viewport) */
+/* (moved to where blobs are defined) */
+/* Also kill any solid bg from dashboard container */
+#dash, #home, #sched-view, #map-view, .home-page, .home-card-wrap{
+  background: transparent !important;
+}
+
+/* ── Glass surface mixin via custom props ── */
+:root{
+  --lg-bg: rgba(255,255,255,0.04);
+  --lg-bg-strong: rgba(255,255,255,0.06);
+  --lg-bg-stronger: rgba(255,255,255,0.10);
+  --lg-bd: rgba(255,255,255,0.08);
+  --lg-bd-strong: rgba(255,255,255,0.14);
+  --lg-hl: rgba(255,255,255,0.18);
+  --lg-blur: blur(32px) saturate(180%);
+  --lg-blur-heavy: blur(48px) saturate(200%);
+  --lg-shadow: 0 8px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
+  --lg-shadow-lift: 0 20px 60px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.14);
+}
+:root.light{
+  --lg-bg: rgba(255,255,255,0.30);
+  --lg-bg-strong: rgba(255,255,255,0.40);
+  --lg-bg-stronger: rgba(255,255,255,0.55);
+  --lg-bd: rgba(255,255,255,0.45);
+  --lg-bd-strong: rgba(255,255,255,0.65);
+  --lg-hl: rgba(255,255,255,0.85);
+  --lg-shadow: 0 8px 32px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.55);
+  --lg-shadow-lift: 0 20px 60px rgba(15,23,42,.12), inset 0 1px 0 rgba(255,255,255,.75);
+}
+
+/* ═══ Glass surfaces — universal ═══ */
+
+/* Header */
+.header{
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  border-bottom: 1px solid var(--lg-bd) !important;
+  box-shadow: var(--lg-shadow);
+}
+
+/* Home screen card */
+.home-card{
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: var(--lg-blur-heavy);
+  -webkit-backdrop-filter: var(--lg-blur-heavy);
+  border: 1px solid var(--lg-bd) !important;
+  box-shadow: var(--lg-shadow-lift) !important;
+  border-radius: 28px !important;
+}
+.home-version{
+  background: var(--lg-bg) !important;
+  border: 1px solid var(--lg-bd) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Tabs and source containers on home */
+.src-tabs{background:transparent!important;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:22px 22px 0 0;overflow:hidden;border:1px solid var(--lg-bd);border-bottom:none}
+.src-tab{background:var(--lg-bg)!important;border-bottom:1px solid var(--lg-bd)!important}
+.src-tab.active{background:var(--lg-bg-stronger)!important;border-bottom:1px solid transparent!important}
+.src-panel{background:var(--lg-bg-strong)!important;backdrop-filter:var(--lg-blur);-webkit-backdrop-filter:var(--lg-blur);border:1px solid var(--lg-bd)!important;border-radius:22px!important;box-shadow:var(--lg-shadow)!important}
+
+/* KPI cards — Top summary */
+.ksum, .kcard{
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  border: 1px solid var(--lg-bd) !important;
+  box-shadow: var(--lg-shadow) !important;
+  position: relative;
+  overflow: hidden;
+}
+/* Light bleed on KPI cards */
+.ksum::before, .kcard::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: radial-gradient(120% 60% at 0% 0%, rgba(0,212,255,.10) 0%, transparent 60%);
+  pointer-events:none;
+  border-radius:inherit;
+}
+:root.light .ksum::before, :root.light .kcard::before{
+  background: radial-gradient(120% 60% at 0% 0%, rgba(2,132,199,.08) 0%, transparent 60%);
+}
+
+/* Chart cards */
+.ccard{
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  border: 1px solid var(--lg-bd) !important;
+  box-shadow: var(--lg-shadow) !important;
+}
+
+/* Sidebar */
+.sb{
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  border-right: 1px solid var(--lg-bd) !important;
+  box-shadow: 0 0 32px rgba(0,0,0,.15);
+}
+:root.light .sb{box-shadow: 4px 0 24px rgba(15,23,42,.06)}
+
+/* Filter chips — keep ORIGINAL colors, just add transparency to inactive state */
+html.light .chip:not(.on), html:not(.light) .chip:not(.on){
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--lg-bd) !important;
+  transition: all .15s ease;
+}
+html.light .chip:not(.on):hover, html:not(.light) .chip:not(.on):hover{
+  background: var(--lg-bg-strong) !important;
+  border-color: var(--lg-bd-strong) !important;
+}
+/* Active chips keep their original colors (region/firmware/status/app) — DO NOT override */
+/* Just soften them with backdrop blur and slight transparency */
+html.light .chip.on, html:not(.light) .chip.on{
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 14px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.2) !important;
+}
+
+/* Table section */
+.tsec{
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  border: 1px solid var(--lg-bd) !important;
+  box-shadow: var(--lg-shadow) !important;
+  border-radius: 18px !important;
+}
+.tsec thead{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(8px);
+}
+.tsec th{
+  background: transparent !important;
+  border-bottom: 1px solid var(--lg-bd) !important;
+}
+.tsec tbody tr{
+  border-bottom: 1px solid var(--lg-bd) !important;
+  background: transparent !important;
+}
+.tsec tbody tr:hover{
+  background: var(--lg-bg) !important;
+}
+.thdr{
+  background: transparent !important;
+  border-bottom: 1px solid var(--lg-bd) !important;
+}
+
+/* Search input */
+#si{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--lg-bd) !important;
+}
+#si:focus{
+  border-color: rgba(0,212,255,.5) !important;
+  background: var(--lg-bg-strong) !important;
+  box-shadow: 0 0 0 3px rgba(0,212,255,.15);
+}
+
+/* Filter bar */
+.filter-bar{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--lg-bd) !important;
+}
+.fb-chip{
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--lg-bd) !important;
+}
+
+/* Toggle pills (view switcher in header) */
+.toggle-pill{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--lg-bd) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+}
+.tpill-btn.active{
+  background: rgba(0,212,255,.85) !important;
+  box-shadow: 0 4px 14px rgba(0,212,255,.4), inset 0 1px 0 rgba(255,255,255,.3) !important;
+}
+:root.light .tpill-btn.active{
+  background: rgba(2,132,199,.92) !important;
+  box-shadow: 0 4px 14px rgba(2,132,199,.35), inset 0 1px 0 rgba(255,255,255,.5) !important;
+}
+
+/* Buttons — generic */
+.btn{
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid var(--lg-bd) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.15) !important;
+}
+.btn:hover{
+  background: var(--lg-bg-stronger) !important;
+  border-color: var(--lg-bd-strong) !important;
+}
+.btn-primary, .src-btn{
+  background: linear-gradient(135deg, rgba(0,212,255,.85), rgba(37,99,235,.75)) !important;
+  border: 1px solid rgba(0,212,255,.5) !important;
+  box-shadow: 0 8px 24px rgba(0,212,255,.35), inset 0 1px 0 rgba(255,255,255,.3) !important;
+  color: #fff !important;
+}
+:root.light .btn-primary, :root.light .src-btn{
+  background: linear-gradient(135deg, rgba(2,132,199,.92), rgba(29,78,216,.85)) !important;
+  box-shadow: 0 8px 24px rgba(2,132,199,.3), inset 0 1px 0 rgba(255,255,255,.5) !important;
+}
+
+/* Map info cards */
+.map-info-card, .map-info-card-tall{
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  border: 1px solid var(--lg-bd) !important;
+  box-shadow: var(--lg-shadow) !important;
+}
+
+/* Schedule drawer — heavy glass */
+.sched-drawer{
+  background: var(--lg-bg-stronger) !important;
+  backdrop-filter: var(--lg-blur-heavy);
+  -webkit-backdrop-filter: var(--lg-blur-heavy);
+  border-left: 1px solid var(--lg-bd-strong) !important;
+  box-shadow: var(--lg-shadow-lift) !important;
+}
+.sched-drawer-header, .sched-drawer-footer{
+  background: var(--lg-bg) !important;
+  border-color: var(--lg-bd) !important;
+}
+.sf-input{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--lg-bd) !important;
+}
+.sf-input:focus{
+  background: var(--lg-bg-strong) !important;
+  border-color: rgba(0,212,255,.55) !important;
+  box-shadow: 0 0 0 3px rgba(0,212,255,.15) !important;
+}
+
+/* Schedule sections (left column calendar + plans list) */
+.sched-section, .sched-left, .sched-right, .sched-gantt{
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  border: 1px solid var(--lg-bd) !important;
+  box-shadow: var(--lg-shadow) !important;
+}
+
+/* Modals */
+.modal-overlay, #conf-modal{
+  background: rgba(8,12,24,.45) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+:root.light .modal-overlay, :root.light #conf-modal{
+  background: rgba(148,163,184,.35) !important;
+}
+.modal-content, .modal{
+  background: var(--lg-bg-stronger) !important;
+  backdrop-filter: var(--lg-blur-heavy);
+  -webkit-backdrop-filter: var(--lg-blur-heavy);
+  border: 1px solid var(--lg-bd-strong) !important;
+  box-shadow: var(--lg-shadow-lift) !important;
+}
+
+/* Drawer backdrop */
+.sched-drawer-backdrop.show{
+  background: rgba(8,12,24,.35) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+:root.light .sched-drawer-backdrop.show{
+  background: rgba(148,163,184,.30) !important;
+}
+
+/* Version badge — bottom left */
+.version-badge{
+  background: var(--sf) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--lg-bd) !important;
+  box-shadow: var(--lg-shadow);
+}
+
+/* Plan list items */
+.plan-item{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--lg-bd) !important;
+}
+.plan-item:hover{background:var(--lg-bg-strong)!important}
+
+/* Calendar cells */
+.cal-day:hover{
+  background: var(--lg-bg-strong) !important;
+}
+.cal-day.cd-selected{
+  background: rgba(0,212,255,.30) !important;
+  border-color: rgba(0,212,255,.6) !important;
+  box-shadow: 0 4px 14px rgba(0,212,255,.3), inset 0 1px 0 rgba(255,255,255,.2);
+}
+:root.light .cal-day.cd-selected{
+  background: rgba(2,132,199,.25) !important;
+  border-color: rgba(2,132,199,.5) !important;
+}
+
+/* Sort headers — keep readable */
+.tsec th.sorted{
+  background: rgba(0,212,255,.10) !important;
+}
+
+/* Edit/Delete buttons in plan list */
+.plan-act{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--lg-bd) !important;
+}
+
+/* Status badges keep their colors but add glass treatment */
+.sb2, .fwb, .ab, .rb{
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.15);
+}
+
+/* Pagination */
+.pgbtn{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--lg-bd) !important;
+}
+.pgbtn:hover:not(:disabled){background:var(--lg-bg-strong)!important}
+.pgbtn.active{
+  background: rgba(0,212,255,.7) !important;
+  border-color: rgba(0,212,255,.5) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(0,212,255,.3), inset 0 1px 0 rgba(255,255,255,.2);
+}
+:root.light .pgbtn.active{
+  background: rgba(2,132,199,.85) !important;
+  border-color: rgba(2,132,199,.6) !important;
+}
+
+/* Refresh, hb, lite buttons */
+.hb, .lite, .refresh-btn{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--lg-bd) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.1);
+}
+.hb:hover, .lite:hover, .refresh-btn:hover{
+  background: var(--lg-bg-strong) !important;
+  border-color: var(--lg-bd-strong) !important;
+}
+
+/* Text input fields */
+input[type=text], input[type=url], select, textarea{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--lg-bd) !important;
+}
+
+/* Drop zone */
+#dz{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(15px);
+  border: 2px dashed var(--lg-bd-strong) !important;
+}
+#dz:hover, #dz.over{
+  background: var(--lg-bg-strong) !important;
+  border-color: rgba(0,212,255,.55) !important;
+}
+
+/* Strong text contrast adjustment for glass readability */
+:root:not(.light){
+  --tx: #f1f5f9;
+  --tx2: #cbd5e1;
+}
+:root.light{
+  --tx: #0f172a;
+  --tx2: #334155;
+}
+
+/* Brand logo glass treatment */
+.brand-logo, .logo{
+  box-shadow: 0 8px 24px rgba(0,212,255,.35), inset 0 1px 0 rgba(255,255,255,.3);
+}
+
+/* Subtle edge highlight on every glass surface — pseudo-element ring */
+.ksum, .kcard, .ccard, .tsec, .sched-section, .modal-content, .sched-drawer, .home-card{
+  position: relative;
+}
+
+/* Remove harsh inner borders that fight with glass aesthetic */
+.kcard hr, .ccard hr{border-color:var(--lg-bd)!important}
+
+/* ═══ END LIQUID GLASS ═══ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   LIQUID GLASS — High-specificity overrides (beat .light .X rules)
+   ═══════════════════════════════════════════════════════════════════ */
+:root :is(.ksum, .kcard, .ccard),
+html.light .ksum, html.light .kcard, html.light .ccard,
+html:not(.light) .ksum, html:not(.light) .kcard, html:not(.light) .ccard{
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: var(--lg-blur) !important;
+  -webkit-backdrop-filter: var(--lg-blur) !important;
+  border: 1px solid var(--lg-bd) !important;
+  box-shadow: var(--lg-shadow) !important;
+}
+
+html.light .tsec, html:not(.light) .tsec,
+html.light .header, html:not(.light) .header,
+html.light .sb, html:not(.light) .sb,
+html.light .home-card, html:not(.light) .home-card,
+html.light .map-info-card, html:not(.light) .map-info-card,
+html.light .map-info-card-tall, html:not(.light) .map-info-card-tall,
+html.light .sched-section, html:not(.light) .sched-section,
+html.light .sched-left, html:not(.light) .sched-left,
+html.light .sched-right, html:not(.light) .sched-right,
+html.light .sched-gantt, html:not(.light) .sched-gantt,
+html.light .modal-content, html:not(.light) .modal-content,
+html.light .modal, html:not(.light) .modal,
+html.light .sched-drawer, html:not(.light) .sched-drawer,
+html.light .version-badge, html:not(.light) .version-badge{
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: var(--lg-blur) !important;
+  -webkit-backdrop-filter: var(--lg-blur) !important;
+  border-color: var(--lg-bd) !important;
+  box-shadow: var(--lg-shadow) !important;
+}
+
+/* Reinforce drawer/modal with heavier blur */
+html.light .sched-drawer, html:not(.light) .sched-drawer,
+html.light .modal-content, html:not(.light) .modal-content{
+  backdrop-filter: var(--lg-blur-heavy) !important;
+  -webkit-backdrop-filter: var(--lg-blur-heavy) !important;
+  background: var(--lg-bg-stronger) !important;
+  box-shadow: var(--lg-shadow-lift) !important;
+}
+
+/* Inner table bg — also override with high spec */
+html.light .tsec table, html:not(.light) .tsec table,
+html.light .tsec tbody, html:not(.light) .tsec tbody,
+html.light .tsec tbody tr, html:not(.light) .tsec tbody tr,
+html.light .tsec thead, html:not(.light) .tsec thead,
+html.light .tsec th, html:not(.light) .tsec th,
+html.light .tsec td, html:not(.light) .tsec td{
+  background: transparent !important;
+}
+html.light .tsec thead, html:not(.light) .tsec thead{
+  background: var(--lg-bg) !important;
+}
+html.light .tsec tbody tr:hover, html:not(.light) .tsec tbody tr:hover{
+  background: var(--lg-bg) !important;
+}
+
+/* Filter bar */
+html.light .filter-bar, html:not(.light) .filter-bar{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+}
+
+/* Toggle pills, fb-chip (NOT .chip — handled separately) */
+html.light .toggle-pill, html:not(.light) .toggle-pill,
+html.light .fb-chip, html:not(.light) .fb-chip{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(15px) !important;
+  -webkit-backdrop-filter: blur(15px) !important;
+  border-color: var(--lg-bd) !important;
+}
+
+/* Calendar bg & cells */
+html.light #cal-grid, html:not(.light) #cal-grid,
+html.light .cal-day, html:not(.light) .cal-day{
+  background: transparent !important;
+}
+
+/* Inputs */
+html.light input, html:not(.light) input,
+html.light select, html:not(.light) select,
+html.light textarea, html:not(.light) textarea,
+html.light .sf-input, html:not(.light) .sf-input{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border-color: var(--lg-bd) !important;
+}
+
+/* Source tabs/panels on home */
+html.light .src-tab, html:not(.light) .src-tab{
+  background: var(--lg-bg) !important;
+}
+html.light .src-tab.active, html:not(.light) .src-tab.active{
+  background: var(--lg-bg-stronger) !important;
+}
+html.light .src-panel, html:not(.light) .src-panel{
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: var(--lg-blur) !important;
+}
+
+/* Buttons */
+html.light .btn, html:not(.light) .btn,
+html.light .hb, html:not(.light) .hb,
+html.light .lite, html:not(.light) .lite,
+html.light .pgbtn, html:not(.light) .pgbtn{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(15px) !important;
+  border-color: var(--lg-bd) !important;
+}
+
+/* Plans list & plan items */
+html.light #sched-plans, html:not(.light) #sched-plans,
+html.light .plan-item, html:not(.light) .plan-item{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(10px) !important;
+  border-color: var(--lg-bd) !important;
+}
+
+/* Gantt wrap — keep visible but transparent */
+html.light #gantt-wrap, html:not(.light) #gantt-wrap,
+html.light .gc-wrap, html:not(.light) .gc-wrap{
+  background: transparent !important;
+}
+
+/* ═══ END HIGH-SPEC OVERRIDES ═══ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   ACTUAL CLASS NAMES IN THIS DASHBOARD (sidebar, main, content, etc.)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Sidebar — was solid; make it glass */
+html.light .sidebar, html:not(.light) .sidebar{
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: var(--lg-blur) !important;
+  -webkit-backdrop-filter: var(--lg-blur) !important;
+  border-right: 1px solid var(--lg-bd) !important;
+  box-shadow: var(--lg-shadow) !important;
+}
+
+/* Main + content area — MUST be transparent so mesh shows through */
+html.light .main, html:not(.light) .main,
+html.light .content, html:not(.light) .content,
+html.light #dash-content, html:not(.light) #dash-content,
+html.light #map-view, html:not(.light) #map-view,
+html.light .map-body, html:not(.light) .map-body{
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Header (HTML element) — glass, more translucent */
+html.light header, html:not(.light) header{
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: var(--lg-blur) !important;
+  -webkit-backdrop-filter: var(--lg-blur) !important;
+  border-bottom: 1px solid var(--lg-bd) !important;
+  box-shadow: var(--lg-shadow) !important;
+}
+
+/* Header buttons */
+html.light .hbtn, html:not(.light) .hbtn,
+html.light .rbtn, html:not(.light) .rbtn,
+html.light .hbtn.gr, html:not(.light) .hbtn.gr{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(15px) !important;
+  -webkit-backdrop-filter: blur(15px) !important;
+  border: 1px solid var(--lg-bd) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.15) !important;
+}
+html.light .hbtn:hover, html:not(.light) .hbtn:hover,
+html.light .rbtn:hover, html:not(.light) .rbtn:hover{
+  background: var(--lg-bg-strong) !important;
+  border-color: var(--lg-bd-strong) !important;
+}
+
+/* View pill row & individual buttons (Dashboard / Map / Schedule) */
+html.light .view-pill, html:not(.light) .view-pill{
+  background: var(--lg-bg) !important;
+  backdrop-filter: blur(15px) !important;
+  border: 1px solid var(--lg-bd) !important;
+}
+
+/* Krow + Crow rows must be transparent (they are containers) */
+html.light .krow, html:not(.light) .krow,
+html.light .crow, html:not(.light) .crow{
+  background: transparent !important;
+}
+
+/* Filter section titles in sidebar */
+html.light .ftitle, html:not(.light) .ftitle{
+  background: transparent !important;
+}
+
+/* Sidebar chip containers must be transparent */
+html.light .fchips, html:not(.light) .fchips{
+  background: transparent !important;
+}
+
+/* Map-specific */
+html.light #map-kpi-bar, html:not(.light) #map-kpi-bar{
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: var(--lg-blur) !important;
+  -webkit-backdrop-filter: var(--lg-blur) !important;
+  border: 1px solid var(--lg-bd) !important;
+  box-shadow: var(--lg-shadow) !important;
+}
+
+/* Home page wrapper */
+html.light #home, html:not(.light) #home,
+html.light .home-card-wrap, html:not(.light) .home-card-wrap{
+  background: transparent !important;
+}
+
+/* Pill buttons in view switcher */
+html.light .vpbtn, html:not(.light) .vpbtn,
+html.light .vp-btn, html:not(.light) .vp-btn,
+html.light .vpill, html:not(.light) .vpill{
+  background: transparent !important;
+}
+html.light .vpbtn.active, html:not(.light) .vpbtn.active,
+html.light .vp-btn.active, html:not(.light) .vp-btn.active{
+  background: rgba(0,212,255,.85) !important;
+  box-shadow: 0 4px 14px rgba(0,212,255,.4), inset 0 1px 0 rgba(255,255,255,.3) !important;
+}
+html.light .vpbtn.active, html.light .vp-btn.active{
+  background: rgba(2,132,199,.92) !important;
+  box-shadow: 0 4px 14px rgba(2,132,199,.35), inset 0 1px 0 rgba(255,255,255,.5) !important;
+}
+
+/* ═══ END ACTUAL CLASS OVERRIDES ═══ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   FINAL LIQUID GLASS — :root-prefixed to BEAT original CSS specificity
+   (Original uses :root:not(.light) .X !important → must match prefix)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── DARK MODE GLASS SURFACES ── dark tint for text contrast, lighter overall */
+:root:not(.light) header,
+:root:not(.light) .sidebar,
+:root:not(.light) .ccard,
+:root:not(.light) .tsec,
+:root:not(.light) .map-info-card,
+:root:not(.light) .map-info-card-tall,
+:root:not(.light) .sched-section,
+:root:not(.light) .sched-left,
+:root:not(.light) .sched-gantt,
+:root:not(.light) .sched-drawer,
+:root:not(.light) .modal-content,
+:root:not(.light) .modal-box,
+:root:not(.light) .home-card{
+  background: rgba(13,18,32,0.35) !important;
+  backdrop-filter: blur(32px) saturate(220%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(220%) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.10) !important;
+}
+
+/* KPI cards (dashboard + map) — lighter white-tinted glass (like light mode) */
+:root:not(.light) .kcard,
+:root:not(.light) .mkpi-card{
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: blur(32px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
+  border-color: rgba(255,255,255,0.18) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.15) !important;
+}
+
+/* Gantt chart card — same lighter tint as Metering Units table */
+:root:not(.light) .sched-right{
+  background: rgba(13,18,32,0.22) !important;
+  backdrop-filter: blur(32px) saturate(220%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(220%) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+
+/* map-kpi-bar itself is transparent (just the wrapper) */
+:root:not(.light) #map-kpi-bar{background:transparent !important;box-shadow:none !important;border:none !important;backdrop-filter:none !important}
+
+/* Header — slightly stronger for sticky readability */
+:root:not(.light) header{
+  background: rgba(10,15,28,0.40) !important;
+}
+
+/* Drawer/modal — heavier blur + more opaque for content focus */
+:root:not(.light) .sched-drawer,
+:root:not(.light) .modal-content,
+:root:not(.light) .modal-box{
+  background: rgba(13,18,32,0.55) !important;
+  backdrop-filter: blur(48px) saturate(220%) !important;
+  -webkit-backdrop-filter: blur(48px) saturate(220%) !important;
+}
+
+/* Table column headers — transparent so glass shows through */
+:root:not(.light) .tsec thead,
+:root:not(.light) .tsec thead tr,
+:root:not(.light) .tsec th{
+  background: transparent !important;
+  color: #f1f5f9 !important;
+}
+
+/* Gantt — kill ALL inner solid backgrounds, only keep subtle row dividers (borders) */
+:root:not(.light) .gc-header-row,
+:root:not(.light) .gc-header-cell,
+:root:not(.light) .gc-label-header,
+:root:not(.light) .gc-row,
+:root:not(.light) .gc-row.gc-group-row,
+:root:not(.light) .gc-bar-row,
+:root:not(.light) .gc-bar-row.gc-group-bar-row,
+:root:not(.light) .gc-label-cell,
+:root:not(.light) .gc-cell{
+  background: transparent !important;
+  color: #cbd5e1 !important;
+}
+:root:not(.light) .gc-row:hover,
+:root:not(.light) .gc-bar-row:hover{background:rgba(255,255,255,0.03) !important}
+:root:not(.light) .gc-cell.today-col,
+:root:not(.light) .gc-header-cell.today-col{
+  background: rgba(99,102,241,0.10) !important;
+}
+
+/* Brighter text colors in dark mode */
+:root:not(.light){
+  --tx: #f1f5f9 !important;
+  --tx2: #e2e8f0 !important;
+  --tx3: #cbd5e1 !important;
+}
+:root:not(.light) .klabel,
+:root:not(.light) .map-info-title,
+:root:not(.light) .sched-title,
+:root:not(.light) .sched-subtitle,
+:root:not(.light) .ftitle,
+:root:not(.light) .mkpi-label,
+:root:not(.light) .mkpi-sub{
+  color: #cbd5e1 !important;
+}
+/* Don't force kval/mkpi-val to white — preserve their semantic colors:
+   .tot/.mkpi-tot = #0284c7 (sky), .fwup = #34d399 (green), .fwod = #f87171 (red) */
+:root:not(.light) .kcard.tot .kval,
+:root:not(.light) .mkpi-card.mkpi-tot .mkpi-val{color: #0284c7 !important}
+:root:not(.light) .kcard.fwup .kval{color: #34d399 !important}
+:root:not(.light) .kcard.fwod .kval{color: #f87171 !important}
+
+/* Sched drawer footer — fully transparent (no dark bar, just the button) */
+:root:not(.light) .sched-drawer-footer,
+:root.light .sched-drawer-footer{
+  background: transparent !important;
+  border-top: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+/* Sched drawer body — match Metering Units transparent feel */
+:root:not(.light) .sched-drawer,
+:root.light .sched-drawer{
+  background: rgba(13,18,32,0.22) !important;
+}
+:root.light .sched-drawer{
+  background: rgba(255,255,255,0.30) !important;
+}
+:root:not(.light) .gc-header-row{
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+:root:not(.light) .gc-label-header{
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  color: #f1f5f9 !important;
+}
+:root:not(.light) .gc-header-cell{
+  background: transparent !important;
+  color: #f1f5f9 !important;
+}
+
+/* Schedule body — brighter text everywhere */
+:root:not(.light) .gc-label-tag,
+:root:not(.light) .gc-label-group,
+:root:not(.light) .sched-subtitle,
+:root:not(.light) .sched-title,
+:root:not(.light) #plan-list-title,
+:root:not(.light) .plan-item-tag,
+:root:not(.light) .plan-item-meta,
+:root:not(.light) .plan-item-date,
+:root:not(.light) .plan-item-fw,
+:root:not(.light) .plan-item-app,
+:root:not(.light) .plan-item-by,
+:root:not(.light) .cal-month-label,
+:root:not(.light) .cal-day,
+:root:not(.light) .cal-weekday,
+:root:not(.light) #cal-selected-label,
+:root:not(.light) .drawer-title,
+:root:not(.light) .drawer-date-display,
+:root:not(.light) .sf-label,
+:root:not(.light) .sched-form label,
+:root:not(.light) #sched-view .ftitle,
+:root:not(.light) .sched-section-header,
+:root:not(.light) .gc-legend,
+:root:not(.light) .gc-legend-item{
+  color: #f1f5f9 !important;
+}
+/* Secondary text (meta info, dates) — slightly dimmer but still readable */
+:root:not(.light) .plan-item-meta,
+:root:not(.light) .gc-bar{
+  color: #e2e8f0 !important;
+}
+
+/* Dark mode buttons & controls */
+:root:not(.light) .hbtn,
+:root:not(.light) .rbtn,
+:root:not(.light) .cal-nav-btn,
+:root:not(.light) .sf-sm-btn,
+:root:not(.light) .modal-btn-cancel,
+:root:not(.light) .pgbtn,
+:root:not(.light) .lite,
+:root:not(.light) .btn,
+:root:not(.light) input[type=text],
+:root:not(.light) input[type=url],
+:root:not(.light) select,
+:root:not(.light) textarea,
+:root:not(.light) .sf-input,
+:root:not(.light) #si{
+  background: rgba(13,18,32,0.50) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  color: var(--tx) !important;
+}
+:root:not(.light) .hbtn:hover,
+:root:not(.light) .rbtn:hover,
+:root:not(.light) .cal-nav-btn:hover,
+:root:not(.light) .sf-sm-btn:hover,
+:root:not(.light) .modal-btn-cancel:hover,
+:root:not(.light) .pgbtn:hover{
+  background: rgba(13,18,32,0.70) !important;
+  border-color: rgba(0,212,255,0.35) !important;
+}
+
+/* Clear Month button — red accent (overrides generic .sf-sm-btn glass) */
+:root:not(.light) .sf-sm-btn[onclick*="clearMonth"],
+:root.light .sf-sm-btn[onclick*="clearMonth"]{
+  background: rgba(239,68,68,0.12) !important;
+  border-color: rgba(239,68,68,0.45) !important;
+  color: #ef4444 !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+}
+:root:not(.light) .sf-sm-btn[onclick*="clearMonth"]:hover,
+:root.light .sf-sm-btn[onclick*="clearMonth"]:hover{
+  background: rgba(239,68,68,0.25) !important;
+  border-color: rgba(239,68,68,0.70) !important;
+  color: #fff !important;
+}
+
+/* View pill & toggle pill in dark */
+:root:not(.light) .view-pill,
+:root:not(.light) .toggle-pill{
+  background: rgba(13,18,32,0.50) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+}
+
+/* Gantt — headers + rows + drawer/footer */
+:root:not(.light) .gc-label-header,
+:root:not(.light) .gc-header-row,
+:root:not(.light) .sched-drawer-header{
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: blur(8px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(180%) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+}
+:root:not(.light) .gc-header-cell{
+  background: transparent !important;
+  border-color: rgba(255,255,255,0.10) !important;
+}
+:root:not(.light) .gc-row.gc-group-row{
+  background: rgba(255,255,255,0.04) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+:root:not(.light) .gc-row{background:transparent !important}
+:root:not(.light) .gc-row.gc-group-row{background:transparent !important}
+:root:not(.light) .gc-bar-row{background:transparent !important}
+:root:not(.light) .gc-bar-row.gc-group-bar-row{background:transparent !important}
+:root:not(.light) .gc-label-cell{background:transparent !important}
+:root:not(.light) .gc-header-row{background:transparent !important}
+:root:not(.light) .gc-row:hover{background:rgba(255,255,255,0.04) !important}
+:root:not(.light) .gantt-container,
+:root:not(.light) .gc-wrap,
+:root:not(.light) #gantt-wrap{background:transparent !important}
+
+/* Bar chart tracks — lighter & translucent */
+:root:not(.light) .btrack,
+:root:not(.light) .mbtrack{
+  background: rgba(255,255,255,0.06) !important;
+}
+:root.light .btrack,
+:root.light .mbtrack{
+  background: rgba(15,23,42,0.06) !important;
+}
+
+/* Plan items */
+:root:not(.light) .plan-item,
+:root:not(.light) #sched-plans{
+  background: rgba(13,18,32,0.45) !important;
+  backdrop-filter: blur(15px) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+}
+
+/* Dark mode TEXT — boost contrast on glass */
+:root:not(.light) .tx, :root:not(.light) .tx-strong,
+:root:not(.light) body, :root:not(.light) .kcard, :root:not(.light) .ccard,
+:root:not(.light) .tsec, :root:not(.light) .sidebar, :root:not(.light) header{
+  color: #f1f5f9;
+}
+:root:not(.light) .ftitle,
+:root:not(.light) .klabel,
+:root:not(.light) .map-info-title,
+:root:not(.light) .sched-title{
+  color: #cbd5e1 !important;
+}
+
+/* ── LIGHT MODE GLASS SURFACES ── */
+:root.light header,
+:root.light .sidebar,
+:root.light .kcard,
+:root.light .ccard,
+:root.light .tsec,
+:root.light .mkpi-card,
+:root.light .map-info-card,
+:root.light .map-info-card-tall,
+:root.light .sched-section,
+:root.light .sched-left,
+:root.light .sched-right,
+:root.light .sched-gantt,
+:root.light .sched-drawer,
+:root.light .modal-content,
+:root.light .modal-box,
+:root.light .home-card{
+  background: rgba(255,255,255,0.30) !important;
+  backdrop-filter: blur(32px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(180%) !important;
+  border-color: rgba(255,255,255,0.55) !important;
+  box-shadow: 0 8px 32px rgba(15,23,42,.06), inset 0 1px 0 rgba(255,255,255,.60) !important;
+}
+:root.light #map-kpi-bar{background:transparent !important;box-shadow:none !important;border:none !important;backdrop-filter:none !important}
+
+/* Light mode: kill solid-white inner bg on table sub-elements */
+:root.light .thdr,
+:root.light .tw,
+:root.light .pg,
+:root.light .pb,
+:root.light .tsec tbody tr,
+:root.light table,
+:root.light .tsec table,
+:root.light .tsec tbody{
+  background: transparent !important;
+}
+:root.light .tsec thead,
+:root.light thead tr,
+:root.light .tsec thead tr,
+:root.light .tsec th{
+  background: transparent !important;
+  color: #1e293b !important;
+}
+/* Pagination buttons in light — glass */
+:root.light .pb{
+  background: rgba(255,255,255,0.50) !important;
+  border-color: rgba(255,255,255,0.65) !important;
+  color: #475569 !important;
+  backdrop-filter: blur(10px) !important;
+}
+:root.light .pb.on{
+  background: rgba(2,132,199,0.85) !important;
+  border-color: rgba(2,132,199,0.7) !important;
+  color: #fff !important;
+}
+
+/* Gantt column headers in light — glass like table */
+:root.light .gc-header-cell{
+  background: transparent !important;
+  color: #475569 !important;
+}
+
+/* Light mode buttons & controls */
+:root.light .hbtn,
+:root.light .rbtn,
+:root.light .cal-nav-btn,
+:root.light .sf-sm-btn,
+:root.light .modal-btn-cancel,
+:root.light .pgbtn,
+:root.light .lite,
+:root.light .btn,
+:root.light input[type=text],
+:root.light input[type=url],
+:root.light select,
+:root.light textarea,
+:root.light .sf-input,
+:root.light #si{
+  background: rgba(255,255,255,0.50) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-color: rgba(255,255,255,0.65) !important;
+  color: #0f172a !important;
+}
+:root.light .hbtn:hover,
+:root.light .rbtn:hover,
+:root.light .cal-nav-btn:hover,
+:root.light .sf-sm-btn:hover,
+:root.light .modal-btn-cancel:hover{
+  background: rgba(255,255,255,0.70) !important;
+  border-color: rgba(2,132,199,0.4) !important;
+}
+
+:root.light .view-pill,
+:root.light .toggle-pill{
+  background: rgba(255,255,255,0.50) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-color: rgba(255,255,255,0.65) !important;
+}
+
+:root.light .gc-label-header,
+:root.light .gc-header-row,
+:root.light .sched-drawer-header{
+  background: rgba(255,255,255,0.35) !important;
+  backdrop-filter: blur(8px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(180%) !important;
+  border-color: rgba(255,255,255,0.50) !important;
+}
+:root.light .gc-header-cell{
+  background: transparent !important;
+  border-color: rgba(255,255,255,0.50) !important;
+}
+:root.light .gc-row.gc-group-row{
+  background: rgba(255,255,255,0.15) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: rgba(255,255,255,0.50) !important;
+}
+:root.light .gc-row{background:transparent !important}
+:root.light .gc-row.gc-group-row{background:rgba(255,255,255,0.15) !important}
+:root.light .gc-bar-row{background:transparent !important}
+:root.light .gc-bar-row.gc-group-bar-row{background:transparent !important}
+:root.light .gc-label-cell{background:transparent !important}
+:root.light .gc-row:hover{background:rgba(255,255,255,0.30) !important}
+
+:root.light .plan-item,
+:root.light #sched-plans{
+  background: rgba(255,255,255,0.30) !important;
+  backdrop-filter: blur(15px) !important;
+  border-color: rgba(255,255,255,0.50) !important;
+}
+
+/* ── COMMON: krow/crow/main/content/dash-content stay transparent ── */
+:root:not(.light) .krow, :root.light .krow,
+:root:not(.light) .crow, :root.light .crow,
+:root:not(.light) .main, :root.light .main,
+:root:not(.light) .content, :root.light .content,
+:root:not(.light) #dash-content, :root.light #dash-content,
+:root:not(.light) .map-body, :root.light .map-body,
+:root:not(.light) #sched-view, :root.light #sched-view,
+:root:not(.light) .sched-layout, :root.light .sched-layout,
+:root:not(.light) #map-view, :root.light #map-view,
+:root:not(.light) #home, :root.light #home,
+:root:not(.light) #dash, :root.light #dash,
+:root:not(.light) body, :root.light body,
+:root:not(.light), :root.light{
+  background: transparent !important;
+}
+
+/* Inner table elements transparent */
+:root:not(.light) .tsec table, :root.light .tsec table,
+:root:not(.light) .tsec tbody, :root.light .tsec tbody,
+:root:not(.light) .tsec tbody tr, :root.light .tsec tbody tr,
+:root:not(.light) .tsec td, :root.light .tsec td{
+  background: transparent !important;
+}
+:root:not(.light) .tsec thead{background:rgba(255,255,255,0.03) !important}
+:root.light .tsec thead{background:rgba(255,255,255,0.40) !important}
+:root:not(.light) .tsec tbody tr:hover{background:rgba(255,255,255,0.04) !important}
+:root.light .tsec tbody tr:hover{background:rgba(255,255,255,0.30) !important}
+
+/* Filter bar */
+:root:not(.light) .filter-bar{background:rgba(255,255,255,0.03) !important;backdrop-filter:blur(20px) !important}
+:root.light .filter-bar{background:rgba(255,255,255,0.35) !important;backdrop-filter:blur(20px) !important}
+
+/* Body stays transparent so mesh shows */
+html, html.light, html:not(.light){background: transparent !important}
+
+/* ═══ END FINAL OVERRIDES ═══ */
+
+
 </style>
 </head>
 <body>
+<!-- LIQUID GLASS: mesh gradient backdrop layer -->
+<div class="lg-mesh" aria-hidden="true">
+  <div class="lg-blob lg-blob-1"></div>
+  <div class="lg-blob lg-blob-2"></div>
+  <div class="lg-blob lg-blob-3"></div>
+  <div class="lg-blob lg-blob-4"></div>
+  <div class="lg-blob lg-blob-5"></div>
+  <div class="lg-noise"></div>
+</div>
 
 <!-- HOME -->
 <div id="home">
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.10.0</div>
+  <div class="home-version">v1.11.2</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -623,7 +1799,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
         <button class="tpill-btn" id="btn-dark" onclick="setTheme('dark')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4A6.5 6.5 0 0 0 20 14.5Z"/></svg> Dark</button>
         <button class="tpill-btn active" id="btn-light" onclick="setTheme('light')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><circle cx="12" cy="12" r="4"/><path d="M12 2V4M12 20V22M4.7 4.7L6.1 6.1M17.9 17.9L19.3 19.3M2 12H4M20 12H22M4.7 19.3L6.1 17.9M17.9 6.1L19.3 4.7"/></svg> Light</button>
       </div>
-      <button class="hbtn" onclick="goHome()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M10 5L4 12L10 19"/><path d="M4 12H20"/></svg> Back to Home</button>
+      <button class="hbtn" onclick="goHome()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M10 5L4 12L10 19"/><path d="M4 12H20"/></svg> กลับไปหน้าแรก</button>
     </div>
   </header>
 
@@ -640,7 +1816,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
     <div class="content" id="dash-content">
       <!-- KPI Row -->
       <div class="krow" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:20px">
-        <div class="kcard tot"><div class="klabel">Total Units</div><div class="kval" id="kt">0</div><div class="ksub" id="ks"></div></div>
+        <div class="kcard tot"><div class="klabel">Total Units</div><div class="kval" id="kt" style="color: rgb(2, 132, 199)">0</div><div class="ksub" id="ks"></div></div>
         <div class="kcard fwup"><div class="klabel"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 5L20.5 19H3.5L12 5Z"/></svg> Firmware Up-to-date</div><div class="kval" id="kfu">0</div><div class="ksub" id="kfup"></div></div>
         <div class="kcard fwod"><div class="klabel"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 19L3.5 5H20.5L12 19Z"/></svg> Firmware Outdated</div><div class="kval" id="kfo">0</div><div class="ksub" id="kfop"></div></div>
       </div>
@@ -672,7 +1848,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
         </div>
         <div class="tw"><table>
           <thead><tr>
-            <th onclick="srt('PTT Region')">Region <span id="sx0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
+            <th onclick="srt('PTT Region')" style="color: rgb(0, 0, 0)">Region <span id="sx0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
             <th onclick="srt('Site')">Site <span class="th-sub">/ TAG</span> <span id="sx1"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
             <th>Metering Name</th>
             <th onclick="srt('Firmware')">Firmware <span class="th-sub">/ FW Update</span> <span id="sx3"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
@@ -2609,6 +3785,11 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge">v1.10.0</div>
+<div class="version-badge" style="width: 232px">v1.11.2</div>
 </body>
 </html>
+
+<style id="__om-edit-overrides">
+#map-kpi-bar .mkpi-tot >.mkpi-val { color: rgba(2, 132, 199, 0.933) !important }
+#plan-list >div:nth-child(1) .plan-item-tag { color: rgb(203, 213, 225) !important }
+</style>
