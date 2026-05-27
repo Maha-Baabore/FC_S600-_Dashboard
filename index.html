@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.12.7</title>
+<title>FC S600+ PTT — Metering Dashboard v1.12.8</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -183,7 +183,7 @@ header{background:rgba(8,12,24,.96);border-bottom:1px solid var(--br);padding:0 
 .hbtn.gr{border-color:rgba(0,212,255,.3);color:var(--ac)}.hbtn.gr:hover{background:rgba(0,212,255,.08)}
 .lupd{font-size:10px;color:var(--tx3);font-family:'Space Mono',monospace}
 .main{display:flex;padding-left:296px}
-.sidebar{width:256px;min-width:256px;background:var(--sf);border-right:none;padding:16px 0 16px;height:calc(100vh - 82px);overflow-y:auto;position:fixed;top:72px;left:20px;border-radius:18px;z-index:10;border:1px solid var(--br)}
+.sidebar{width:256px;min-width:256px;background:var(--sf);border-right:none;padding:16px 0 32px;height:calc(100vh - 82px);overflow-y:auto;position:fixed;top:72px;left:20px;border-radius:18px;z-index:10;border:1px solid var(--br)}
 .sidebar::-webkit-scrollbar{width:3px}.sidebar::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
 .ftitle{padding:8px 16px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--tx3);font-family:'Space Mono',monospace;display:flex;align-items:center;gap:8px}
 .ftitle::after{content:'';flex:1;height:1px;background:var(--br)}
@@ -250,7 +250,7 @@ header{background:rgba(8,12,24,.96);border-bottom:1px solid var(--br);padding:0 
 .tcnt{font-family:'Space Mono',monospace;font-size:11px;color:var(--tx3);margin-left:10px}
 .srch{background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:7px 12px;font-size:12px;color:var(--tx);outline:none;width:220px;font-family:'DM Sans',sans-serif;transition:border-color .2s}
 .srch::placeholder{color:var(--tx3)}.srch:focus{border-color:var(--ac2)}
-.tw{overflow-x:auto;overflow-y:auto;flex:1;min-height:0}
+.tw{overflow-x:auto;overflow-y:auto;flex:1;min-height:0;display:block}
 .tw::-webkit-scrollbar{width:3px;height:3px}.tw::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
 table{width:100%;border-collapse:collapse;font-size:12px}
 thead{position:sticky;top:0;z-index:2}thead tr{background:var(--sf2)}
@@ -453,22 +453,22 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .drawer-trigger-hint{font-size:10.5px;color:var(--tx3);text-align:center;line-height:1.5;font-family:'DM Sans',sans-serif;padding:0 12px}
 .modal-btn-cancel{flex:0 0 auto}
 
-/* Version badge — compact, centered under sidebar */
+/* Version badge — text only, centered under sidebar */
 .version-badge{
   position: fixed !important;
-  bottom: 18px;
+  bottom: 16px;
   left: 20px;
   width: 256px;
   text-align: center;
   font-size: 9px;
   font-family: 'Space Mono', monospace;
   color: var(--tx3);
-  padding: 4px 14px;
+  padding: 0;
   letter-spacing: 1px;
   z-index: 9999;
   background: transparent;
-  border-radius: 20px;
   border: none;
+  pointer-events: none;
 }
 .sched-active .version-badge{ width: 256px; left: 20px; }
 .sched-active{ padding-left: 0 !important; }
@@ -574,7 +574,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .map-body{flex:1;min-height:0;display:flex;flex-direction:row;gap:12px;padding:0 16px 14px;overflow:hidden;max-height:100%}
 #chartdiv{flex:1;min-width:0;height:100%;background:transparent}
 .map-right-panel{width:290px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;overflow-y:auto;align-self:flex-start;padding-top:2px;max-height:100%}
-.map-info-card{background:transparent;border:1px solid var(--br);border-radius:12px;padding:14px 16px}
+.map-info-card{background:transparent;border:none;border-radius:0;padding:8px 4px}
 .map-info-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--tx3);font-family:'Space Mono',monospace;margin-bottom:8px}
 .map-info-sub{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);font-family:'Space Mono',monospace;margin-bottom:6px}
 .map-reg-chips{display:flex;flex-wrap:wrap;gap:5px}
@@ -596,7 +596,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.12.7 — visionOS-inspired
+   LIQUID GLASS v1.12.8 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -853,13 +853,14 @@ html.light .chip.on, html:not(.light) .chip.on{
   box-shadow: 0 8px 24px rgba(2,132,199,.3), inset 0 1px 0 rgba(255,255,255,.5) !important;
 }
 
-/* Map info cards — single glass layer */
+/* Map info cards — transparent glass, no visible box */
 .map-info-card, .map-info-card-tall{
-  background: var(--lg-bg-strong) !important;
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid var(--lg-bd) !important;
-  box-shadow: var(--lg-shadow) !important;
+  background: transparent !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 8px 4px;
 }
 
 /* Schedule drawer — heavy glass */
@@ -1755,7 +1756,7 @@ html, html.light, html:not(.light){background: transparent !important}
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.12.7</div>
+  <div class="home-version">v1.12.8</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -3841,7 +3842,7 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge">v1.12.7</div>
+<div class="version-badge">v1.12.8</div>
 </body>
 </html>
 
