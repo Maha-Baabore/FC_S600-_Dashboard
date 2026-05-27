@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.12.13</title>
+<title>FC S600+ PTT — Metering Dashboard v1.12.14</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -22,7 +22,7 @@
   --tx:#0f172a;--tx2:#475569;--tx3:#94a3b8;--br:rgba(0,0,0,0.08);
   --table-hover:rgba(0,0,0,0.025);
 }
-*{transition:background-color .25s ease,color .2s ease,border-color .2s ease}
+/* perf: removed global wildcard transition — keep targeted transitions only */
 *{box-sizing:border-box;margin:0;padding:0}
 body,header,.sidebar,.content,.main{transition:background-color .3s ease,color .2s ease,border-color .2s ease}
 /* Light mode overrides */
@@ -608,7 +608,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.12.13 — visionOS-inspired
+   LIQUID GLASS v1.12.14 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1833,7 +1833,7 @@ html:not(.light) .map-panel {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.12.13</div>
+  <div class="home-version">v1.12.14</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2211,7 +2211,8 @@ function loadGS(){
 
 function doFetch(url,sheet,btn){
   setP(50,'\u0e01\u0e33\u0e25\u0e31\u0e07\u0e14\u0e32\u0e27\u0e19\u0e4c\u0e42\u0e2b\u0e25\u0e14 CSV...');
-  fetch(url).then(function(r){
+  var _fc=new AbortController();var _ft=setTimeout(function(){_fc.abort();},15000);
+  fetch(url,{signal:_fc.signal}).then(function(r){clearTimeout(_ft);
     if(!r.ok)throw new Error('HTTP '+r.status);
     return r.text();
   }).then(function(t){
@@ -2266,9 +2267,9 @@ function parseCSV(text){
     }
   }
   // handle last line without trailing newline
-  if(cur!==''||cells.length){
+  if(cur.trim()!==''||cells.some(function(x){ return x.trim()!==''; })){
     cells.push(cur);
-    if(cells.some(function(c){ return c.trim()!==''; })) rows.push(cells);
+    if(cells.some(function(x){ return x.trim()!==''; })) rows.push(cells);
   }
   return rows;
 }
@@ -2295,7 +2296,7 @@ function showDash(sub){
   document.getElementById('home').style.display='none';
   document.getElementById('dash').style.display='block';
   var vb=document.querySelector('.version-badge');if(vb)vb.style.display='';
-  document.getElementById('hf').innerHTML=sub;
+  document.getElementById('hf').textContent=sub;
   document.getElementById('h-upd').textContent='Loaded '+new Date().toLocaleTimeString('th-TH');
   document.getElementById('ref-btn').style.display=(lastSrc&&lastSrc.type==='gs')?'':'none';
   buildF();render();
@@ -2310,14 +2311,14 @@ function refreshGS(){
   .then(function(t){
     var rows=parseCSV(t);processRows(rows);ST.p=1;buildF();render();
     document.getElementById('h-upd').textContent='Updated '+new Date().toLocaleTimeString('th-TH');
-    document.getElementById('hf').innerHTML=lastSrc.sheet+' (Google Sheet) &middot; '+DATA.length+' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23';
+    document.getElementById('hf').textContent=lastSrc.sheet+' (Google Sheet) &middot; '+DATA.length+' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23';
     btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 12A8 8 0 1 1 17.5 6.5"/><path d="M20 3.5V8H15.5"/></svg> Refresh';btn.disabled=false;
   }).catch(function(e){
     fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(lastSrc.url)).then(function(r){return r.text();}).then(function(t){
       var rows=parseCSV(t);processRows(rows);ST.p=1;buildF();render();
       document.getElementById('h-upd').textContent='Updated '+new Date().toLocaleTimeString('th-TH');
       btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 12A8 8 0 1 1 17.5 6.5"/><path d="M20 3.5V8H15.5"/></svg> Refresh';btn.disabled=false;
-    }).catch(function(){btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 12A8 8 0 1 1 17.5 6.5"/><path d="M20 3.5V8H15.5"/></svg> Refresh';btn.disabled=false;});
+    }).catch(function(){clrP();btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 12A8 8 0 1 1 17.5 6.5"/><path d="M20 3.5V8H15.5"/></svg> Refresh';btn.disabled=false;});
   });
 }
 
@@ -2340,6 +2341,9 @@ function fixHart(v) {
 }
 
 var nv=function(v){return(v||'').toString().trim();};
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+var PLAN_STATUSES=['planned','inprogress','done','cancelled'];
+var REGION_ORDER=['1','2','3','4','5','6','7','8','9','10','11','GSP','OFFSHORE','OSP'];
 function fd(){
   var d=DATA;
   if(ST.f.r.size)d=d.filter(function(x){return ST.f.r.has(nv(x['PTT Region']));});
@@ -2458,11 +2462,13 @@ function rmF(kind,val){
     var t=c.textContent.trim();
     if(kind!=='q' && (t===val || c.dataset.k===val)){ c.classList.remove('on'); if(c.classList.contains('rc')){c.style.removeProperty('--rc-bg');c.style.removeProperty('--rc-bd');c.style.removeProperty('--rc-tx');} }
   });
-  render();
+  debouncedRender();
 }
 
-function srt(c){ST.sc=ST.sc===c?(ST.sa=!ST.sa,c):(ST.sa=true,c);render();}
+function srt(c){ST.sc=ST.sc===c?(ST.sa=!ST.sa,c):(ST.sa=true,c);debouncedRender();}
 
+var _renderTimer=null;
+function debouncedRender(){clearTimeout(_renderTimer);_renderTimer=setTimeout(render,60);}
 function render(){
   var d=fd(),t=d.length;
   var co=0,de=0,te=0,fu=0,fo=0;
@@ -3078,7 +3084,7 @@ var PLANS = (function(){
     // Migrate: ensure all required fields exist with defaults
     return arr.map(function(p){
       return {
-        id:        p.id        || Date.now()+Math.random(),
+        id:        p.id        || (Date.now().toString(36)+Math.random().toString(36).slice(2)),
         date:      p.date      || '',
         site:      p.site      || '',
         tag:       p.tag       || '',
@@ -3236,8 +3242,11 @@ function addPlan(){
   var fw=document.getElementById('sf-fw-target').value.trim();
   var performedBy=document.getElementById('sf-performed-by').value.trim();
   if(!site||!tag){alert('Please select a Site and TAG');return;}
-  PLANS.push({id:Date.now(),date:selectedDate,site:site,tag:tag,fwTarget:fw,timeStart:'',timeEnd:'',performedBy:performedBy,note:'',status:'planned'});
+  PLANS.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2),date:selectedDate,site:site,tag:tag,fwTarget:fw,timeStart:'',timeEnd:'',performedBy:performedBy,note:'',status:'planned'});
   savePlans();
+  document.getElementById('sf-site').value='';
+  document.getElementById('sf-tag').value='';
+  document.getElementById('sf-fw-target').value='';
   document.getElementById('sf-performed-by').value='';
   renderCal(); renderPlanList(); renderGantt();
 }
@@ -3284,8 +3293,8 @@ function renderPlanList(){
     var fwCurrent=(row['Firmware']||'').trim()||'—';
     return '<div class="plan-item">'+
       '<div style="flex:1;min-width:0">'+
-        '<div class="plan-item-tag">'+p.tag+'</div>'+
-        '<div class="plan-item-site">'+p.site+'</div>'+
+        '<div class="plan-item-tag">'+esc(p.tag)+'</div>'+
+        '<div class="plan-item-site">'+esc(p.site)+'</div>'+
         '<div class="plan-item-meta" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">'+
           '<span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12L15 14.5"/></svg> '+dl+'</span>'+
           '<span>App: <b>'+app+'</b></span>'+
@@ -3466,7 +3475,7 @@ function renderGantt(){
         if(!statCnt[st]) return '';
         return '<div style="flex:'+(statCnt[st]/cnt)+';background:'+SC[st]+';min-width:1px"></div>';
       }).join('');
-      var tip=inCol.map(function(p){ return p.tag+'('+p.status[0].toUpperCase()+')'; }).join(', ');
+      var tip=inCol.map(function(p){ return esc(p.tag)+'('+p.status[0].toUpperCase()+')'; }).join(', ');
       return '<div style="width:'+COL_W+'px;flex-shrink:0;height:'+GRP_H+'px;border-right:1px solid rgba(128,128,128,.06);background:'+bg+';display:flex;flex-direction:column;justify-content:center;padding:0 3px" title="'+tip+'" onclick="gcToggle(\''+reg+'\')" >'+
         '<div style="display:flex;height:8px;border-radius:3px;overflow:hidden;gap:1px">'+segs+'</div>'+
         '<div style="font-size:8px;font-family:Space Mono,monospace;color:var(--tx3);text-align:center;margin-top:1px">'+cnt+'</div>'+
@@ -3903,7 +3912,7 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.12.13</div>
+<div class="version-badge" style="display:none">v1.12.14</div>
 </body>
 </html>
 
