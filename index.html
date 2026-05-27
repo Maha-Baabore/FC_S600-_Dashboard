@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.12.4</title>
+<title>FC S600+ PTT — Metering Dashboard v1.12.5</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -471,6 +471,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   border: 1px solid var(--br);
 }
 .sched-active .version-badge{ width: 256px; left: 20px; }
+.sched-active{ padding-left: 0 !important; }
 /* Plan list — give breathing room below the "Monthly Plan" header */
 .sched-plans{ padding-top: 10px !important; }
 /* Custom Gantt */
@@ -595,7 +596,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.12.4 — visionOS-inspired
+   LIQUID GLASS v1.12.5 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1770,7 +1771,7 @@ html, html.light, html:not(.light){background: transparent !important}
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.12.4</div>
+  <div class="home-version">v1.12.5</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -1835,18 +1836,19 @@ html, html.light, html:not(.light){background: transparent !important}
         <div class="kcard fwod"><div class="klabel"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 19L3.5 5H20.5L12 19Z"/></svg> Firmware Outdated</div><div class="kval" id="kfo">0</div><div class="ksub" id="kfop"></div></div>
       </div>
 
-      <div class="crow">
+      <div style="margin-bottom:20px">
         <div class="ccard"><div class="ctitle">Units by Region</div><div id="cr"></div></div>
-        <div class="ccard"><div class="ctitle">Application &amp; Firmware Status</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-            <div>
-              <div style="font-size:9px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;font-family:'Space Mono',monospace">APPLICATION</div>
-              <div class="dleg" id="dl-app"></div>
-            </div>
-            <div>
-              <div style="font-size:9px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;font-family:'Space Mono',monospace">FIRMWARE</div>
-              <div class="dleg" id="dl-fw"></div>
-            </div>
+      </div>
+      <div class="ccard" style="margin-bottom:0">
+        <div class="ctitle">Application &amp; Firmware Status</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px">
+          <div>
+            <div style="font-size:9px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;font-family:'Space Mono',monospace">APPLICATION</div>
+            <div class="dleg" id="dl-app"></div>
+          </div>
+          <div>
+            <div style="font-size:9px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;font-family:'Space Mono',monospace">FIRMWARE</div>
+            <div class="dleg" id="dl-fw"></div>
           </div>
         </div>
       </div>
@@ -1855,6 +1857,12 @@ html, html.light, html:not(.light){background: transparent !important}
 
     <!-- TABLE VIEW -->
     <div class="content hidden" id="table-view">
+      <!-- KPI Row (same as dashboard) -->
+      <div class="krow" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:20px">
+        <div class="kcard tot"><div class="klabel">Total Units</div><div class="kval" id="kt2" style="color:rgb(2,132,199)">0</div><div class="ksub" id="ks2"></div></div>
+        <div class="kcard fwup"><div class="klabel"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 5L20.5 19H3.5L12 5Z"/></svg> Firmware Up-to-date</div><div class="kval" id="kfu2">0</div><div class="ksub" id="kfup2"></div></div>
+        <div class="kcard fwod"><div class="klabel"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 19L3.5 5H20.5L12 19Z"/></svg> Firmware Outdated</div><div class="kval" id="kfo2">0</div><div class="ksub" id="kfop2"></div></div>
+      </div>
       <div class="tsec">
         <div class="filter-bar hidden" id="filter-bar-table"></div>
         <div class="thdr">
@@ -2424,6 +2432,14 @@ function render(){
   document.getElementById('ks').textContent=Array.from(new Set(d.map(function(x){return x['Site'];}))).length+' sites';
   document.getElementById('kfup').textContent=t?(fu/t*100).toFixed(1)+'% of total':'';
   document.getElementById('kfop').textContent=t?(fo/t*100).toFixed(1)+'% of total':'';
+  // Sync to table-view KPI cards
+  var el;
+  if((el=document.getElementById('kt2'))) el.textContent=t;
+  if((el=document.getElementById('kfu2'))) el.textContent=fu;
+  if((el=document.getElementById('kfo2'))) el.textContent=fo;
+  if((el=document.getElementById('ks2'))) el.textContent=Array.from(new Set(d.map(function(x){return x['Site'];}))).length+' sites';
+  if((el=document.getElementById('kfup2'))) el.textContent=t?(fu/t*100).toFixed(1)+'% of total':'';
+  if((el=document.getElementById('kfop2'))) el.textContent=t?(fo/t*100).toFixed(1)+'% of total':'';
   // Region chart
   var cnt={};d.forEach(function(x){var k=nv(x['PTT Region'])||'?';cnt[k]=(cnt[k]||0)+1;});
   var regionOrder=['1','2','3','4','5','6','7','8','9','10','11','GSP','OFFSHORE','OSP'];
@@ -3841,7 +3857,7 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge" style="width: 232px">v1.12.4</div>
+<div class="version-badge" style="width: 232px">v1.12.5</div>
 </body>
 </html>
 
