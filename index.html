@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.9.8</title>
+<title>FC S600+ PTT — Metering Dashboard v1.9.9</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -539,7 +539,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.9.8</div>
+  <div class="home-version">v1.9.9</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -720,10 +720,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
                 <label class="sf-label">Performed By</label>
                 <input class="sf-input" id="sf-performed-by" type="text" placeholder="Engineer name">
               </div>
-              <div class="sf-row">
-                <label class="sf-label">Note (optional)</label>
-                <input class="sf-input" id="sf-note" type="text" placeholder="optional">
-              </div>
+
               <button class="sf-add-btn" onclick="addPlan()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg> Add Plan</button>
             </div>
           </div>
@@ -1824,12 +1821,10 @@ function addPlan(){
   var tag=document.getElementById('sf-tag').value;
   var fw=document.getElementById('sf-fw-target').value.trim();
   var performedBy=document.getElementById('sf-performed-by').value.trim();
-  var note=document.getElementById('sf-note').value.trim();
   if(!site||!tag){alert('Please select a Site and TAG');return;}
-  PLANS.push({id:Date.now(),date:selectedDate,site:site,tag:tag,fwTarget:fw,timeStart:'',timeEnd:'',performedBy:performedBy,note:note,status:'planned'});
+  PLANS.push({id:Date.now(),date:selectedDate,site:site,tag:tag,fwTarget:fw,timeStart:'',timeEnd:'',performedBy:performedBy,note:'',status:'planned'});
   savePlans();
   document.getElementById('sf-performed-by').value='';
-  document.getElementById('sf-note').value='';
   renderCal(); renderPlanList(); renderGantt();
 }
 
@@ -2476,6 +2471,6 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge">v1.9.8</div>
+<div class="version-badge">v1.9.9</div>
 </body>
 </html>
