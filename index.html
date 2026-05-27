@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.12.0</title>
+<title>FC S600+ PTT — Metering Dashboard v1.12.1</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -321,13 +321,13 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 #dash-content.hidden{display:none!important}
 #sched-view{flex:1;overflow-y:auto;background:var(--bg);height:calc(100vh - 62px)}
 #sched-view.hidden{display:none!important}
-.sched-layout{display:grid;grid-template-columns:260px 1fr;gap:12px;height:100%;padding:12px;box-sizing:border-box}
-.sched-left{display:flex;flex-direction:column;gap:10px;overflow-y:auto;height:calc(100vh - 86px);padding-bottom:10px}
+.sched-layout{display:block;height:100%;padding:12px 12px 12px 296px;box-sizing:border-box}
+.sched-left{position:fixed;top:74px;left:12px;width:260px;bottom:100px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;z-index:10}
 .sched-left::-webkit-scrollbar{width:3px}
 .sched-left::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
 .sched-left::-webkit-scrollbar-track{background:transparent}
-.sched-right{display:flex;flex-direction:column;gap:10px;overflow:hidden;height:calc(100vh - 86px)}
-.sched-section{background:var(--sf);border:1px solid var(--br);border-radius:16px;padding:16px 18px;flex-shrink:0}
+.sched-add-btn-wrap{position:fixed;bottom:56px;left:12px;width:260px;z-index:10}
+.sched-right{display:flex;flex-direction:column;gap:10px;height:calc(100vh - 86px)}.sched-section{background:var(--sf);border:1px solid var(--br);border-radius:16px;padding:16px 18px;flex-shrink:0}
 .sched-section.sched-gantt{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
 .sched-plans-box{background:var(--sf);border:1px solid var(--br);border-radius:16px;display:flex;flex-direction:column;overflow:hidden;flex:0 0 auto;max-height:340px;min-height:80px}
 .sched-plans-header{padding:12px 18px 10px;flex-shrink:0;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between}
@@ -454,9 +454,9 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 /* Version badge — bottom left, fits left sidebar width, centered text */
 .version-badge{
   position: fixed !important;
-  bottom: 10px;
+  bottom: 18px;
   left: 12px;
-  width: 232px;  /* dashboard sidebar (256) minus 24px margins */
+  width: 232px;
   text-align: center;
   font-size: 9px;
   font-family: 'Space Mono', monospace;
@@ -468,8 +468,8 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   border-radius: 12px;
   border: 1px solid var(--br);
 }
-/* Schedule page has wider left column (340px) */
-.sched-active .version-badge{ width: 232px; }
+/* Schedule page — match left column width */
+.sched-active .version-badge{ width: 260px; left: 12px; }
 /* Plan list — give breathing room below the "Monthly Plan" header */
 .sched-plans{ padding-top: 10px !important; }
 /* Custom Gantt */
@@ -594,7 +594,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.12.0 — visionOS-inspired
+   LIQUID GLASS v1.12.1 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -885,7 +885,7 @@ html.light .chip.on, html:not(.light) .chip.on{
 }
 
 /* Schedule sections (left column calendar + plans list) */
-.sched-section, .sched-plans-box, .sched-left, .sched-right, .sched-gantt{
+.sched-section, .sched-plans-box, .sched-gantt{
   background: var(--lg-bg-strong) !important;
   backdrop-filter: var(--lg-blur);
   -webkit-backdrop-filter: var(--lg-blur);
@@ -1081,8 +1081,6 @@ html.light .map-info-card, html:not(.light) .map-info-card,
 html.light .map-info-card-tall, html:not(.light) .map-info-card-tall,
 html.light .sched-section, html:not(.light) .sched-section,
 html.light .sched-plans-box, html:not(.light) .sched-plans-box,
-html.light .sched-left, html:not(.light) .sched-left,
-html.light .sched-right, html:not(.light) .sched-right,
 html.light .sched-gantt, html:not(.light) .sched-gantt,
 html.light .modal-content, html:not(.light) .modal-content,
 html.light .modal, html:not(.light) .modal,
@@ -1310,7 +1308,6 @@ html.light .vpbtn.active, html.light .vp-btn.active{
 :root:not(.light) .map-info-card-tall,
 :root:not(.light) .sched-section,
 :root:not(.light) .sched-plans-box,
-:root:not(.light) .sched-left,
 :root:not(.light) .sched-gantt,
 :root:not(.light) .sched-drawer,
 :root:not(.light) .modal-content,
@@ -1322,8 +1319,9 @@ html.light .vpbtn.active, html.light .vp-btn.active{
   border-color: rgba(255,255,255,0.10) !important;
   box-shadow: 0 8px 32px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.10) !important;
 }
-
-/* KPI cards (dashboard + map) — lighter white-tinted glass (like light mode) */
+/* sched-right/left are transparent containers */
+:root:not(.light) .sched-right,
+:root:not(.light) .sched-left{background:transparent !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;border:none !important;box-shadow:none !important}
 :root:not(.light) .kcard,
 :root:not(.light) .mkpi-card{
   background: rgba(255,255,255,0.06) !important;
@@ -1331,15 +1329,6 @@ html.light .vpbtn.active, html.light .vp-btn.active{
   -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
   border-color: rgba(255,255,255,0.18) !important;
   box-shadow: 0 8px 32px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.15) !important;
-}
-
-/* Gantt chart card — same lighter tint as Metering Units table */
-:root:not(.light) .sched-right{
-  background: rgba(13,18,32,0.22) !important;
-  backdrop-filter: blur(32px) saturate(220%) !important;
-  -webkit-backdrop-filter: blur(32px) saturate(220%) !important;
-  border-color: rgba(255,255,255,0.08) !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.08) !important;
 }
 
 /* map-kpi-bar itself is transparent (just the wrapper) */
@@ -1600,8 +1589,6 @@ html.light .vpbtn.active, html.light .vp-btn.active{
 :root.light .map-info-card-tall,
 :root.light .sched-section,
 :root.light .sched-plans-box,
-:root.light .sched-left,
-:root.light .sched-right,
 :root.light .sched-gantt,
 :root.light .sched-drawer,
 :root.light .modal-content,
@@ -1613,6 +1600,8 @@ html.light .vpbtn.active, html.light .vp-btn.active{
   border-color: rgba(255,255,255,0.55) !important;
   box-shadow: 0 8px 32px rgba(15,23,42,.06), inset 0 1px 0 rgba(255,255,255,.60) !important;
 }
+:root.light .sched-right,
+:root.light .sched-left{background:transparent !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;border:none !important;box-shadow:none !important}
 :root.light #map-kpi-bar{background:transparent !important;box-shadow:none !important;border:none !important;backdrop-filter:none !important}
 
 /* Light mode: kill solid-white inner bg on table sub-elements */
@@ -1779,7 +1768,7 @@ html, html.light, html:not(.light){background: transparent !important}
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.12.0</div>
+  <div class="home-version">v1.12.1</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -1917,9 +1906,8 @@ html, html.light, html:not(.light){background: transparent !important}
     <div id="sched-view" class="hidden">
       <div class="sched-layout">
 
-        <!-- LEFT: Calendar(s) + Add button at bottom -->
+        <!-- LEFT: Calendar only (fixed, like sidebar) -->
         <div class="sched-left">
-          <!-- Calendar this month -->
           <div class="sched-section">
             <div class="sched-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><rect x="3.5" y="5" width="17" height="15.5" rx="1.5"/><path d="M3.5 9.5H20.5M8 3V7M16 3V7"/></svg> Firmware Update Plan</div>
             <div class="cal-nav">
@@ -1930,18 +1918,11 @@ html, html.light, html:not(.light){background: transparent !important}
             <div class="cal-grid" id="cal-grid"></div>
             <div class="cal-selected-date" id="cal-selected-label">Select a date to plan</div>
           </div>
+        </div>
 
-          <!-- Calendar next month -->
-          <div class="sched-section">
-            <div class="cal-month-label" id="cal-next-month-label" style="font-size:11px;font-weight:700;font-family:'Space Mono',monospace;color:var(--tx2);display:block;text-align:center;margin-bottom:10px"></div>
-            <div class="cal-grid" id="cal-next-grid"></div>
-          </div>
-
-          <!-- Add Update Plan button at bottom -->
-          <div class="sched-section" style="margin-top:auto">
-            <button class="sf-add-btn drawer-trigger" onclick="openPlanDrawer()" style="width:100%"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg> Add Update Plan</button>
-            <div class="drawer-trigger-hint" style="margin-top:8px;text-align:center;font-size:10px;color:var(--tx3)">Select a date and add a firmware update plan</div>
-          </div>
+        <!-- Add Update Plan button — fixed above version badge -->
+        <div class="sched-add-btn-wrap">
+          <button class="sf-add-btn drawer-trigger" onclick="openPlanDrawer()" style="width:100%;border-radius:14px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg> Add Update Plan</button>
         </div>
 
         <!-- RIGHT: Plan list + Gantt -->
@@ -3853,7 +3834,7 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge" style="width: 232px">v1.12.0</div>
+<div class="version-badge" style="width: 232px">v1.12.1</div>
 </body>
 </html>
 
