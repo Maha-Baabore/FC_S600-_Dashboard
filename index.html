@@ -605,7 +605,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.12.12 — visionOS-inspired
+   LIQUID GLASS v1.12.13 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1075,8 +1075,8 @@ html:not(.light) .ksum, html:not(.light) .kcard, html:not(.light) .ccard{
   border: 1px solid var(--lg-bd) !important;
   box-shadow: var(--lg-shadow) !important;
 }
-html.light .map-info-card, html.light .map-info-card-tall,
-html:not(.light) .map-info-card, html:not(.light) .map-info-card-tall{
+html.light .map-info-card, html.light .map-info-card-tall, html.light .mkpi-card,
+html:not(.light) .map-info-card, html:not(.light) .map-info-card-tall, html:not(.light) .mkpi-card{
   background: var(--lg-bg) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -1328,8 +1328,7 @@ html.light .vpbtn.active, html.light .vp-btn.active{
 /* sched-right/left are transparent containers */
 :root:not(.light) .sched-right,
 :root:not(.light) .sched-left{background:transparent !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;border:none !important;box-shadow:none !important}
-:root:not(.light) .kcard,
-:root:not(.light) .mkpi-card{
+:root:not(.light) .kcard{
   background: rgba(255,255,255,0.06) !important;
   backdrop-filter: blur(32px) saturate(200%) !important;
   -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
@@ -1590,7 +1589,6 @@ html.light .vpbtn.active, html.light .vp-btn.active{
 :root.light .kcard,
 :root.light .ccard,
 :root.light .tsec,
-:root.light .mkpi-card,
 :root.light .sched-section,
 :root.light .sched-plans-box,
 :root.light .sched-gantt,
@@ -1773,7 +1771,7 @@ html, html.light, html:not(.light){background: transparent !important}
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.12.12</div>
+  <div class="home-version">v1.12.13</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
