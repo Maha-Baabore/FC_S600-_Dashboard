@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.11.8</title>
+<title>FC S600+ PTT — Metering Dashboard v1.11.9</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -593,7 +593,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.11.8 — visionOS-inspired
+   LIQUID GLASS v1.11.9 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1774,7 +1774,7 @@ html, html.light, html:not(.light){background: transparent !important}
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.11.8</div>
+  <div class="home-version">v1.11.9</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -3609,10 +3609,20 @@ function gcExport(){
           ctx.lineTo(x,by+r); ctx.quadraticCurveTo(x,by,x+r,by);
           ctx.closePath(); ctx.fill();
           // tag label on bar
-          if(COL_W>=32){
+          if(COL_W>=24){
             ctx.save();
             ctx.beginPath(); ctx.rect(x+2,by,bw-4,bh); ctx.clip();
-            text(p.tag,x+bw/2,by+bh/2,'#fff',8,'center',true);
+            ctx.fillStyle='#fff';
+            ctx.font='bold 8px "Space Mono",monospace';
+            ctx.textAlign='center'; ctx.textBaseline='middle';
+            var maxW=bw-8;
+            var label=p.tag;
+            // truncate to fit
+            while(label.length>1 && ctx.measureText(label).width>maxW){
+              label=label.slice(0,-1);
+            }
+            if(label!==p.tag) label=label.slice(0,-1)+'…';
+            ctx.fillText(label,x+bw/2,by+bh/2);
             ctx.restore();
           }
         });
@@ -3803,7 +3813,7 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge" style="width: 232px">v1.11.8</div>
+<div class="version-badge" style="width: 232px">v1.11.9</div>
 </body>
 </html>
 
