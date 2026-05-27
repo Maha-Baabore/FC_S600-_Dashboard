@@ -1795,6 +1795,26 @@ html:not(.light) .mkpi-card {
 }
 
 
+/* ── MAP PANEL: clean slate, zero conflict with .ccard cascade ── */
+.map-panel {
+  border-radius: 14px;
+  padding: 18px 20px;
+  width: 100%;
+  box-sizing: border-box;
+  /* Light mode default */
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.35);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+html:not(.light) .map-panel {
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+}
 </style>
 </head>
 <body>
@@ -1937,19 +1957,19 @@ html:not(.light) .mkpi-card {
       <div class="map-body">
         <div id="chartdiv"></div>
         <div class="map-right-panel">
-          <div class="ccard" id="map-region-panel">
+          <div class="map-panel" id="map-region-panel">
             <div class="ctitle">Units by Region</div>
             <div id="map-region-list"></div>
           </div>
-          <div class="ccard" id="map-appfw-panel" style="margin-bottom:0">
+          <div class="map-panel" id="map-appfw-panel">
             <div class="ctitle">Application &amp; Firmware Status</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px">
               <div>
-                <div style="font-size:9px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;font-family:&apos;Space Mono&apos;,monospace">APPLICATION</div>
+                <div style="font-size:9px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;font-family:'Space Mono',monospace">APPLICATION</div>
                 <div id="map-dl-app"></div>
               </div>
               <div>
-                <div style="font-size:9px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;font-family:&apos;Space Mono&apos;,monospace">FIRMWARE</div>
+                <div style="font-size:9px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;font-family:'Space Mono',monospace">FIRMWARE</div>
                 <div id="map-dl-fw"></div>
               </div>
             </div>
