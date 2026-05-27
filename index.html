@@ -1792,31 +1792,15 @@ html:not(.light) .map-panel {
   border: 1px solid rgba(255,255,255,0.12);
   box-shadow: 0 4px 20px rgba(0,0,0,0.25);
 }
-/* ── Map page: glass panel behind right cards ── */
+/* ── Map right panel: layout only, no background ── */
 .map-right-panel{
-  background: var(--lg-bg-strong);
-  backdrop-filter: var(--lg-blur);
-  -webkit-backdrop-filter: var(--lg-blur);
-  border: 1px solid var(--lg-bd);
-  box-shadow: var(--lg-shadow);
-  border-radius: 18px;
-  padding: 16px 14px !important;
-}
-/* Cards inside panel are transparent — panel provides the glass */
-.map-right-panel .ccard{
+  border-radius: 0;
+  padding: 0 !important;
   background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
   border: none !important;
   box-shadow: none !important;
-  border-radius: 0 !important;
-  padding: 0 !important;
-}
-/* Divider between the two cards */
-.map-right-panel > div:first-child{
-  border-bottom: 1px solid var(--lg-bd);
-  padding-bottom: 16px;
-  margin-bottom: 16px !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 </style>
