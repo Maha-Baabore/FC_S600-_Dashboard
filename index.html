@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.12.1</title>
+<title>FC S600+ PTT — Metering Dashboard v1.12.2</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -182,8 +182,8 @@ header{background:rgba(8,12,24,.96);border-bottom:1px solid var(--br);padding:0 
 .hbtn:hover{border-color:var(--ac);color:var(--ac)}
 .hbtn.gr{border-color:rgba(0,212,255,.3);color:var(--ac)}.hbtn.gr:hover{background:rgba(0,212,255,.08)}
 .lupd{font-size:10px;color:var(--tx3);font-family:'Space Mono',monospace}
-.main{display:flex;padding-left:256px}
-.sidebar{width:232px;min-width:232px;background:var(--sf);border-right:none;padding:16px 0 16px;height:calc(100vh - 82px);overflow-y:auto;position:fixed;top:72px;left:12px;border-radius:18px;z-index:10;border:1px solid var(--br)}
+.main{display:flex;padding-left:272px}
+.sidebar{width:232px;min-width:232px;background:var(--sf);border-right:none;padding:16px 0 16px;height:calc(100vh - 82px);overflow-y:auto;position:fixed;top:72px;left:20px;border-radius:18px;z-index:10;border:1px solid var(--br)}
 .sidebar::-webkit-scrollbar{width:3px}.sidebar::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
 .ftitle{padding:8px 16px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--tx3);font-family:'Space Mono',monospace;display:flex;align-items:center;gap:8px}
 .ftitle::after{content:'';flex:1;height:1px;background:var(--br)}
@@ -296,7 +296,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .vpill-btn{padding:5px 13px;border-radius:24px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--tx3);transition:all .2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
 .vpill-btn.active{background:var(--ac2);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.35)}
 /* Map view */
-#map-view{flex:1;overflow:hidden;position:relative;background:var(--bg);height:calc(100vh - 62px);overflow-y:auto}
+#map-view{flex:1;overflow:hidden;position:relative;background:var(--bg);height:calc(100vh - 62px);overflow-y:hidden}
 #map-view.hidden{display:none!important}
 #dash-content.hidden{display:none!important}
 .map-wrap{width:100%;height:100%;display:flex;align-items:flex-start;justify-content:center;padding:20px;gap:20px}
@@ -321,12 +321,12 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 #dash-content.hidden{display:none!important}
 #sched-view{flex:1;overflow-y:auto;background:var(--bg);height:calc(100vh - 62px)}
 #sched-view.hidden{display:none!important}
-.sched-layout{display:block;height:100%;padding:12px 12px 12px 296px;box-sizing:border-box}
-.sched-left{position:fixed;top:74px;left:12px;width:260px;bottom:100px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;z-index:10}
+.sched-layout{display:block;height:100%;padding:12px 26px 12px 284px;box-sizing:border-box}
+.sched-left{position:fixed;top:74px;left:20px;width:232px;bottom:100px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;z-index:10}
 .sched-left::-webkit-scrollbar{width:3px}
 .sched-left::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
 .sched-left::-webkit-scrollbar-track{background:transparent}
-.sched-add-btn-wrap{position:fixed;bottom:56px;left:12px;width:260px;z-index:10}
+.sched-add-btn-wrap{display:none}
 .sched-right{display:flex;flex-direction:column;gap:10px;height:calc(100vh - 86px)}.sched-section{background:var(--sf);border:1px solid var(--br);border-radius:16px;padding:16px 18px;flex-shrink:0}
 .sched-section.sched-gantt{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
 .sched-plans-box{background:var(--sf);border:1px solid var(--br);border-radius:16px;display:flex;flex-direction:column;overflow:hidden;flex:0 0 auto;max-height:340px;min-height:80px}
@@ -451,12 +451,12 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .drawer-trigger-hint{font-size:10.5px;color:var(--tx3);text-align:center;line-height:1.5;font-family:'DM Sans',sans-serif;padding:0 12px}
 .modal-btn-cancel{flex:0 0 auto}
 
-/* Version badge — bottom left, fits left sidebar width, centered text */
+/* Version badge — bottom left */
 .version-badge{
   position: fixed !important;
   bottom: 18px;
-  left: 12px;
-  width: 232px;
+  left: 20px;
+  width: 216px;
   text-align: center;
   font-size: 9px;
   font-family: 'Space Mono', monospace;
@@ -468,8 +468,8 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   border-radius: 12px;
   border: 1px solid var(--br);
 }
-/* Schedule page — match left column width */
-.sched-active .version-badge{ width: 260px; left: 12px; }
+/* Schedule page — match sched-left width */
+.sched-active .version-badge{ width: 216px; left: 20px; }
 /* Plan list — give breathing room below the "Monthly Plan" header */
 .sched-plans{ padding-top: 10px !important; }
 /* Custom Gantt */
@@ -594,7 +594,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.12.1 — visionOS-inspired
+   LIQUID GLASS v1.12.2 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1768,7 +1768,7 @@ html, html.light, html:not(.light){background: transparent !important}
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.12.1</div>
+  <div class="home-version">v1.12.2</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -1906,7 +1906,7 @@ html, html.light, html:not(.light){background: transparent !important}
     <div id="sched-view" class="hidden">
       <div class="sched-layout">
 
-        <!-- LEFT: Calendar only (fixed, like sidebar) -->
+        <!-- LEFT: Calendar + Add button inside card (fixed, same width as sidebar) -->
         <div class="sched-left">
           <div class="sched-section">
             <div class="sched-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><rect x="3.5" y="5" width="17" height="15.5" rx="1.5"/><path d="M3.5 9.5H20.5M8 3V7M16 3V7"/></svg> Firmware Update Plan</div>
@@ -1916,13 +1916,9 @@ html, html.light, html:not(.light){background: transparent !important}
               <button class="cal-nav-btn" onclick="calNext()"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M9.5 5L16.5 12L9.5 19"/></svg></button>
             </div>
             <div class="cal-grid" id="cal-grid"></div>
-            <div class="cal-selected-date" id="cal-selected-label">Select a date to plan</div>
+            <div class="cal-selected-date" id="cal-selected-label" style="margin-bottom:12px">Select a date to plan</div>
+            <button class="sf-add-btn drawer-trigger" onclick="openPlanDrawer()" style="width:100%"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg> Add Update Plan</button>
           </div>
-        </div>
-
-        <!-- Add Update Plan button — fixed above version badge -->
-        <div class="sched-add-btn-wrap">
-          <button class="sf-add-btn drawer-trigger" onclick="openPlanDrawer()" style="width:100%;border-radius:14px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg> Add Update Plan</button>
         </div>
 
         <!-- RIGHT: Plan list + Gantt -->
@@ -3834,7 +3830,7 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge" style="width: 232px">v1.12.1</div>
+<div class="version-badge" style="width: 232px">v1.12.2</div>
 </body>
 </html>
 
