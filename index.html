@@ -1752,17 +1752,15 @@ html, html.light, html:not(.light){background: transparent !important}
 
 /* ═══ END FINAL OVERRIDES ═══ */
 
-/* Map panels + KPI cards — liquid glass, FINAL highest specificity */
-/* Light mode: subtle frosted, low alpha so gradient shows through */
-html.light .map-info-card, html.light .map-info-card-tall, html.light .mkpi-card {
+/* mkpi-card (map KPI bar) — liquid glass matching ccard */
+html.light .mkpi-card {
   background: rgba(255,255,255,0.12) !important;
   backdrop-filter: blur(24px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
   border: 1px solid rgba(255,255,255,0.30) !important;
   box-shadow: 0 4px 24px rgba(0,0,0,0.06) !important;
 }
-/* Dark mode: dark-tinted frosted glass */
-html:not(.light) .map-info-card, html:not(.light) .map-info-card-tall, html:not(.light) .mkpi-card {
+html:not(.light) .mkpi-card {
   background: rgba(255,255,255,0.06) !important;
   backdrop-filter: blur(24px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
@@ -1913,19 +1911,19 @@ html:not(.light) .map-info-card, html:not(.light) .map-info-card-tall, html:not(
       <div class="map-body">
         <div id="chartdiv"></div>
         <div class="map-right-panel">
-          <div class="map-info-card" id="map-region-panel">
-            <div class="map-info-title">Units by Region</div>
+          <div class="ccard" id="map-region-panel">
+            <div class="ctitle">Units by Region</div>
             <div id="map-region-list"></div>
           </div>
-          <div class="map-info-card" id="map-appfw-panel">
-            <div class="map-info-title">Application &amp; Firmware Status</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+          <div class="ccard" id="map-appfw-panel" style="margin-bottom:0">
+            <div class="ctitle">Application &amp; Firmware Status</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px">
               <div>
-                <div class="map-info-sub">APPLICATION</div>
+                <div style="font-size:9px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;font-family:&apos;Space Mono&apos;,monospace">APPLICATION</div>
                 <div id="map-dl-app"></div>
               </div>
               <div>
-                <div class="map-info-sub">FIRMWARE</div>
+                <div style="font-size:9px;color:var(--tx3);letter-spacing:1px;margin-bottom:8px;font-family:&apos;Space Mono&apos;,monospace">FIRMWARE</div>
                 <div id="map-dl-fw"></div>
               </div>
             </div>
