@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.9.1</title>
+<title>FC S600+ PTT — Metering Dashboard v1.9.2</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -530,7 +530,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.9.1</div>
+  <div class="home-version">v1.9.2</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -1713,6 +1713,11 @@ function savePlans(){ try{ localStorage.setItem('fc-plans', JSON.stringify(PLANS
 function initSched(){
   var now = new Date();
   if(!calYear){ calYear = now.getFullYear(); calMonth = now.getMonth(); }
+  // Sync view toggle buttons with current GC_VIEW state
+  ['day','week','month'].forEach(function(m){
+    var b=document.getElementById('gc-btn-'+m);
+    if(b) b.classList.toggle('active', m===GC_VIEW);
+  });
   populateSiteDropdown();
   renderCal();
   renderPlanList();
@@ -1883,7 +1888,7 @@ function renderPlanList(){
 
 
 // ── CUSTOM GANTT — Daily Load View ──
-var GC_VIEW = 'week';
+var GC_VIEW = 'day';
 var GC_OPEN = {};
 
 function gcSetView(v){
