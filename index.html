@@ -583,7 +583,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .map-body{flex:1;min-height:0;display:flex;flex-direction:row;gap:12px;padding:0 16px 14px;overflow:hidden;max-height:100%}
 #chartdiv{flex:1;min-width:0;height:100%;background:transparent}
 .map-right-panel{width:290px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;overflow-y:auto;align-self:flex-start;padding-top:2px;max-height:100%}
-.map-info-card{border:1px solid var(--br);border-radius:12px;padding:14px 16px}
+.map-info-card{border-radius:12px;padding:14px 16px}
 .map-info-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--tx3);font-family:'Space Mono',monospace;margin-bottom:8px}
 .map-info-sub{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);font-family:'Space Mono',monospace;margin-bottom:6px}
 .map-reg-chips{display:flex;flex-wrap:wrap;gap:5px}
@@ -1752,6 +1752,17 @@ html, html.light, html:not(.light){background: transparent !important}
 
 /* ═══ END FINAL OVERRIDES ═══ */
 
+/* Map panels + KPI cards — liquid glass, FINAL highest specificity */
+html.light .map-info-card, html:not(.light) .map-info-card,
+html.light .map-info-card-tall, html:not(.light) .map-info-card-tall,
+html.light .mkpi-card, html:not(.light) .mkpi-card {
+  background: var(--lg-bg-strong) !important;
+  backdrop-filter: var(--lg-blur) !important;
+  -webkit-backdrop-filter: var(--lg-blur) !important;
+  border: 1px solid var(--lg-bd) !important;
+  box-shadow: var(--lg-shadow) !important;
+}
+
 
 </style>
 </head>
@@ -1975,47 +1986,6 @@ html, html.light, html:not(.light){background: transparent !important}
         </div>
       </div><!-- /.sched-layout -->
 
-      <!-- ADD PLAN DRAWER -->
-      <div class="sched-drawer-backdrop" id="sched-drawer-backdrop" onclick="closePlanDrawer()"></div>
-      <aside class="sched-drawer" id="sched-drawer" aria-hidden="true">
-        <div class="sched-drawer-header">
-          <div class="drawer-title">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg>
-            Add Update Plan
-          </div>
-          <button class="drawer-close" onclick="closePlanDrawer()" aria-label="Close">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 5.5L18.5 18.5"/><path d="M18.5 5.5L5.5 18.5"/></svg>
-          </button>
-        </div>
-        <div class="sched-drawer-body">
-          <div class="drawer-date-display" id="drawer-date-display">Select a date on the calendar</div>
-          <div class="sched-form">
-            <div class="sf-row">
-              <label class="sf-label">Site</label>
-              <select class="sf-input" id="sf-site"><option value="">-- Select Site --</option></select>
-            </div>
-            <div class="sf-row">
-              <label class="sf-label">TAG</label>
-              <select class="sf-input" id="sf-tag"><option value="">-- Select TAG --</option></select>
-            </div>
-            <div class="sf-row">
-              <label class="sf-label">Target Firmware</label>
-              <input class="sf-input" id="sf-fw-target" type="text" placeholder="e.g. 06.31">
-            </div>
-            <div class="sf-row">
-              <label class="sf-label">Performed By</label>
-              <input class="sf-input" id="sf-performed-by" type="text" placeholder="Engineer name">
-            </div>
-          </div>
-        </div>
-        <div class="sched-drawer-footer">
-          <button class="modal-btn-cancel" onclick="closePlanDrawer()">Cancel</button>
-          <button class="sf-add-btn" style="margin-top:0;flex:1" onclick="addPlanFromDrawer()">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg>
-            Add Plan
-          </button>
-        </div>
-      </aside>
     </div><!-- /#sched-view -->
 
   </div>
@@ -2048,6 +2018,32 @@ html, html.light, html:not(.light){background: transparent !important}
     <div class="modal-footer">
       <button class="modal-btn-cancel" onclick="closeModal('modal-edit-plan')">Cancel</button>
       <button class="modal-btn-save" onclick="saveEditPlan()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M4.5 12.5L9.5 17.5L19.5 6.5"/></svg> Save</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL: Add Update Plan -->
+<div class="modal-overlay hidden" id="modal-add-plan">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg> Add Update Plan</span>
+      <button class="modal-close" onclick="closePlanDrawer()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M5.5 5.5L18.5 18.5"/><path d="M18.5 5.5L5.5 18.5"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="drawer-date-display" id="drawer-date-display">Select a date on the calendar</div>
+      <div class="sf-row"><label class="sf-label">Site</label>
+        <select class="sf-input" id="sf-site"><option value="">-- Select Site --</option></select></div>
+      <div class="sf-row"><label class="sf-label">TAG</label>
+        <select class="sf-input" id="sf-tag"><option value="">-- Select TAG --</option></select></div>
+      <div class="sf-row"><label class="sf-label">Target Firmware</label>
+        <input class="sf-input" id="sf-fw-target" type="text" placeholder="e.g. 06.31"></div>
+      <div class="sf-row"><label class="sf-label">Performed By</label>
+        <input class="sf-input" id="sf-performed-by" type="text" placeholder="Engineer name"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn-cancel" onclick="closePlanDrawer()">Cancel</button>
+      <button class="modal-btn-save" onclick="addPlanFromDrawer()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg> Add Plan</button>
     </div>
   </div>
 </div>
@@ -2541,35 +2537,23 @@ function openPlanDrawer(){
   var dd=document.getElementById('drawer-date-display');
   var lbl=document.getElementById('cal-selected-label');
   if(dd && lbl) dd.textContent = lbl.textContent;
-  document.getElementById('sched-drawer').classList.add('open');
-  document.getElementById('sched-drawer-backdrop').classList.add('show');
-  document.getElementById('sched-drawer').setAttribute('aria-hidden','false');
+  openModal('modal-add-plan');
 }
 function closePlanDrawer(){
-  document.getElementById('sched-drawer').classList.remove('open');
-  document.getElementById('sched-drawer-backdrop').classList.remove('show');
-  document.getElementById('sched-drawer').setAttribute('aria-hidden','true');
+  closeModal('modal-add-plan');
 }
 function addPlanFromDrawer(){
-  // delegate to existing addPlan()
-  var ok=true;
-  try{ addPlan(); }catch(e){ ok=false; console.error(e); }
-  // close only if a plan was actually added — addPlan does its own validation/alerts.
-  // If validation failed, addPlan typically alerts and doesn't add; we still keep drawer open.
-  // Heuristic: close if the form date is valid and no alert was raised. Best effort: close after 50ms.
-  setTimeout(function(){
-    // crude check: did addPlan clear inputs? if site is still empty assume something was attempted
-  }, 0);
+  try{ addPlan(); }catch(e){ console.error(e); }
   closePlanDrawer();
 }
 // Escape to close
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){
-    var dr=document.getElementById('sched-drawer');
-    if(dr && dr.classList.contains('open')) closePlanDrawer();
+    var m=document.getElementById('modal-add-plan');
+    if(m && !m.classList.contains('hidden')) closePlanDrawer();
   }
 });
-// Keep drawer date display in sync when selecting a calendar date
+// Keep modal date display in sync when selecting a calendar date
 (function(){
   var lbl=document.getElementById('cal-selected-label');
   if(!lbl) return;
