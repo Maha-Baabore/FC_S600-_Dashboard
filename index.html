@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.12.12</title>
+<title>FC S600+ PTT — Metering Dashboard v1.12.13</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -862,8 +862,8 @@ html.light .chip.on, html:not(.light) .chip.on{
   box-shadow: 0 8px 24px rgba(2,132,199,.3), inset 0 1px 0 rgba(255,255,255,.5) !important;
 }
 
-/* Map info cards — minimal glass, no blur halo */
-.map-info-card, .map-info-card-tall{
+/* Map info cards + KPI cards — minimal glass, no blur halo */
+.map-info-card, .map-info-card-tall, .mkpi-card{
   background: var(--lg-bg) !important;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -3859,7 +3859,7 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge">v1.12.12</div>
+<div class="version-badge">v1.12.13</div>
 </body>
 </html>
 
