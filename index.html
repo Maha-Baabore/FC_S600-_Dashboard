@@ -50,8 +50,8 @@ body,header,.sidebar,.content,.main{transition:background-color .3s ease,color .
 .light .kcard{background:#ffffff!important;box-shadow:0 1px 6px rgba(0,0,0,0.06)!important}
 .light .ccard{background:#ffffff!important;box-shadow:0 1px 6px rgba(0,0,0,0.06)!important}
 /* Map right panel cards: frosted glass, not solid white */
-.light .map-right-panel .ccard{background:rgba(255,255,255,0.06)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.45)!important;box-shadow:0 0 24px 4px rgba(15,23,42,.10)!important}
-:root:not(.light) .map-right-panel .ccard{background:rgba(255,255,255,0.04)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.08)!important;box-shadow:0 0 24px 4px rgba(0,0,0,.30)!important}
+.light .map-right-panel .ccard{background:rgba(255,255,255,0.06)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.45)!important;box-shadow:none!important}
+:root:not(.light) .map-right-panel .ccard{background:rgba(255,255,255,0.04)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.08)!important;box-shadow:none!important}
 .light .tsec{background:#ffffff!important;box-shadow:0 1px 6px rgba(0,0,0,0.06)!important}
 .light thead tr{background:#f1f5f9!important}
 .light .tw{background:#ffffff}
@@ -661,7 +661,7 @@ html, html.light, html:not(.light), body, html.light body, html:not(.light) body
   --lg-hl: rgba(255,255,255,0.18);
   --lg-blur: blur(32px) saturate(180%);
   --lg-blur-heavy: blur(48px) saturate(200%);
-  --lg-shadow: 0 0 24px 4px rgba(0,0,0,.30);
+  --lg-shadow: none;
   --lg-shadow-lift: 0 20px 60px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.14);
 }
 :root.light{
@@ -671,7 +671,7 @@ html, html.light, html:not(.light), body, html.light body, html:not(.light) body
   --lg-bd: rgba(255,255,255,0.45);
   --lg-bd-strong: rgba(255,255,255,0.65);
   --lg-hl: rgba(255,255,255,0.85);
-  --lg-shadow: 0 0 24px 4px rgba(15,23,42,.10);
+  --lg-shadow: none;
   --lg-shadow-lift: 0 20px 60px rgba(15,23,42,.12), inset 0 1px 0 rgba(255,255,255,.75);
 }
 
@@ -1084,7 +1084,7 @@ html.light .map-right-panel .ccard{
   backdrop-filter: blur(20px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   border: 1px solid rgba(255,255,255,0.45) !important;
-  box-shadow: 0 0 24px 4px rgba(15,23,42,.10) !important;
+  box-shadow: none !important;
 }
 html:not(.light) .map-right-panel .ccard{
   background: rgba(255,255,255,0.04) !important;
@@ -1626,7 +1626,7 @@ html.light .vpbtn.active, html.light .vp-btn.active{
   backdrop-filter: blur(20px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   border: 1px solid rgba(255,255,255,0.45) !important;
-  box-shadow: 0 0 24px 4px rgba(15,23,42,.10) !important;
+  box-shadow: none !important;
 }
 :root.light .sched-right,
 :root.light .sched-left{background:transparent !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;border:none !important;box-shadow:none !important}
@@ -1813,7 +1813,7 @@ html:not(.light) .map-panel {
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 0 24px 4px rgba(0,0,0,.30);
+  box-shadow: none;
 }
 </style>
 </head>
@@ -1958,9 +1958,9 @@ html:not(.light) .map-panel {
         <div id="chartdiv"></div>
         <div class="map-right-panel">
           <div style="margin-bottom:10px">
-            <div class="ccard" style="background:rgba(255,255,255,0.06)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.45)!important;box-shadow:0 0 24px 4px rgba(15,23,42,.10)!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%"><div class="ctitle">Units by Region</div><div id="map-cr"></div></div>
+            <div class="ccard" style="background:rgba(255,255,255,0.06)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.45)!important;box-shadow:none!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%"><div class="ctitle">Units by Region</div><div id="map-cr"></div></div>
           </div>
-          <div class="ccard" style="background:rgba(255,255,255,0.06)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.45)!important;box-shadow:0 0 24px 4px rgba(15,23,42,.10)!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%;margin-bottom:0">
+          <div class="ccard" style="background:rgba(255,255,255,0.06)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.45)!important;box-shadow:none!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%;margin-bottom:0">
             <div class="ctitle">Application &amp; Firmware Status</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px">
               <div>
@@ -2596,7 +2596,7 @@ function setTheme(mode){
   }
   // Update map panel inline styles for glass effect
   var mapPanels = document.querySelectorAll('.map-right-panel .ccard');
-  var panelStyle = mode==='light' ? 'background:rgba(255,255,255,0.06)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.45)!important;box-shadow:0 0 24px 4px rgba(15,23,42,.10)!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%' : 'background:rgba(255,255,255,0.04)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.08)!important;box-shadow:0 0 24px 4px rgba(0,0,0,.30)!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%';
+  var panelStyle = mode==='light' ? 'background:rgba(255,255,255,0.06)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.45)!important;box-shadow:none!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%' : 'background:rgba(255,255,255,0.04)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.08)!important;box-shadow:none!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%';
   mapPanels.forEach(function(el){ el.setAttribute('style', panelStyle + (el.id==='' && el.style.marginBottom ? ';margin-bottom:'+el.style.marginBottom : '')); });
 }
 
