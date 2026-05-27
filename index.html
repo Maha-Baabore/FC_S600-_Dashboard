@@ -51,7 +51,7 @@ body,header,.sidebar,.content,.main{transition:background-color .3s ease,color .
 .light .ccard{background:#ffffff!important;box-shadow:0 1px 6px rgba(0,0,0,0.06)!important}
 /* Map right panel cards: frosted glass, not solid white */
 .light .map-right-panel .ccard{background:rgba(255,255,255,0.06)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.45)!important;box-shadow:none!important}
-:root:not(.light) .map-right-panel .ccard{background:rgba(255,255,255,0.07)!important;backdrop-filter:blur(24px) saturate(180%)!important;-webkit-backdrop-filter:blur(24px) saturate(180%)!important;box-shadow:0 4px 20px rgba(0,0,0,0.25)!important}
+:root:not(.light) .map-right-panel .ccard{background:rgba(255,255,255,0.04)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.08)!important;box-shadow:none!important}
 .light .tsec{background:#ffffff!important;box-shadow:0 1px 6px rgba(0,0,0,0.06)!important}
 .light thead tr{background:#f1f5f9!important}
 .light .tw{background:#ffffff}
@@ -1087,11 +1087,11 @@ html.light .map-right-panel .ccard{
   box-shadow: none !important;
 }
 html:not(.light) .map-right-panel .ccard{
-  background: rgba(255,255,255,0.07) !important;
-  backdrop-filter: blur(24px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
-  border: 1px solid rgba(255,255,255,0.12) !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.25) !important;
+  background: rgba(255,255,255,0.04) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  box-shadow: none !important;
 }
 html.light .map-info-card, html.light .map-info-card-tall, html.light .mkpi-card,
 html:not(.light) .map-info-card, html:not(.light) .map-info-card-tall, html:not(.light) .mkpi-card{
@@ -1809,11 +1809,11 @@ html:not(.light) .mkpi-card {
   box-shadow: 0 4px 20px rgba(0,0,0,0.06);
 }
 html:not(.light) .map-panel {
-  background: rgba(255,255,255,0.07);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: none;
 }
 </style>
 </head>
@@ -2596,7 +2596,7 @@ function setTheme(mode){
   }
   // Update map panel inline styles for glass effect
   var mapPanels = document.querySelectorAll('.map-right-panel .ccard');
-  var panelStyle = mode==='light' ? 'background:rgba(255,255,255,0.06)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.45)!important;box-shadow:none!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%' : 'background:rgba(255,255,255,0.07)!important;backdrop-filter:blur(24px) saturate(180%)!important;-webkit-backdrop-filter:blur(24px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.12)!important;box-shadow:0 4px 20px rgba(0,0,0,0.25)!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%';
+  var panelStyle = mode==='light' ? 'background:rgba(255,255,255,0.06)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.45)!important;box-shadow:none!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%' : 'background:rgba(255,255,255,0.04)!important;backdrop-filter:blur(20px) saturate(180%)!important;-webkit-backdrop-filter:blur(20px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.08)!important;box-shadow:none!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%';
   mapPanels.forEach(function(el){ el.setAttribute('style', panelStyle + (el.id==='' && el.style.marginBottom ? ';margin-bottom:'+el.style.marginBottom : '')); });
 }
 
