@@ -1753,14 +1753,21 @@ html, html.light, html:not(.light){background: transparent !important}
 /* ═══ END FINAL OVERRIDES ═══ */
 
 /* Map panels + KPI cards — liquid glass, FINAL highest specificity */
-html.light .map-info-card, html:not(.light) .map-info-card,
-html.light .map-info-card-tall, html:not(.light) .map-info-card-tall,
-html.light .mkpi-card, html:not(.light) .mkpi-card {
-  background: var(--lg-bg-strong) !important;
-  backdrop-filter: var(--lg-blur) !important;
-  -webkit-backdrop-filter: var(--lg-blur) !important;
-  border: 1px solid var(--lg-bd) !important;
-  box-shadow: var(--lg-shadow) !important;
+/* Light mode: subtle frosted, low alpha so gradient shows through */
+html.light .map-info-card, html.light .map-info-card-tall, html.light .mkpi-card {
+  background: rgba(255,255,255,0.12) !important;
+  backdrop-filter: blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+  border: 1px solid rgba(255,255,255,0.30) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06) !important;
+}
+/* Dark mode: dark-tinted frosted glass */
+html:not(.light) .map-info-card, html:not(.light) .map-info-card-tall, html:not(.light) .mkpi-card {
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.20) !important;
 }
 
 
