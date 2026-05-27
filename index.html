@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.8.4</title>
+<title>FC S600+ PTT — Metering Dashboard v1.9.1</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -530,7 +530,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.8.4</div>
+  <div class="home-version">v1.9.1</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -573,7 +573,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
         <button class="tpill-btn" id="btn-dark" onclick="setTheme('dark')">&#9790; Dark</button>
         <button class="tpill-btn active" id="btn-light" onclick="setTheme('light')">&#9728; Light</button>
       </div>
-      <button class="hbtn" onclick="goHome()">&#8617; Back to Home</button>
+      <button class="hbtn" onclick="goHome()">&#8617; กลับไปหน้าแรก</button>
     </div>
   </header>
 
@@ -884,7 +884,7 @@ var AC={Turbine:'#00d4ff',Supervisory:'#c084fc',USM:'#10b981',Orifice:'#fbbf24'}
 var FWC={'Up-to-date':'#34d399',Outdated:'#f87171',Unknown:'#a8a29e'};
 var CM={'PTT Region':0,Site:1,TAG:2,Firmware:4,'Firmware Update':5,Status:6,Applications:7,'Last config installed date':8};
 var DATA=[],lastSrc=null;
-var ST={f:{r:new Set(),fw:new Set(),fwu:new Set(),hv:new Set(),st:new Set(),ap:new Set()},q:'',sc:null,sa:true,p:1,ps:20};
+var ST={f:{r:new Set(),fw:new Set(),fwu:new Set(),st:new Set(),ap:new Set()},q:'',sc:null,sa:true,p:1,ps:20};
 
 
 function setP(pct,msg){document.getElementById('prog-wrap').style.display='block';document.getElementById('prog').style.width=pct+'%';document.getElementById('status-msg').textContent=msg||'';}
@@ -926,7 +926,7 @@ function doFetch(url,sheet,btn){
     fetch(proxy).then(function(r){return r.text();}).then(function(t){
       finishGS(t,url,sheet,btn);
     }).catch(function(e2){
-      clrP();showErr(e.message);
+      clrP();showErr(e2.message||e.message);
       btn.disabled=false;btn.innerHTML='&#9654; เข้าสู่ Dashboard';
     });
   });
@@ -949,14 +949,31 @@ function finishGS(csv,url,sheet,btn){
 
 function parseCSV(text){
   var rows=[],cells=[],cur='',inQ=false;
+  // Normalize line endings
+  text = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
   for(var i=0;i<text.length;i++){
     var ch=text[i];
-    if(ch==='"'){if(inQ&&text[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}
-    else if(ch===','&&!inQ){cells.push(cur);cur='';}
-    else if((ch==='\n'||ch==='\r')&&!inQ){cells.push(cur);cur='';if(cells.some(function(c){return c.trim()!=='';}))rows.push(cells);cells=[];if(ch==='\r'&&text[i+1]==='\n')i++;}
-    else cur+=ch;
+    if(ch==='"'){
+      if(inQ && text[i+1]==='"'){ cur+='"'; i++; }  // escaped quote
+      else inQ=!inQ;
+    } else if(ch==='\n' && inQ){
+      // newline inside quoted field — treat as literal character
+      cur+='\n';
+    } else if(ch===',' && !inQ){
+      cells.push(cur); cur='';
+    } else if(ch==='\n' && !inQ){
+      cells.push(cur); cur='';
+      if(cells.some(function(c){ return c.trim()!==''; })) rows.push(cells);
+      cells=[];
+    } else {
+      cur+=ch;
+    }
   }
-  if(cur||cells.length){cells.push(cur);if(cells.some(function(c){return c.trim()!=='';}))rows.push(cells);}
+  // handle last line without trailing newline
+  if(cur!==''||cells.length){
+    cells.push(cur);
+    if(cells.some(function(c){ return c.trim()!==''; })) rows.push(cells);
+  }
   return rows;
 }
 
@@ -975,31 +992,7 @@ function processRows(rows){
   }
 }
 
-function loadXL(file){
-  if(!file)return;
-  setP(20,'\u0e2d\u0e48\u0e32\u0e19\u0e44\u0e1f\u0e25\u0e4c Excel...');
-  var reader=new FileReader();
-  reader.onload=function(e){
-    try{
-      var wb=XLSX.read(e.target.result,{type:'array',cellDates:true,dateNF:'yyyy-mm-dd'});
-      var sn=wb.SheetNames.find(function(s){return s==='Overall';})||wb.SheetNames.find(function(s){return s.toLowerCase().includes('overall');})||wb.SheetNames[0];
-      setP(60,'\u0e1b\u0e23\u0e30\u0e21\u0e27\u0e25\u0e1c\u0e25...');
-      var rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{defval:'',raw:false,dateNF:'yyyy-mm-dd'});
-      DATA=rows.map(function(r){
-        if(!r['Applications']&&r['Column1'])r['Applications']=r['Column1'];
-        r['Applications']=(r['Applications']||'').toString().trim();
-        r['Hart version']=fixHart((r['Hart version']||'').toString());
-        var d=r['Last config installed date']||'';
-        r['Last config installed date']=d.toString().replace(' 00:00:00','').replace('Invalid Date','').trim();
-        return r;
-      }).filter(function(r){return r['PTT Region']||r['Site']||r['TAG'];});
-      lastSrc={type:'xl',file:file,sheet:sn};
-      setP(100,'');
-      setTimeout(function(){clrP();showDash(file.name+' ('+sn+') &middot; '+DATA.length+' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23');},300);
-    }catch(err){clrP();alert('\u0e2d\u0e48\u0e32\u0e19\u0e44\u0e1f\u0e25\u0e4c\u0e44\u0e21\u0e48\u0e44\u0e14\u0e49: '+err.message);}
-  };
-  reader.readAsArrayBuffer(file);
-}
+// loadXL removed — Excel import not in use
 
 function showDash(sub){
   mapBuilt = false; // reset so map rebuilds with new data
@@ -1011,7 +1004,7 @@ function showDash(sub){
   buildF();render();
 }
 
-function goHome(){document.getElementById('home').style.display='flex';document.getElementById('dash').style.display='none';ST={f:{r:new Set(),fw:new Set(),fwu:new Set(),hv:new Set(),st:new Set(),ap:new Set()},q:'',sc:null,sa:true,p:1,ps:20};}
+function goHome(){document.getElementById('home').style.display='flex';document.getElementById('dash').style.display='none';ST={f:{r:new Set(),fw:new Set(),fwu:new Set(),st:new Set(),ap:new Set()},q:'',sc:null,sa:true,p:1,ps:20};}
 
 function refreshGS(){
   if(!lastSrc||lastSrc.type!=='gs'){alert('Refresh \u0e43\u0e0a\u0e49\u0e44\u0e14\u0e49\u0e40\u0e09\u0e1e\u0e32\u0e30 Google Sheet');return;}
@@ -1091,7 +1084,7 @@ function buildF(){
   fwuEl.innerHTML=['Up-to-date','Outdated','Unknown'].map(function(v){
     var sc=v==='Up-to-date'?'fwu':v==='Outdated'?'fwo':'fwk';
     return '<span class="chip '+sc+'" onclick="tog(&quot;fwu&quot;,&quot;'+v+'&quot;,this)">'+v+'</span>';
-  }).join('');;
+  }).join('');
   chips('fs',['Commissioned','Decommissioned'],'st',null,null,true);
   // Application chips with matching colors
   var faEl=document.getElementById('fa');
@@ -1130,7 +1123,9 @@ function chips(id,vals,fk,lb,cm,isSt){
 }
 
 function tog(k,v,el){var s=ST.f[k];s.has(v)?(s.delete(v),el.classList.remove('on')):(s.add(v),el.classList.add('on'));ST.p=1;render();}
-function rst(){Object.values(ST.f).forEach(function(s){s.clear();});ST.q='';ST.p=1;document.getElementById('si').value='';document.querySelectorAll('.chip').forEach(function(c){
+function rst(){Object.values(ST.f).forEach(function(s){s.clear();});ST.q='';ST.p=1;document.getElementById('si').value='';
+  var sidebar=document.querySelector('.sidebar');
+  (sidebar||document).querySelectorAll('.chip').forEach(function(c){
     c.classList.remove('on');
     if(c.classList.contains('rc')){c.style.removeProperty('--rc-bg');c.style.removeProperty('--rc-bd');c.style.removeProperty('--rc-tx');}
   });render();}
@@ -1139,11 +1134,15 @@ function srt(c){ST.sc=ST.sc===c?(ST.sa=!ST.sa,c):(ST.sa=true,c);render();}
 
 function render(){
   var d=fd(),t=d.length;
-  var co=d.filter(function(x){return nv(x['Status'])==='Commissioned';}).length;
-  var de=d.filter(function(x){return nv(x['Status'])==='Decommissioned';}).length;
-  var te=d.filter(function(x){return nv(x['Status'])==='Terminated';}).length;
-  var fu=d.filter(function(x){return nv(x['Firmware Update'])==='Up-to-date';}).length;
-  var fo=d.filter(function(x){return nv(x['Firmware Update'])==='Outdated';}).length;
+  var co=0,de=0,te=0,fu=0,fo=0;
+  d.forEach(function(x){
+    var st=nv(x['Status']),fw=nv(x['Firmware Update']);
+    if(st==='Commissioned') co++;
+    else if(st==='Decommissioned') de++;
+    else if(st==='Terminated') te++;
+    if(fw==='Up-to-date') fu++;
+    else if(fw==='Outdated') fo++;
+  });
   document.getElementById('kt').textContent=t;
   document.getElementById('kfu').textContent=fu;document.getElementById('kfo').textContent=fo;
   document.getElementById('ks').textContent=Array.from(new Set(d.map(function(x){return x['Site'];}))).length+' sites';
@@ -1155,9 +1154,6 @@ function render(){
   var regionOrder=['1','2','3','4','5','6','7','8','9','10','11','GSP','OFFSHORE','OSP'];
   var sorted=regionOrder.map(function(k){return[k,cnt[k]||0];});
   var mx=sorted.reduce(function(m,e){return Math.max(m,e[1]);},1);
-  var _allR_=Array.from(new Set(DATA.map(function(x){return nv(x['PTT Region']);}))).sort(function(a,b){var na=parseInt(a),nb=parseInt(b);if(!isNaN(na)&&!isNaN(nb))return na-nb;if(!isNaN(na))return -1;if(!isNaN(nb))return 1;return a.localeCompare(b);});
-  // rcm uses REGION_COLOR_MAP built in buildF
-  var rcm=REGION_COLOR_MAP;
   document.getElementById('cr').innerHTML=sorted.map(function(e){
     var regKey=e[0],regCount=e[1],regColor=REGION_COLOR_MAP[regKey]||RC[0];
     if(regCount===0){
@@ -1206,6 +1202,9 @@ function render(){
       '<td><span class="ab '+apc+'">'+ap+'</span></td>'+
       '<td style="color:#94a3b8;font-size:10px;font-family:Space Mono,monospace">'+(dt||'&mdash;')+'</td></tr>';
   }).join('');
+  var totalPages=Math.ceil(d.length/ST.ps)||1;
+  if(ST.p>totalPages) ST.p=totalPages;
+  if(ST.p<1) ST.p=1;
   rPg(d.length);
 }
 
@@ -1218,7 +1217,7 @@ function rPg(total){
   h+='<button class="pb" onclick="gp('+(cur+1)+')" '+(cur>=pages?'disabled':'')+'>&rsaquo;</button>';
   document.getElementById('pg').innerHTML=h;
 }
-function gp(p){var pages=Math.ceil(fd().length/ST.ps)||1;ST.p=Math.max(1,Math.min(p,pages));render();}
+function gp(p){ST.p=p;render();} // render() internally calls fd() and clamps page
 
 // ── THEME TOGGLE ──
 function setTheme(mode){
@@ -1325,9 +1324,9 @@ var amPointSeries = null;
 var amSpecialSeries = null;
 
 function buildPixelMap() {
-  mapBuilt = true;
   var chartdiv = document.getElementById('chartdiv');
   if (!chartdiv) return;
+  mapBuilt = true; // set only after element check
 
   // Get colors from REGION_COLOR_MAP (built in buildF)
   // RC array: index 0→region1, 1→region2... 11→region12, 12→GSP, 13→OFFSHORE, 14→OSP
@@ -1684,7 +1683,29 @@ function getOriginalPixelData() {
 // ══════════════════════════════════════════
 //  SCHEDULE PLAN
 // ══════════════════════════════════════════
-var PLANS = JSON.parse(localStorage.getItem('fc-plans') || '[]');
+var PLANS_VERSION = 2;
+var PLANS = (function(){
+  try{
+    var raw=localStorage.getItem('fc-plans');
+    if(!raw) return [];
+    var arr=JSON.parse(raw);
+    if(!Array.isArray(arr)) return [];
+    // Migrate: ensure all required fields exist with defaults
+    return arr.map(function(p){
+      return {
+        id:        p.id        || Date.now()+Math.random(),
+        date:      p.date      || '',
+        site:      p.site      || '',
+        tag:       p.tag       || '',
+        fwTarget:  p.fwTarget  || '',
+        timeStart: p.timeStart || '08:00',
+        timeEnd:   p.timeEnd   || '17:00',
+        note:      p.note      || '',
+        status:    (['planned','inprogress','done','cancelled'].indexOf(p.status)>=0 ? p.status : 'planned')
+      };
+    }).filter(function(p){ return p.date && p.tag; }); // drop corrupt entries
+  }catch(e){ return []; }
+})();
 var calYear, calMonth, selectedDate = null;
 
 function savePlans(){ try{ localStorage.setItem('fc-plans', JSON.stringify(PLANS)); }catch(e){} }
@@ -1764,14 +1785,18 @@ function calDots(ds){
   var ps=PLANS.filter(function(p){ return p.date===ds; });
   if(!ps.length) return '<div class="cal-dot-row"></div>';
   return '<div class="cal-dot-row">'+ps.slice(0,4).map(function(p){
-    return '<span class="cal-dot" style="background:'+(SCHED_STATUS_COLORS[p.status]||'#6366f1')+'"></span>';
+    return '<span class="cal-dot" style="background:'+(SCHED_STATUS_COLORS[p.status]||'#6366f1')+'" title="'+(p.tag||'').replace(/"/g,'&quot;')+'" ></span>';
   }).join('')+'</div>';
 }
 
 function fmtDate(y,m,d){
-  var adj=((m%12)+12)%12; var yr=y+Math.floor(m/12);
-  if(m<0){yr=y-1;adj=(12+m%12)%12;}
-  return yr+'-'+String(adj+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+  // Use native Date to handle month overflow/underflow correctly
+  // e.g. month -1 → December of previous year, month 13 → January of next year
+  var dt = new Date(y, m, d);
+  var yy = dt.getFullYear();
+  var mm = dt.getMonth();
+  var dd = dt.getDate();
+  return yy+'-'+String(mm+1).padStart(2,'0')+'-'+String(dd).padStart(2,'0');
 }
 
 function selectDate(ds){
@@ -1874,12 +1899,54 @@ function gcExpandAll(){
   var regions=Object.keys(GC_OPEN);
   var allOpen=regions.length>0&&regions.every(function(r){ return GC_OPEN[r]; });
   regions.forEach(function(r){ GC_OPEN[r]=!allOpen; });
-  renderGantt();
+  // Try fast DOM toggle first, fall back to full render if needed
+  var toggled = _gcToggleDom(null, !allOpen);
+  if(!toggled) renderGantt();
 }
 
 function gcToggle(reg){
   GC_OPEN[reg]=!GC_OPEN[reg];
-  renderGantt();
+  // Try fast DOM toggle — avoids full rebuild
+  var toggled = _gcToggleDom(reg, GC_OPEN[reg]);
+  if(!toggled) renderGantt();
+}
+
+// Fast DOM toggle: find existing rows by data-region and show/hide
+// Returns true if successful, false if DOM is stale and needs full render
+function _gcToggleDom(reg, isOpen){
+  var wrap = document.getElementById('gantt-wrap');
+  if(!wrap) return false;
+  var labelEl = wrap.querySelector('#gc-labels');
+  var chartEl = wrap.querySelector('#gc-chart');
+  if(!labelEl || !chartEl) return false;
+
+  var regs = reg ? [reg] : Object.keys(GC_OPEN);
+  var allFound = true;
+
+  regs.forEach(function(r){
+    var open = (reg===null) ? isOpen : GC_OPEN[r];
+    // Find label rows for this region
+    var labelRows = labelEl.querySelectorAll('[data-region="'+r+'"][data-type="item"]');
+    var barRows   = chartEl.querySelectorAll('[data-region="'+r+'"][data-type="item"]');
+    var chevrons  = wrap.querySelectorAll('[data-region="'+r+'"][data-chevron]');
+
+    if(labelRows.length !== barRows.length){ allFound = false; return; }
+    // Update visibility
+    var display = open ? '' : 'none';
+    labelRows.forEach(function(el){ el.style.display=display; });
+    barRows.forEach(function(el){ el.style.display=display; });
+    chevrons.forEach(function(el){ el.textContent=open?'▼':'▶'; });
+    // Update group row count badge
+    var badge = wrap.querySelector('[data-region="'+r+'"][data-type="badge"]');
+    if(badge){
+      var total = labelRows.length;
+      var done  = 0;
+      labelRows.forEach(function(el){ if(el.getAttribute('data-status')==='done') done++; });
+      badge.textContent = done+'/'+total;
+    }
+  });
+
+  return allFound;
 }
 
 function renderGantt(){
@@ -1899,7 +1966,6 @@ function renderGantt(){
     var row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag&&(x['Site']||'').trim()===p.site; })
           ||DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; })||{};
     var reg=(row['PTT Region']||'').trim()||p.site||'Unknown';
-    p._region=reg;
     if(!byRegion[reg]) byRegion[reg]=[];
     byRegion[reg].push(p);
   });
@@ -1996,10 +2062,10 @@ function renderGantt(){
     var doneCount=ps.filter(function(p){ return p.status==='done'; }).length;
 
     // ── Region group row ──
-    labelHTML+='<div style="height:'+GRP_H+'px;flex-shrink:0;display:flex;align-items:center;padding:0 8px;gap:5px;background:var(--sf2);border-bottom:1px solid var(--br);cursor:pointer" onclick="gcToggle(\''+reg+'\')">'+
+    labelHTML+='<div data-region="'+reg+'" data-type="group" style="height:'+GRP_H+'px;flex-shrink:0;display:flex;align-items:center;padding:0 8px;gap:5px;background:var(--sf2);border-bottom:1px solid var(--br);cursor:pointer" onclick="gcToggle(\''+reg+'\')">'+
       '<span style="font-size:9px;color:var(--tx3);display:inline-block;transition:transform .15s;'+(isOpen?'transform:rotate(90deg)':'')+'">&#9654;</span>'+
       '<span style="font-size:10px;font-weight:700;font-family:Space Mono,monospace;color:'+regColor+'">'+reg+'</span>'+
-      '<span style="font-size:9px;color:var(--tx3);font-family:Space Mono,monospace;margin-left:auto">'+doneCount+'/'+ps.length+'</span>'+
+      '<span data-region="'+reg+'" data-type="badge" style="font-size:9px;color:var(--tx3);font-family:Space Mono,monospace;margin-left:auto">'+doneCount+'/'+ps.length+'</span>'+
     '</div>';
 
     // Group bar row: stacked mini-bars per column showing total load
@@ -2022,15 +2088,15 @@ function renderGantt(){
         '<div style="font-size:8px;font-family:Space Mono,monospace;color:var(--tx3);text-align:center;margin-top:1px">'+cnt+'</div>'+
       '</div>';
     }).join('');
-    chartHTML+='<div style="display:flex;height:'+GRP_H+'px;flex-shrink:0;border-bottom:1px solid var(--br);width:'+totalW+'px;cursor:pointer" onclick="gcToggle(\''+reg+'\')">'+grpCells+'</div>';
+    chartHTML+='<div data-region="'+reg+'" data-type="group" style="display:flex;height:'+GRP_H+'px;flex-shrink:0;border-bottom:1px solid var(--br);width:'+totalW+'px;cursor:pointer" onclick="gcToggle(\''+reg+'\')">'+grpCells+'</div>';
 
     // ── Expanded: each plan = 1 row ──
     if(isOpen){
       var sorted=ps.slice().sort(function(a,b){ return a.date.localeCompare(b.date); });
       sorted.forEach(function(p){
         var col=SC[p.status]||'#6366f1';
-        labelHTML+='<div style="height:'+ROW_H+'px;flex-shrink:0;display:flex;align-items:center;padding:0 8px 0 20px;border-bottom:1px solid var(--br);cursor:pointer;border-left:2px solid '+col+'" onclick="openEditPlan('+p.id+')">'+
-          '<span style="font-size:10px;font-weight:600;font-family:Space Mono,monospace;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+p.tag+' — '+p.site+'">'+p.tag+'</span>'+
+        labelHTML+='<div data-region="'+reg+'" data-type="item" data-status="'+p.status+'" style="height:'+ROW_H+'px;flex-shrink:0;display:flex;align-items:center;padding:0 8px 0 20px;border-bottom:1px solid var(--br);cursor:pointer;border-left:2px solid '+col+(isOpen?'':'display:none')+'" onclick="openEditPlan('+p.id+')">'+
+          '<span style="font-size:10px;font-weight:600;font-family:Space Mono,monospace;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(p.tag||'').replace(/"/g,'&quot;')+'\u2014'+(p.site||'').replace(/"/g,'&quot;')+'">'+p.tag+'</span>'+
         '</div>';
 
         var rowCells=cols.map(function(col2){
@@ -2043,7 +2109,7 @@ function renderGantt(){
               (COL_W>=32?p.tag:'')+'</span></div>':'')+
           '</div>';
         }).join('');
-        chartHTML+='<div style="display:flex;height:'+ROW_H+'px;flex-shrink:0;border-bottom:1px solid var(--br);width:'+totalW+'px">'+rowCells+'</div>';
+        chartHTML+='<div data-region="'+reg+'" data-type="item" data-status="'+p.status+'" style="display:flex;height:'+ROW_H+'px;flex-shrink:0;border-bottom:1px solid var(--br);width:'+totalW+'px'+(isOpen?'':';display:none')+'">'+rowCells+'</div>';
       });
     }
   });
@@ -2380,6 +2446,16 @@ function openReport(id){
 }
 
 function submitReport(){
+  // Validate required fields
+  var tag=document.getElementById('rpt-tag').value.trim();
+  var region=document.getElementById('rpt-region').value.trim();
+  var firmware=document.getElementById('rpt-firmware').value.trim();
+  if(!tag||!region){
+    var st=document.getElementById('rpt-api-status');
+    st.className='report-apps-status err';
+    st.textContent='\u26a0 TAG and PTT Region are required';
+    return;
+  }
   var url=(CONFIG.appsScriptUrl||'https://script.google.com/macros/s/AKfycbwL92RaTHjMspTp4Ty_01hL9UkW2xK1PozdJiWEdlySkEW4olHGGcsPN9rADV9EDkxN/exec').trim();
   if(!url){
     var st=document.getElementById('rpt-api-status');
