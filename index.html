@@ -476,10 +476,10 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   pointer-events: none;
   left: 20px;
   transform: none;
-  width: 256px;
+  width: 140px;
   text-align: center;
 }
-.sched-active .version-badge{ width: 256px; left: 20px; }
+.sched-active .version-badge{ width: 140px; left: 20px; }
 .sched-active{ padding-left: 0 !important; }
 /* Plan list — give breathing room below the "Monthly Plan" header */
 .sched-plans{ padding-top: 10px !important; }
@@ -2244,13 +2244,14 @@ function showDash(sub){
   mapBuilt = false; // reset so map rebuilds with new data
   document.getElementById('home').style.display='none';
   document.getElementById('dash').style.display='block';
+  var vb=document.querySelector('.version-badge');if(vb)vb.style.display='';
   document.getElementById('hf').innerHTML=sub;
   document.getElementById('h-upd').textContent='Loaded '+new Date().toLocaleTimeString('th-TH');
   document.getElementById('ref-btn').style.display=(lastSrc&&lastSrc.type==='gs')?'':'none';
   buildF();render();
 }
 
-function goHome(){document.getElementById('home').style.display='flex';document.getElementById('dash').style.display='none';ST={f:{r:new Set(),fw:new Set(),fwu:new Set(),st:new Set(),ap:new Set()},q:'',sc:null,sa:true,p:1,ps:20};}
+function goHome(){document.getElementById('home').style.display='flex';document.getElementById('dash').style.display='none';ST={f:{r:new Set(),fw:new Set(),fwu:new Set(),st:new Set(),ap:new Set()},q:'',sc:null,sa:true,p:1,ps:20};var vb=document.querySelector('.version-badge');if(vb)vb.style.display='none';}
 
 function refreshGS(){
   if(!lastSrc||lastSrc.type!=='gs'){alert('Refresh \u0e43\u0e0a\u0e49\u0e44\u0e14\u0e49\u0e40\u0e09\u0e1e\u0e32\u0e30 Google Sheet');return;}
@@ -3841,7 +3842,7 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge">v1.12.13</div>
+<div class="version-badge" style="display:none">v1.12.13</div>
 </body>
 </html>
 
