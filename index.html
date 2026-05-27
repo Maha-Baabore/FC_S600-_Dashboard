@@ -1958,9 +1958,9 @@ html:not(.light) .map-panel {
         <div id="chartdiv"></div>
         <div class="map-right-panel">
           <div style="margin-bottom:10px">
-            <div class="ccard"><div class="ctitle">Units by Region</div><div id="map-cr"></div></div>
+            <div class="ccard" style="background:rgba(255,255,255,0.18)!important;backdrop-filter:blur(24px) saturate(160%)!important;-webkit-backdrop-filter:blur(24px) saturate(160%)!important;border:1px solid rgba(255,255,255,0.35)!important;box-shadow:0 4px 20px rgba(0,0,0,0.06)!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%"><div class="ctitle">Units by Region</div><div id="map-cr"></div></div>
           </div>
-          <div class="ccard" style="margin-bottom:0">
+          <div class="ccard" style="background:rgba(255,255,255,0.18)!important;backdrop-filter:blur(24px) saturate(160%)!important;-webkit-backdrop-filter:blur(24px) saturate(160%)!important;border:1px solid rgba(255,255,255,0.35)!important;box-shadow:0 4px 20px rgba(0,0,0,0.06)!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%;margin-bottom:0">
             <div class="ctitle">Application &amp; Firmware Status</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px">
               <div>
@@ -2588,6 +2588,10 @@ function setTheme(mode){
   if(typeof renderGantt === 'function' && document.getElementById('gantt-wrap')){
     setTimeout(renderGantt, 50);
   }
+  // Update map panel inline styles for glass effect
+  var mapPanels = document.querySelectorAll('.map-right-panel .ccard');
+  var panelStyle = mode==='light' ? 'background:rgba(255,255,255,0.18)!important;backdrop-filter:blur(24px) saturate(160%)!important;-webkit-backdrop-filter:blur(24px) saturate(160%)!important;border:1px solid rgba(255,255,255,0.35)!important;box-shadow:0 4px 20px rgba(0,0,0,0.06)!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%' : 'background:rgba(255,255,255,0.07)!important;backdrop-filter:blur(24px) saturate(180%)!important;-webkit-backdrop-filter:blur(24px) saturate(180%)!important;border:1px solid rgba(255,255,255,0.12)!important;box-shadow:0 4px 20px rgba(0,0,0,0.25)!important;border-radius:14px;padding:18px 20px;box-sizing:border-box;width:100%';
+  mapPanels.forEach(function(el){ el.setAttribute('style', panelStyle + (el.id==='' && el.style.marginBottom ? ';margin-bottom:'+el.style.marginBottom : '')); });
 }
 
 // ── ADD-PLAN DRAWER ──
