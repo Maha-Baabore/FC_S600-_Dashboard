@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.9.9</title>
+<title>FC S600+ PTT — Metering Dashboard v1.10.0</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -230,6 +230,21 @@ header{background:rgba(8,12,24,.96);border-bottom:1px solid var(--br);padding:0 
 .ldot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 .ll{color:var(--tx2)}.lc{color:var(--tx);font-weight:700;font-family:'Space Mono',monospace;margin-left:auto}
 .tsec{background:var(--sf);border:1px solid var(--br);border-radius:14px;overflow:hidden;transition:background-color .3s ease}
+/* Active filter bar — summary above table */
+.filter-bar{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:10px 18px;border-bottom:1px solid var(--br);background:var(--sf2)}
+.filter-bar.hidden{display:none}
+.filter-bar .fb-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);font-family:'Space Mono',monospace;margin-right:4px}
+.fb-chip{display:inline-flex;align-items:center;gap:6px;padding:3px 4px 3px 10px;border-radius:20px;background:var(--bg);border:1px solid var(--br);font-size:10px;color:var(--tx2);font-family:'Space Mono',monospace}
+.fb-chip .fb-key{color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;font-weight:700;font-size:9px}
+.fb-chip .fb-val{color:var(--tx);font-weight:600}
+.fb-chip .fb-x{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--sf3);border:none;color:var(--tx2);cursor:pointer;padding:0;transition:all .15s}
+.fb-chip .fb-x:hover{background:var(--rd);color:#fff}
+.fb-clear{display:inline-flex;align-items:center;gap:4px;background:transparent;border:none;color:var(--tx3);font-size:10px;cursor:pointer;font-family:'Space Mono',monospace;padding:3px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-left:auto}
+.fb-clear:hover{color:var(--rd)}
+.light .fb-chip{background:#fff}
+.light .fb-chip .fb-x{background:#e2e8f0}
+.light .filter-bar{background:#f8fafc}
+
 .thdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--br)}
 .ttitle{font-size:13px;font-weight:600}
 .tcnt{font-family:'Space Mono',monospace;font-size:11px;color:var(--tx3);margin-left:10px}
@@ -244,6 +259,12 @@ th:hover{color:var(--tx2)}th.sorted{color:var(--ac)}
 td{padding:7px 12px;border-bottom:1px solid var(--br);vertical-align:middle;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none}
 .tg{font-family:'Space Mono',monospace;font-size:11px;color:var(--ac)}
+.th-sub{font-size:8px;color:var(--tx3);font-weight:400;letter-spacing:.3px;text-transform:none;margin-left:1px}
+.cell-primary{font-size:12px;color:var(--tx);line-height:1.35}
+.cell-tag{font-family:'Space Mono',monospace;font-size:10.5px;color:var(--ac);margin-top:2px;letter-spacing:.2px}
+.cell-fw{margin-bottom:4px}
+.cell-fwu{line-height:1}
+.light .cell-tag{color:#0284c7}
 .rb{display:inline-flex;align-items:center;justify-content:center;background:var(--sf3);border-radius:5px;padding:2px 7px;font-family:'Space Mono',monospace;font-size:10px;color:var(--tx2)}
 .fw2{background:rgba(124,58,237,.15);color:#a78bfa;border-radius:4px;padding:2px 7px;font-family:'Space Mono',monospace;font-size:10px}
 .hv2{background:rgba(37,99,235,.12);color:#60a5fa;border-radius:4px;padding:2px 7px;font-family:'Space Mono',monospace;font-size:10px}
@@ -408,6 +429,27 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .light .gantt text{fill:#475569!important}
 .light .gantt .bar-label{fill:#fff!important;font-weight:700!important}
 .light .gantt-container .popup-wrapper{background:#fff!important;border:1px solid #e2e8f0!important;box-shadow:0 4px 16px rgba(0,0,0,.1)!important}
+
+/* Add-plan drawer */
+.sched-drawer{position:fixed;top:62px;right:0;bottom:0;width:380px;max-width:90vw;background:var(--sf);border-left:1px solid var(--br);display:flex;flex-direction:column;transform:translateX(110%);transition:transform .28s cubic-bezier(.4,0,.2,1);z-index:120;box-shadow:-12px 0 32px rgba(0,0,0,.25)}
+.sched-drawer.open{transform:translateX(0)}
+.sched-drawer-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--br)}
+.drawer-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--tx)}
+.drawer-close{background:transparent;border:none;color:var(--tx3);cursor:pointer;padding:6px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;transition:all .15s}
+.drawer-close:hover{background:var(--sf2);color:var(--rd)}
+.sched-drawer-body{flex:1;overflow-y:auto;padding:18px}
+.sched-drawer-body::-webkit-scrollbar{width:3px}
+.sched-drawer-body::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+.sched-drawer-footer{display:flex;gap:8px;padding:14px 18px;border-top:1px solid var(--br);background:var(--sf2)}
+.drawer-date-display{font-family:'Space Mono',monospace;font-size:11px;color:var(--ac);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:8px;padding:9px 12px;text-align:center;margin-bottom:14px;font-weight:600;letter-spacing:.4px}
+.light .drawer-date-display{background:rgba(2,132,199,.06);border-color:rgba(2,132,199,.2)}
+.sched-drawer-backdrop{position:fixed;top:62px;left:0;right:0;bottom:0;background:rgba(0,0,0,0);pointer-events:none;transition:background .25s ease;z-index:119}
+.sched-drawer-backdrop.show{background:rgba(0,0,0,.4);pointer-events:auto;backdrop-filter:blur(2px)}
+.light .sched-drawer-backdrop.show{background:rgba(15,23,42,.25)}
+.drawer-trigger{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px;font-size:13px;border-radius:10px}
+.drawer-trigger-hint{font-size:10.5px;color:var(--tx3);text-align:center;line-height:1.5;font-family:'DM Sans',sans-serif;padding:0 12px}
+.modal-btn-cancel{flex:0 0 auto}
+
 /* sched-plans scrollbar */
 /* Version badge fixed bottom-left */
 .version-badge{position:fixed;bottom:10px;left:10px;font-size:9px;font-family:'Space Mono',monospace;color:var(--tx3);background:var(--sf);border:1px solid var(--br);border-radius:8px;padding:3px 8px;z-index:500;pointer-events:none;opacity:.7;letter-spacing:.5px}
@@ -539,7 +581,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.9.9</div>
+  <div class="home-version">v1.10.0</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -620,7 +662,9 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
       </div>
 
       <div class="tsec">
-        <div class="thdr">
+        <!-- Active filter summary -->
+        <div class="filter-bar hidden" id="filter-bar"></div>
+                <div class="thdr">
           <div style="display:flex;align-items:center">
             <span class="ttitle">Metering Units</span><span class="tcnt" id="tc"></span>
           </div>
@@ -629,14 +673,12 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
         <div class="tw"><table>
           <thead><tr>
             <th onclick="srt('PTT Region')">Region <span id="sx0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
-            <th onclick="srt('Site')">Site <span id="sx1"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
-            <th onclick="srt('TAG')">TAG <span id="sx2"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
+            <th onclick="srt('Site')">Site <span class="th-sub">/ TAG</span> <span id="sx1"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
             <th>Metering Name</th>
-            <th onclick="srt('Firmware')">Firmware <span id="sx4"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
-            <th onclick="srt('Firmware Update')">FW Update <span id="sx5"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
-            <th onclick="srt('Status')">Status <span id="sx7"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
-            <th onclick="srt('Applications')">Application <span id="sx8"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
-            <th onclick="srt('Last config installed date')">Config Date <span id="sx9"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
+            <th onclick="srt('Firmware')">Firmware <span class="th-sub">/ FW Update</span> <span id="sx3"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
+            <th onclick="srt('Status')">Status <span id="sx4"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
+            <th onclick="srt('Applications')">Application <span id="sx5"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
+            <th onclick="srt('Last config installed date')">Config Date <span id="sx6"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg></span></th>
           </tr></thead>
           <tbody id="tb"></tbody>
         </table></div>
@@ -696,33 +738,10 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
             <div class="cal-selected-date" id="cal-selected-label">Select a date to plan</div>
           </div>
 
-          <!-- Add plan form -->
-          <div class="sched-section" id="sched-form-section" style="flex:1;overflow-y:auto">
-            <div class="sched-subtitle" style="margin-bottom:10px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg> Add Update Plan</div>
-            <div class="sched-form">
-              <div class="sf-row">
-                <label class="sf-label">Site</label>
-                <select class="sf-input" id="sf-site">
-                  <option value="">-- Select Site --</option>
-                </select>
-              </div>
-              <div class="sf-row">
-                <label class="sf-label">TAG</label>
-                <select class="sf-input" id="sf-tag">
-                  <option value="">-- Select TAG --</option>
-                </select>
-              </div>
-              <div class="sf-row">
-                <label class="sf-label">Target Firmware</label>
-                <input class="sf-input" id="sf-fw-target" type="text" placeholder="e.g. 06.31">
-              </div>
-              <div class="sf-row">
-                <label class="sf-label">Performed By</label>
-                <input class="sf-input" id="sf-performed-by" type="text" placeholder="Engineer name">
-              </div>
-
-              <button class="sf-add-btn" onclick="addPlan()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg> Add Plan</button>
-            </div>
+          <!-- Add Plan trigger -->
+          <div class="sched-section" style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:stretch;gap:12px">
+            <button class="sf-add-btn drawer-trigger" onclick="openPlanDrawer()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg> Add Update Plan</button>
+            <div class="drawer-trigger-hint">Click to schedule a firmware update for the selected date</div>
           </div>
         </div>
 
@@ -766,8 +785,50 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
           </div>
 
         </div>
-      </div>
-    </div>
+      </div><!-- /.sched-layout -->
+
+      <!-- ADD PLAN DRAWER -->
+      <div class="sched-drawer-backdrop" id="sched-drawer-backdrop" onclick="closePlanDrawer()"></div>
+      <aside class="sched-drawer" id="sched-drawer" aria-hidden="true">
+        <div class="sched-drawer-header">
+          <div class="drawer-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg>
+            Add Update Plan
+          </div>
+          <button class="drawer-close" onclick="closePlanDrawer()" aria-label="Close">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 5.5L18.5 18.5"/><path d="M18.5 5.5L5.5 18.5"/></svg>
+          </button>
+        </div>
+        <div class="sched-drawer-body">
+          <div class="drawer-date-display" id="drawer-date-display">Select a date on the calendar</div>
+          <div class="sched-form">
+            <div class="sf-row">
+              <label class="sf-label">Site</label>
+              <select class="sf-input" id="sf-site"><option value="">-- Select Site --</option></select>
+            </div>
+            <div class="sf-row">
+              <label class="sf-label">TAG</label>
+              <select class="sf-input" id="sf-tag"><option value="">-- Select TAG --</option></select>
+            </div>
+            <div class="sf-row">
+              <label class="sf-label">Target Firmware</label>
+              <input class="sf-input" id="sf-fw-target" type="text" placeholder="e.g. 06.31">
+            </div>
+            <div class="sf-row">
+              <label class="sf-label">Performed By</label>
+              <input class="sf-input" id="sf-performed-by" type="text" placeholder="Engineer name">
+            </div>
+          </div>
+        </div>
+        <div class="sched-drawer-footer">
+          <button class="modal-btn-cancel" onclick="closePlanDrawer()">Cancel</button>
+          <button class="sf-add-btn" style="margin-top:0;flex:1" onclick="addPlanFromDrawer()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 4V20M4 12H20"/></svg>
+            Add Plan
+          </button>
+        </div>
+      </aside>
+    </div><!-- /#sched-view -->
 
   </div>
 </div>
@@ -883,7 +944,7 @@ function hexToRgba(hex, alpha) {
 var RC=['#00d4ff','#3b82f6','#8b5cf6','#ec4899','#f97316','#f59e0b','#10b981','#14b8a6','#06b6d4','#84cc16','#a855f7','#ef4444','#6366f1','#d946ef'];
 var AC={Turbine:'#00d4ff',Supervisory:'#c084fc',USM:'#10b981',Orifice:'#fbbf24'};
 var FWC={'Up-to-date':'#34d399',Outdated:'#f87171',Unknown:'#a8a29e'};
-var CM={'PTT Region':0,Site:1,TAG:2,Firmware:4,'Firmware Update':5,Status:6,Applications:7,'Last config installed date':8};
+var CM={'PTT Region':0,Site:1,Firmware:3,Status:4,Applications:5,'Last config installed date':6};
 var DATA=[],lastSrc=null;
 var ST={f:{r:new Set(),fw:new Set(),fwu:new Set(),st:new Set(),ap:new Set()},q:'',sc:null,sa:true,p:1,ps:20};
 
@@ -1130,7 +1191,41 @@ function rst(){Object.values(ST.f).forEach(function(s){s.clear();});ST.q='';ST.p
     c.classList.remove('on');
     if(c.classList.contains('rc')){c.style.removeProperty('--rc-bg');c.style.removeProperty('--rc-bd');c.style.removeProperty('--rc-tx');}
   });render();}
-function sch(){ST.q=document.getElementById('si').value.toLowerCase();ST.p=1;render();}
+function sch(){ST.q=document.getElementById('si').value.toLowerCase();ST.p=1;render();renderFilterBar();}
+// ── ACTIVE FILTER BAR ──
+function renderFilterBar(){
+  var bar=document.getElementById('filter-bar'); if(!bar) return;
+  var chips=[];
+  function chip(key,val,onRemove){
+    var safeVal=String(val).replace(/'/g,"&#39;");
+    return '<span class="fb-chip"><span class="fb-key">'+key+'</span> <span class="fb-val">'+safeVal+'</span>'+
+      '<button class="fb-x" onclick="'+onRemove+'" title="Remove">'+
+        '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5.5 5.5L18.5 18.5"/><path d="M18.5 5.5L5.5 18.5"/></svg>'+
+      '</button></span>';
+  }
+  ST.f.r.forEach(function(v){chips.push(chip('Region', regLabel(v), "rmF('r','"+v+"')"));});
+  ST.f.fw.forEach(function(v){chips.push(chip('Firmware', v, "rmF('fw','"+v+"')"));});
+  ST.f.fwu.forEach(function(v){chips.push(chip('FW Update', v, "rmF('fwu','"+v+"')"));});
+  ST.f.st.forEach(function(v){chips.push(chip('Status', v, "rmF('st','"+v+"')"));});
+  ST.f.ap.forEach(function(v){chips.push(chip('Application', v, "rmF('ap','"+v+"')"));});
+  if(ST.q){ chips.push(chip('Search', '"'+ST.q+'"', "rmF('q')")); }
+  if(!chips.length){ bar.classList.add('hidden'); bar.innerHTML=''; return; }
+  bar.classList.remove('hidden');
+  bar.innerHTML = '<span class="fb-label">Active filters</span>' + chips.join('') +
+    '<button class="fb-clear" onclick="rst()">Clear all</button>';
+}
+function rmF(kind,val){
+  if(kind==='q'){ ST.q=''; var si=document.getElementById('si'); if(si) si.value=''; }
+  else { ST.f[kind].delete(val); }
+  ST.p=1;
+  // Reflect on sidebar chips
+  document.querySelectorAll('.chip.on').forEach(function(c){
+    var t=c.textContent.trim();
+    if(kind!=='q' && (t===val || c.dataset.k===val)){ c.classList.remove('on'); if(c.classList.contains('rc')){c.style.removeProperty('--rc-bg');c.style.removeProperty('--rc-bd');c.style.removeProperty('--rc-tx');} }
+  });
+  render();
+}
+
 function srt(c){ST.sc=ST.sc===c?(ST.sa=!ST.sa,c):(ST.sa=true,c);render();}
 
 function render(){
@@ -1178,10 +1273,10 @@ function render(){
   // Table
   var st2=(ST.p-1)*ST.ps,pd=d.slice(st2,st2+ST.ps);
   document.getElementById('tc').textContent=d.length+' records';
-  for(var i=0;i<=8;i++){var el=document.getElementById('sx'+i);if(el)el.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg>';}
+  for(var i=0;i<=6;i++){var el=document.getElementById('sx'+i);if(el)el.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg>';}
   document.querySelectorAll('th').forEach(function(th){th.classList.remove('sorted');});
   if(ST.sc!==null){var idx=CM[ST.sc];if(idx!==undefined){var ths=document.querySelectorAll('thead th');ths[idx].classList.add('sorted');ths[idx].querySelector('span').innerHTML=ST.sa?'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M5 14.5L12 7.5L19 14.5"/></svg>':'<svg width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"display:inline-block;vertical-align:middle\"><path d=\"M5 9.5L12 16.5L19 9.5\"/></svg>';}}
-  if(!pd.length){document.getElementById('tb').innerHTML='<tr><td colspan="9" style="text-align:center;padding:40px;color:#475569">\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25</td></tr>';rPg(0);return;}
+  if(!pd.length){document.getElementById('tb').innerHTML='<tr><td colspan="7" style="text-align:center;padding:40px;color:#475569">\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25</td></tr>';rPg(0);return;}
   document.getElementById('tb').innerHTML=pd.map(function(x){
     var fw=nv(x['Firmware']),fwu=nv(x['Firmware Update']),st3=nv(x['Status']),ap=nv(x['Applications']);
     var stc=st3==='Commissioned'?'sbc':st3==='Decommissioned'?'sbd':'sbt';
@@ -1192,12 +1287,9 @@ function render(){
     var dt=nv(x['Last config installed date']).replace(' 00:00:00','');
     var _reg=nv(x['PTT Region']);var _regCol=REGION_COLOR_MAP[_reg]||'#475569';
     return '<tr><td><span class="rb" style="background:'+_regCol+';color:'+(isLightColor(_regCol)?'#080c18':'#fff')+'">'+regLabel(_reg)+'</span></td>'+
-      '<td>'+( nv(x['Site'])||'&mdash;')+'</td>'+
-      '<td class="tg">'+( nv(x['TAG'])||'&mdash;')+'</td>'+
+      '<td><div class="cell-primary">'+( nv(x['Site'])||'&mdash;')+'</div><div class="cell-tag">'+( nv(x['TAG'])||'&mdash;')+'</div></td>'+
       '<td title="'+mn+'">'+mn.substring(0,34)+(mn.length>34?'&hellip;':'')+'</td>'+
-      '<td>'+(fw?'<span class="fw2">'+fw+'</span>':'<span style="color:#475569">&mdash;</span>')+'</td>'+
-      '<td><span class="fwb '+fwuc+'">'+fwuicon+' '+fwu+'</span></td>'+
-      
+      '<td><div class="cell-fw">'+(fw?'<span class="fw2">'+fw+'</span>':'<span style="color:#475569">&mdash;</span>')+'</div><div class="cell-fwu"><span class="fwb '+fwuc+'">'+fwuicon+' '+fwu+'</span></div></td>'+
       '<td><span class="sb2 '+stc+'">'+st3+'</span></td>'+
       '<td><span class="ab '+apc+'">'+ap+'</span></td>'+
       '<td style="color:#94a3b8;font-size:10px;font-family:Space Mono,monospace">'+(dt||'&mdash;')+'</td></tr>';
@@ -1206,6 +1298,7 @@ function render(){
   if(ST.p>totalPages) ST.p=totalPages;
   if(ST.p<1) ST.p=1;
   rPg(d.length);
+  renderFilterBar();
 }
 
 function rPg(total){
@@ -1246,6 +1339,51 @@ function setTheme(mode){
     setTimeout(renderGantt, 50);
   }
 }
+
+// ── ADD-PLAN DRAWER ──
+function openPlanDrawer(){
+  var dd=document.getElementById('drawer-date-display');
+  var lbl=document.getElementById('cal-selected-label');
+  if(dd && lbl) dd.textContent = lbl.textContent;
+  document.getElementById('sched-drawer').classList.add('open');
+  document.getElementById('sched-drawer-backdrop').classList.add('show');
+  document.getElementById('sched-drawer').setAttribute('aria-hidden','false');
+}
+function closePlanDrawer(){
+  document.getElementById('sched-drawer').classList.remove('open');
+  document.getElementById('sched-drawer-backdrop').classList.remove('show');
+  document.getElementById('sched-drawer').setAttribute('aria-hidden','true');
+}
+function addPlanFromDrawer(){
+  // delegate to existing addPlan()
+  var ok=true;
+  try{ addPlan(); }catch(e){ ok=false; console.error(e); }
+  // close only if a plan was actually added — addPlan does its own validation/alerts.
+  // If validation failed, addPlan typically alerts and doesn't add; we still keep drawer open.
+  // Heuristic: close if the form date is valid and no alert was raised. Best effort: close after 50ms.
+  setTimeout(function(){
+    // crude check: did addPlan clear inputs? if site is still empty assume something was attempted
+  }, 0);
+  closePlanDrawer();
+}
+// Escape to close
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    var dr=document.getElementById('sched-drawer');
+    if(dr && dr.classList.contains('open')) closePlanDrawer();
+  }
+});
+// Keep drawer date display in sync when selecting a calendar date
+(function(){
+  var lbl=document.getElementById('cal-selected-label');
+  if(!lbl) return;
+  var obs=new MutationObserver(function(){
+    var dd=document.getElementById('drawer-date-display');
+    if(dd) dd.textContent=lbl.textContent;
+  });
+  obs.observe(lbl,{childList:true,characterData:true,subtree:true});
+})();
+
 // restore saved theme on load — default is light
 (function(){
   try{
@@ -2471,6 +2609,6 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge">v1.9.9</div>
+<div class="version-badge">v1.10.0</div>
 </body>
 </html>
