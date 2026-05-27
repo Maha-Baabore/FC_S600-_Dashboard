@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.9.3</title>
+<title>FC S600+ PTT — Metering Dashboard v1.9.4</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -402,6 +402,8 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .light .gantt .bar-label{fill:#fff!important;font-weight:700!important}
 .light .gantt-container .popup-wrapper{background:#fff!important;border:1px solid #e2e8f0!important;box-shadow:0 4px 16px rgba(0,0,0,.1)!important}
 /* sched-plans scrollbar */
+/* Version badge fixed bottom-left */
+.version-badge{position:fixed;bottom:10px;left:10px;font-size:9px;font-family:'Space Mono',monospace;color:var(--tx3);background:var(--sf);border:1px solid var(--br);border-radius:8px;padding:3px 8px;z-index:500;pointer-events:none;opacity:.7;letter-spacing:.5px}
 /* Custom Gantt */
 .gc-wrap{display:flex;height:100%;min-height:0}
 .gc-labels{flex-shrink:0;width:160px;border-right:1px solid var(--br);overflow:hidden}
@@ -530,7 +532,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.9.3</div>
+  <div class="home-version">v1.9.4</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -561,7 +563,6 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
     </div>
     <div class="hright">
       <span class="lupd" id="h-upd"></span>
-      <div class="hbadge">Units: <strong id="ht">0</strong></div>
       <button class="hbtn gr" id="ref-btn" onclick="refreshGS()"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="display:inline-block;vertical-align:middle"><path d="M10.5 6.5A4 4 0 1 1 8.5 3M10.5 2V4.5H8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Refresh</button>
       <!-- View mode toggle -->
       <div class="view-pill">
@@ -708,14 +709,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
                 <label class="sf-label">Target Firmware</label>
                 <input class="sf-input" id="sf-fw-target" type="text" placeholder="e.g. 06.31">
               </div>
-              <div class="sf-row">
-                <label class="sf-label">Start Time</label>
-                <input class="sf-input" id="sf-time-start" type="time" value="08:00">
-              </div>
-              <div class="sf-row">
-                <label class="sf-label">End Time</label>
-                <input class="sf-input" id="sf-time-end" type="time" value="17:00">
-              </div>
+
               <div class="sf-row">
                 <label class="sf-label">Note</label>
                 <input class="sf-input" id="sf-note" type="text" placeholder="optional">
@@ -1148,7 +1142,6 @@ function render(){
   document.getElementById('ks').textContent=Array.from(new Set(d.map(function(x){return x['Site'];}))).length+' sites';
   document.getElementById('kfup').textContent=t?(fu/t*100).toFixed(1)+'% of total':'';
   document.getElementById('kfop').textContent=t?(fo/t*100).toFixed(1)+'% of total':'';
-  document.getElementById('ht').textContent=t;
   // Region chart
   var cnt={};d.forEach(function(x){var k=nv(x['PTT Region'])||'?';cnt[k]=(cnt[k]||0)+1;});
   var regionOrder=['1','2','3','4','5','6','7','8','9','10','11','GSP','OFFSHORE','OSP'];
@@ -1820,12 +1813,12 @@ function addPlan(){
   var site=document.getElementById('sf-site').value;
   var tag=document.getElementById('sf-tag').value;
   var fw=document.getElementById('sf-fw-target').value.trim();
-  var ts=document.getElementById('sf-time-start').value;
-  var te=document.getElementById('sf-time-end').value;
+  var performedBy=document.getElementById('sf-performed-by').value.trim();
   var note=document.getElementById('sf-note').value.trim();
   if(!site||!tag){alert('Please select a Site and TAG');return;}
-  PLANS.push({id:Date.now(),date:selectedDate,site:site,tag:tag,fwTarget:fw,timeStart:ts,timeEnd:te,note:note,status:'planned'});
+  PLANS.push({id:Date.now(),date:selectedDate,site:site,tag:tag,fwTarget:fw,timeStart:'',timeEnd:'',performedBy:performedBy,note:note,status:'planned'});
   savePlans();
+  document.getElementById('sf-performed-by').value='';
   document.getElementById('sf-note').value='';
   renderCal(); renderPlanList(); renderGantt();
 }
@@ -1877,9 +1870,9 @@ function renderPlanList(){
       '<div class="plan-item-right">'+
         '<button class="plan-status-badge badge-'+p.status+'" onclick="cyclePlanStatus('+p.id+')" title="Click to change status">'+lbl[p.status]+'</button>'+
         '<div style="display:flex;gap:4px;margin-top:4px">'+
-          '<button class="sf-sm-btn" style="font-size:9px;padding:3px 7px;color:#10b981;border-color:#10b98133" onclick="openReport('+p.id+')" title="Report update result"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="display:inline-block;vertical-align:middle"><rect x="2" y="1.5" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M4.5 5H8.5M4.5 7.5H8.5M4.5 10H7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> Report</button>'+
-          '<button class="sf-sm-btn" style="font-size:9px;padding:3px 7px" onclick="openEditPlan('+p.id+')" title="Edit"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="display:inline-block;vertical-align:middle"><path d="M9 2L11 4L5 10H3V8L9 2Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+
-          '<button class="plan-del-btn" onclick="deletePlan('+p.id+')" title="Delete"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="display:inline-block;vertical-align:middle"><path d="M2 2L9 9M9 2L2 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>'+
+          (p.status==='done'?'<button class="sf-sm-btn" style="font-size:9px;padding:3px 7px;color:#10b981;border-color:#10b98133" onclick="openReport('+p.id+')" title="Report update result"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="display:inline-block;vertical-align:middle"><rect x="2" y="1.5" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M4.5 5H8.5M4.5 7.5H8.5M4.5 10H7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> Report</button>':'')+
+          '<button class="sf-sm-btn" style="font-size:9px;padding:3px 7px" onclick="openEditPlan('+p.id+')" title="Edit"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="display:inline-block;vertical-align:middle"><rect x="1" y="1" width="12" height="12" rx="3.5" fill="currentColor" fill-opacity=".08"/><path d="M5.5 9.5L5 9V7.5L8.5 4L10 5.5L6.5 9H5.5Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.5 4L10 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button>'+
+          '<button class="plan-del-btn" onclick="deletePlan('+p.id+')" title="Delete"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="display:inline-block;vertical-align:middle"><rect x="1" y="1" width="12" height="12" rx="3.5" fill="currentColor" fill-opacity=".08"/><path d="M4.5 5.5H9.5M6 5.5V4H8V5.5M5.5 5.5L6 10H8L8.5 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+
         '</div>'+
       '</div>'+
     '</div>';
@@ -1904,55 +1897,14 @@ function gcExpandAll(){
   var regions=Object.keys(GC_OPEN);
   var allOpen=regions.length>0&&regions.every(function(r){ return GC_OPEN[r]; });
   regions.forEach(function(r){ GC_OPEN[r]=!allOpen; });
-  // Try fast DOM toggle first, fall back to full render if needed
-  var toggled = _gcToggleDom(null, !allOpen);
-  if(!toggled) renderGantt();
+  renderGantt();
 }
 
 function gcToggle(reg){
   GC_OPEN[reg]=!GC_OPEN[reg];
-  // Try fast DOM toggle — avoids full rebuild
-  var toggled = _gcToggleDom(reg, GC_OPEN[reg]);
-  if(!toggled) renderGantt();
+  renderGantt();
 }
 
-// Fast DOM toggle: find existing rows by data-region and show/hide
-// Returns true if successful, false if DOM is stale and needs full render
-function _gcToggleDom(reg, isOpen){
-  var wrap = document.getElementById('gantt-wrap');
-  if(!wrap) return false;
-  var labelEl = wrap.querySelector('#gc-labels');
-  var chartEl = wrap.querySelector('#gc-chart');
-  if(!labelEl || !chartEl) return false;
-
-  var regs = reg ? [reg] : Object.keys(GC_OPEN);
-  var allFound = true;
-
-  regs.forEach(function(r){
-    var open = (reg===null) ? isOpen : GC_OPEN[r];
-    // Find label rows for this region
-    var labelRows = labelEl.querySelectorAll('[data-region="'+r+'"][data-type="item"]');
-    var barRows   = chartEl.querySelectorAll('[data-region="'+r+'"][data-type="item"]');
-    var chevrons  = wrap.querySelectorAll('[data-region="'+r+'"][data-chevron]');
-
-    if(labelRows.length !== barRows.length){ allFound = false; return; }
-    // Update visibility
-    var display = open ? '' : 'none';
-    labelRows.forEach(function(el){ el.style.display=display; });
-    barRows.forEach(function(el){ el.style.display=display; });
-    chevrons.forEach(function(el){ el.textContent=open?'▼':'▶'; });
-    // Update group row count badge
-    var badge = wrap.querySelector('[data-region="'+r+'"][data-type="badge"]');
-    if(badge){
-      var total = labelRows.length;
-      var done  = 0;
-      labelRows.forEach(function(el){ if(el.getAttribute('data-status')==='done') done++; });
-      badge.textContent = done+'/'+total;
-    }
-  });
-
-  return allFound;
-}
 
 function renderGantt(){
   var el=document.getElementById('gantt-wrap');
@@ -2135,6 +2087,11 @@ function renderGantt(){
   var labEl=document.getElementById('gc-labels');
   if(chartEl&&labEl){
     chartEl.addEventListener('scroll',function(){ labEl.scrollTop=chartEl.scrollTop; });
+    // Scroll horizontally to today column
+    if(todayColIdx>=0){
+      var scrollTo=todayColIdx*COL_W - (chartEl.clientWidth/2) + COL_W/2;
+      chartEl.scrollLeft=Math.max(0,scrollTo);
+    }
   }
 }
 
@@ -2508,5 +2465,6 @@ function submitReport(){
 }
 
 </script>
+<div class="version-badge">v1.9.4</div>
 </body>
 </html>
