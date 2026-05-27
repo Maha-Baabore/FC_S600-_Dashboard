@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.9.4</title>
+<title>FC S600+ PTT — Metering Dashboard v1.9.5</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -532,7 +532,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.9.4</div>
+  <div class="home-version">v1.9.5</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -709,9 +709,12 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
                 <label class="sf-label">Target Firmware</label>
                 <input class="sf-input" id="sf-fw-target" type="text" placeholder="e.g. 06.31">
               </div>
-
               <div class="sf-row">
-                <label class="sf-label">Note</label>
+                <label class="sf-label">Performed By</label>
+                <input class="sf-input" id="sf-performed-by" type="text" placeholder="Engineer name">
+              </div>
+              <div class="sf-row">
+                <label class="sf-label">Note (optional)</label>
                 <input class="sf-input" id="sf-note" type="text" placeholder="optional">
               </div>
               <button class="sf-add-btn" onclick="addPlan()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="display:inline-block;vertical-align:middle"><path d="M6 2V10M2 6H10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Add Plan</button>
@@ -727,7 +730,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
             <div style="display:flex;align-items:center;justify-content:space-between">
               <div class="sched-subtitle" id="plan-list-title">Monthly Plan</div>
               <div style="display:flex;gap:8px">
-                <button class="sf-sm-btn" style="color:#ef4444;border-color:#ef444433" onclick="clearMonthPlans()"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="display:inline-block;vertical-align:middle"><path d="M2 4H11M5 4V2.5H8V4M4.5 4L5 10.5H8L8.5 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg> Clear Month</button>
+                <button class="sf-sm-btn" style="color:#ef4444;border-color:#ef444433" onclick="clearMonthPlans()"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="display:inline-block;vertical-align:middle"><rect x="1" y="1" width="12" height="12" rx="3.5" fill="#ef4444" fill-opacity=".1"/><path d="M4.5 5.5H9.5M6 5.5V4H8V5.5M5.5 5.5L6 10H8L8.5 5.5" stroke="#ef4444" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg> Clear Month</button>
               </div>
             </div>
           </div>
@@ -1809,7 +1812,7 @@ function selectDate(ds){
 }
 
 function addPlan(){
-  if(!selectedDate){alert('กรุณาเลือกDateก่อน');return;}
+  if(!selectedDate){alert('Please select a date first');return;}
   var site=document.getElementById('sf-site').value;
   var tag=document.getElementById('sf-tag').value;
   var fw=document.getElementById('sf-fw-target').value.trim();
@@ -2465,6 +2468,6 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge">v1.9.4</div>
+<div class="version-badge">v1.9.5</div>
 </body>
 </html>
