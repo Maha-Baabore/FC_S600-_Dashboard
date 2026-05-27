@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.11.3</title>
+<title>FC S600+ PTT — Metering Dashboard v1.11.4</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -452,7 +452,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 /* Version badge — bottom left, fits left sidebar width, centered text */
 .version-badge{
-  position: fixed;
+  position: fixed !important;
   bottom: 10px;
   left: 12px;
   width: 232px;  /* dashboard sidebar (256) minus 24px margins */
@@ -462,7 +462,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   color: var(--tx3);
   padding: 5px 8px;
   letter-spacing: 1px;
-  z-index: 50;
+  z-index: 9999;
   background: var(--sf);
   border-radius: 12px;
   border: 1px solid var(--br);
@@ -593,7 +593,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.11.3 — visionOS-inspired
+   LIQUID GLASS v1.11.4 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -601,7 +601,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .lg-mesh{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
 .lg-blob{position:absolute;border-radius:50%;filter:blur(70px);will-change:transform}
 /* Place all body content above mesh */
-body > *:not(.lg-mesh){position:relative;z-index:1}
+body > *:not(.lg-mesh):not(.version-badge){position:relative;z-index:1}
 
 /* DARK theme blobs — softer aurora, won't fight with text */
 :root:not(.light) .lg-blob-1{top:-25%;left:-15%;width:90vw;height:90vw;background:radial-gradient(circle,#00d4ff 0%,transparent 60%);opacity:.45}
@@ -1757,7 +1757,7 @@ html, html.light, html:not(.light){background: transparent !important}
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.11.3</div>
+  <div class="home-version">v1.11.4</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -3785,7 +3785,7 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge" style="width: 232px">v1.11.3</div>
+<div class="version-badge" style="width: 232px">v1.11.4</div>
 </body>
 </html>
 
