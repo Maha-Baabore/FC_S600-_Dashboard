@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.11.4</title>
+<title>FC S600+ PTT — Metering Dashboard v1.11.5</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -593,7 +593,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.11.4 — visionOS-inspired
+   LIQUID GLASS v1.11.5 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -940,14 +940,31 @@ html.light .chip.on, html:not(.light) .chip.on{
 .cal-day:hover{
   background: var(--lg-bg-strong) !important;
 }
+.cal-day.selected{
+  background: var(--ac2) !important;
+  border-color: var(--ac) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(37,99,235,.5), inset 0 1px 0 rgba(255,255,255,.2) !important;
+  font-weight: 700 !important;
+}
+:root.light .cal-day.selected{
+  background: var(--ac2) !important;
+  border-color: var(--ac) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(37,99,235,.4), inset 0 1px 0 rgba(255,255,255,.3) !important;
+}
 .cal-day.cd-selected{
-  background: rgba(0,212,255,.30) !important;
-  border-color: rgba(0,212,255,.6) !important;
-  box-shadow: 0 4px 14px rgba(0,212,255,.3), inset 0 1px 0 rgba(255,255,255,.2);
+  background: var(--ac2) !important;
+  border-color: var(--ac) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(37,99,235,.5), inset 0 1px 0 rgba(255,255,255,.2) !important;
+  font-weight: 700 !important;
 }
 :root.light .cal-day.cd-selected{
-  background: rgba(2,132,199,.25) !important;
-  border-color: rgba(2,132,199,.5) !important;
+  background: var(--ac2) !important;
+  border-color: var(--ac) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(37,99,235,.4), inset 0 1px 0 rgba(255,255,255,.3) !important;
 }
 
 /* Sort headers — keep readable */
@@ -1119,7 +1136,7 @@ html.light .fb-chip, html:not(.light) .fb-chip{
 
 /* Calendar bg & cells */
 html.light #cal-grid, html:not(.light) #cal-grid,
-html.light .cal-day, html:not(.light) .cal-day{
+html.light .cal-day:not(.selected):not(.cd-selected), html:not(.light) .cal-day:not(.selected):not(.cd-selected){
   background: transparent !important;
 }
 
@@ -1757,7 +1774,7 @@ html, html.light, html:not(.light){background: transparent !important}
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.11.4</div>
+  <div class="home-version">v1.11.5</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -3785,7 +3802,7 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge" style="width: 232px">v1.11.4</div>
+<div class="version-badge" style="width: 232px">v1.11.5</div>
 </body>
 </html>
 
