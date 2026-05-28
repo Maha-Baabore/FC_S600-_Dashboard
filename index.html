@@ -3173,15 +3173,17 @@ var PLANS = (function(){
     // Migrate: ensure all required fields exist with defaults
     return arr.map(function(p){
       return {
-        id:        p.id        || (Date.now().toString(36)+Math.random().toString(36).slice(2)),
-        date:      p.date      || '',
-        site:      p.site      || '',
-        tag:       p.tag       || '',
-        fwTarget:  p.fwTarget  || '',
-        timeStart: p.timeStart || '08:00',
-        timeEnd:   p.timeEnd   || '17:00',
-        note:      p.note      || '',
-        status:    (['planned','inprogress','done','cancelled'].indexOf(p.status)>=0 ? p.status : 'planned')
+        id:          p.id          || (Date.now().toString(36)+Math.random().toString(36).slice(2)),
+        date:        p.date        || '',
+        site:        p.site        || '',
+        tag:         p.tag         || '',
+        fwTarget:    p.fwTarget    || '',
+        timeStart:   p.timeStart   || '08:00',
+        timeEnd:     p.timeEnd     || '17:00',
+        performedBy: p.performedBy || '',
+        note:        p.note        || '',
+        status:      (['planned','inprogress','done','cancelled'].indexOf(p.status)>=0 ? p.status : 'planned'),
+        reported:    p.reported    === true  // *** preserve lock — must be explicit true
       };
     }).filter(function(p){ return p.date && p.tag; }); // drop corrupt entries
   }catch(e){ return []; }
