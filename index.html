@@ -582,7 +582,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .mkpi-sub{font-size:10px;color:var(--tx3);margin-top:2px}
 .mkpi-tot .mkpi-val{color:var(--ac)}
 .map-body{flex:1;min-height:0;display:flex;flex-direction:row;gap:12px;padding:0 16px 14px;overflow:hidden;max-height:100%}
-.map-right-panel{width:280px;flex-shrink:0;display:flex;flex-direction:column;gap:12px;overflow-y:auto;align-self:flex-start;max-height:100%;padding-bottom:4px}
+.map-right-panel{width:280px;flex-shrink:0;display:flex;flex-direction:column;gap:12px;overflow-y:auto;align-self:stretch;max-height:100%;padding-bottom:4px;position:relative}
 #chartdiv{flex:1;min-width:0;height:100%;background:transparent}
 .map-info-card{border-radius:12px;padding:14px 16px}
 .map-info-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--tx3);font-family:'Space Mono',monospace;margin-bottom:8px}
@@ -1792,15 +1792,34 @@ html:not(.light) .map-panel {
   border: 1px solid rgba(255,255,255,0.12);
   box-shadow: 0 4px 20px rgba(0,0,0,0.25);
 }
-/* ── Map right panel: layout only, no background ── */
+/* ── Map right panel: full-height glass backdrop ── */
 .map-right-panel{
-  border-radius: 0;
-  padding: 0 !important;
+  border-radius: 18px;
+  padding: 16px 14px !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+/* Glass layer covers entire right column height */
+.map-right-panel::before{
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  background: var(--lg-bg-strong);
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  border: 1px solid var(--lg-bd);
+  box-shadow: var(--lg-shadow);
+  z-index: 0;
+  pointer-events: none;
+}
+/* Cards sit above the glass layer */
+.map-right-panel > * {
+  position: relative;
+  z-index: 1;
 }
 
 </style>
