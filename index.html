@@ -574,7 +574,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .report-apps-status.ok{background:rgba(16,185,129,.12);color:#10b981}
 .report-apps-status.err{background:rgba(239,68,68,.12);color:#ef4444}
 .report-apps-status.loading{background:rgba(99,102,241,.12);color:#6366f1}
-#map-kpi-bar{padding:8px 16px 6px;flex-shrink:0;display:flex;justify-content:flex-end}
+#map-kpi-bar{padding:8px 16px 6px;flex-shrink:0;display:flex;justify-content:flex-end;align-items:stretch}
 .mkpi-row{display:flex;flex-wrap:nowrap;gap:8px}
 .mkpi-card{background:var(--sf);border:1px solid var(--br);border-radius:12px;padding:12px 18px;min-width:120px;flex-shrink:0}
 .mkpi-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--tx3);font-family:'Space Mono',monospace;margin-bottom:4px}
@@ -1864,7 +1864,7 @@ html:not(.light) .map-panel {
         <button class="tpill-btn" id="btn-dark" onclick="setTheme('dark')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4A6.5 6.5 0 0 0 20 14.5Z"/></svg> Dark</button>
         <button class="tpill-btn active" id="btn-light" onclick="setTheme('light')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><circle cx="12" cy="12" r="4"/><path d="M12 2V4M12 20V22M4.7 4.7L6.1 6.1M17.9 17.9L19.3 19.3M2 12H4M20 12H22M4.7 19.3L6.1 17.9M17.9 6.1L19.3 4.7"/></svg> Light</button>
       </div>
-      <button class="hbtn" onclick="goHome()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M10 5L4 12L10 19"/><path d="M4 12H20"/></svg> กลับไปหน้าแรก</button>
+      <button class="hbtn" onclick="goHome()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M10 5L4 12L10 19"/><path d="M4 12H20"/></svg> Back to Home</button>
     </div>
   </header>
 
@@ -2518,6 +2518,7 @@ function render(){
   var mcr=document.getElementById('map-cr'); if(mcr) mcr.innerHTML=document.getElementById('cr').innerHTML;
   var mda=document.getElementById('map-dl-app'); if(mda) mda.innerHTML=document.getElementById('dl-app').innerHTML;
   var mdf=document.getElementById('map-dl-fw'); if(mdf) mdf.innerHTML=document.getElementById('dl-fw').innerHTML;
+
   // Table
   var st2=(ST.p-1)*ST.ps,pd=d.slice(st2,st2+ST.ps);
   document.getElementById('tc').textContent=d.length+' records';
@@ -3026,6 +3027,16 @@ function renderMapKPI() {
       '<div class="mkpi-val" style="color:#f87171">'+fo+'</div>'+
       '<div class="mkpi-sub">'+(t?(fo/t*100).toFixed(1)+'% of total':'0%')+'</div></div>'+
     '</div>';
+  // Sync right panel left edge + width to KPI bar
+  setTimeout(function(){
+    var row = bar.querySelector('.mkpi-row');
+    var rp = document.querySelector('.map-right-panel');
+    if(row && rp){
+      var barRect = bar.getBoundingClientRect();
+      var rowRect = row.getBoundingClientRect();
+      rp.style.width = (barRect.right - rowRect.left - 16) + 'px';
+    }
+  }, 100);
 }
 
 // Override render to also update map KPI if in map mode
