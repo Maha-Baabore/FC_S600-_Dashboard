@@ -3406,9 +3406,9 @@ function renderPlanList(){
           (p.status==='done' && !p.reported
             ? '<button class="plan-action-btn report-btn" onclick="openReport(\''+p.id+'\')" title="Report update result"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3H14L19 8V20A1 1 0 0 1 18 21H6A1 1 0 0 1 5 20V4A1 1 0 0 1 6 3Z"/><path d="M14 3V8H19"/><path d="M8.5 14L10.5 16L15 11.5"/></svg></button>'
             : '')+
-          // reported: แสดง lock icon แทนปุ่ม edit + delete
+          // reported: แสดง lock icon — double-click เพื่อ admin unlock
           (p.reported
-            ? '<span title="Reported — this mission is complete" style="font-size:14px;opacity:.5;cursor:default">🔒</span>'
+            ? '<span title="Double-click to unlock (Admin)" style="font-size:14px;opacity:.6;cursor:pointer;user-select:none" ondblclick="adminUnlock(\''+p.id+'\')">🔒</span>'
             : '<button class="plan-action-btn edit-btn" onclick="openEditPlan(\''+p.id+'\')" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:middle"><path d="M15.5 4L20 8.5L9.5 19H5V14.5L15.5 4Z"/><path d="M13 6.5L17.5 11"/></svg></button>'+
               '<button class="plan-action-btn delete-btn" onclick="deletePlan(\''+p.id+'\')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:middle"><path d="M4 6.5H20"/><path d="M9.5 6.5V4.5H14.5V6.5"/><path d="M5.5 6.5L6.5 20H17.5L18.5 6.5"/><path d="M10 10.5V16M14 10.5V16"/></svg></button>'
           )+
@@ -3849,6 +3849,24 @@ function gcExport(){
   a.download='gantt_chart.png';
   a.href=canvas.toDataURL('image/png');
   a.click();
+}
+
+// ── ADMIN UNLOCK ──
+var ADMIN_PASSWORD = 'admin1234'; // เปลี่ยนได้ตามต้องการ
+
+function adminUnlock(id){
+  var p = PLANS.find(function(x){ return String(x.id)===String(id); });
+  if(!p) return;
+  var pw = prompt('🔐 Admin Password เพื่อ unlock plan: '+p.tag);
+  if(pw === null) return; // กด Cancel
+  if(pw !== ADMIN_PASSWORD){
+    alert('❌ รหัสผ่านไม่ถูกต้อง');
+    return;
+  }
+  if(!confirm('Unlock "'+p.tag+'" ?\nสถานะจะกลับเป็น Done และสามารถแก้ไข/ลบได้อีกครั้ง')) return;
+  p.reported = false;
+  savePlans();
+  renderCal(); renderPlanList(); renderGantt();
 }
 
 function clearMonthPlans(){
