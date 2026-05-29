@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.12.14</title>
+<title>FC S600+ PTT — Metering Dashboard v1.14.0</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -285,6 +285,13 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .pb:hover:not(:disabled){border-color:var(--ac2);color:var(--tx)}.pb.on{background:var(--ac2);border-color:var(--ac2);color:#fff}.pb:disabled{opacity:.3;cursor:not-allowed}
 @keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .kcard{animation:fu .3s ease both}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+#login-pw::placeholder{color:var(--tx3)}
+#login-pw::-ms-reveal,#login-pw::-ms-clear{display:none}
+#login-pw::-webkit-credentials-auto-fill-button,#login-pw::-webkit-textfield-decoration-container{display:none!important}
+#login-pw{-webkit-appearance:none;appearance:none}
+:root:not(.light) #login-eye{color:#ffffff}
+:root:not(.light) #login-eye:hover{color:#ffffff}
 @keyframes sp{to{transform:rotate(360deg)}}.spinning{display:inline-block;animation:sp .8s linear infinite}
 
 /* App chip active colors */
@@ -612,7 +619,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.12.14 — visionOS-inspired
+   LIQUID GLASS v1.14.0 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1902,7 +1909,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.12.14</div>
+  <div class="home-version">v1.14.0</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -1915,7 +1922,35 @@ html:not(.light) .sched-gantt {
     <!-- hidden inputs เก็บค่าไว้ให้ loadGS() ใช้งานได้ปกติ -->
     <input type="hidden" id="gs-url" value="">
     <input type="hidden" id="gs-sheet" value="Overall">
-    <button class="load-btn gs" id="gs-btn" onclick="loadGS()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> เข้าสู่ Dashboard</button>
+
+    <!-- Login form — shown when not authenticated -->
+    <div id="home-login-block" style="margin-bottom:12px">
+      <div style="position:relative;margin-bottom:8px">
+        <input id="login-pw" type="password" placeholder="Password"
+          style="width:100%;box-sizing:border-box;padding:10px 40px 10px 14px;border-radius:10px;border:1px solid rgba(128,128,128,0.25);background:rgba(128,128,128,0.08);color:var(--tx);font-size:13px;font-family:inherit;outline:none;transition:border .2s" autocomplete="current-password"
+          oninput="var e=document.getElementById('login-eye');e.style.display=this.value?'flex':'none';e.style.color='var(--tx)'"
+          onfocus="this.style.borderColor='rgba(0,212,255,0.45)'"
+          onblur="this.style.borderColor='rgba(255,255,255,0.12)'"
+          onkeydown="if(event.key==='Enter')submitLogin()">
+        <button id="login-eye" title="Hold to show password"
+          style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--tx);padding:4px;display:none;align-items:center;user-select:none;opacity:0.8"
+          onmousedown="document.getElementById('login-pw').type='text'"
+          onmouseup="document.getElementById('login-pw').type='password'"
+          onmouseleave="document.getElementById('login-pw').type='password'"
+          ontouchstart="document.getElementById('login-pw').type='text';return false"
+          ontouchend="document.getElementById('login-pw').type='password'">
+          <svg id="eye-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 12 5 5 12 5s10 7 10 7-3 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <div id="login-err" style="color:#f87171;font-size:11px;min-height:16px;margin-bottom:6px;font-family:'Space Mono',monospace;text-align:center"></div>
+      <button onclick="submitLogin()" class="load-btn gs" style="width:100%;justify-content:center">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Sign In
+      </button>
+    </div>
+
+    <!-- Enter Dashboard — shown after login -->
+    <button class="load-btn gs" id="gs-btn" style="display:none" onclick="loadGS()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard</button>
     <div class="err-box" id="gs-err"></div>
     <div class="ok-badge" id="gs-ok"><span class="dot"></span><span id="gs-ok-txt"></span></div>
   </div>
@@ -1945,7 +1980,7 @@ html:not(.light) .sched-gantt {
         <button class="tpill-btn" id="btn-dark" onclick="setTheme('dark')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4A6.5 6.5 0 0 0 20 14.5Z"/></svg> Dark</button>
         <button class="tpill-btn active" id="btn-light" onclick="setTheme('light')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><circle cx="12" cy="12" r="4"/><path d="M12 2V4M12 20V22M4.7 4.7L6.1 6.1M17.9 17.9L19.3 19.3M2 12H4M20 12H22M4.7 19.3L6.1 17.9M17.9 6.1L19.3 4.7"/></svg> Light</button>
       </div>
-      <button class="hbtn" onclick="goHome()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M10 5L4 12L10 19"/><path d="M4 12H20"/></svg> Back to Home</button>
+      <button class="hbtn" onclick="signOut()" style="color:#f87171;border-color:rgba(248,113,113,0.25)" title="Sign out"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign Out</button>
     </div>
   </header>
 
@@ -2227,7 +2262,7 @@ html:not(.light) .sched-gantt {
 var CONFIG = {
   sheetUrl:       'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0MbcggGsP6MfD9uxVFfvsmCANy7lyqm0ngIBHaozHYF4SelcQeAM4IAaTLCy9Zcj0Chfemm00xZrp/pub?gid=838721591&single=true&output=csv',
   sheetName:      'Overall',
-  appsScriptUrl:  'https://script.google.com/macros/s/AKfycbwL92RaTHjMspTp4Ty_01hL9UkW2xK1PozdJiWEdlySkEW4olHGGcsPN9rADV9EDkxN/exec'   // ← วาง Web App URL จาก Apps Script ตรงนี้
+  appsScriptUrl:  'https://script.google.com/macros/s/AKfycbwL92RaTHjMspTp4Ty_01hL9UkW2xK1PozdJiWEdlySkEW4olHGGcsPN9rADV9EDkxN/exec'
 };
 // ═══════════════════════════════════════════════
 
@@ -2264,7 +2299,12 @@ var ST={f:{r:new Set(),fw:new Set(),fwu:new Set(),st:new Set(),ap:new Set()},q:'
 
 function setP(pct,msg){document.getElementById('prog-wrap').style.display='block';document.getElementById('prog').style.width=pct+'%';document.getElementById('status-msg').textContent=msg||'';}
 function clrP(){document.getElementById('prog-wrap').style.display='none';document.getElementById('prog').style.width='0%';document.getElementById('status-msg').textContent='';}
-function showErr(msg){var e=document.getElementById('gs-err');e.style.display='block';e.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 3.5L21.5 20H2.5L12 3.5Z"/><path d="M12 10V14"/><circle cx="12" cy="17" r=".9" fill="currentColor" stroke="none"/></svg> '+msg;}
+function showErr(msg){
+  var e=document.getElementById('gs-err');
+  e.style.display='block';
+  // Use textContent to prevent XSS — error message may contain untrusted content from network responses
+  e.textContent='\u26a0 '+msg;
+}
 function hideErr(){document.getElementById('gs-err').style.display='none';}
 
 function buildCsvUrl(raw,sheet){
@@ -2278,7 +2318,7 @@ function buildCsvUrl(raw,sheet){
 function loadGS(){
   var raw=(CONFIG.sheetUrl||'').trim();
   var sheet=(CONFIG.sheetName||'Overall').trim();
-  if(!raw){showErr('ไม่พบ URL ใน CONFIG');return;}
+  if(!raw){showErr('Google Sheet URL not set in CONFIG');return;}
   var url=buildCsvUrl(raw,sheet);
   if(!url){showErr('URL ไม่ถูกต้อง');return;}
   hideErr();
@@ -2299,34 +2339,35 @@ function doFetch(url,sheet,btn){
   }).catch(function(e){
     var proxy='https://api.allorigins.win/raw?url='+encodeURIComponent(url);
     setP(60,'\u0e25\u0e2d\u0e07 proxy...');
-    fetch(proxy).then(function(r){return r.text();}).then(function(t){
+    var _pc=new AbortController();var _pt=setTimeout(function(){_pc.abort();},15000);
+    fetch(proxy,{signal:_pc.signal}).then(function(r){clearTimeout(_pt);return r.text();}).then(function(t){
       finishGS(t,url,sheet,btn);
     }).catch(function(e2){
       clrP();showErr(e2.message||e.message);
-      btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> เข้าสู่ Dashboard';
+      btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';
     });
   });
 }
 
 function finishGS(csv,url,sheet,btn){
   var rows=parseCSV(csv);
-  if(rows.length<2){clrP();showErr('ไม่พบข้อมูล');btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> เข้าสู่ Dashboard';return;}
+  if(rows.length<2){clrP();showErr('No data found in sheet');btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';return;}
   processRows(rows);
   lastSrc={type:'gs',url:url,sheet:sheet};
   setP(100,'');
   setTimeout(function(){
     clrP();
-    showDash(sheet+' (Google Sheet) &middot; '+DATA.length+' รายการ');
+    showDash(sheet+' (Google Sheet) &middot; '+DATA.length+' records');
     var ok=document.getElementById('gs-ok');ok.style.display='flex';
-    document.getElementById('gs-ok-txt').textContent='โหลดสำเร็จ '+DATA.length+' รายการ — '+new Date().toLocaleTimeString('th-TH');
-    btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> เข้าสู่ Dashboard';
+    document.getElementById('gs-ok-txt').textContent='Loaded '+DATA.length+' records — '+new Date().toLocaleTimeString('en-GB');
+    btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';
   },350);
 }
 
 function parseCSV(text){
   var rows=[],cells=[],cur='',inQ=false;
-  // Normalize line endings
-  text = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  // Strip UTF-8 BOM and normalize line endings
+  text = text.replace(/^\uFEFF/,'').replace(/\r\n/g,'\n').replace(/\r/g,'\n');
   for(var i=0;i<text.length;i++){
     var ch=text[i];
     if(ch==='"'){
@@ -2379,21 +2420,38 @@ function showDash(sub){
   document.getElementById('h-upd').textContent='Loaded '+new Date().toLocaleTimeString('th-TH');
   document.getElementById('ref-btn').style.display=(lastSrc&&lastSrc.type==='gs')?'':'none';
   buildF();render();
+  // apply role after DOM settles
+  setTimeout(function(){ applyRole(sessionStorage.getItem('fc-role')||'viewer'); }, 100);
 }
 
+function signOut(){
+  sessionStorage.removeItem('fc-auth');
+  var vb=document.querySelector('.version-badge');if(vb)vb.style.display='none';
+  document.getElementById('dash').style.display='none';
+  document.getElementById('login-pw').value='';
+  document.getElementById('login-err').textContent='';
+  document.getElementById('home-login-block').style.display='block';
+  document.getElementById('gs-btn').style.display='none';
+  document.getElementById('gs-ok').style.display='none';
+  document.getElementById('gs-err').textContent='';
+  document.getElementById('home').style.display='flex';
+  setTimeout(function(){ document.getElementById('login-pw').focus(); }, 80);
+}
 function goHome(){document.getElementById('home').style.display='flex';document.getElementById('dash').style.display='none';ST={f:{r:new Set(),fw:new Set(),fwu:new Set(),st:new Set(),ap:new Set()},q:'',sc:null,sa:true,p:1,ps:20};var vb=document.querySelector('.version-badge');if(vb)vb.style.display='none';}
 
 function refreshGS(){
   if(!lastSrc||lastSrc.type!=='gs'){alert('Refresh \u0e43\u0e0a\u0e49\u0e44\u0e14\u0e49\u0e40\u0e09\u0e1e\u0e32\u0e30 Google Sheet');return;}
   var btn=document.getElementById('ref-btn');btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;animation:sp .8s linear infinite"><path d="M12 3A9 9 0 1 1 4.5 7"/></svg>';btn.disabled=true;
-  fetch(lastSrc.url).then(function(r){return r.text();})
+  var _rc=new AbortController();var _rt=setTimeout(function(){_rc.abort();},15000);
+  fetch(lastSrc.url,{signal:_rc.signal}).then(function(r){clearTimeout(_rt);return r.text();})
   .then(function(t){
     var rows=parseCSV(t);processRows(rows);ST.p=1;buildF();render();
     document.getElementById('h-upd').textContent='Updated '+new Date().toLocaleTimeString('th-TH');
-    document.getElementById('hf').textContent=lastSrc.sheet+' (Google Sheet) &middot; '+DATA.length+' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23';
+    document.getElementById('hf').textContent=lastSrc.sheet+' (Google Sheet) \u00b7 '+DATA.length+' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23';
     btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 12A8 8 0 1 1 17.5 6.5"/><path d="M20 3.5V8H15.5"/></svg> Refresh';btn.disabled=false;
   }).catch(function(e){
-    fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(lastSrc.url)).then(function(r){return r.text();}).then(function(t){
+    var _rc2=new AbortController();var _rt2=setTimeout(function(){_rc2.abort();},15000);
+    fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(lastSrc.url),{signal:_rc2.signal}).then(function(r){clearTimeout(_rt2);return r.text();}).then(function(t){
       var rows=parseCSV(t);processRows(rows);ST.p=1;buildF();render();
       document.getElementById('h-upd').textContent='Updated '+new Date().toLocaleTimeString('th-TH');
       btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 12A8 8 0 1 1 17.5 6.5"/><path d="M20 3.5V8H15.5"/></svg> Refresh';btn.disabled=false;
@@ -2577,7 +2635,8 @@ function render(){
   var regionOrder=['1','2','3','4','5','6','7','8','9','10','11','GSP','OFFSHORE','OSP'];
   var sorted=regionOrder.map(function(k){return[k,cnt[k]||0];});
   var mx=sorted.reduce(function(m,e){return Math.max(m,e[1]);},1);
-  document.getElementById('cr').innerHTML=sorted.map(function(e){
+  var emptyHtml='<div style="color:var(--tx2);font-size:12px;padding:20px 8px;text-align:center;letter-spacing:.5px;font-family:Space Mono,monospace">No data found</div>';
+  document.getElementById('cr').innerHTML=t?sorted.map(function(e){
     var regKey=e[0],regCount=e[1],regColor=REGION_COLOR_MAP[regKey]||RC[0];
     if(regCount===0){
       if(ST.f.r.size>0) return '';
@@ -2585,19 +2644,19 @@ function render(){
     }
     var w=(regCount/mx*100).toFixed(1);
     return '<div class="brow"><div class="blabel" style="color:'+regColor+'">'+regLabel(regKey)+'</div><div class="btrack"><div class="bfill" style="width:'+w+'%;background:'+regColor+'"><span>'+regCount+'</span></div></div></div>';
-  }).join('');
+  }).join(''):emptyHtml;
   // App legend
   var ac2={};d.forEach(function(x){var k=nv(x['Applications'])||'Other';ac2[k]=(ac2[k]||0)+1;});
   var ents=Object.entries(ac2).sort(function(a,b){return b[1]-a[1];});
-  document.getElementById('dl-app').innerHTML=ents.map(function(e){
+  document.getElementById('dl-app').innerHTML=t?ents.map(function(e){
     return '<div class="li"><div class="ldot" style="background:'+(AC[e[0]]||'#94a3b8')+'"></div><span class="ll">'+e[0]+'</span><span class="lc">'+e[1]+'</span></div>';
-  }).join('');
+  }).join(''):emptyHtml;
   // FW legend
   var fw2={};d.forEach(function(x){var k=nv(x['Firmware Update'])||'Unknown';fw2[k]=(fw2[k]||0)+1;});
   var fents=Object.entries(fw2).sort(function(a,b){return b[1]-a[1];});
-  document.getElementById('dl-fw').innerHTML=fents.map(function(e){
+  document.getElementById('dl-fw').innerHTML=t?fents.map(function(e){
     return '<div class="li"><div class="ldot" style="background:'+(FWC[e[0]]||'#94a3b8')+'"></div><span class="ll">'+e[0]+'</span><span class="lc">'+e[1]+'</span></div>';
-  }).join('');
+  }).join(''):emptyHtml;
   // Sync to map right panel
   var mapCr=document.getElementById('map-cr');
   if(mapCr) mapCr.innerHTML=document.getElementById('cr').innerHTML;
@@ -2616,7 +2675,7 @@ function render(){
   for(var i=0;i<=6;i++){var el=document.getElementById('sx'+i);if(el)el.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 9.5L12 5.5L16 9.5"/><path d="M8 14.5L12 18.5L16 14.5"/></svg>';}
   document.querySelectorAll('th').forEach(function(th){th.classList.remove('sorted');});
   if(ST.sc!==null){var idx=CM[ST.sc];if(idx!==undefined){var ths=document.querySelectorAll('thead th');ths[idx].classList.add('sorted');var sxEl=document.getElementById('sx'+idx);if(sxEl)sxEl.innerHTML=ST.sa?'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M5 14.5L12 7.5L19 14.5"/></svg>':'<svg width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"display:inline-block;vertical-align:middle\"><path d=\"M5 9.5L12 16.5L19 9.5\"/></svg>';}}
-  if(!pd.length){document.getElementById('tb').innerHTML='<tr><td colspan="7" style="text-align:center;padding:40px;color:#475569">\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25</td></tr>';rPg(0);return;}
+  if(!pd.length){document.getElementById('tb').innerHTML='<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--tx2);font-size:13px;letter-spacing:.5px">No data found</td></tr>';rPg(0);return;}
   document.getElementById('tb').innerHTML=pd.map(function(x){
     var fw=nv(x['Firmware']),fwu=nv(x['Firmware Update']),st3=nv(x['Status']),ap=nv(x['Applications']);
     var stc=st3==='Commissioned'?'sbc':st3==='Decommissioned'?'sbd':'sbt';
@@ -2720,9 +2779,90 @@ document.addEventListener('keydown',function(e){
   }catch(e){ setTheme('light'); }
 })();
 
-// ── AUTO-LOAD: โหลดข้อมูลอัตโนมัติเมื่อเปิดหน้าเว็บ ──
+// ── LOGIN ──────────────────────────────────────────
+function showLogin(){
+  var vb=document.querySelector('.version-badge');if(vb)vb.style.display='none';
+  var lb=document.getElementById('home-login-block');
+  var gb=document.getElementById('gs-btn');
+  if(lb) lb.style.display='block';
+  if(gb) gb.style.display='none';
+  document.getElementById('home').style.display='flex';
+  setTimeout(function(){ var el=document.getElementById('login-pw'); if(el) el.focus(); }, 80);
+}
+function submitLogin(){
+  var pw=document.getElementById('login-pw').value;
+  var err=document.getElementById('login-err');
+  if(!pw){ err.textContent='Please enter a password.'; return; }
+
+  var btn=document.querySelector('#home-login-block button[onclick="submitLogin()"]');
+  if(btn){ btn.disabled=true; btn.textContent='Verifying...'; }
+  err.textContent='';
+
+  crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw))
+    .then(function(buf){
+      var hash=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+      var HASH_ADMIN  = '150e3eb2a2721faab22687ead552a1bb17f554f43ec58054f203253ee566890d';
+      var HASH_VIEWER = '4715010cdb262e5477bc3523fb3c4f75e540f21d4b3555602e02b8a59d042401';
+
+      if(hash===HASH_ADMIN){
+        sessionStorage.setItem('fc-auth','1');
+        sessionStorage.setItem('fc-role','admin');
+        applyRole('admin');
+        document.getElementById('home-login-block').style.display='none';
+        document.getElementById('gs-btn').style.display='';
+        loadGS();
+      } else if(hash===HASH_VIEWER){
+        sessionStorage.setItem('fc-auth','1');
+        sessionStorage.setItem('fc-role','viewer');
+        applyRole('viewer');
+        document.getElementById('home-login-block').style.display='none';
+        document.getElementById('gs-btn').style.display='';
+        loadGS();
+      } else {
+        err.textContent='Incorrect password. Try again.';
+        document.getElementById('login-pw').value='';
+        document.getElementById('login-pw').focus();
+        var box=document.getElementById('login-pw');
+        box.style.animation='none'; box.offsetHeight;
+        box.style.animation='shake .3s ease';
+      }
+    })
+    .finally(function(){
+      if(btn){ btn.disabled=false; btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="9" y2="12"/></svg> Sign In'; }
+    });
+}
+
+function applyRole(role){
+  // Schedule tab — hidden for viewer
+  var schedBtn=document.getElementById('btn-view-sched');
+  if(schedBtn) schedBtn.style.display=(role==='admin')?'':'none';
+}
+function toggleLoginPw(){
+  var inp=document.getElementById('login-pw');
+  var icon=document.getElementById('eye-icon');
+  if(inp.type==='password'){
+    inp.type='text';
+    icon.innerHTML='<path d="M17.9 17.9C16.2 19.2 14.2 20 12 20 5 20 2 12 2 12s1.3-2.8 3.6-5"/><path d="M9.9 4.2C10.6 4.1 11.3 4 12 4c7 0 10 8 10 8a18.4 18.4 0 0 1-2.1 3.1"/><path d="M15 12a3 3 0 0 1-5.7 1.3"/><line x1="2" y1="2" x2="22" y2="22"/>';
+  } else {
+    inp.type='password';
+    icon.innerHTML='<path d="M2 12C2 12 5 5 12 5s10 7 10 7-3 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>';
+  }
+}
+// ─────────────────────────────────────────────────
+
+// ── AUTO-LOAD: check auth then load ──
 window.addEventListener('DOMContentLoaded', function(){
-  loadGS();
+  if(sessionStorage.getItem('fc-auth')==='1'){
+    var role=sessionStorage.getItem('fc-role')||'viewer';
+    document.getElementById('home-login-block').style.display='none';
+    document.getElementById('gs-btn').style.display='';
+    document.getElementById('home').style.display='flex';
+    loadGS();
+    // applyRole หลัง dashboard render เสร็จ
+    setTimeout(function(){ applyRole(role); }, 500);
+  } else {
+    showLogin();
+  }
 });
 
 
@@ -3389,10 +3529,10 @@ function renderPlanList(){
         '<div class="plan-item-site">'+esc(p.site)+'</div>'+
         '<div class="plan-item-meta" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">'+
           '<span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12L15 14.5"/></svg> '+dl+'</span>'+
-          '<span>App: <b>'+app+'</b></span>'+
-          '<span>FW: <b>'+fwCurrent+'</b> &rarr; <b style="color:var(--ac)">'+( p.fwTarget||'—')+'</b></span>'+
-          (p.performedBy?'<span style="color:var(--tx2)">By: <b>'+p.performedBy+'</b></span>':'')+
-          (p.note?'<span style="color:var(--tx3)">'+p.note+'</span>':'')+
+          '<span>App: <b>'+esc(app)+'</b></span>'+
+          '<span>FW: <b>'+esc(fwCurrent)+'</b> &rarr; <b style="color:var(--ac)">'+esc(p.fwTarget||'—')+'</b></span>'+
+          (p.performedBy?'<span style="color:var(--tx2)">By: <b>'+esc(p.performedBy)+'</b></span>':'')+
+          (p.note?'<span style="color:var(--tx3)">'+esc(p.note)+'</span>':'')+
         '</div>'+
       '</div>'+
       '<div class="plan-item-right">'+
@@ -3863,7 +4003,7 @@ function adminUnlock(id){
     alert('❌ รหัสผ่านไม่ถูกต้อง');
     return;
   }
-  if(!confirm('Unlock "'+p.tag+'" ?\nสถานะจะกลับเป็น Done และสามารถแก้ไข/ลบได้อีกครั้ง')) return;
+  if(!confirm('Unlock "'+p.tag+'" ?\nStatus will return to Done. Edit and delete will be available again.')) return;
   p.reported = false;
   savePlans();
   renderCal(); renderPlanList(); renderGantt();
@@ -3875,7 +4015,7 @@ function clearMonthPlans(){
   var deletable=PLANS.filter(function(p){ return p.date.startsWith(mk) && !p.reported; });
   var locked=PLANS.filter(function(p){ return p.date.startsWith(mk) && p.reported; }).length;
   if(!deletable.length){
-    alert(locked ? 'ทุก plan ในเดือน '+monthName+' ถูก report แล้ว ไม่สามารถลบได้' : 'No plans in '+monthName);
+    alert(locked ? 'All plans in '+monthName+' have been reported and cannot be deleted' : 'No plans in '+monthName);
     return;
   }
   var msg='Clear '+deletable.length+' plan(s) in '+monthName+'?'+(locked?' ('+locked+' reported plan(s) จะไม่ถูกลบ)':'');
@@ -3888,7 +4028,7 @@ function clearMonthPlans(){
 function clearAllPlans(){
   var locked=PLANS.filter(function(p){ return p.reported; }).length;
   var deletable=PLANS.filter(function(p){ return !p.reported; }).length;
-  if(!deletable){ alert('ไม่มี plan ที่ลบได้'+(locked?' ('+locked+' reported plan(s) ถูก lock ไว้)':'')); return; }
+  if(!deletable){ alert('No deletable plans'+(locked?' ('+locked+' reported plan(s) are locked)':'')); return; }
   var msg='Delete '+deletable+' plan(s)?'+(locked?' ('+locked+' reported plan(s) จะไม่ถูกลบ)':'');
   if(!confirm(msg)) return;
   PLANS=PLANS.filter(function(p){ return p.reported; });
@@ -4053,44 +4193,57 @@ function submitReport(){
   btn.disabled=true; btn.textContent='⏳ Sending...';
   st.className='report-apps-status loading'; st.textContent='Connecting to Google Sheet...';
 
-  // Send main update first, then send log
-  fetch(url,{method:'POST',body:JSON.stringify(payload)})
-    .then(function(r){ return r.json(); })
-    .then(function(res){
-      if(!res.ok) throw new Error(res.msg||'Main sheet error');
-      // ── Now send FW_Log entry
-      st.textContent='✓ Main sheet updated — logging to FW_Log...';
-      return fetch(url,{method:'POST',body:JSON.stringify(logPayload)});
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(res2){
-      if(res2.ok){
-        st.className='report-apps-status ok';
-        st.textContent='✓ อัพเดตสำเร็จ + บันทึก FW Log เรียบร้อย (TAG: '+payload['TAG']+')';
-        btn.textContent='✓ ส่งแล้ว';
-        // update local DATA too
-        var row=DATA.find(function(x){ return (x['TAG']||'').trim()===payload['TAG']; });
-        if(row){ Object.assign(row, payload); }
-        // ล็อค plan — mission complete
-        var planId=document.getElementById('rpt-tag').getAttribute('data-plan-id');
-        if(planId){
-          var pp=PLANS.find(function(x){ return String(x.id)===String(planId); });
-          if(pp){ pp.reported=true; savePlans(); }
+  // mainDone tracks whether main sheet update already succeeded this attempt
+  // so if only FW_Log fails, Retry won't double-write the main sheet
+  var mainDone = btn.getAttribute('data-main-done') === '1';
+
+  function sendFWLog(){
+    st.textContent='✓ Main sheet updated — logging to FW_Log...';
+    return fetch(url,{method:'POST',body:JSON.stringify(logPayload)})
+      .then(function(r){ return r.json(); })
+      .then(function(res2){
+        if(res2.ok){
+          btn.removeAttribute('data-main-done');
+          st.className='report-apps-status ok';
+          st.textContent='✓ Updated successfully + FW Log recorded (TAG: '+payload['TAG']+')';
+          btn.textContent='✓ Sent';
+          var row=DATA.find(function(x){ return (x['TAG']||'').trim()===payload['TAG']; });
+          if(row){ Object.assign(row, payload); }
+          var planId=document.getElementById('rpt-tag').getAttribute('data-plan-id');
+          if(planId){
+            var pp=PLANS.find(function(x){ return String(x.id)===String(planId); });
+            if(pp){ pp.reported=true; savePlans(); }
+          }
+          setTimeout(function(){ closeModal('modal-report'); render(); renderPlanList(); renderGantt(); },1800);
+        } else {
+          throw new Error(res2.msg||'FW_Log sheet error');
         }
-        setTimeout(function(){ closeModal('modal-report'); render(); renderPlanList(); renderGantt(); },1800);
-      } else {
-        throw new Error(res2.msg||'FW_Log sheet error');
-      }
-    })
-    .catch(function(e){
-      st.className='report-apps-status err';
-      st.textContent='✗ ส่งไม่สำเร็จ: '+e.message;
-      btn.disabled=false; btn.textContent='⇧ ลองใหม่';
-    });
+      });
+  }
+
+  var chain;
+  if(mainDone){
+    // Main already succeeded on a previous attempt — only retry FW_Log
+    chain = sendFWLog();
+  } else {
+    chain = fetch(url,{method:'POST',body:JSON.stringify(payload)})
+      .then(function(r){ return r.json(); })
+      .then(function(res){
+        if(!res.ok) throw new Error(res.msg||'Main sheet error');
+        btn.setAttribute('data-main-done','1'); // mark so retry won't re-send
+        return sendFWLog();
+      });
+  }
+
+  chain.catch(function(e){
+    st.className='report-apps-status err';
+    st.textContent='\u2717 Failed to send: '+e.message;
+    btn.disabled=false; btn.textContent='\u21e7 Retry';
+  });
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.12.14</div>
+<div class="version-badge" style="display:none">v1.14.0</div>
 </body>
 </html>
 
