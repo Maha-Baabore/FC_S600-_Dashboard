@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.14.0</title>
+<title>FC S600+ PTT — Metering Dashboard v1.14.2</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -619,7 +619,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.14.0 — visionOS-inspired
+   LIQUID GLASS v1.14.2 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1909,7 +1909,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.14.0</div>
+  <div class="home-version">v1.14.2</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -1980,7 +1980,7 @@ html:not(.light) .sched-gantt {
         <button class="tpill-btn" id="btn-dark" onclick="setTheme('dark')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4A6.5 6.5 0 0 0 20 14.5Z"/></svg> Dark</button>
         <button class="tpill-btn active" id="btn-light" onclick="setTheme('light')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><circle cx="12" cy="12" r="4"/><path d="M12 2V4M12 20V22M4.7 4.7L6.1 6.1M17.9 17.9L19.3 19.3M2 12H4M20 12H22M4.7 19.3L6.1 17.9M17.9 6.1L19.3 4.7"/></svg> Light</button>
       </div>
-      <button class="hbtn" onclick="signOut()" style="color:#f87171;border-color:rgba(248,113,113,0.25)" title="Sign out"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign Out</button>
+      <button class="hbtn" onclick="signOut()" style="color:#f87171;border-color:rgba(248,113,113,0.25);display:flex;align-items:center;gap:6px" title="Sign out"><span id="role-badge" style="font-size:10px;font-weight:700;letter-spacing:.6px;padding:2px 7px;border-radius:4px;background:rgba(248,113,113,0.15);color:#f87171"></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign Out</button>
     </div>
   </header>
 
@@ -2090,7 +2090,7 @@ html:not(.light) .sched-gantt {
         <!-- LEFT: Calendar inside stretchy card, Add button pinned above version badge -->
         <div class="sched-left">
           <div class="sched-left-card sched-section">
-            <div class="sched-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><rect x="3.5" y="5" width="17" height="15.5" rx="1.5"/><path d="M3.5 9.5H20.5M8 3V7M16 3V7"/></svg> Firmware Update Plan</div>
+            <div class="sched-title"><svg width="16" height="16" viewBox="0 0 192 192" fill="none" style="display:inline-block;vertical-align:middle"><path fill="#bbe2ff" d="M32 36.8C32 20.894 44.894 8 60.8 8h70.4C147.106 8 160 20.894 160 36.8v30.4c0 15.906-12.894 28.8-28.8 28.8H60.8C44.894 96 32 83.106 32 67.2z"/><path fill="#3c90ff" d="M19.867 49.392C17.818 33.82 29.94 20 45.645 20h100.71c15.706 0 27.827 13.82 25.778 29.392L166 96l6.133 46.608C174.182 158.18 162.061 172 146.355 172H45.645c-15.706 0-27.827-13.82-25.778-29.392L26 96z"/><mask id="ma" width="154" height="152" x="19" y="20" maskUnits="userSpaceOnUse" style="mask-type:alpha"><path fill="#3c90ff" d="M19.867 49.392C17.818 33.82 29.94 20 45.645 20h100.71c15.706 0 27.827 13.82 25.778 29.392L166 96l6.133 46.608C174.182 158.18 162.061 172 146.355 172H45.645c-15.706 0-27.827-13.82-25.778-29.392L26 96z"/></mask><g mask="url(#ma)"><path fill="url(#mb)" d="M0 0h166v76H0z" transform="matrix(1 0 0 -1 13 172)"/></g><mask id="mc" width="154" height="152" x="19" y="20" maskUnits="userSpaceOnUse" style="mask-type:alpha"><path fill="#3186ff" d="M19.867 49.392C17.818 33.82 29.94 20 45.645 20h100.71c15.706 0 27.827 13.82 25.778 29.392L166 96l6.133 46.608C174.182 158.18 162.061 172 146.355 172H45.645c-15.706 0-27.827-13.82-25.778-29.392L26 96z"/></mask><g mask="url(#mc)"><path fill="url(#md)" d="M32 27.2C32 16.596 40.596 8 51.2 8h89.6c10.604 0 19.2 8.596 19.2 19.2V96H32z" filter="url(#me)"/></g><path fill="#fff" d="M75.353 133.336q-6.282 0-10.777-2.043t-7.61-5.465q-3.065-3.474-4.342-6.793T51.603 115a2.07 2.07 0 0 1 1.021-1.124l5.67-2.247q.714-.357 1.43-.102.714.204 1.685 2.349 1.022 2.145 2.86 4.546a14.3 14.3 0 0 0 4.495 3.728q2.606 1.328 6.435 1.328 6.18 0 9.807-3.575 3.677-3.575 3.677-9.091 0-5.976-3.882-9.194-3.881-3.269-10.266-3.269h-5.362a1.9 1.9 0 0 1-1.328-.51q-.51-.562-.511-1.277v-5.465q0-.767.51-1.277a1.82 1.82 0 0 1 1.329-.562h4.647q5.721 0 9.194-3.116t3.473-8.07q0-4.902-3.116-7.916t-8.58-3.014q-3.065 0-5.312 1.022a11.5 11.5 0 0 0-3.882 2.86 22.7 22.7 0 0 0-2.809 3.78q-1.174 1.941-1.89 2.145-.714.153-1.379-.255l-5.363-2.605q-.664-.358-.868-1.124t1.226-3.575q1.481-2.86 4.494-5.823a21 21 0 0 1 7.049-4.597q4.035-1.635 9.398-1.634 9.96 0 15.782 5.26 5.823 5.21 5.823 13.791 0 5.925-2.86 10.266-2.81 4.34-7.968 6.13v.204q6.231 1.838 9.806 6.741 3.627 4.853 3.626 11.594 0 9.654-6.742 15.834-6.74 6.18-17.57 6.18zm51.25-1.175q-.868 0-1.533-.664a2.25 2.25 0 0 1-.612-1.583V73.118l-11.492 8.274q-.614.46-1.431.307a1.96 1.96 0 0 1-1.225-.766l-3.32-4.7a1.98 1.98 0 0 1-.358-1.43q.153-.816.817-1.276l20.379-14.557q.256-.204.562-.306.307-.153.715-.153h4.291q.868 0 1.379.613.562.56.562 1.43v69.36q0 .92-.664 1.583a2 2 0 0 1-1.533.664z"/><defs><linearGradient id="mb" x1="83" x2="83" y1="76" gradientUnits="userSpaceOnUse"><stop stop-color="#4fa0ff"/><stop offset="1" stop-color="#3186ff"/></linearGradient><linearGradient id="md" x1="89.06" x2="89.06" y1="21.75" y2="96.39" gradientUnits="userSpaceOnUse"><stop stop-color="#a9a8ff"/><stop offset=".8" stop-color="#3c90ff"/></linearGradient><filter id="me" width="152" height="112" x="20" y="-4" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_37330_7673" stdDeviation="6"/></filter></defs></svg> Firmware Update Plan</div>
             <div class="cal-nav">
               <button class="cal-nav-btn" onclick="calPrev()"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M14.5 5L7.5 12L14.5 19"/></svg></button>
               <span class="cal-month-label" id="cal-month-label"></span>
@@ -2801,8 +2801,8 @@ function submitLogin(){
   crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw))
     .then(function(buf){
       var hash=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
-      var HASH_ADMIN  = '150e3eb2a2721faab22687ead552a1bb17f554f43ec58054f203253ee566890d';
-      var HASH_VIEWER = '4715010cdb262e5477bc3523fb3c4f75e540f21d4b3555602e02b8a59d042401';
+      var HASH_ADMIN  = 'dae7eacc329372a071a966be3a91a2211541077e1a8b0d5e8a5aa4651ab7f806'; // adminmps
+      var HASH_VIEWER = '84983c60f7daadc1cb8698621f802c0d9f9a3c3c295c810748fb048115c186ec'; // guest
 
       if(hash===HASH_ADMIN){
         sessionStorage.setItem('fc-auth','1');
@@ -2836,6 +2836,19 @@ function applyRole(role){
   // Schedule tab — hidden for viewer
   var schedBtn=document.getElementById('btn-view-sched');
   if(schedBtn) schedBtn.style.display=(role==='admin')?'':'none';
+  // Role badge in Sign Out button
+  var badge=document.getElementById('role-badge');
+  if(badge){
+    if(role==='admin'){
+      badge.textContent='ADMIN';
+      badge.style.background='rgba(248,113,113,0.18)';
+      badge.style.color='#f87171';
+    } else {
+      badge.textContent='VIEWER';
+      badge.style.background='rgba(148,163,184,0.18)';
+      badge.style.color='#94a3b8';
+    }
+  }
 }
 function toggleLoginPw(){
   var inp=document.getElementById('login-pw');
@@ -4049,8 +4062,18 @@ function exportPlanCSV(){
 }
 
 // ── MODAL HELPERS ──
-function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
-function openModal(id){ document.getElementById(id).classList.remove('hidden'); }
+function closeModal(id){
+  document.getElementById(id).classList.add('hidden');
+  // unblur version badge if no other modal is open
+  var anyOpen=document.querySelectorAll('.modal-overlay:not(.hidden)').length>0;
+  var vb=document.querySelector('.version-badge');
+  if(vb) vb.style.filter=anyOpen?'blur(4px)':'';
+}
+function openModal(id){
+  document.getElementById(id).classList.remove('hidden');
+  var vb=document.querySelector('.version-badge');
+  if(vb) vb.style.filter='blur(4px)';
+}
 
 // ── EDIT PLAN ──
 function openEditPlan(id){
@@ -4243,7 +4266,7 @@ function submitReport(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.14.0</div>
+<div class="version-badge" style="display:none">v1.14.2</div>
 </body>
 </html>
 
