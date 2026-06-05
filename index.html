@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.16.0</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.1</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.16.0 — visionOS-inspired
+   LIQUID GLASS v1.16.1 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1937,7 +1937,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.16.0</div>
+  <div class="home-version">v1.16.1</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2446,7 +2446,7 @@ html:not(.light) .sched-gantt {
         <div class="sf-row"><label class="sf-label">Acknowledged By</label>
           <input class="sf-input" id="rpt-ack-by" type="text" placeholder="Customer name"></div>
         <div class="sf-row"><label class="sf-label">Update Date &amp; Time</label>
-          <input class="sf-input" id="rpt-update-datetime" type="datetime-local"></div>
+          <input class="sf-input" id="rpt-update-datetime" type="date"></div>
         <div class="sf-row"><label class="sf-label">Remark</label>
           <input class="sf-input" id="rpt-remark" type="text" placeholder="Optional note"></div>
       </div>
@@ -4364,8 +4364,8 @@ function openReport(id){
   var today=new Date(); var iso=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
   document.getElementById('rpt-config-date').value=row['Last config installed date']||iso;
   document.getElementById('rpt-performed-by').value=p.performedBy||'';
-  // default update datetime = now (local ISO without seconds)
-  var nowDt=new Date(); var dtIso=nowDt.getFullYear()+'-'+String(nowDt.getMonth()+1).padStart(2,'0')+'-'+String(nowDt.getDate()).padStart(2,'0')+'T'+String(nowDt.getHours()).padStart(2,'0')+':'+String(nowDt.getMinutes()).padStart(2,'0');
+  // default update date = today (date only)
+  var nowDt=new Date(); var dtIso=nowDt.getFullYear()+'-'+String(nowDt.getMonth()+1).padStart(2,'0')+'-'+String(nowDt.getDate()).padStart(2,'0');
   document.getElementById('rpt-update-datetime').value=dtIso;
   document.getElementById('rpt-remark').value='';
   document.getElementById('rpt-api-status').className='report-apps-status';
@@ -4397,7 +4397,7 @@ function submitReport(){
   // ── Timestamp for log
   var nowTs = new Date().toLocaleString('th-TH',{hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
   var updateDtRaw = document.getElementById('rpt-update-datetime').value;
-  var updateDtDisplay = updateDtRaw ? new Date(updateDtRaw).toLocaleString('th-TH',{hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : nowTs;
+  var updateDtDisplay = updateDtRaw ? new Date(updateDtRaw).toLocaleDateString('th-TH',{year:'numeric',month:'2-digit',day:'2-digit'}) : new Date().toLocaleDateString('th-TH',{year:'numeric',month:'2-digit',day:'2-digit'});
 
   // ── Main sheet payload (existing sheet update)
   var payload={
@@ -4714,7 +4714,7 @@ function gcExportPDF(){
       '<span class="leg-item"><span class="leg-dot" style="background:#10b981"></span>Done</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Cancelled</span>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.0</span><span>SRPLC Confidential</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.1</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
   '<script>window.onload=function(){ window.print(); };<\/script>'+
   '</body></html>';
@@ -4848,9 +4848,9 @@ function exportServiceReportPDF(){
   '.header{display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;border-bottom:2px solid #1e3a5f;margin-bottom:8px;gap:8px}'+
   '.header-logo{height:40px;width:auto;flex-shrink:0}'+
   '.header-center{flex:1;text-align:center}'+
-  '.header-center h1{font-size:12px;font-weight:700;color:#1e3a5f;margin:0 0 1px}'+
-  '.header-center .subtitle{font-size:8.5px;color:#64748b;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
-  '.header-right{text-align:right;font-size:8px;color:#475569;line-height:1.4;flex-shrink:0;min-width:90px}'+
+  '.header-center h1{font-size:16px;font-weight:700;color:#1e3a5f;margin:0 0 2px}'+
+  '.header-center .subtitle{font-size:12px;color:#64748b;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
+  '.header-right{text-align:right;font-size:11px;color:#475569;line-height:1.6;flex-shrink:0;min-width:90px}'+
   '.info-table{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:9.5px}'+
   '.info-table td{padding:4px 7px;border:1px solid #cbd5e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}'+
   '.info-table .lbl{background:#f1f5f9;font-weight:600;color:#334155;width:36%}'+
@@ -4866,7 +4866,7 @@ function exportServiceReportPDF(){
   '.photo-single{margin:4px 0 8px;page-break-inside:avoid}'+
   '.photo-single img,.photo-pair img{width:100%;height:auto;max-height:110px;object-fit:contain;border:1px solid #e2e8f0;border-radius:3px;display:block}'+
   '.photo-label{font-size:8px;font-weight:600;color:#64748b;margin-bottom:3px}'+
-  '.footer{padding-top:4px;border-top:1.5px solid #1e3a5f;display:flex;align-items:center;gap:0;font-size:7px;color:#475569}'+
+  '.footer{padding-top:5px;border-top:1.5px solid #1e3a5f;display:flex;align-items:center;gap:0;font-size:9px;color:#475569}'+
   '.tag-badge{display:inline-block;background:#eff6ff;border:1px solid #3b82f6;color:#1d4ed8;border-radius:3px;padding:0 4px;font-weight:700}'+
   '.ready-stmt{background:#f0fdf4;border:1px solid #10b981;border-radius:4px;padding:6px 10px;font-size:9.5px;color:#065f46;margin:6px 0;font-weight:600}'+
   '</style></head><body>'+
@@ -4881,14 +4881,18 @@ function exportServiceReportPDF(){
       '<div class="header-right">SIAMRAJ PUBLIC COMPANY LIMITED<br>289/9 Moo 10 Old Railway Rd.,<br>Samrong, Phrapradaeng,<br>Samutprakarn 10130 Thailand<br>Tel: +66 2 7435010-25 Ext.2116</div>'+
     '</div>'+
     '<div class="page-content">'+
-    '<table class="info-table">'+
-      '<tr><td class="lbl">Work Site / Location</td><td class="val" colspan="3" style="max-width:none">'+rptData.name+'</td></tr>'+
-      '<tr><td class="lbl">Customer Company</td><td class="val">PTT Public Company Limited</td><td class="lbl">Site / PTT Region</td><td class="val">'+rptData.site+' / '+rptData.region+'</td></tr>'+
-      '<tr><td class="lbl">Acknowledged By (PTT)</td><td class="val">'+rptData.ackBy+'</td><td class="lbl">Performed By (SRPLC)</td><td class="val">'+rptData.performedBy+'</td></tr>'+
-      '<tr><td class="lbl">TAG No.</td><td class="val"><span class="tag-badge">'+rptData.tag+'</span></td><td class="lbl">Serial No.</td><td class="val">'+rptData.serial+'</td></tr>'+
-      '<tr><td class="lbl">IP Address</td><td class="val">'+rptData.ip+'</td><td class="lbl">Hart Version</td><td class="val">'+rptData.hart+'</td></tr>'+
-      '<tr><td class="lbl">Old Firmware</td><td class="val">'+rptData.fwOld+'</td><td class="lbl">New Firmware</td><td class="val"><strong>'+rptData.fwNew+'</strong></td></tr>'+
-      '<tr><td class="lbl">Config Name</td><td class="val">'+rptData.configName+'</td><td class="lbl">Last Config Date</td><td class="val">'+rptData.configDate+'</td></tr>'+
+    '<table class="info-table" style="font-size:9.5px">'+
+      '<tr><td class="lbl" style="width:40%;font-weight:700">Work Site / Location</td><td class="val" style="font-weight:400">'+rptData.name+'</td></tr>'+
+      '<tr><td class="lbl" style="font-weight:700">Site / PTT Region</td><td class="val" style="font-weight:400">'+rptData.site+' / '+rptData.region+'</td></tr>'+
+      '<tr><td class="lbl" style="font-weight:700">Duration</td><td class="val" style="font-weight:400;color:#64748b">(Update Date)</td></tr>'+
+      '<tr><td class="lbl" style="font-weight:700">Customer Company</td><td class="val" style="font-weight:400">PTT Public Company Limited</td></tr>'+
+      '<tr><td class="lbl" style="font-weight:700">Acknowledged By (PTT)</td><td class="val" style="font-weight:400">'+rptData.ackBy+'</td></tr>'+
+      '<tr><td class="lbl" style="font-weight:700">Performed By (SRPLC)</td><td class="val" style="font-weight:400">'+rptData.performedBy+'</td></tr>'+
+      '<tr><td class="lbl" style="font-weight:700">TAG No.</td><td class="val" style="font-weight:400"><span class="tag-badge">'+rptData.tag+'</span></td></tr>'+
+      '<tr><td class="lbl" style="font-weight:700">Serial No.</td><td class="val" style="font-weight:400">'+rptData.serial+'</td></tr>'+
+      '<tr><td class="lbl" style="font-weight:700">IP Address</td><td class="val" style="font-weight:400">'+rptData.ip+'</td></tr>'+
+      '<tr><td class="lbl" style="font-weight:700">Old Firmware</td><td class="val" style="font-weight:400">'+rptData.fwOld+'</td></tr>'+
+      '<tr><td class="lbl" style="font-weight:700">New Firmware</td><td class="val" style="font-weight:400;color:#059669;font-weight:700">'+rptData.fwNew+'</td></tr>'+
     '</table>'+
     '</div>'+
     '<div class="footer"><div style="flex:3;overflow:hidden"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Firmware Update Service Report</div><div style="opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+rptData.name+'</div></div><div style="flex:2;text-align:center;white-space:nowrap;font-weight:600">Page 1 of 4</div><div style="flex:3;text-align:right;overflow:hidden"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Performed By (SRPLC): '+rptData.performedBy+'</div><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Acknowledged By (PTT): '+rptData.ackBy+'</div></div></div>'+
@@ -5100,7 +5104,7 @@ function openServiceReport(planId){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.16.0</div>
+<div class="version-badge" style="display:none">v1.16.1</div>
 </body>
 </html>
 
