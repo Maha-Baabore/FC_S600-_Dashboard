@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.16.1</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.2</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.16.1 — visionOS-inspired
+   LIQUID GLASS v1.16.2 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1937,7 +1937,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.16.1</div>
+  <div class="home-version">v1.16.2</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2445,7 +2445,7 @@ html:not(.light) .sched-gantt {
           <input class="sf-input" id="rpt-performed-by" type="text" placeholder="Engineer name"></div>
         <div class="sf-row"><label class="sf-label">Acknowledged By</label>
           <input class="sf-input" id="rpt-ack-by" type="text" placeholder="Customer name"></div>
-        <div class="sf-row"><label class="sf-label">Update Date &amp; Time</label>
+        <div class="sf-row"><label class="sf-label">Update Date</label>
           <input class="sf-input" id="rpt-update-datetime" type="date"></div>
         <div class="sf-row"><label class="sf-label">Remark</label>
           <input class="sf-input" id="rpt-remark" type="text" placeholder="Optional note"></div>
@@ -4714,7 +4714,7 @@ function gcExportPDF(){
       '<span class="leg-item"><span class="leg-dot" style="background:#10b981"></span>Done</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Cancelled</span>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.1</span><span>SRPLC Confidential</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.2</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
   '<script>window.onload=function(){ window.print(); };<\/script>'+
   '</body></html>';
@@ -4884,7 +4884,7 @@ function exportServiceReportPDF(){
     '<table class="info-table" style="font-size:9.5px">'+
       '<tr><td class="lbl" style="width:40%;font-weight:700">Work Site / Location</td><td class="val" style="font-weight:400">'+rptData.name+'</td></tr>'+
       '<tr><td class="lbl" style="font-weight:700">Site / PTT Region</td><td class="val" style="font-weight:400">'+rptData.site+' / '+rptData.region+'</td></tr>'+
-      '<tr><td class="lbl" style="font-weight:700">Duration</td><td class="val" style="font-weight:400;color:#64748b">(Update Date)</td></tr>'+
+      '<tr><td class="lbl" style="font-weight:700">Duration</td><td class="val" style="font-weight:400">'+rptData.updateDt+'</td></tr>'+
       '<tr><td class="lbl" style="font-weight:700">Customer Company</td><td class="val" style="font-weight:400">PTT Public Company Limited</td></tr>'+
       '<tr><td class="lbl" style="font-weight:700">Acknowledged By (PTT)</td><td class="val" style="font-weight:400">'+rptData.ackBy+'</td></tr>'+
       '<tr><td class="lbl" style="font-weight:700">Performed By (SRPLC)</td><td class="val" style="font-weight:400">'+rptData.performedBy+'</td></tr>'+
@@ -5104,7 +5104,7 @@ function openServiceReport(planId){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.16.1</div>
+<div class="version-badge" style="display:none">v1.16.2</div>
 </body>
 </html>
 
