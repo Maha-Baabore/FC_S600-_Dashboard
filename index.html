@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.15.2</title>
+<title>FC S600+ PTT — Metering Dashboard v1.15.3</title>
+<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -591,8 +592,10 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .sr-th-remark{width:140px}
 .sr-td-check{text-align:center}
 .sr-chk{width:15px;height:15px;cursor:pointer;accent-color:var(--ac)}
-.sr-remark-input{width:100%;background:var(--sf2);border:1px solid var(--br);border-radius:5px;padding:3px 6px;font-size:10px;color:var(--tx1);font-family:'DM Sans',sans-serif;outline:none;box-sizing:border-box}
-.sr-remark-input:focus{border-color:var(--ac);background:var(--sf)}
+.sr-remark-input{width:100%;background:#f1f5f9;border:1.5px solid #94a3b8;border-radius:5px;padding:3px 6px;font-size:10px;color:#0f172a;font-family:'DM Sans',sans-serif;outline:none;box-sizing:border-box}
+.sr-remark-input:focus{border-color:#0284c7;background:#fff}
+:root:not(.light) .sr-remark-input{background:#1e293b;border-color:#334155;color:#e2e8f0}
+:root:not(.light) .sr-remark-input:focus{border-color:#00d4ff;background:#263244}
 .sr-photo-row{display:flex;align-items:center;gap:8px;margin-top:6px}
 .sr-img-name{font-size:9px;color:#10b981;font-family:'Space Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
 .sr-img-preview{margin-top:5px;max-height:120px;overflow:hidden;border-radius:6px;border:1px solid var(--br)}
@@ -639,7 +642,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.15.2 — visionOS-inspired
+   LIQUID GLASS v1.15.3 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1929,7 +1932,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.15.2</div>
+  <div class="home-version">v1.15.3</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -3767,9 +3770,20 @@ function renderGantt(){
   var SL={planned:'P',inprogress:'IP',done:'D',cancelled:'X'};
   var today=new Date(); today.setHours(0,0,0,0);
 
-  // Group by region
+  // Filter plans to current calendar month (for all views — Gantt shows current month context)
+  var mk=calYear+'-'+String(calMonth+1).padStart(2,'0');
+  var visiblePlans=GC_VIEW==='day'
+    ? PLANS.filter(function(p){ return p.date.startsWith(mk); })
+    : PLANS; // week/month views show all plans
+
+  if(!visiblePlans.length){
+    el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--tx3);font-size:12px;font-family:Space Mono,monospace">No plans for '+MONTH_TH[calMonth]+' '+(calYear+543)+'.</div>';
+    return;
+  }
+
+  // Group by region using filtered plans
   var byRegion={};
-  PLANS.forEach(function(p){
+  visiblePlans.forEach(function(p){
     var row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag&&(x['Site']||'').trim()===p.site; })
           ||DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; })||{};
     var reg=(row['PTT Region']||'').trim()||p.site||'Unknown';
@@ -3785,13 +3799,13 @@ function renderGantt(){
   });
   regions.forEach(function(r){ if(GC_OPEN[r]===undefined) GC_OPEN[r]=true; });
 
-  // Date range: day view = current calendar month; week/month = all plans
+  // Date range: day view = current calendar month; week/month = visible plans range
   var minD, maxD;
   if(GC_VIEW==='day'){
     minD=new Date(calYear,calMonth,1);
     maxD=new Date(calYear,calMonth+1,0); // last day of month
   } else {
-    var allD=PLANS.map(function(p){ return new Date(p.date); });
+    var allD=visiblePlans.map(function(p){ return new Date(p.date); });
     minD=new Date(Math.min.apply(null,allD));
     maxD=new Date(Math.max.apply(null,allD));
     var pad=GC_VIEW==='month'?30:7;
@@ -4636,7 +4650,7 @@ function gcExportPDF(){
       '<span class="leg-item"><span class="leg-dot" style="background:#10b981"></span>Done</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Cancelled</span>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.2</span><span>SRPLC Confidential</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.3</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
   '<script>window.onload=function(){ window.print(); };<\/script>'+
   '</body></html>';
@@ -4703,24 +4717,19 @@ function exportServiceReportPDF(){
     postUpdate: getSectionChecklist(4)
   };
 
-  function chkRows(items){
+  function chkRows(items, col1Name, col2Name){
+    // Single check column: show Pass/Done (green) or Fail/Not Done (red) or dash
+    col1Name = col1Name||'Done'; col2Name = col2Name||'Not Done';
     return items.map(function(item){
-      // Show only the checked column result, hide unchecked column
-      var c1, c2;
-      if(item.col1 && !item.col2){
-        c1='<span style="color:#10b981;font-weight:700;font-size:12px">✓</span>';
-        c2='';
-      } else if(item.col2 && !item.col1){
-        c1='';
-        c2='<span style="color:#ef4444;font-weight:700;font-size:12px">✗</span>';
-      } else if(item.col1 && item.col2){
-        c1='<span style="color:#10b981;font-weight:700;font-size:12px">✓</span>';
-        c2='<span style="color:#ef4444;font-weight:700;font-size:12px">✗</span>';
+      var checkCell;
+      if(item.col1){
+        checkCell='<td class="chk-pass" style="text-align:center;color:#059669;font-weight:700">✓ '+col1Name+'</td>';
+      } else if(item.col2){
+        checkCell='<td class="chk-fail" style="text-align:center;color:#dc2626;font-weight:700">✗ '+col2Name+'</td>';
       } else {
-        c1='<span style="display:inline-block;width:12px;height:12px;border:1.5px solid #94a3b8;border-radius:2px;vertical-align:middle"></span>';
-        c2='';
+        checkCell='<td style="text-align:center;color:#94a3b8;font-size:9px">—</td>';
       }
-      return '<tr><td>'+item.desc+'</td><td style="text-align:center">'+c1+'</td><td style="text-align:center">'+c2+'</td><td>'+item.remark+'</td></tr>';
+      return '<tr><td>'+item.desc+'</td>'+checkCell+'<td>'+item.remark+'</td></tr>';
     }).join('');
   }
 
@@ -4770,10 +4779,13 @@ function exportServiceReportPDF(){
   'h2{font-size:11px;font-weight:700;color:#1e3a5f;margin:10px 0 5px;padding:4px 8px;border-left:3px solid #3b82f6;background:#eff6ff}'+
   '.checklist{width:100%;border-collapse:collapse;font-size:10px;margin-bottom:8px}'+
   '.checklist th{background:#1e3a5f;color:#fff;padding:5px 8px;text-align:left;font-size:10px}'+
-  '.checklist th.c{width:42px;text-align:center}'+
-  '.checklist th.r{width:110px}'+
-  '.checklist td{padding:5px 8px;border:1px solid #e2e8f0;vertical-align:top}'+
+  '.checklist th.c{width:60px;text-align:center}'+
+  '.checklist th.r{width:120px}'+
+  '.checklist td{padding:5px 8px;border:1px solid #e2e8f0;vertical-align:middle}'+
   '.checklist tr:nth-child(even) td{background:#f8fafc}'+
+  '.chk-pass{color:#059669;font-weight:700}'+
+  '.chk-fail{color:#dc2626;font-weight:700}'+
+  '.chk-empty{color:#94a3b8;font-size:9px}'+
   '.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}'+
   '.photo-box{border:1px solid #e2e8f0;border-radius:4px;overflow:hidden}'+
   '.photo-label{background:#f1f5f9;padding:4px 8px;font-size:9px;font-weight:600;color:#475569}'+
@@ -4793,7 +4805,7 @@ function exportServiceReportPDF(){
       '</div>'+
       '<div class="header-right">SIAMRAJ PUBLIC COMPANY LIMITED<br>289/9 Moo 10 Old Railway Rd.,<br>Samrong, Phrapradaeng,<br>Samutprakarn 10130 Thailand<br>Tel: +66 2 7435010-25 Ext.2116</div>'+
     '</div>'+
-    '<table class="info-table">'+
+    '<div class="page-content"><table class="info-table"'+
       '<tr><td class="lbl">Work Site / Location</td><td class="val" colspan="3">'+rptData.name+'</td></tr>'+
       '<tr><td class="lbl">Customer Company</td><td class="val">PTT Public Company Limited</td><td class="lbl">Site / PTT Region</td><td class="val">'+rptData.site+' / '+rptData.region+'</td></tr>'+
       '<tr><td class="lbl">Acknowledged By (Customer)</td><td class="val">'+rptData.ackBy+'</td><td class="lbl">Performed By (SRPLC)</td><td class="val">'+rptData.performedBy+'</td></tr>'+
@@ -4801,35 +4813,35 @@ function exportServiceReportPDF(){
       '<tr><td class="lbl">IP Address</td><td class="val">'+rptData.ip+'</td><td class="lbl">Hart Version</td><td class="val">'+rptData.hart+'</td></tr>'+
       '<tr><td class="lbl">Old Firmware</td><td class="val">'+rptData.fwOld+'</td><td class="lbl">New Firmware</td><td class="val"><strong>'+rptData.fwNew+'</strong></td></tr>'+
       '<tr><td class="lbl">Config Name</td><td class="val">'+rptData.configName+'</td><td class="lbl">Last Config Date</td><td class="val">'+rptData.configDate+'</td></tr>'+
-    '</table>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.2</span><span>Page 1 of 4</span><span>Date: '+dateStr+'</span></div>'+
+    '</table></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.3</span><span>Page 1 of 4</span><span>Date: '+dateStr+'</span></div>'+
   '</div>'+
 
   '<div class="page page-break">'+
     '<div class="header"><img class="header-logo" src="'+LOGO_DATA+'" alt="Siamraj"><div class="header-center"><h1 style="background:none;border:none;margin:0 0 2px;padding:0">Firmware Update Service Report</h1><div class="subtitle">'+rptData.name+' | <span class="tag-badge">'+rptData.tag+'</span></div></div><div class="header-right">Prepared by: '+rptData.performedBy+'<br>Acknowledged by: '+rptData.ackBy+'</div></div>'+
-    '<div class="page-no">Page 2 of 4</div>'+
+    '<div class="page-content"><div class="page-no">Page 2 of 4</div>'+
     '<h2 style="background:#fef9c3;border-color:#f59e0b;color:#92400e">Pre-Update</h2>'+
-    '<table class="checklist"><tr><th>Description</th><th class="c">Done</th><th class="c">Not Done</th><th class="r">Remarks</th></tr>'+chkRows(CL.preUpdate)+'</table>'+
+    '<table class="checklist"><tr><th>Description</th><th class="c">Check</th><th class="r">Remarks</th></tr>'+chkRows(CL.preUpdate,'Done','Not Done')+'</table>'+
     imgSection('pre-update','Pre-Update Photo')+
     '<h2 style="background:#eff6ff;border-color:#6366f1;color:#3730a3">Perform Firmware Update</h2>'+
-    '<table class="checklist"><tr><th>Description</th><th class="c">Done</th><th class="c">Not Done</th><th class="r">Remarks</th></tr>'+chkRows(CL.performFw)+'</table>'+
+    '<table class="checklist"><tr><th>Description</th><th class="c">Check</th><th class="r">Remarks</th></tr>'+chkRows(CL.performFw,'Done','Not Done')+'</table>'+
     imgSection('perform-update','Perform Firmware Update Photo')+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.2</span><span>Page 2 of 4</span><span>Date: '+dateStr+'</span></div>'+
+    '</div><div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.3</span><span>Page 2 of 4</span><span>Date: '+dateStr+'</span></div>'+
   '</div>'+
 
   '<div class="page page-break">'+
     '<div class="header"><img class="header-logo" src="'+LOGO_DATA+'" alt="Siamraj"><div class="header-center"><h1 style="background:none;border:none;margin:0 0 2px;padding:0">Firmware Update Service Report</h1><div class="subtitle">'+rptData.name+' | <span class="tag-badge">'+rptData.tag+'</span></div></div><div class="header-right">Prepared by: '+rptData.performedBy+'<br>Acknowledged by: '+rptData.ackBy+'</div></div>'+
-    '<div class="page-no">Page 3 of 4</div>'+
+    '<div class="page-content"><div class="page-no">Page 3 of 4</div>'+
     '<h2 style="background:#f0fdf4;border-color:#10b981;color:#065f46">Reset Power Cycle Test</h2>'+
-    '<table class="checklist"><tr><th>Description</th><th class="c">Pass</th><th class="c">Fail</th><th class="r">Remarks</th></tr>'+chkRows(CL.powerCycle)+'</table>'+
+    '<table class="checklist"><tr><th>Description</th><th class="c">Check</th><th class="r">Remarks</th></tr>'+chkRows(CL.powerCycle,'Pass','Fail')+'</table>'+
     imgSection('power-cycle','Power Cycle Test Photo')+
     '<h2 style="background:#fff7ed;border-color:#f59e0b;color:#92400e">Calculation Tests</h2>'+
-    '<table class="checklist"><tr><th>Description</th><th class="c">Pass</th><th class="c">Fail</th><th class="r">Remarks</th></tr>'+chkRows(CL.calcTests)+'</table>'+
+    '<table class="checklist"><tr><th>Description</th><th class="c">Check</th><th class="r">Remarks</th></tr>'+chkRows(CL.calcTests,'Pass','Fail')+'</table>'+
     imgSection('calc-test','Calculation Tests Photo')+
     '<h2 style="background:#f0fdf4;border-color:#10b981;color:#065f46">Post-Update</h2>'+
-    '<table class="checklist"><tr><th>Description</th><th class="c">Done</th><th class="c">Not Done</th><th class="r">Remarks</th></tr>'+chkRows(CL.postUpdate)+'</table>'+
+    '<table class="checklist"><tr><th>Description</th><th class="c">Check</th><th class="r">Remarks</th></tr>'+chkRows(CL.postUpdate,'Done','Not Done')+'</table>'+
     imgSection('post-update','Post-Update Photo')+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.2</span><span>Page 3 of 4</span><span>Date: '+dateStr+'</span></div>'+
+    '</div><div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.3</span><span>Page 3 of 4</span><span>Date: '+dateStr+'</span></div>'+
   '</div>'+
 
   '<div class="page page-break">'+
@@ -4855,7 +4867,7 @@ function exportServiceReportPDF(){
       '<div class="sig-box">________________________________<br>Acknowledged by: '+rptData.ackBy+'<br>(Customer Representative)</div>'+
     '</div>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.2</span><span>Page 4 of 4</span><span>Date: '+dateStr+'</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.3</span><span>Page 4 of 4</span><span>Date: '+dateStr+'</span></div>'+
   '</div>'+
 
   '<script>window.onload=function(){ window.print(); };<\/script>'+
@@ -4933,7 +4945,7 @@ function openServiceReport(planId){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.15.2</div>
+<div class="version-badge" style="display:none">v1.15.3</div>
 </body>
 </html>
 
