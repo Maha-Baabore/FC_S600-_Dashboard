@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.15.5</title>
+<title>FC S600+ PTT — Metering Dashboard v1.15.6</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.15.5 — visionOS-inspired
+   LIQUID GLASS v1.15.6 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1937,7 +1937,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.15.5</div>
+  <div class="home-version">v1.15.6</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2328,16 +2328,16 @@ html:not(.light) .sched-gantt {
         <div class="sr-section-header" style="background:rgba(var(--ac-rgb,2,132,199),.1);border-left-color:var(--ac);color:var(--tx1);backdrop-filter:blur(8px)">Result &amp; Photos</div>
         <div style="padding:10px 0 4px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div>
-            <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-old-version" onclick="srAttachImageMulti('old-version')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photos — Old Version (max 2)</button><span id="sr-img-name-old-version-1" class="sr-img-name"></span><span id="sr-img-name-old-version-2" class="sr-img-name"></span></div>
-            <div style="display:flex;gap:6px;margin-top:4px"><div id="sr-preview-old-version-1" class="sr-img-preview" style="flex:1"></div><div id="sr-preview-old-version-2" class="sr-img-preview" style="flex:1"></div></div>
+            <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-old-version" onclick="srAttachImageSingle('old-version')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photo — Old Version (1 image)</button><span id="sr-img-name-old-version-1" class="sr-img-name"></span></div>
+            <div id="sr-preview-old-version-1" class="sr-img-preview" style="margin-top:4px"></div>
           </div>
           <div>
-            <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-new-version" onclick="srAttachImageMulti('new-version')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photos — New Version (max 2)</button><span id="sr-img-name-new-version-1" class="sr-img-name"></span><span id="sr-img-name-new-version-2" class="sr-img-name"></span></div>
-            <div style="display:flex;gap:6px;margin-top:4px"><div id="sr-preview-new-version-1" class="sr-img-preview" style="flex:1"></div><div id="sr-preview-new-version-2" class="sr-img-preview" style="flex:1"></div></div>
+            <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-new-version" onclick="srAttachImageSingle('new-version')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photo — New Version (1 image)</button><span id="sr-img-name-new-version-1" class="sr-img-name"></span></div>
+            <div id="sr-preview-new-version-1" class="sr-img-preview" style="margin-top:4px"></div>
           </div>
         </div>
-        <div class="sr-photo-row" style="margin-top:4px"><button class="sr-img-attach-btn" id="sr-img-btn-constant-log" onclick="srAttachImageMulti('constant-log')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photos — Constant Log (max 2)</button><span id="sr-img-name-constant-log-1" class="sr-img-name"></span><span id="sr-img-name-constant-log-2" class="sr-img-name"></span></div>
-        <div style="display:flex;gap:6px;margin-top:4px"><div id="sr-preview-constant-log-1" class="sr-img-preview" style="flex:1;max-height:150px"></div><div id="sr-preview-constant-log-2" class="sr-img-preview" style="flex:1;max-height:150px"></div></div>
+        <div class="sr-photo-row" style="margin-top:4px"><button class="sr-img-attach-btn" id="sr-img-btn-constant-log" onclick="srAttachImageSingle('constant-log')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photo — Constant Log (1 image)</button><span id="sr-img-name-constant-log-1" class="sr-img-name"></span></div>
+        <div id="sr-preview-constant-log-1" class="sr-img-preview" style="margin-top:4px;max-height:200px"></div>
         <div class="sf-row" style="margin-top:10px"><label class="sf-label">Note / Remark</label>
           <input class="sf-input" id="sr-final-remark" type="text" placeholder="Additional notes..."></div>
       </div>
@@ -4453,8 +4453,16 @@ function gcExportPDF(){
   var TXT='#475569', TXT2='#0f172a', SC={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444'};
   var MONTH_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
+  // Filter plans to current calendar month (same as web Gantt)
+  var mk=calYear+'-'+String(calMonth+1).padStart(2,'0');
+  var pdfPlans=GC_VIEW==='day'
+    ? PLANS.filter(function(p){ return p.date.startsWith(mk); })
+    : PLANS;
+
+  if(!pdfPlans.length){ alert('No plans for selected month'); return; }
+
   var byRegion={};
-  PLANS.forEach(function(p){
+  pdfPlans.forEach(function(p){
     var row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag&&(x['Site']||'').trim()===p.site; })
           ||DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; })||{};
     var reg=(row['PTT Region']||'').trim()||p.site||'Unknown';
@@ -4651,7 +4659,7 @@ function gcExportPDF(){
       '<span class="leg-item"><span class="leg-dot" style="background:#10b981"></span>Done</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Cancelled</span>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.5</span><span>SRPLC Confidential</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.6</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
   '<script>window.onload=function(){ window.print(); };<\/script>'+
   '</body></html>';
@@ -4735,19 +4743,25 @@ function exportServiceReportPDF(){
   }
 
   function imgSection(sectionId, label){
+    // Constant Log shows bigger; Old/New Version + checklist sections show normal
+    var isConstantLog = (sectionId==='constant-log');
     var key1=sectionId, key2=sectionId+'-2';
     var img1=_srReportImages[key1], img2=_srReportImages[key2];
     if(!img1&&!img2) return '';
-    var html='<div style="margin-top:10px;padding-bottom:10px">';
+    var html='<div style="margin-top:8px;padding-bottom:8px">';
     if(label) html+='<div style="font-size:9px;font-weight:600;color:#64748b;margin-bottom:4px">'+label+'</div>';
-    if(img1&&img2){
-      html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
-      html+='<img src="'+img1.dataUrl+'" style="width:100%;height:auto;max-height:120px;object-fit:contain;border:1px solid #e2e8f0;border-radius:4px">';
-      html+='<img src="'+img2.dataUrl+'" style="width:100%;height:auto;max-height:120px;object-fit:contain;border:1px solid #e2e8f0;border-radius:4px">';
+    // Constant Log, Old Version, New Version: single image only (use key1, ignore key2)
+    if(isConstantLog){
+      var img=img1||img2;
+      html+='<img src="'+img.dataUrl+'" style="width:100%;height:auto;max-height:260px;object-fit:contain;border:1px solid #e2e8f0;border-radius:4px;display:block">';
+    } else if(img1&&img2){
+      html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">';
+      html+='<img src="'+img1.dataUrl+'" style="width:100%;height:auto;max-height:100px;object-fit:contain;border:1px solid #e2e8f0;border-radius:4px">';
+      html+='<img src="'+img2.dataUrl+'" style="width:100%;height:auto;max-height:100px;object-fit:contain;border:1px solid #e2e8f0;border-radius:4px">';
       html+='</div>';
     } else {
       var img=img1||img2;
-      html+='<img src="'+img.dataUrl+'" style="max-width:60%;height:auto;max-height:130px;object-fit:contain;border:1px solid #e2e8f0;border-radius:4px;display:block">';
+      html+='<img src="'+img.dataUrl+'" style="max-width:55%;height:auto;max-height:110px;object-fit:contain;border:1px solid #e2e8f0;border-radius:4px;display:block">';
     }
     html+='</div>';
     return html;
@@ -4812,11 +4826,11 @@ function exportServiceReportPDF(){
       '<tr><td class="lbl">Config Name</td><td class="val">'+rptData.configName+'</td><td class="lbl">Last Config Date</td><td class="val">'+rptData.configDate+'</td></tr>'+
     '</table>'+
     '</div>'+
-    '<div class="footer"><span style="flex:1">Firmware Update Service Report</span><span style="flex:2;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+rptData.name+'</span><span style="flex:1;text-align:center"><span class="tag-badge">'+rptData.tag+'</span></span><span style="flex:1;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">By: '+rptData.performedBy+'</span><span style="flex:1;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">Ack: '+rptData.ackBy+'</span><span style="text-align:right;white-space:nowrap">Page 1 of 4</span></div>'+
+    '<div class="footer"><span style="flex:2;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">Firmware Update Service Report</span><span style="flex:3;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+rptData.name+'</span><span style="flex:1;text-align:center;white-space:nowrap">Page 1 of 4</span><span style="flex:3;text-align:right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">By: '+rptData.performedBy+' | Ack: '+rptData.ackBy+'</span></div>'+
   '</div>'+
 
   '<div class="page page-break">'+
-    '<div class="header"><img class="header-logo" src="'+LOGO_DATA+'" alt="Siamraj"><div class="header-center"><h1 style="background:none;border:none;margin:0;padding:0;font-size:12px">Firmware Update Service Report</h1><div class="subtitle" style="max-width:300px">'+rptData.name+'</div></div><div class="header-right"><span class="tag-badge">'+rptData.tag+'</span><br>'+rptData.performedBy+'</div></div>'+
+    '<div class="header"><img class="header-logo" src="'+LOGO_DATA+'" alt="Siamraj"><div class="header-center"><h1 style="background:none;border:none;margin:0;padding:0;font-size:12px">Firmware Update Service Report</h1><div class="subtitle" style="max-width:none;text-align:center">'+rptData.name+'</div></div><div class="header-right"><span class="tag-badge">'+rptData.tag+'</span></div></div>'+
     '<div class="page-content">'+
     '<h2 style="background:#fef9c3;border-color:#f59e0b;color:#92400e">Pre-Update</h2>'+
     '<table class="checklist"><tr><th>Description</th><th class="c">Check</th><th class="r">Remarks</th></tr>'+chkRows(CL.preUpdate,'Done','Not Done')+'</table>'+
@@ -4825,11 +4839,11 @@ function exportServiceReportPDF(){
     '<table class="checklist"><tr><th>Description</th><th class="c">Check</th><th class="r">Remarks</th></tr>'+chkRows(CL.performFw,'Done','Not Done')+'</table>'+
     imgSection('perform-update','Perform Firmware Update Photo')+
     '</div>'+
-    '<div class="footer"><span style="flex:1">Firmware Update Service Report</span><span style="flex:2;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+rptData.name+'</span><span style="flex:1;text-align:center"><span class="tag-badge">'+rptData.tag+'</span></span><span style="flex:1;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">By: '+rptData.performedBy+'</span><span style="flex:1;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">Ack: '+rptData.ackBy+'</span><span style="text-align:right;white-space:nowrap">Page 2 of 4</span></div>'+
+    '<div class="footer"><span style="flex:2;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">Firmware Update Service Report</span><span style="flex:3;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+rptData.name+'</span><span style="flex:1;text-align:center;white-space:nowrap">Page 2 of 4</span><span style="flex:3;text-align:right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">By: '+rptData.performedBy+' | Ack: '+rptData.ackBy+'</span></div>'+
   '</div>'+
 
   '<div class="page page-break">'+
-    '<div class="header"><img class="header-logo" src="'+LOGO_DATA+'" alt="Siamraj"><div class="header-center"><h1 style="background:none;border:none;margin:0;padding:0;font-size:12px">Firmware Update Service Report</h1><div class="subtitle" style="max-width:300px">'+rptData.name+'</div></div><div class="header-right"><span class="tag-badge">'+rptData.tag+'</span><br>'+rptData.performedBy+'</div></div>'+
+    '<div class="header"><img class="header-logo" src="'+LOGO_DATA+'" alt="Siamraj"><div class="header-center"><h1 style="background:none;border:none;margin:0;padding:0;font-size:12px">Firmware Update Service Report</h1><div class="subtitle" style="max-width:none;text-align:center">'+rptData.name+'</div></div><div class="header-right"><span class="tag-badge">'+rptData.tag+'</span></div></div>'+
     '<div class="page-content">'+
     '<h2 style="background:#f0fdf4;border-color:#10b981;color:#065f46">Reset Power Cycle Test</h2>'+
     '<table class="checklist"><tr><th>Description</th><th class="c">Check</th><th class="r">Remarks</th></tr>'+chkRows(CL.powerCycle,'Pass','Fail')+'</table>'+
@@ -4841,11 +4855,11 @@ function exportServiceReportPDF(){
     '<table class="checklist"><tr><th>Description</th><th class="c">Check</th><th class="r">Remarks</th></tr>'+chkRows(CL.postUpdate,'Done','Not Done')+'</table>'+
     imgSection('post-update','Post-Update Photo')+
     '</div>'+
-    '<div class="footer"><span style="flex:1">Firmware Update Service Report</span><span style="flex:2;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+rptData.name+'</span><span style="flex:1;text-align:center"><span class="tag-badge">'+rptData.tag+'</span></span><span style="flex:1;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">By: '+rptData.performedBy+'</span><span style="flex:1;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">Ack: '+rptData.ackBy+'</span><span style="text-align:right;white-space:nowrap">Page 3 of 4</span></div>'+
+    '<div class="footer"><span style="flex:2;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">Firmware Update Service Report</span><span style="flex:3;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+rptData.name+'</span><span style="flex:1;text-align:center;white-space:nowrap">Page 3 of 4</span><span style="flex:3;text-align:right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">By: '+rptData.performedBy+' | Ack: '+rptData.ackBy+'</span></div>'+
   '</div>'+
 
   '<div class="page page-break">'+
-    '<div class="header"><img class="header-logo" src="'+LOGO_DATA+'" alt="Siamraj"><div class="header-center"><h1 style="background:none;border:none;margin:0;padding:0;font-size:12px">Firmware Update Service Report</h1><div class="subtitle" style="max-width:300px">'+rptData.name+'</div></div><div class="header-right"><span class="tag-badge">'+rptData.tag+'</span><br>'+rptData.performedBy+'</div></div>'+
+    '<div class="header"><img class="header-logo" src="'+LOGO_DATA+'" alt="Siamraj"><div class="header-center"><h1 style="background:none;border:none;margin:0;padding:0;font-size:12px">Firmware Update Service Report</h1><div class="subtitle" style="max-width:none;text-align:center">'+rptData.name+'</div></div><div class="header-right"><span class="tag-badge">'+rptData.tag+'</span></div></div>'+
     '<div class="page-content">'+
     '<h2 style="background:none;border:none;border-bottom:1px solid #e2e8f0;padding:3px 0;color:#1e3a5f;margin-top:0">2. Result</h2>'+
     '<table class="info-table" style="margin-bottom:6px">'+
@@ -4862,7 +4876,7 @@ function exportServiceReportPDF(){
       (imgSection('new-version','')||'<div style="height:50px;border:1px dashed #cbd5e1;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#94a3b8">No image attached</div>')+'</div>'+
     '</div>'+
     '</div>'+
-    '<div class="footer"><span style="flex:1">Firmware Update Service Report</span><span style="flex:2;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+rptData.name+'</span><span style="flex:1;text-align:center"><span class="tag-badge">'+rptData.tag+'</span></span><span style="flex:1;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">By: '+rptData.performedBy+'</span><span style="flex:1;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">Ack: '+rptData.ackBy+'</span><span style="text-align:right;white-space:nowrap">Page 4 of 4</span></div>'+
+    '<div class="footer"><span style="flex:2;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">Firmware Update Service Report</span><span style="flex:3;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+rptData.name+'</span><span style="flex:1;text-align:center;white-space:nowrap">Page 4 of 4</span><span style="flex:3;text-align:right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">By: '+rptData.performedBy+' | Ack: '+rptData.ackBy+'</span></div>'+
   '</div>'+
 
   '<script>window.onload=function(){ window.print(); };<\/script>'+
@@ -4875,6 +4889,27 @@ function exportServiceReportPDF(){
 
 // ══════════════════════════════════════════════════════
 //  exportServiceReportPDF — Firmware Update Service Report
+
+// srAttachImageSingle — single button, single image only
+function srAttachImageSingle(sectionId){
+  var input=document.createElement('input');
+  input.type='file'; input.accept='image/*';
+  input.onchange=function(e){
+    var file=e.target.files[0]; if(!file) return;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      _srReportImages[sectionId]={name:file.name,dataUrl:ev.target.result};
+      var btn=document.getElementById('sr-img-btn-'+sectionId);
+      if(btn){ btn.style.borderColor='#10b981'; btn.style.color='#10b981'; }
+      var nameEl=document.getElementById('sr-img-name-'+sectionId+'-1');
+      if(nameEl) nameEl.textContent=file.name.slice(0,20)+(file.name.length>20?'…':'');
+      var previewEl=document.getElementById('sr-preview-'+sectionId+'-1');
+      if(previewEl){ previewEl.innerHTML='<img src="'+ev.target.result+'" alt="'+file.name+'">'; }
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
 
 // srAttachImageMulti — single button, pick up to 2 images
 function srAttachImageMulti(sectionId){
@@ -4965,14 +5000,19 @@ function openServiceReport(planId){
   document.getElementById('sr-final-remark').value='';
   _srReportImages={};
   var SID_LABELS={'pre-update':'Pre-Update','perform-update':'Perform Update','power-cycle':'Power Cycle Test','calc-test':'Calculation Tests','post-update':'Post-Update','old-version':'Old Version','new-version':'New Version','constant-log':'Constant Log'};
+  var SINGLE_SIDS=['old-version','new-version','constant-log'];
+  var SVG_ATTACH='<svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> ';
   ['pre-update','perform-update','power-cycle','calc-test','post-update','old-version','new-version','constant-log'].forEach(function(sid){
-    [1,2].forEach(function(slot){
-      var key=slot===2?(sid+'-2'):sid;
-      var btnId=slot===2?('sr-img-btn-'+sid+'-2'):('sr-img-btn-'+sid);
-      var btn=document.getElementById(btnId);
-      var nameEl=document.getElementById('sr-img-name-'+key);
-      var previewEl=document.getElementById('sr-preview-'+key);
-      if(btn){ btn.style.borderColor=''; btn.style.color=''; btn.innerHTML='<svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photos — '+SID_LABELS[sid]+' (max 2)'; }
+    var isSingle=SINGLE_SIDS.indexOf(sid)>=0;
+    var btn=document.getElementById('sr-img-btn-'+sid);
+    if(btn){
+      btn.style.borderColor=''; btn.style.color='';
+      btn.innerHTML=SVG_ATTACH+(isSingle?('Attach Photo — '+SID_LABELS[sid]+' (1 image)'):('Attach Photos — '+SID_LABELS[sid]+' (max 2)'));
+    }
+    var slots=isSingle?[1]:[1,2];
+    slots.forEach(function(slot){
+      var nameEl=document.getElementById('sr-img-name-'+sid+'-'+slot);
+      var previewEl=document.getElementById('sr-preview-'+sid+'-'+slot);
       if(nameEl) nameEl.textContent='';
       if(previewEl) previewEl.innerHTML='';
     });
@@ -4982,7 +5022,7 @@ function openServiceReport(planId){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.15.5</div>
+<div class="version-badge" style="display:none">v1.15.6</div>
 </body>
 </html>
 
