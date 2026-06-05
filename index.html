@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.15.1</title>
+<title>FC S600+ PTT — Metering Dashboard v1.15.2</title>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
@@ -591,8 +591,8 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .sr-th-remark{width:140px}
 .sr-td-check{text-align:center}
 .sr-chk{width:15px;height:15px;cursor:pointer;accent-color:var(--ac)}
-.sr-remark-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--br);padding:2px 4px;font-size:10px;color:var(--tx1);font-family:'DM Sans',sans-serif;outline:none}
-.sr-remark-input:focus{border-bottom-color:var(--ac)}
+.sr-remark-input{width:100%;background:var(--sf2);border:1px solid var(--br);border-radius:5px;padding:3px 6px;font-size:10px;color:var(--tx1);font-family:'DM Sans',sans-serif;outline:none;box-sizing:border-box}
+.sr-remark-input:focus{border-color:var(--ac);background:var(--sf)}
 .sr-photo-row{display:flex;align-items:center;gap:8px;margin-top:6px}
 .sr-img-name{font-size:9px;color:#10b981;font-family:'Space Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
 .sr-img-preview{margin-top:5px;max-height:120px;overflow:hidden;border-radius:6px;border:1px solid var(--br)}
@@ -639,7 +639,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.15.1 — visionOS-inspired
+   LIQUID GLASS v1.15.2 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1929,7 +1929,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.15.1</div>
+  <div class="home-version">v1.15.2</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2257,7 +2257,8 @@ html:not(.light) .sched-gantt {
             <tr><td>Check communication</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
           </tbody>
         </table>
-        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-pre-update" onclick="srAttachImage('pre-update')">📎 Attach Photo — Pre-Update</button><span id="sr-img-name-pre-update" class="sr-img-name"></span></div>
+        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-pre-update" onclick="srAttachImage('pre-update',1)">📎 Photo 1 — Pre-Update</button><span id="sr-img-name-pre-update-1" class="sr-img-name"></span></div>
+        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-pre-update-2" onclick="srAttachImage('pre-update',2)">📎 Photo 2 — Pre-Update</button><span id="sr-img-name-pre-update-2" class="sr-img-name"></span></div>
       </div>
 
       <div class="sr-section">
@@ -2271,7 +2272,8 @@ html:not(.light) .sched-gantt {
             <tr><td>Selecting Reset Totals</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
           </tbody>
         </table>
-        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-perform-update" onclick="srAttachImage('perform-update')">📎 Attach Photo — Perform Update</button><span id="sr-img-name-perform-update" class="sr-img-name"></span></div>
+        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-perform-update" onclick="srAttachImage('perform-update',1)">📎 Photo 1 — Perform Update</button><span id="sr-img-name-perform-update-1" class="sr-img-name"></span></div>
+        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-perform-update-2" onclick="srAttachImage('perform-update',2)">📎 Photo 2 — Perform Update</button><span id="sr-img-name-perform-update-2" class="sr-img-name"></span></div>
       </div>
 
       <div class="sr-section">
@@ -2285,7 +2287,8 @@ html:not(.light) .sched-gantt {
             <tr><td>Login through web server is successful</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
           </tbody>
         </table>
-        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-power-cycle" onclick="srAttachImage('power-cycle')">📎 Attach Photo — Power Cycle Test</button><span id="sr-img-name-power-cycle" class="sr-img-name"></span></div>
+        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-power-cycle" onclick="srAttachImage('power-cycle',1)">📎 Photo 1 — Power Cycle Test</button><span id="sr-img-name-power-cycle-1" class="sr-img-name"></span></div>
+        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-power-cycle-2" onclick="srAttachImage('power-cycle',2)">📎 Photo 2 — Power Cycle Test</button><span id="sr-img-name-power-cycle-2" class="sr-img-name"></span></div>
       </div>
 
       <div class="sr-section">
@@ -2300,7 +2303,8 @@ html:not(.light) .sched-gantt {
             <tr><td>Linear K-Factor Calculation Test</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
           </tbody>
         </table>
-        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-calc-test" onclick="srAttachImage('calc-test')">📎 Attach Photo — Calculation Tests</button><span id="sr-img-name-calc-test" class="sr-img-name"></span></div>
+        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-calc-test" onclick="srAttachImage('calc-test',1)">📎 Photo 1 — Calculation Tests</button><span id="sr-img-name-calc-test-1" class="sr-img-name"></span></div>
+        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-calc-test-2" onclick="srAttachImage('calc-test',2)">📎 Photo 2 — Calculation Tests</button><span id="sr-img-name-calc-test-2" class="sr-img-name"></span></div>
       </div>
 
       <div class="sr-section">
@@ -2312,7 +2316,8 @@ html:not(.light) .sched-gantt {
             <tr><td>Print out Current report and Constant log</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
           </tbody>
         </table>
-        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-post-update" onclick="srAttachImage('post-update')">📎 Attach Photo — Post-Update</button><span id="sr-img-name-post-update" class="sr-img-name"></span></div>
+        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-post-update" onclick="srAttachImage('post-update',1)">📎 Photo 1 — Post-Update</button><span id="sr-img-name-post-update-1" class="sr-img-name"></span></div>
+        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-post-update-2" onclick="srAttachImage('post-update',2)">📎 Photo 2 — Post-Update</button><span id="sr-img-name-post-update-2" class="sr-img-name"></span></div>
       </div>
 
       <!-- Result & Photos -->
@@ -2320,16 +2325,22 @@ html:not(.light) .sched-gantt {
         <div class="sr-section-header" style="background:var(--sf2);border-left-color:var(--ac);color:var(--tx1)">Result &amp; Photos</div>
         <div style="padding:10px 0 4px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div>
-            <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-old-version" onclick="srAttachImage('old-version')">📎 Old Version Photo</button><span id="sr-img-name-old-version" class="sr-img-name"></span></div>
-            <div id="sr-preview-old-version" class="sr-img-preview"></div>
+            <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-old-version" onclick="srAttachImage('old-version',1)">📎 Old Version Photo 1</button><span id="sr-img-name-old-version-1" class="sr-img-name"></span></div>
+            <div id="sr-preview-old-version-1" class="sr-img-preview"></div>
+            <div class="sr-photo-row" style="margin-top:4px"><button class="sr-img-attach-btn" id="sr-img-btn-old-version-2" onclick="srAttachImage('old-version',2)">📎 Old Version Photo 2</button><span id="sr-img-name-old-version-2" class="sr-img-name"></span></div>
+            <div id="sr-preview-old-version-2" class="sr-img-preview"></div>
           </div>
           <div>
-            <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-new-version" onclick="srAttachImage('new-version')">📎 New Version Photo</button><span id="sr-img-name-new-version" class="sr-img-name"></span></div>
-            <div id="sr-preview-new-version" class="sr-img-preview"></div>
+            <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-new-version" onclick="srAttachImage('new-version',1)">📎 New Version Photo 1</button><span id="sr-img-name-new-version-1" class="sr-img-name"></span></div>
+            <div id="sr-preview-new-version-1" class="sr-img-preview"></div>
+            <div class="sr-photo-row" style="margin-top:4px"><button class="sr-img-attach-btn" id="sr-img-btn-new-version-2" onclick="srAttachImage('new-version',2)">📎 New Version Photo 2</button><span id="sr-img-name-new-version-2" class="sr-img-name"></span></div>
+            <div id="sr-preview-new-version-2" class="sr-img-preview"></div>
           </div>
         </div>
-        <div class="sr-photo-row" style="margin-top:4px"><button class="sr-img-attach-btn" id="sr-img-btn-constant-log" onclick="srAttachImage('constant-log')">📎 Constant Log Comparison Photo</button><span id="sr-img-name-constant-log" class="sr-img-name"></span></div>
-        <div id="sr-preview-constant-log" class="sr-img-preview" style="max-height:200px"></div>
+        <div class="sr-photo-row" style="margin-top:4px"><button class="sr-img-attach-btn" id="sr-img-btn-constant-log" onclick="srAttachImage('constant-log',1)">📎 Constant Log Photo 1</button><span id="sr-img-name-constant-log-1" class="sr-img-name"></span></div>
+        <div id="sr-preview-constant-log-1" class="sr-img-preview" style="max-height:180px"></div>
+        <div class="sr-photo-row" style="margin-top:4px"><button class="sr-img-attach-btn" id="sr-img-btn-constant-log-2" onclick="srAttachImage('constant-log',2)">📎 Constant Log Photo 2</button><span id="sr-img-name-constant-log-2" class="sr-img-name"></span></div>
+        <div id="sr-preview-constant-log-2" class="sr-img-preview" style="max-height:180px"></div>
         <div class="sf-row" style="margin-top:10px"><label class="sf-label">Note / Remark</label>
           <input class="sf-input" id="sr-final-remark" type="text" placeholder="Additional notes..."></div>
       </div>
@@ -2883,13 +2894,12 @@ function openPlanDrawer(){
   var dd=document.getElementById('drawer-date-display');
   var lbl=document.getElementById('cal-selected-label');
   if(dd && lbl) dd.textContent = lbl.textContent;
-  // Reset site + tag dropdowns so previous selection doesn't bleed through
-  var siteEl=document.getElementById('sf-site');
+  // Re-populate site dropdown fresh (fixes stale onchange references + clears TAG)
   var tagEl=document.getElementById('sf-tag');
-  if(siteEl) siteEl.value='';
   if(tagEl){ tagEl.innerHTML='<option value="">-- Select TAG --</option>'; tagEl.value=''; }
   var fwEl=document.getElementById('sf-fw-target');
   if(fwEl) fwEl.value='';
+  populateSiteDropdown(); // re-attach onchange with fresh references
   openModal('modal-add-plan');
 }
 function closePlanDrawer(){
@@ -3708,8 +3718,8 @@ function renderPlanList(){
             : '')+
           // reported: แสดง lock icon — double-click เพื่อ admin unlock
           (p.reported
-            ? '<span title="Double-click to unlock (Admin)" style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:5px;border:1.5px solid currentColor;opacity:.55;cursor:pointer;user-select:none;color:currentColor" ondblclick="adminUnlock(\''+p.id+'\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>'+
-              '<button class="plan-action-btn" onclick="openServiceReport(\''+p.id+'\')" title="Firmware Update Service Report" style="background:rgba(99,102,241,.08);border-color:rgba(99,102,241,.3);color:#6366f1"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3H14L19 8V20A1 1 0 0 1 18 21H6A1 1 0 0 1 5 20V4A1 1 0 0 1 6 3Z"/><path d="M14 3V8H19"/><path d="M8 12H16M8 16H13"/></svg></button>'
+            ? '<button class="plan-action-btn" onclick="openServiceReport(\''+p.id+'\')" title="Firmware Update Service Report" style="background:rgba(99,102,241,.08);border-color:rgba(99,102,241,.3);color:#6366f1"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3H14L19 8V20A1 1 0 0 1 18 21H6A1 1 0 0 1 5 20V4A1 1 0 0 1 6 3Z"/><path d="M14 3V8H19"/><path d="M8 12H16M8 16H13"/></svg></button>'+
+              '<span title="Double-click to unlock (Admin)" style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:5px;border:1.5px solid currentColor;opacity:.55;cursor:pointer;user-select:none;color:currentColor" ondblclick="adminUnlock(\''+p.id+'\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>'
             : '<button class="plan-action-btn edit-btn" onclick="openEditPlan(\''+p.id+'\')" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:middle"><path d="M15.5 4L20 8.5L9.5 19H5V14.5L15.5 4Z"/><path d="M13 6.5L17.5 11"/></svg></button>'+
               '<button class="plan-action-btn delete-btn" onclick="deletePlan(\''+p.id+'\')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:middle"><path d="M4 6.5H20"/><path d="M9.5 6.5V4.5H14.5V6.5"/><path d="M5.5 6.5L6.5 20H17.5L18.5 6.5"/><path d="M10 10.5V16M14 10.5V16"/></svg></button>'
           )+
@@ -3775,12 +3785,18 @@ function renderGantt(){
   });
   regions.forEach(function(r){ if(GC_OPEN[r]===undefined) GC_OPEN[r]=true; });
 
-  // Date range from all plans
-  var allD=PLANS.map(function(p){ return new Date(p.date); });
-  var minD=new Date(Math.min.apply(null,allD));
-  var maxD=new Date(Math.max.apply(null,allD));
-  var pad=GC_VIEW==='month'?30:GC_VIEW==='week'?7:3;
-  minD.setDate(minD.getDate()-pad); maxD.setDate(maxD.getDate()+pad);
+  // Date range: day view = current calendar month; week/month = all plans
+  var minD, maxD;
+  if(GC_VIEW==='day'){
+    minD=new Date(calYear,calMonth,1);
+    maxD=new Date(calYear,calMonth+1,0); // last day of month
+  } else {
+    var allD=PLANS.map(function(p){ return new Date(p.date); });
+    minD=new Date(Math.min.apply(null,allD));
+    maxD=new Date(Math.max.apply(null,allD));
+    var pad=GC_VIEW==='month'?30:7;
+    minD.setDate(minD.getDate()-pad); maxD.setDate(maxD.getDate()+pad);
+  }
 
   // Build columns based on view
   var cols=[]; var cur=new Date(minD);
@@ -3966,19 +3982,15 @@ function gcExport(){
     return a.localeCompare(b);
   });
 
-  // Date range
-  var allD=PLANS.map(function(p){ return new Date(p.date); });
-  var minD=new Date(Math.min.apply(null,allD)); minD.setDate(minD.getDate()-2);
-  var maxD=new Date(Math.max.apply(null,allD)); maxD.setDate(maxD.getDate()+2);
-  var cols=[]; var cur=new Date(minD);
-  if(GC_VIEW==='month'){
-    cur=new Date(minD.getFullYear(),minD.getMonth(),1);
-    while(cur<=maxD){ cols.push(new Date(cur)); cur.setMonth(cur.getMonth()+1); }
-  } else if(GC_VIEW==='week'){
-    var wd=cur.getDay(); cur.setDate(cur.getDate()-(wd===0?6:wd-1));
-    while(cur<=maxD){ cols.push(new Date(cur)); cur.setDate(cur.getDate()+7); }
+  // Date range: day view = current calendar month; week/month = all plans
+  var minD, maxD;
+  if(GC_VIEW==='day'){
+    minD=new Date(calYear,calMonth,1);
+    maxD=new Date(calYear,calMonth+1,0);
   } else {
-    while(cur<=maxD){ cols.push(new Date(cur)); cur.setDate(cur.getDate()+1); }
+    var allD=PLANS.map(function(p){ return new Date(p.date); });
+    minD=new Date(Math.min.apply(null,allD)); minD.setDate(minD.getDate()-2);
+    maxD=new Date(Math.max.apply(null,allD)); maxD.setDate(maxD.getDate()+2);
   }
 
   function planInCol(p,col){
@@ -4441,9 +4453,15 @@ function gcExportPDF(){
     return a.localeCompare(b);
   });
 
-  var allD=PLANS.map(function(p){ return new Date(p.date); });
-  var minD=new Date(Math.min.apply(null,allD)); minD.setDate(minD.getDate()-2);
-  var maxD=new Date(Math.max.apply(null,allD)); maxD.setDate(maxD.getDate()+2);
+  var minD, maxD;
+  if(GC_VIEW==='day'){
+    minD=new Date(calYear,calMonth,1);
+    maxD=new Date(calYear,calMonth+1,0);
+  } else {
+    var allD=PLANS.map(function(p){ return new Date(p.date); });
+    minD=new Date(Math.min.apply(null,allD)); minD.setDate(minD.getDate()-2);
+    maxD=new Date(Math.max.apply(null,allD)); maxD.setDate(maxD.getDate()+2);
+  }
   var cols=[]; var cur=new Date(minD);
   if(GC_VIEW==='month'){
     cur=new Date(minD.getFullYear(),minD.getMonth(),1);
@@ -4618,7 +4636,7 @@ function gcExportPDF(){
       '<span class="leg-item"><span class="leg-dot" style="background:#10b981"></span>Done</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Cancelled</span>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.1</span><span>SRPLC Confidential</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.2</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
   '<script>window.onload=function(){ window.print(); };<\/script>'+
   '</body></html>';
@@ -4687,16 +4705,42 @@ function exportServiceReportPDF(){
 
   function chkRows(items){
     return items.map(function(item){
-      var c1=item.col1?'<span style="color:#10b981;font-weight:700;font-size:12px">✓</span>':'<span style="display:inline-block;width:12px;height:12px;border:1.5px solid #94a3b8;border-radius:2px;vertical-align:middle"></span>';
-      var c2=item.col2?'<span style="color:#ef4444;font-weight:700;font-size:12px">✗</span>':'<span style="display:inline-block;width:12px;height:12px;border:1.5px solid #94a3b8;border-radius:2px;vertical-align:middle"></span>';
+      // Show only the checked column result, hide unchecked column
+      var c1, c2;
+      if(item.col1 && !item.col2){
+        c1='<span style="color:#10b981;font-weight:700;font-size:12px">✓</span>';
+        c2='';
+      } else if(item.col2 && !item.col1){
+        c1='';
+        c2='<span style="color:#ef4444;font-weight:700;font-size:12px">✗</span>';
+      } else if(item.col1 && item.col2){
+        c1='<span style="color:#10b981;font-weight:700;font-size:12px">✓</span>';
+        c2='<span style="color:#ef4444;font-weight:700;font-size:12px">✗</span>';
+      } else {
+        c1='<span style="display:inline-block;width:12px;height:12px;border:1.5px solid #94a3b8;border-radius:2px;vertical-align:middle"></span>';
+        c2='';
+      }
       return '<tr><td>'+item.desc+'</td><td style="text-align:center">'+c1+'</td><td style="text-align:center">'+c2+'</td><td>'+item.remark+'</td></tr>';
     }).join('');
   }
 
-  function imgSection(sectionId,label){
-    var imgObj=_srReportImages[sectionId];
-    if(imgObj&&imgObj.dataUrl) return '<div class="photo-box"><div class="photo-label">'+label+'</div><img class="photo-img" src="'+imgObj.dataUrl+'"></div>';
-    return '';
+  function imgSection(sectionId, label){
+    var key1=sectionId, key2=sectionId+'-2';
+    var img1=_srReportImages[key1], img2=_srReportImages[key2];
+    if(!img1&&!img2) return '';
+    var html='<div style="margin-top:10px;padding-bottom:10px">';
+    if(label) html+='<div style="font-size:9px;font-weight:600;color:#64748b;margin-bottom:4px">'+label+'</div>';
+    if(img1&&img2){
+      html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+      html+='<img src="'+img1.dataUrl+'" style="width:100%;height:auto;max-height:120px;object-fit:contain;border:1px solid #e2e8f0;border-radius:4px">';
+      html+='<img src="'+img2.dataUrl+'" style="width:100%;height:auto;max-height:120px;object-fit:contain;border:1px solid #e2e8f0;border-radius:4px">';
+      html+='</div>';
+    } else {
+      var img=img1||img2;
+      html+='<img src="'+img.dataUrl+'" style="max-width:60%;height:auto;max-height:130px;object-fit:contain;border:1px solid #e2e8f0;border-radius:4px;display:block">';
+    }
+    html+='</div>';
+    return html;
   }
 
 
@@ -4709,7 +4753,8 @@ function exportServiceReportPDF(){
   '<style>'+
   'body{margin:0;padding:0;font-family:"Helvetica Neue",Arial,sans-serif;background:#fff;color:#1e293b;font-size:11px}'+
   '@media print{body{margin:0}@page{size:A4 portrait;margin:10mm}}'+
-  '.page{width:190mm;margin:0 auto;padding:8mm 10mm;background:#fff;box-sizing:border-box}'+
+  '.page{width:190mm;min-height:260mm;margin:0 auto;padding:8mm 10mm;background:#fff;box-sizing:border-box;display:flex;flex-direction:column}'+
+  '.page-content{flex:1}'+
   '.page-break{page-break-before:always}'+
   '.header{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:8px;border-bottom:2.5px solid #1e3a5f;margin-bottom:10px}'+
   '.header-logo{height:48px;width:auto}'+
@@ -4757,7 +4802,7 @@ function exportServiceReportPDF(){
       '<tr><td class="lbl">Old Firmware</td><td class="val">'+rptData.fwOld+'</td><td class="lbl">New Firmware</td><td class="val"><strong>'+rptData.fwNew+'</strong></td></tr>'+
       '<tr><td class="lbl">Config Name</td><td class="val">'+rptData.configName+'</td><td class="lbl">Last Config Date</td><td class="val">'+rptData.configDate+'</td></tr>'+
     '</table>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.1</span><span>Page 1 of 4</span><span>Date: '+dateStr+'</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.2</span><span>Page 1 of 4</span><span>Date: '+dateStr+'</span></div>'+
   '</div>'+
 
   '<div class="page page-break">'+
@@ -4769,7 +4814,7 @@ function exportServiceReportPDF(){
     '<h2 style="background:#eff6ff;border-color:#6366f1;color:#3730a3">Perform Firmware Update</h2>'+
     '<table class="checklist"><tr><th>Description</th><th class="c">Done</th><th class="c">Not Done</th><th class="r">Remarks</th></tr>'+chkRows(CL.performFw)+'</table>'+
     imgSection('perform-update','Perform Firmware Update Photo')+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.1</span><span>Page 2 of 4</span><span>Date: '+dateStr+'</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.2</span><span>Page 2 of 4</span><span>Date: '+dateStr+'</span></div>'+
   '</div>'+
 
   '<div class="page page-break">'+
@@ -4784,34 +4829,33 @@ function exportServiceReportPDF(){
     '<h2 style="background:#f0fdf4;border-color:#10b981;color:#065f46">Post-Update</h2>'+
     '<table class="checklist"><tr><th>Description</th><th class="c">Done</th><th class="c">Not Done</th><th class="r">Remarks</th></tr>'+chkRows(CL.postUpdate)+'</table>'+
     imgSection('post-update','Post-Update Photo')+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.1</span><span>Page 3 of 4</span><span>Date: '+dateStr+'</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.2</span><span>Page 3 of 4</span><span>Date: '+dateStr+'</span></div>'+
   '</div>'+
 
   '<div class="page page-break">'+
     '<div class="header"><img class="header-logo" src="'+LOGO_DATA+'" alt="Siamraj"><div class="header-center"><h1 style="background:none;border:none;margin:0 0 2px;padding:0">Firmware Update Service Report</h1><div class="subtitle">'+rptData.name+' | <span class="tag-badge">'+rptData.tag+'</span></div></div><div class="header-right">Prepared by: '+rptData.performedBy+'<br>Acknowledged by: '+rptData.ackBy+'</div></div>'+
+    '<div class="page-content">'+
     '<div class="page-no">Page 4 of 4</div>'+
     '<h2 style="background:none;border:none;border-bottom:1px solid #e2e8f0;padding:4px 0;color:#1e3a5f">2. Result</h2>'+
     '<table class="info-table" style="margin-bottom:8px"><tr><td class="lbl">Flow Computer Tag No.</td><td class="val"><span class="tag-badge">'+rptData.tag+'</span></td></tr><tr><td class="lbl">Note(s) / Remark</td><td class="val">'+rptData.remark+'&nbsp;</td></tr><tr><td class="lbl">Constant log checked &amp; FC ready for service</td><td class="val"><span class="tag-badge">'+rptData.tag+'</span></td></tr></table>'+
     '<div class="photo-grid">'+
       '<div>'+
         '<h2 style="margin-top:0;background:#f1f5f9;border-color:#64748b;color:#334155">Old Version</h2>'+
-        imgSection('old-version','')+
-        ((_srReportImages['old-version']&&_srReportImages['old-version'].dataUrl)?'':'<div style="height:80px;border:1px dashed #cbd5e1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#94a3b8">No image attached</div>')+
+        (imgSection('old-version','')||'<div style="height:60px;border:1px dashed #cbd5e1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#94a3b8">No image attached</div>')+
       '</div>'+
       '<div>'+
         '<h2 style="margin-top:0;background:#f1f5f9;border-color:#64748b;color:#334155">New Version</h2>'+
-        imgSection('new-version','')+
-        ((_srReportImages['new-version']&&_srReportImages['new-version'].dataUrl)?'':'<div style="height:80px;border:1px dashed #cbd5e1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#94a3b8">No image attached</div>')+
+        (imgSection('new-version','')||'<div style="height:60px;border:1px dashed #cbd5e1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#94a3b8">No image attached</div>')+
       '</div>'+
     '</div>'+
     '<h2 style="background:#f1f5f9;border-color:#64748b;color:#334155">Constant Log Comparison</h2>'+
-    imgSection('constant-log','')+
-    ((_srReportImages['constant-log']&&_srReportImages['constant-log'].dataUrl)?'':'<div style="height:80px;border:1px dashed #cbd5e1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#94a3b8">No image attached</div>')+
+    (imgSection('constant-log','')||'<div style="height:60px;border:1px dashed #cbd5e1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#94a3b8">No image attached</div>')+
     '<div class="sig-row">'+
       '<div class="sig-box">________________________________<br>Prepared by: '+rptData.performedBy+'<br>(SRPLC Engineer)</div>'+
       '<div class="sig-box">________________________________<br>Acknowledged by: '+rptData.ackBy+'<br>(Customer Representative)</div>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.1</span><span>Page 4 of 4</span><span>Date: '+dateStr+'</span></div>'+
+    '</div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.2</span><span>Page 4 of 4</span><span>Date: '+dateStr+'</span></div>'+
   '</div>'+
 
   '<script>window.onload=function(){ window.print(); };<\/script>'+
@@ -4822,22 +4866,22 @@ function exportServiceReportPDF(){
   window.open(url,'_blank');
 }
 
-function srAttachImage(sectionId){
+function srAttachImage(sectionId, slot){
+  slot = slot||1;
+  var key = slot===2 ? (sectionId+'-2') : sectionId;
+  var btnId = slot===2 ? ('sr-img-btn-'+sectionId+'-2') : ('sr-img-btn-'+sectionId);
   var input=document.createElement('input');
   input.type='file'; input.accept='image/*';
   input.onchange=function(e){
     var file=e.target.files[0]; if(!file) return;
     var reader=new FileReader();
     reader.onload=function(ev){
-      _srReportImages[sectionId]={name:file.name, dataUrl:ev.target.result};
-      // Update attach button
-      var btn=document.getElementById('sr-img-btn-'+sectionId);
-      if(btn){ btn.textContent='✓ Photo attached'; btn.style.borderColor='#10b981'; btn.style.color='#10b981'; }
-      // Update name label
-      var nameEl=document.getElementById('sr-img-name-'+sectionId);
+      _srReportImages[key]={name:file.name, dataUrl:ev.target.result};
+      var btn=document.getElementById(btnId);
+      if(btn){ btn.textContent='✓ Photo '+slot+' attached'; btn.style.borderColor='#10b981'; btn.style.color='#10b981'; }
+      var nameEl=document.getElementById('sr-img-name-'+key);
       if(nameEl) nameEl.textContent=file.name;
-      // Update preview (for result section photos)
-      var previewEl=document.getElementById('sr-preview-'+sectionId);
+      var previewEl=document.getElementById('sr-preview-'+key);
       if(previewEl){ previewEl.innerHTML='<img src="'+ev.target.result+'" alt="'+file.name+'">'; }
     };
     reader.readAsDataURL(file);
@@ -4871,20 +4915,25 @@ function openServiceReport(planId){
   modal.querySelectorAll('.sr-remark-input').forEach(function(i){ i.value=''; });
   document.getElementById('sr-final-remark').value='';
   _srReportImages={};
+  var SID_LABELS={'pre-update':'Pre-Update','perform-update':'Perform Update','power-cycle':'Power Cycle Test','calc-test':'Calculation Tests','post-update':'Post-Update','old-version':'Old Version','new-version':'New Version','constant-log':'Constant Log'};
   ['pre-update','perform-update','power-cycle','calc-test','post-update','old-version','new-version','constant-log'].forEach(function(sid){
-    var btn=document.getElementById('sr-img-btn-'+sid);
-    var nameEl=document.getElementById('sr-img-name-'+sid);
-    var previewEl=document.getElementById('sr-preview-'+sid);
-    if(btn){ btn.style.borderColor=''; btn.style.color=''; btn.textContent='📎 '+(sid==='pre-update'?'Attach Photo — Pre-Update':sid==='perform-update'?'Attach Photo — Perform Update':sid==='power-cycle'?'Attach Photo — Power Cycle Test':sid==='calc-test'?'Attach Photo — Calculation Tests':sid==='post-update'?'Attach Photo — Post-Update':sid==='old-version'?'Old Version Photo':sid==='new-version'?'New Version Photo':'Constant Log Comparison Photo'); }
-    if(nameEl) nameEl.textContent='';
-    if(previewEl) previewEl.innerHTML='';
+    [1,2].forEach(function(slot){
+      var key=slot===2?(sid+'-2'):sid;
+      var btnId=slot===2?('sr-img-btn-'+sid+'-2'):('sr-img-btn-'+sid);
+      var btn=document.getElementById(btnId);
+      var nameEl=document.getElementById('sr-img-name-'+key);
+      var previewEl=document.getElementById('sr-preview-'+key);
+      if(btn){ btn.style.borderColor=''; btn.style.color=''; btn.textContent='📎 '+SID_LABELS[sid]+' Photo '+slot; }
+      if(nameEl) nameEl.textContent='';
+      if(previewEl) previewEl.innerHTML='';
+    });
   });
 
   openModal('modal-service-report');
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.15.1</div>
+<div class="version-badge" style="display:none">v1.15.2</div>
 </body>
 </html>
 
