@@ -4959,6 +4959,7 @@ function exportServiceReportPDF(){
 function srAttachImageSingle(sectionId, slot){
   slot = slot || 1;
   var key = slot === 2 ? (sectionId + '-2') : sectionId;
+  var previewId = sectionId + '-' + slot;  // always "sid-1" or "sid-2"
   var btnId = slot === 2 ? ('sr-img-btn-' + sectionId + '-2') : ('sr-img-btn-' + sectionId);
   var input=document.createElement('input');
   input.type='file'; input.accept='image/*';
@@ -4971,7 +4972,7 @@ function srAttachImageSingle(sectionId, slot){
       if(btn){ btn.style.borderColor='#10b981'; btn.style.color='#10b981'; }
       var nameEl=document.getElementById('sr-img-name-'+sectionId+'-'+slot);
       if(nameEl) nameEl.textContent=file.name.slice(0,20)+(file.name.length>20?'…':'');
-      var previewEl=document.getElementById('sr-preview-'+key);
+      var previewEl=document.getElementById('sr-preview-'+previewId);
       if(previewEl){ previewEl.innerHTML='<img src="'+ev.target.result+'" alt="'+file.name+'">'; }
     };
     reader.readAsDataURL(file);
