@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.16.2</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.3</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.16.2 — visionOS-inspired
+   LIQUID GLASS v1.16.3 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1937,7 +1937,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.16.2</div>
+  <div class="home-version">v1.16.3</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4714,7 +4714,7 @@ function gcExportPDF(){
       '<span class="leg-item"><span class="leg-dot" style="background:#10b981"></span>Done</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Cancelled</span>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.2</span><span>SRPLC Confidential</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.3</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
   '<script>window.onload=function(){ window.print(); };<\/script>'+
   '</body></html>';
@@ -4744,15 +4744,23 @@ function exportServiceReportPDF(){
     tag:      p.tag||document.getElementById('sr-info-tag').textContent||'',
     ip:       row['IP : Address']||row['IP Address']||'',
     serial:   row['Serial No.']||row['Serial No']||'',
-    fwOld:    document.getElementById('sr-info-fw-old').textContent||'',
-    fwNew:    document.getElementById('sr-info-fw-new').textContent||row['Firmware']||p.fwTarget||'',
+    fwOld:    p.fwOld||document.getElementById('sr-info-fw-old').textContent||'',
+    fwNew:    p.fwNew||document.getElementById('sr-info-fw-new').textContent||row['Firmware']||p.fwTarget||'',
     fwStatus: row['Firmware Update']||'Up-to-date',
     hart:     row['Hart version']||'',
     configName: row['Config name']||'',
     configDate: row['Last config installed date']||'',
     performedBy: p.performedBy||document.getElementById('sr-info-performed-by').textContent||'',
-    ackBy:    document.getElementById('sr-info-ack-by').textContent||'',
-    remark:   document.getElementById('sr-final-remark').value||''
+    ackBy:    p.ackBy||document.getElementById('sr-info-ack-by').textContent||'',
+    remark:   document.getElementById('sr-final-remark').value||'',
+    updateDt: (function(){
+      // Try rpt-update-datetime first (if report modal was used), then plan date
+      var el=document.getElementById('rpt-update-datetime');
+      var v=el?el.value:'';
+      if(v) return new Date(v).toLocaleDateString('th-TH',{year:'numeric',month:'2-digit',day:'2-digit'});
+      if(p.date) return new Date(p.date).toLocaleDateString('th-TH',{year:'numeric',month:'2-digit',day:'2-digit'});
+      return '';
+    })()
   };
 
   // Read checklist state from modal DOM
@@ -5104,7 +5112,7 @@ function openServiceReport(planId){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.16.2</div>
+<div class="version-badge" style="display:none">v1.16.3</div>
 </body>
 </html>
 
