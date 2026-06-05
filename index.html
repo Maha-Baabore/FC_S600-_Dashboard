@@ -2250,13 +2250,15 @@ html:not(.light) .sched-gantt {
           <input class="sf-input" id="rpt-update-datetime" type="datetime-local"></div>
         <div class="sf-row"><label class="sf-label">Remark</label>
           <input class="sf-input" id="rpt-remark" type="text" placeholder="Optional note"></div>
+        <div class="sf-row"><label class="sf-label">Acknowledged By</label>
+          <input class="sf-input" id="rpt-acknowledged-by" type="text" placeholder="Customer name"></div>
       </div>
       <div class="report-apps-status" id="rpt-api-status"></div>
     </div>
     <div class="modal-footer">
       <button class="modal-btn-cancel" onclick="closeModal('modal-report')">Cancel</button>
-      <button id="rpt-export-pdf-btn" class="modal-btn-save" style="display:none;background:rgba(239,68,68,.85);margin-left:8px" onclick="exportReportPDF(document.getElementById('rpt-tag').getAttribute('data-plan-id'))" title="Export PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Export PDF</button>
       <button class="modal-btn-save" onclick="submitReport()" id="rpt-submit-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 15V3"/><path d="M6.5 8.5L12 3L17.5 8.5"/><path d="M4 19H20"/></svg> Send to Google Sheet</button>
+      <button id="rpt-export-pdf-btn" class="modal-btn-save" style="display:none;background:rgba(239,68,68,.85);margin-left:8px" onclick="exportReportPDF(document.getElementById('rpt-tag').getAttribute('data-plan-id'))" title="Export PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Export PDF</button>
     </div>
   </div>
 </div>
@@ -3566,7 +3568,7 @@ function renderPlanList(){
             : '')+
           // reported: แสดง lock icon — double-click เพื่อ admin unlock
           (p.reported
-            ? '<button class="plan-action-btn pdf-btn" onclick="exportReportPDF(\''+p.id+'\')" title="Export PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></button>'+
+            ? (p.reportData ? '<button class="plan-action-btn pdf-btn" onclick="exportReportPDF(\''+p.id+'\')" title="Export PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></button>' : '')+
               '<button class="plan-action-btn lock-btn" ondblclick="adminUnlock(\''+p.id+'\')" title="Double-click to unlock"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button>'
             : '<button class="plan-action-btn edit-btn" onclick="openEditPlan(\''+p.id+'\')" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:middle"><path d="M15.5 4L20 8.5L9.5 19H5V14.5L15.5 4Z"/><path d="M13 6.5L17.5 11"/></svg></button>'+
               '<button class="plan-action-btn delete-btn" onclick="deletePlan(\''+p.id+'\')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:middle"><path d="M4 6.5H20"/><path d="M9.5 6.5V4.5H14.5V6.5"/><path d="M5.5 6.5L6.5 20H17.5L18.5 6.5"/><path d="M10 10.5V16M14 10.5V16"/></svg></button>'
@@ -4019,7 +4021,7 @@ function gcExport(){
   '</style></head><body>'+
   '<div class="hdr">'+
     '<div class="hdr-left">'+
-      '<img src="'+SIAMRAJ_LOGO_B64+'" alt="Siamraj">'+
+
       '<div class="htitle"><h1>Firmware Update Schedule</h1><p>FloBoss S600+ &middot; Exported: '+today2+'</p></div>'+
     '</div>'+
 
@@ -4082,7 +4084,6 @@ function exportReportPDF(planId){
 
   // Header — Siamraj left, PTT right
   '<div class="hdr">'+
-    '<div class="hdr-logo"><img src="'+SIAMRAJ_LOGO_B64+'" alt="Siamraj"></div>'+
     '<div class="hdr-info">'+
       '<strong>SIAMRAJ Public Company Limited</strong><br>'+
       '289/9 Moo 10 Old Railway Rd., Samrong, Phrapradaeng, Samutprakarn 10130<br>'+
@@ -4147,14 +4148,14 @@ function exportReportPDF(planId){
   // Sign block
   '<div class="sign-row">'+
     '<div class="sign-block"><div class="name">'+e(d.performedBy)+'</div><div class="role">Prepared by &nbsp;|&nbsp; SRPLC</div></div>'+
-    '<div class="sign-block"><div class="name">&nbsp;</div><div class="role">Acknowledged by &nbsp;|&nbsp; PTT</div></div>'+
+    '<div class="sign-block"><div class="name">'+(d.acknowledgedBy?e(d.acknowledgedBy):'&nbsp;')+'</div><div class="role">Acknowledged by &nbsp;|&nbsp; PTT</div></div>'+
   '</div>'+
 
   // Footer
   '<div class="footer">'+
     '<span>Flow Computer — Upgrade Firmware</span>'+
-    '<span>Prepared by '+e(d.performedBy)+' &nbsp;|&nbsp; SRPLC</span>'+
-    '<span>'+e(d.site)+' &nbsp;|&nbsp; PTT</span>'+
+    '<span>'+e(d.name)+'</span>'+
+    '<span>Prepared by '+e(d.performedBy)+' &nbsp;/&nbsp; Acknowledged by '+(d.acknowledgedBy?e(d.acknowledgedBy):'—')+'</span>'+
   '</div>'+
 
   '</body></html>';
@@ -4306,6 +4307,10 @@ function openReport(id){
   var nowDt=new Date(); var dtIso=nowDt.getFullYear()+'-'+String(nowDt.getMonth()+1).padStart(2,'0')+'-'+String(nowDt.getDate()).padStart(2,'0')+'T'+String(nowDt.getHours()).padStart(2,'0')+':'+String(nowDt.getMinutes()).padStart(2,'0');
   document.getElementById('rpt-update-datetime').value=dtIso;
   document.getElementById('rpt-remark').value='';
+  document.getElementById('rpt-acknowledged-by').value='';
+  // hide export PDF btn when opening report (only show after sent)
+  var eb=document.getElementById('rpt-export-pdf-btn');
+  if(eb) eb.style.display='none';
   document.getElementById('rpt-api-status').className='report-apps-status';
   document.getElementById('rpt-api-status').textContent='';
   document.getElementById('rpt-submit-btn').disabled=false;
@@ -4414,6 +4419,7 @@ function submitReport(){
                 performedBy:document.getElementById('rpt-performed-by').value,
                 updateDt:  document.getElementById('rpt-update-datetime').value,
                 remark:    document.getElementById('rpt-remark').value,
+                acknowledgedBy: document.getElementById('rpt-acknowledged-by').value,
                 submittedAt:new Date().toISOString()
               };
               savePlans();
