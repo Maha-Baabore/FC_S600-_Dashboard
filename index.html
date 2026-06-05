@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.15.9</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.0</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.15.9 — visionOS-inspired
+   LIQUID GLASS v1.16.0 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1937,7 +1937,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.15.9</div>
+  <div class="home-version">v1.16.0</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2265,8 +2265,18 @@ html:not(.light) .sched-gantt {
             <tr><td>Check communication</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
           </tbody>
         </table>
-        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-pre-update" onclick="srAttachImageMulti('pre-update')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photos — Pre-Update (max 2)</button><span id="sr-img-name-pre-update-1" class="sr-img-name"></span><span id="sr-img-name-pre-update-2" class="sr-img-name"></span></div>
-        <div style="display:flex;gap:6px;margin-top:5px"><div id="sr-preview-pre-update-1" class="sr-img-preview" style="flex:1;max-height:130px"></div><div id="sr-preview-pre-update-2" class="sr-img-preview" style="flex:1;max-height:130px"></div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+          <div>
+            <button class="sr-img-attach-btn" id="sr-img-btn-pre-update" onclick="srAttachImageSingle('pre-update',1)" style="width:100%"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Photo 1 — Pre-Update</button>
+            <span id="sr-img-name-pre-update-1" class="sr-img-name" style="display:block;margin-top:2px"></span>
+            <div id="sr-preview-pre-update-1" class="sr-img-preview" style="margin-top:5px;min-height:80px"></div>
+          </div>
+          <div>
+            <button class="sr-img-attach-btn" id="sr-img-btn-pre-update-2" onclick="srAttachImageSingle('pre-update',2)" style="width:100%"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Photo 2 — Pre-Update</button>
+            <span id="sr-img-name-pre-update-2" class="sr-img-name" style="display:block;margin-top:2px"></span>
+            <div id="sr-preview-pre-update-2" class="sr-img-preview" style="margin-top:5px;min-height:80px"></div>
+          </div>
+        </div>
       </div>
 
       <div class="sr-section">
@@ -2280,8 +2290,18 @@ html:not(.light) .sched-gantt {
             <tr><td>Selecting Reset Totals</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
           </tbody>
         </table>
-        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-perform-update" onclick="srAttachImageMulti('perform-update')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photos — Perform Update (max 2)</button><span id="sr-img-name-perform-update-1" class="sr-img-name"></span><span id="sr-img-name-perform-update-2" class="sr-img-name"></span></div>
-        <div style="display:flex;gap:6px;margin-top:5px"><div id="sr-preview-perform-update-1" class="sr-img-preview" style="flex:1;max-height:130px"></div><div id="sr-preview-perform-update-2" class="sr-img-preview" style="flex:1;max-height:130px"></div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+          <div>
+            <button class="sr-img-attach-btn" id="sr-img-btn-perform-update" onclick="srAttachImageSingle('perform-update',1)" style="width:100%"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Photo 1 — Perform Update</button>
+            <span id="sr-img-name-perform-update-1" class="sr-img-name" style="display:block;margin-top:2px"></span>
+            <div id="sr-preview-perform-update-1" class="sr-img-preview" style="margin-top:5px;min-height:80px"></div>
+          </div>
+          <div>
+            <button class="sr-img-attach-btn" id="sr-img-btn-perform-update-2" onclick="srAttachImageSingle('perform-update',2)" style="width:100%"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Photo 2 — Perform Update</button>
+            <span id="sr-img-name-perform-update-2" class="sr-img-name" style="display:block;margin-top:2px"></span>
+            <div id="sr-preview-perform-update-2" class="sr-img-preview" style="margin-top:5px;min-height:80px"></div>
+          </div>
+        </div>
       </div>
 
       <div class="sr-section">
@@ -2295,8 +2315,18 @@ html:not(.light) .sched-gantt {
             <tr><td>Login through web server is successful</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
           </tbody>
         </table>
-        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-power-cycle" onclick="srAttachImageMulti('power-cycle')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photos — Power Cycle Test (max 2)</button><span id="sr-img-name-power-cycle-1" class="sr-img-name"></span><span id="sr-img-name-power-cycle-2" class="sr-img-name"></span></div>
-        <div style="display:flex;gap:6px;margin-top:5px"><div id="sr-preview-power-cycle-1" class="sr-img-preview" style="flex:1;max-height:130px"></div><div id="sr-preview-power-cycle-2" class="sr-img-preview" style="flex:1;max-height:130px"></div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+          <div>
+            <button class="sr-img-attach-btn" id="sr-img-btn-power-cycle" onclick="srAttachImageSingle('power-cycle',1)" style="width:100%"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Photo 1 — Power Cycle Test</button>
+            <span id="sr-img-name-power-cycle-1" class="sr-img-name" style="display:block;margin-top:2px"></span>
+            <div id="sr-preview-power-cycle-1" class="sr-img-preview" style="margin-top:5px;min-height:80px"></div>
+          </div>
+          <div>
+            <button class="sr-img-attach-btn" id="sr-img-btn-power-cycle-2" onclick="srAttachImageSingle('power-cycle',2)" style="width:100%"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Photo 2 — Power Cycle Test</button>
+            <span id="sr-img-name-power-cycle-2" class="sr-img-name" style="display:block;margin-top:2px"></span>
+            <div id="sr-preview-power-cycle-2" class="sr-img-preview" style="margin-top:5px;min-height:80px"></div>
+          </div>
+        </div>
       </div>
 
       <div class="sr-section">
@@ -2311,8 +2341,18 @@ html:not(.light) .sched-gantt {
             <tr><td>Linear K-Factor Calculation Test</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
           </tbody>
         </table>
-        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-calc-test" onclick="srAttachImageMulti('calc-test')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photos — Calculation Tests (max 2)</button><span id="sr-img-name-calc-test-1" class="sr-img-name"></span><span id="sr-img-name-calc-test-2" class="sr-img-name"></span></div>
-        <div style="display:flex;gap:6px;margin-top:5px"><div id="sr-preview-calc-test-1" class="sr-img-preview" style="flex:1;max-height:130px"></div><div id="sr-preview-calc-test-2" class="sr-img-preview" style="flex:1;max-height:130px"></div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+          <div>
+            <button class="sr-img-attach-btn" id="sr-img-btn-calc-test" onclick="srAttachImageSingle('calc-test',1)" style="width:100%"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Photo 1 — Calculation Tests</button>
+            <span id="sr-img-name-calc-test-1" class="sr-img-name" style="display:block;margin-top:2px"></span>
+            <div id="sr-preview-calc-test-1" class="sr-img-preview" style="margin-top:5px;min-height:80px"></div>
+          </div>
+          <div>
+            <button class="sr-img-attach-btn" id="sr-img-btn-calc-test-2" onclick="srAttachImageSingle('calc-test',2)" style="width:100%"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Photo 2 — Calculation Tests</button>
+            <span id="sr-img-name-calc-test-2" class="sr-img-name" style="display:block;margin-top:2px"></span>
+            <div id="sr-preview-calc-test-2" class="sr-img-preview" style="margin-top:5px;min-height:80px"></div>
+          </div>
+        </div>
       </div>
 
       <div class="sr-section">
@@ -2324,8 +2364,18 @@ html:not(.light) .sched-gantt {
             <tr><td>Print out Current report and Constant log</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
           </tbody>
         </table>
-        <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-post-update" onclick="srAttachImageMulti('post-update')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photos — Post-Update (max 2)</button><span id="sr-img-name-post-update-1" class="sr-img-name"></span><span id="sr-img-name-post-update-2" class="sr-img-name"></span></div>
-        <div style="display:flex;gap:6px;margin-top:5px"><div id="sr-preview-post-update-1" class="sr-img-preview" style="flex:1;max-height:130px"></div><div id="sr-preview-post-update-2" class="sr-img-preview" style="flex:1;max-height:130px"></div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+          <div>
+            <button class="sr-img-attach-btn" id="sr-img-btn-post-update" onclick="srAttachImageSingle('post-update',1)" style="width:100%"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Photo 1 — Post-Update</button>
+            <span id="sr-img-name-post-update-1" class="sr-img-name" style="display:block;margin-top:2px"></span>
+            <div id="sr-preview-post-update-1" class="sr-img-preview" style="margin-top:5px;min-height:80px"></div>
+          </div>
+          <div>
+            <button class="sr-img-attach-btn" id="sr-img-btn-post-update-2" onclick="srAttachImageSingle('post-update',2)" style="width:100%"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Photo 2 — Post-Update</button>
+            <span id="sr-img-name-post-update-2" class="sr-img-name" style="display:block;margin-top:2px"></span>
+            <div id="sr-preview-post-update-2" class="sr-img-preview" style="margin-top:5px;min-height:80px"></div>
+          </div>
+        </div>
       </div>
 
       <!-- Result & Photos -->
@@ -4664,7 +4714,7 @@ function gcExportPDF(){
       '<span class="leg-item"><span class="leg-dot" style="background:#10b981"></span>Done</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Cancelled</span>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.15.9</span><span>SRPLC Confidential</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.0</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
   '<script>window.onload=function(){ window.print(); };<\/script>'+
   '</body></html>';
@@ -4905,20 +4955,23 @@ function exportServiceReportPDF(){
 // ══════════════════════════════════════════════════════
 //  exportServiceReportPDF — Firmware Update Service Report
 
-// srAttachImageSingle — single button, single image only
-function srAttachImageSingle(sectionId){
+// srAttachImageSingle — single button, single image only (slot 1 or 2)
+function srAttachImageSingle(sectionId, slot){
+  slot = slot || 1;
+  var key = slot === 2 ? (sectionId + '-2') : sectionId;
+  var btnId = slot === 2 ? ('sr-img-btn-' + sectionId + '-2') : ('sr-img-btn-' + sectionId);
   var input=document.createElement('input');
   input.type='file'; input.accept='image/*';
   input.onchange=function(e){
     var file=e.target.files[0]; if(!file) return;
     var reader=new FileReader();
     reader.onload=function(ev){
-      _srReportImages[sectionId]={name:file.name,dataUrl:ev.target.result};
-      var btn=document.getElementById('sr-img-btn-'+sectionId);
+      _srReportImages[key]={name:file.name,dataUrl:ev.target.result};
+      var btn=document.getElementById(btnId);
       if(btn){ btn.style.borderColor='#10b981'; btn.style.color='#10b981'; }
-      var nameEl=document.getElementById('sr-img-name-'+sectionId+'-1');
+      var nameEl=document.getElementById('sr-img-name-'+sectionId+'-'+slot);
       if(nameEl) nameEl.textContent=file.name.slice(0,20)+(file.name.length>20?'…':'');
-      var previewEl=document.getElementById('sr-preview-'+sectionId+'-1');
+      var previewEl=document.getElementById('sr-preview-'+key);
       if(previewEl){ previewEl.innerHTML='<img src="'+ev.target.result+'" alt="'+file.name+'">'; }
     };
     reader.readAsDataURL(file);
@@ -5019,16 +5072,25 @@ function openServiceReport(planId){
   var SVG_ATTACH='<svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> ';
   ['pre-update','perform-update','power-cycle','calc-test','post-update','old-version','new-version','constant-log'].forEach(function(sid){
     var isSingle=SINGLE_SIDS.indexOf(sid)>=0;
-    var btn=document.getElementById('sr-img-btn-'+sid);
-    if(btn){
-      btn.style.borderColor=''; btn.style.color='';
-      btn.innerHTML=SVG_ATTACH+(isSingle?('Attach Photo — '+SID_LABELS[sid]+' (1 image)'):('Attach Photos — '+SID_LABELS[sid]+' (max 2)'));
-    }
     var slots=isSingle?[1]:[1,2];
     slots.forEach(function(slot){
+      // Reset button
+      var btnId=slot===2?('sr-img-btn-'+sid+'-2'):('sr-img-btn-'+sid);
+      var btn=document.getElementById(btnId);
+      if(btn){
+        btn.style.borderColor=''; btn.style.color='';
+        if(isSingle){
+          btn.innerHTML=SVG_ATTACH+'Attach Photo — '+SID_LABELS[sid]+' (1 image)';
+        } else {
+          btn.innerHTML=SVG_ATTACH+'Photo '+slot+' — '+SID_LABELS[sid];
+        }
+      }
+      // Reset name label
       var nameEl=document.getElementById('sr-img-name-'+sid+'-'+slot);
-      var previewEl=document.getElementById('sr-preview-'+sid+'-'+slot);
       if(nameEl) nameEl.textContent='';
+      // Reset preview
+      var previewKey=slot===2?(sid+'-2'):sid;
+      var previewEl=document.getElementById('sr-preview-'+previewKey);
       if(previewEl) previewEl.innerHTML='';
     });
   });
@@ -5037,7 +5099,7 @@ function openServiceReport(planId){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.15.9</div>
+<div class="version-badge" style="display:none">v1.16.0</div>
 </body>
 </html>
 
