@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.16.17</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.18</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.16.17 — visionOS-inspired
+   LIQUID GLASS v1.16.18 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1941,7 +1941,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.16.17</div>
+  <div class="home-version">v1.16.18</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -5291,6 +5291,8 @@ function exportTablePDF(){
   'table{width:100%;border-collapse:collapse;font-size:8.5px}'+
   'th{background:#1e3a5f;color:#fff;padding:5px 7px;text-align:left;white-space:nowrap;font-size:8px;font-weight:600}'+
   'td{padding:4px 7px;border-bottom:1px solid #e2e8f0;vertical-align:middle}'+
+  'tr{page-break-inside:avoid}'+
+  'thead{display:table-header-group;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
   '.legend{display:flex;gap:16px;margin-top:6px;flex-wrap:wrap}'+
   '.leg{display:flex;align-items:center;gap:4px;font-size:8px;color:#475569}'+
   '.leg-dot{width:9px;height:9px;border-radius:2px;display:inline-block;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
@@ -5348,7 +5350,16 @@ function exportTablePDF(){
       '</div>'+
     '</div>'+
   '</div>'+
-  '<script>window.onload=function(){ window.print(); };<\/script>'+
+  '<script>'+
+'window.onload=function(){'+
+'  var ph=Math.round(176*3.7795275591);'+
+'  var totalH=document.documentElement.scrollHeight;'+
+'  var pages=Math.max(1,Math.ceil(totalH/ph));'+
+'  var el=document.getElementById("rpt-pg-num");'+
+'  if(el) el.textContent="Page 1 of "+pages;'+
+'  window.print();'+
+'};'+
+'<\/script>'+
   '</body></html>';
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
@@ -5357,7 +5368,7 @@ function exportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.16.17</div>
+<div class="version-badge" style="display:none">v1.16.18</div>
 </body>
 </html>
 
