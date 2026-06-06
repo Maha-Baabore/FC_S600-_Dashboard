@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.16.10</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.11</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.16.10 — visionOS-inspired
+   LIQUID GLASS v1.16.11 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1941,7 +1941,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.16.10</div>
+  <div class="home-version">v1.16.11</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2394,15 +2394,15 @@ html:not(.light) .sched-gantt {
         <div style="padding:10px 0 4px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div>
             <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-old-version" onclick="srAttachImageSingle('old-version')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photo — Old Version (1 image)</button><span id="sr-img-name-old-version-1" class="sr-img-name"></span></div>
-            <div id="sr-preview-old-version-1" class="sr-img-preview" style="margin-top:4px"></div>
+            <div id="sr-preview-old-version-1" class="sr-img-preview" style="margin-top:5px;min-height:80px"></div>
           </div>
           <div>
             <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-new-version" onclick="srAttachImageSingle('new-version')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photo — New Version (1 image)</button><span id="sr-img-name-new-version-1" class="sr-img-name"></span></div>
-            <div id="sr-preview-new-version-1" class="sr-img-preview" style="margin-top:4px"></div>
+            <div id="sr-preview-new-version-1" class="sr-img-preview" style="margin-top:5px;min-height:80px"></div>
           </div>
         </div>
         <div class="sr-photo-row" style="margin-top:4px"><button class="sr-img-attach-btn" id="sr-img-btn-constant-log" onclick="srAttachImageSingle('constant-log')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photo — Constant Log (1 image)</button><span id="sr-img-name-constant-log-1" class="sr-img-name"></span></div>
-        <div id="sr-preview-constant-log-1" class="sr-img-preview" style="margin-top:4px;max-height:200px"></div>
+        <div id="sr-preview-constant-log-1" class="sr-img-preview" style="margin-top:5px;min-height:80px;max-height:200px"></div>
         <div class="sf-row" style="margin-top:10px"><label class="sf-label">Note / Remark</label>
           <textarea class="sf-input" id="sr-final-remark" placeholder="Additional notes..." rows="3" style="resize:vertical;min-height:60px;height:70px;line-height:1.5"></textarea></div>
       </div>
@@ -4738,7 +4738,7 @@ function gcExportPDF(){
       '<span class="leg-item"><span class="leg-dot" style="background:#10b981"></span>Done</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Cancelled</span>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.10</span><span>SRPLC Confidential</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.11</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
   '<script>window.onload=function(){ window.print(); };<\/script>'+
   '</body></html>';
@@ -5204,7 +5204,7 @@ function exportTablePDF(){
   'td{padding:4px 7px;border-bottom:1px solid #e2e8f0;vertical-align:middle}'+
   '.legend{display:flex;gap:16px;margin-top:6px;flex-wrap:wrap}'+
   '.leg{display:flex;align-items:center;gap:4px;font-size:8px;color:#475569}'+
-  '.leg-dot{width:9px;height:9px;border-radius:2px;display:inline-block}'+
+  '.leg-dot{width:9px;height:9px;border-radius:2px;display:inline-block;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
   '.footer{margin-top:8px;display:flex;justify-content:space-between;font-size:7px;color:#94a3b8;padding-top:4px;border-top:1px solid #e2e8f0}'+
   '.print-btn{position:fixed;bottom:20px;right:20px;background:#1e3a5f;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:9999;display:flex;align-items:center;gap:6px}'+
   '.print-btn:hover{background:#2d5a9e}'+
@@ -5226,7 +5226,7 @@ function exportTablePDF(){
       '<span class="leg"><span class="leg-dot" style="background:#dc2626"></span>Outdated / Decommissioned</span>'+
       '<span class="leg"><span class="leg-dot" style="background:#94a3b8"></span>Unknown</span>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.10</span><span>SRPLC Confidential</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.11</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
   '<script>window.onload=function(){ window.print(); };<\/script>'+
   '</body></html>';
@@ -5236,7 +5236,7 @@ function exportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.16.10</div>
+<div class="version-badge" style="display:none">v1.16.11</div>
 </body>
 </html>
 
