@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.16.7</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.8</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -250,7 +250,7 @@ header{background:rgba(8,12,24,.96);border-bottom:1px solid var(--br);padding:0 
 .thdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--br)}
 .ttitle{font-size:13px;font-weight:600}
 .tcnt{font-family:'Space Mono',monospace;font-size:11px;color:var(--tx3);margin-left:10px}
-.srch{background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:7px 12px;font-size:12px;color:var(--tx);outline:none;width:220px;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.srch{background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:7px 12px;font-size:12px;color:var(--tx);outline:none;width:200px;min-width:120px;font-family:'DM Sans',sans-serif;transition:border-color .2s}
 .srch::placeholder{color:var(--tx3)}.srch:focus{border-color:var(--ac2)}
 .tw{overflow-x:auto;overflow-y:auto;flex:1;min-height:0;display:block}
 .tw::-webkit-scrollbar{width:4px;height:4px}.tw::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:4px}.tw::-webkit-scrollbar-track{background:transparent}
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.16.7 — visionOS-inspired
+   LIQUID GLASS v1.16.8 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1937,7 +1937,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.16.7</div>
+  <div class="home-version">v1.16.8</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2064,11 +2064,11 @@ html:not(.light) .sched-gantt {
             <span class="ttitle">Metering Units</span><span class="tcnt" id="tc"></span>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
-            <div style="position:relative;display:inline-flex;align-items:center">
+            <div style="position:relative;display:inline-flex;align-items:center;flex-shrink:1;min-width:0">
               <svg style="position:absolute;left:9px;width:15px;height:15px;pointer-events:none;color:var(--tx3)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5l-4-4"/></svg>
               <input class="srch" id="si" type="text" placeholder="Search TAG, Site, Metering name..." oninput="sch()" style="padding-left:32px">
             </div>
-            <button class="sf-sm-btn" onclick="exportTablePDF()" style="white-space:nowrap;display:inline-flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3V15"/><path d="M6.5 9.5L12 15L17.5 9.5"/><path d="M4 19H20"/></svg> Export PDF</button>
+            <button class="sf-sm-btn" onclick="exportTablePDF()" style="white-space:nowrap;display:inline-flex;align-items:center;gap:5px;flex-shrink:0;z-index:1;position:relative"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3V15"/><path d="M6.5 9.5L12 15L17.5 9.5"/><path d="M4 19H20"/></svg> Export PDF</button>
           </div>
         </div>
         <div class="tw"><table>
@@ -4720,7 +4720,7 @@ function gcExportPDF(){
       '<span class="leg-item"><span class="leg-dot" style="background:#10b981"></span>Done</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Cancelled</span>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.7</span><span>SRPLC Confidential</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.8</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
   '<script>window.onload=function(){ window.print(); };<\/script>'+
   '</body></html>';
@@ -5177,17 +5177,16 @@ function exportTablePDF(){
       '<thead><tr><th>Region</th><th>Site / TAG</th><th>Metering Name</th><th>Firmware</th><th>FW Update</th><th>Status</th><th>Application</th><th>Config Date</th></tr></thead>'+
       '<tbody>'+rows+'</tbody>'+
     '</table>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.7</span><span>SRPLC Confidential</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.8</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
-  '<script>window.onload=function(){window.print();};<\/script>'+
-  '</body></html>';
+    '</body></html>';
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   window.open(URL.createObjectURL(blob),'_blank');
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.16.7</div>
+<div class="version-badge" style="display:none">v1.16.8</div>
 </body>
 </html>
 
