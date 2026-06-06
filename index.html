@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.16.20</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.21</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.16.20 — visionOS-inspired
+   LIQUID GLASS v1.16.21 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1941,7 +1941,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.16.20</div>
+  <div class="home-version">v1.16.21</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -5262,16 +5262,16 @@ function exportTablePDF(){
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>FC S600+ Metering Units</title>'+
   '<style>'+
   'body{margin:0;padding:0;font-family:"Helvetica Neue",Arial,sans-serif;font-size:9px;color:#1e293b;background:#fff}'+
-  '@page{size:A4 landscape;margin:15mm 10mm 12mm}'+
-  '@page{@top-left{content:"FC S600+ PTT \2014  Metering Units";font-size:9px;font-weight:700;color:#1e3a5f;font-family:Helvetica Neue,Arial,sans-serif;border-bottom:1.5px solid #1e3a5f;padding-bottom:2mm}}'+
-  '@page{@top-right{content:"'+dateStr+'  \\A  '+filtered.length+' records";font-size:8px;color:#64748b;font-family:Helvetica Neue,Arial,sans-serif;white-space:pre;text-align:right}}'+
+  '@page{size:A4 landscape;margin:10mm 10mm 14mm}'+
   '@page{@bottom-center{content:"Page " counter(page) " of " counter(pages);font-size:8px;color:#94a3b8;font-family:Helvetica Neue,Arial,sans-serif}}'+
   '@media print{body{margin:0}.print-btn{display:none!important}}'+
   '.page{width:100%;padding:0;box-sizing:border-box}'+
   '.header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1e3a5f;padding-bottom:6px;margin-bottom:8px}'+
-  '.header h1{font-size:14px;font-weight:700;color:#1e3a5f;margin:0 0 2px}'+
-  '.header .sub{font-size:9px;color:#64748b}'+
-  '.header .meta{text-align:right;font-size:8px;color:#64748b;line-height:1.5}'+
+  '.header-logo{height:44px;width:auto;flex-shrink:0}'+
+  '.header-title{flex:1;text-align:center;padding:0 8px}'+
+  '.header h1{font-size:14px;font-weight:700;color:#1e3a5f;margin:0 0 2px;text-align:center}'+
+  '.header-title p{font-size:9px;color:#64748b;margin:0;text-align:center}'+
+  '.header .meta{text-align:right;font-size:8px;color:#64748b;line-height:1.5;flex-shrink:0;min-width:90px}'+
   '.filter-bar{background:#f1f5f9;border-radius:4px;padding:4px 8px;font-size:8px;color:#475569;margin-bottom:6px}'+
   'table{width:100%;border-collapse:collapse;font-size:8.5px}'+
   'th{background:#1e3a5f;color:#fff;padding:5px 7px;text-align:left;white-space:nowrap;font-size:8px;font-weight:600}'+
@@ -5303,7 +5303,11 @@ function exportTablePDF(){
   '<button class="print-btn" onclick="window.print()">&#128438; Print / Save PDF</button>'+
   '<div class="page">'+
     '<div class="header">'+
-      '<div><h1>FC S600+ PTT — Metering Units</h1><div class="sub">PTT Metering Dashboard · FloBoss S600+</div></div>'+
+      '<img class="header-logo" src="'+LOGO_DATA+'" alt="Siamraj">'+
+      '<div class="header-title">'+
+        '<h1>FC S600+ PTT — Metering Units</h1>'+
+        '<p>SIAMRAJ PUBLIC COMPANY LIMITED &nbsp;|  PTT Metering Dashboard</p>'+
+      '</div>'+
       '<div class="meta">Total: <strong>'+filtered.length+'</strong> records<br>Date: '+dateStr+'</div>'+
     '</div>'+
     '<div class="filter-bar">Filter: '+filterText+'</div>'+
@@ -5347,7 +5351,7 @@ function exportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.16.20</div>
+<div class="version-badge" style="display:none">v1.16.21</div>
 </body>
 </html>
 
