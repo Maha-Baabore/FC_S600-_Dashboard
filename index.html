@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.16.16</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.17</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.16.16 — visionOS-inspired
+   LIQUID GLASS v1.16.17 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1941,7 +1941,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.16.16</div>
+  <div class="home-version">v1.16.17</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4780,7 +4780,22 @@ function gcExportPDF(){
     '</div>'+
     ganttSummaryHTML+
   '</div>'+
-  '<script>window.onload=function(){ window.print(); };<\/script>'+
+  '<script>'+
+'(function(){'+
+'  var style=document.createElement("style");'+
+'  style.textContent="@media print { body { counter-reset: page-counter; } .pg-hdr::after { display:none; } }";'+
+'  document.head.appendChild(style);'+
+'  function countPages(){'+
+'    var h=document.documentElement.scrollHeight;'+
+'    var ph=Math.ceil(297*3.7795);'+  // A4 landscape height approx in px
+'    var pgH=Math.ceil(210*3.7795);'+  // A4 landscape = 297w x 210h
+'    var total=Math.max(1,Math.ceil(h/pgH));'+
+'    var el=document.getElementById("pg-num");'+
+'    if(el) el.textContent+=(total>1?" • "+total+" pages":"");'+
+'  }'+
+'  window.onload=function(){ countPages(); window.print(); };'+
+'}())'+
+'<\/script>'+
   '</body></html>';
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
@@ -5262,23 +5277,27 @@ function exportTablePDF(){
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>FC S600+ Metering Units</title>'+
   '<style>'+
   'body{margin:0;padding:0;font-family:"Helvetica Neue",Arial,sans-serif;font-size:9px;color:#1e293b;background:#fff}'+
-  '@media print{body{margin:0}@page{size:A4 landscape;margin:8mm 10mm}}'+
-  '.page{width:277mm;margin:0 auto;padding:6mm 8mm;box-sizing:border-box}'+
+  '@media print{@page{size:A4 landscape;margin:18mm 10mm 10mm}body{margin:0}.print-btn{display:none!important}.pg-hdr{display:flex!important}}'+
+  '.page{width:100%;padding:0;box-sizing:border-box}'+
+  '.pg-hdr{display:none;position:fixed;top:0;left:0;right:0;height:14mm;background:#fff;padding:3mm 10mm 2mm;border-bottom:1.5px solid #1e3a5f;align-items:center;justify-content:space-between;z-index:999;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+  '.pg-hdr-left{font-size:9px;font-weight:700;color:#1e3a5f}'+
+  '.pg-hdr-center{font-size:7.5px;color:#64748b;text-align:center;flex:1;padding:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}'+
+  '.pg-hdr-right{font-size:8px;color:#64748b;white-space:nowrap;text-align:right}'+
   '.header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1e3a5f;padding-bottom:6px;margin-bottom:8px}'+
   '.header h1{font-size:14px;font-weight:700;color:#1e3a5f;margin:0 0 2px}'+
   '.header .sub{font-size:9px;color:#64748b}'+
   '.header .meta{text-align:right;font-size:8px;color:#64748b;line-height:1.5}'+
   '.filter-bar{background:#f1f5f9;border-radius:4px;padding:4px 8px;font-size:8px;color:#475569;margin-bottom:6px}'+
   'table{width:100%;border-collapse:collapse;font-size:8.5px}'+
-  'th{background:#1e3a5f;color:#fff;padding:5px 7px;text-align:left;white-space:nowrap;font-size:8px;font-weight:600}'+
+  'th{background:#1e3a5f;color:#fff;padding:5px 7px;text-align:left;white-space:nowrap;font-size:8px;font-weight:600;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
   'td{padding:4px 7px;border-bottom:1px solid #e2e8f0;vertical-align:middle}'+
+  'thead{display:table-header-group}'+
   '.legend{display:flex;gap:16px;margin-top:6px;flex-wrap:wrap}'+
   '.leg{display:flex;align-items:center;gap:4px;font-size:8px;color:#475569}'+
   '.leg-dot{width:9px;height:9px;border-radius:2px;display:inline-block;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
   '.footer{margin-top:8px;display:flex;justify-content:space-between;font-size:7px;color:#94a3b8;padding-top:4px;border-top:1px solid #e2e8f0}'+
   '.print-btn{position:fixed;bottom:20px;right:20px;background:#1e3a5f;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:9999;display:flex;align-items:center;gap:6px}'+
   '.print-btn:hover{background:#2d5a9e}'+
-  '@media print{.print-btn{display:none}}'+
   '.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}'+
   '.kpi-card{border-radius:6px;padding:8px 10px;display:flex;flex-direction:column;gap:2px;border:1px solid #e2e8f0;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
   '.kpi-label{font-size:7px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;opacity:.75}'+
@@ -5295,6 +5314,11 @@ function exportTablePDF(){
   '.sum-pct{font-size:7.5px;color:#94a3b8;margin-left:4px}'+
   '</style></head><body>'+
   '<button class="print-btn" onclick="window.print()">&#128438; Print / Save PDF</button>'+
+  '<div class="pg-hdr" id="pg-hdr">'+
+    '<div class="pg-hdr-left">FC S600+ PTT — Metering Units</div>'+
+    '<div class="pg-hdr-center">Filter: '+filterText+'</div>'+
+    '<div class="pg-hdr-right" id="pg-num">Date: '+dateStr+'</div>'+
+  '</div>'+
   '<div class="page">'+
     '<div class="header">'+
       '<div><h1>FC S600+ PTT — Metering Units</h1><div class="sub">PTT Metering Dashboard · FloBoss S600+</div></div>'+
@@ -5331,7 +5355,7 @@ function exportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.16.16</div>
+<div class="version-badge" style="display:none">v1.16.17</div>
 </body>
 </html>
 
