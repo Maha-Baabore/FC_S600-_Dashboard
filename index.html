@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.16.3</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.4</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.16.3 — visionOS-inspired
+   LIQUID GLASS v1.16.4 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1937,7 +1937,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.16.3</div>
+  <div class="home-version">v1.16.4</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4714,7 +4714,7 @@ function gcExportPDF(){
       '<span class="leg-item"><span class="leg-dot" style="background:#10b981"></span>Done</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Cancelled</span>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.3</span><span>SRPLC Confidential</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.4</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
   '<script>window.onload=function(){ window.print(); };<\/script>'+
   '</body></html>';
@@ -4858,7 +4858,7 @@ function exportServiceReportPDF(){
   '.header-center{flex:1;text-align:center}'+
   '.header-center h1{font-size:16px;font-weight:700;color:#1e3a5f;margin:0 0 2px}'+
   '.header-center .subtitle{font-size:12px;color:#64748b;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
-  '.header-right{text-align:right;font-size:11px;color:#475569;line-height:1.6;flex-shrink:0;min-width:90px}'+
+  '.header-right{text-align:right;font-size:5.5px;color:#475569;line-height:1.4;flex-shrink:0;min-width:50px}'+
   '.info-table{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:9.5px}'+
   '.info-table td{padding:4px 7px;border:1px solid #cbd5e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}'+
   '.info-table .lbl{background:#f1f5f9;font-weight:600;color:#334155;width:36%}'+
@@ -4882,13 +4882,14 @@ function exportServiceReportPDF(){
   '<div class="page">'+
     '<div class="header">'+
       '<img class="header-logo" src="'+LOGO_DATA+'" alt="Siamraj">'+
-      '<div class="header-center">'+
-        '<h1 style="background:none;border:none;margin:0 0 1px;padding:0">Firmware Update Service Report</h1>'+
-        '<div class="subtitle">Flow Computer — FloBoss S600+</div>'+
-      '</div>'+
-      '<div class="header-right">SIAMRAJ PUBLIC COMPANY LIMITED<br>289/9 Moo 10 Old Railway Rd.,<br>Samrong, Phrapradaeng,<br>Samutprakarn 10130 Thailand<br>Tel: +66 2 7435010-25 Ext.2116</div>'+
+      '<div style="flex:1"></div>'+
+      '<div class="header-right" style="font-size:5.5px;min-width:80px">SIAMRAJ PUBLIC COMPANY LIMITED<br>289/9 Moo 10 Old Railway Rd.,<br>Samrong, Phrapradaeng,<br>Samutprakarn 10130 Thailand<br>Tel: +66 2 7435010-25 Ext.2116</div>'+
     '</div>'+
     '<div class="page-content">'+
+    '<div style="text-align:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1.5px solid #1e3a5f">'+
+      '<div style="font-size:16px;font-weight:700;color:#1e3a5f">Firmware Update Service Report</div>'+
+      '<div style="font-size:11px;color:#64748b;margin-top:2px">Flow Computer — FloBoss S600+</div>'+
+    '</div>'+
     '<table class="info-table" style="font-size:9.5px">'+
       '<tr><td class="lbl" style="width:40%;font-weight:700">Work Site / Location</td><td class="val" style="font-weight:400">'+rptData.name+'</td></tr>'+
       '<tr><td class="lbl" style="font-weight:700">Site / PTT Region</td><td class="val" style="font-weight:400">'+rptData.site+' / '+rptData.region+'</td></tr>'+
@@ -5112,7 +5113,7 @@ function openServiceReport(planId){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.16.3</div>
+<div class="version-badge" style="display:none">v1.16.4</div>
 </body>
 </html>
 
