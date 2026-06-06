@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.16.8</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.9</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.16.8 — visionOS-inspired
+   LIQUID GLASS v1.16.9 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -848,6 +848,10 @@ html.light .chip.on, html:not(.light) .chip.on{
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--lg-bd) !important;
+  max-width: 180px !important;
+  min-width: 80px !important;
+  width: 180px !important;
+  flex-shrink: 1 !important;
 }
 #si:focus{
   border-color: rgba(0,212,255,.5) !important;
@@ -970,9 +974,9 @@ html.light .chip.on, html:not(.light) .chip.on{
 
 /* Modals */
 .modal-overlay, #conf-modal{
-  background: rgba(8,12,24,.45) !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(8,12,24,.12) !important;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 :root.light .modal-overlay, :root.light #conf-modal{
   background: rgba(148,163,184,.35) !important;
@@ -1937,7 +1941,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.16.8</div>
+  <div class="home-version">v1.16.9</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -3260,10 +3264,12 @@ function _buildAmChart(coloredData, regCnt) {
     hoverDiv.id = 'map-hover-tip';
     document.body.appendChild(hoverDiv);
   }
-  // Global mouse tracker for amCharts 5 (ev.originalEvent is undefined in bullet events)
+  // Global mouse tracker - attach to both document AND the map container
   var _mx = 0, _my = 0;
   var _mapMouseTracker = function(e){ _mx = e.clientX; _my = e.clientY; };
   document.addEventListener('mousemove', _mapMouseTracker);
+  var _chartDiv = document.getElementById('chartdiv');
+  if(_chartDiv) _chartDiv.addEventListener('mousemove', _mapMouseTracker);
 
   // ---- Pixel dot series ----
   var pointSeries = chart.series.push(am5map.MapPointSeries.new(amRoot, { autoScale: true }));
@@ -3283,8 +3289,10 @@ function _buildAmChart(coloredData, regCnt) {
       circle.events.on('pointerover', function(ev) {
         // Show tooltip — use region color for all including region 12
         var col = REGION_COLOR_MAP[ctx.region] || '#94a3b8';
+        hoverDiv.style.position = 'fixed';
         hoverDiv.style.color = col;
-        hoverDiv.style.background = '';
+        hoverDiv.style.background = 'var(--sf)';
+        hoverDiv.style.border = '1px solid '+col;
         hoverDiv.textContent = 'Region ' + ctx.region;
         hoverDiv.style.opacity = '1';
         hoverDiv.style.left = (_mx + 14) + 'px';
@@ -3346,7 +3354,10 @@ function _buildAmChart(coloredData, regCnt) {
       cursorOverStyle: 'pointer'
     });
     circle.events.on('pointerover', function(ev) {
+      hoverDiv.style.position = 'fixed';
       hoverDiv.style.color = col;
+      hoverDiv.style.background = 'var(--sf)';
+      hoverDiv.style.border = '1px solid '+col;
       hoverDiv.textContent = ctx.key;
       hoverDiv.style.opacity = '1';
       hoverDiv.style.left = (_mx + 14) + 'px';
@@ -4727,7 +4738,7 @@ function gcExportPDF(){
       '<span class="leg-item"><span class="leg-dot" style="background:#10b981"></span>Done</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Cancelled</span>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.8</span><span>SRPLC Confidential</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.9</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
   '<script>window.onload=function(){ window.print(); };<\/script>'+
   '</body></html>';
@@ -5212,7 +5223,7 @@ function exportTablePDF(){
       '<span class="leg"><span class="leg-dot" style="background:#dc2626"></span>Outdated / Decommissioned</span>'+
       '<span class="leg"><span class="leg-dot" style="background:#94a3b8"></span>Unknown</span>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.8</span><span>SRPLC Confidential</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.9</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
   '</body></html>';
 
@@ -5221,7 +5232,7 @@ function exportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.16.8</div>
+<div class="version-badge" style="display:none">v1.16.9</div>
 </body>
 </html>
 
