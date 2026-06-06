@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.16.11</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.12</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.16.11 — visionOS-inspired
+   LIQUID GLASS v1.16.12 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1941,7 +1941,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.16.11</div>
+  <div class="home-version">v1.16.12</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4719,7 +4719,7 @@ function gcExportPDF(){
   '.gantt-img{width:100%;height:auto;border:1px solid #e2e8f0;border-radius:4px;margin-top:4px}'+
   '.legend{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap}'+
   '.leg-item{display:flex;align-items:center;gap:4px;font-size:9px;color:#475569}'+
-  '.leg-dot{width:10px;height:10px;border-radius:2px;display:inline-block}'+
+  '.leg-dot{width:10px;height:10px;border-radius:2px;display:inline-block;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
   '.footer{margin-top:10px;padding-top:6px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;font-size:8px;color:#94a3b8}'+
   '</style></head><body>'+
   '<div class="page">'+
@@ -4738,7 +4738,6 @@ function gcExportPDF(){
       '<span class="leg-item"><span class="leg-dot" style="background:#10b981"></span>Done</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Cancelled</span>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.11</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
   '<script>window.onload=function(){ window.print(); };<\/script>'+
   '</body></html>';
@@ -5226,7 +5225,6 @@ function exportTablePDF(){
       '<span class="leg"><span class="leg-dot" style="background:#dc2626"></span>Outdated / Decommissioned</span>'+
       '<span class="leg"><span class="leg-dot" style="background:#94a3b8"></span>Unknown</span>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.11</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
   '<script>window.onload=function(){ window.print(); };<\/script>'+
   '</body></html>';
@@ -5236,7 +5234,7 @@ function exportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.16.11</div>
+<div class="version-badge" style="display:none">v1.16.12</div>
 </body>
 </html>
 
