@@ -4781,20 +4781,15 @@ function gcExportPDF(){
     ganttSummaryHTML+
   '</div>'+
   '<script>'+
-'(function(){'+
-'  var style=document.createElement("style");'+
-'  style.textContent="@media print { body { counter-reset: page-counter; } .pg-hdr::after { display:none; } }";'+
-'  document.head.appendChild(style);'+
-'  function countPages(){'+
-'    var h=document.documentElement.scrollHeight;'+
-'    var ph=Math.ceil(297*3.7795);'+  // A4 landscape height approx in px
-'    var pgH=Math.ceil(210*3.7795);'+  // A4 landscape = 297w x 210h
-'    var total=Math.max(1,Math.ceil(h/pgH));'+
-'    var el=document.getElementById("pg-num");'+
-'    if(el) el.textContent+=(total>1?" • "+total+" pages":"");'+
-'  }'+
-'  window.onload=function(){ countPages(); window.print(); };'+
-'}())'+
+'window.onload=function(){'+
+'  var body=document.body,html=document.documentElement;'+
+'  var totalH=Math.max(body.scrollHeight,html.scrollHeight);'+
+'  var pageH=Math.round(182*3.7795);'+
+'  var pages=Math.max(1,Math.ceil(totalH/pageH));'+
+'  var el=document.getElementById("pg-pg");'+
+'  if(el) el.textContent=pages+" page"+(pages>1?"s":"");'+
+'  window.print();'+
+'};'+
 '<\/script>'+
   '</body></html>';
 
@@ -5279,25 +5274,26 @@ function exportTablePDF(){
   'body{margin:0;padding:0;font-family:"Helvetica Neue",Arial,sans-serif;font-size:9px;color:#1e293b;background:#fff}'+
   '@media print{@page{size:A4 landscape;margin:18mm 10mm 10mm}body{margin:0}.print-btn{display:none!important}.pg-hdr{display:flex!important}}'+
   '.page{width:100%;padding:0;box-sizing:border-box}'+
-  '.pg-hdr{display:none;position:fixed;top:0;left:0;right:0;height:14mm;background:#fff;padding:3mm 10mm 2mm;border-bottom:1.5px solid #1e3a5f;align-items:center;justify-content:space-between;z-index:999;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
-  '.pg-hdr-left{font-size:9px;font-weight:700;color:#1e3a5f}'+
-  '.pg-hdr-center{font-size:7.5px;color:#64748b;text-align:center;flex:1;padding:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}'+
-  '.pg-hdr-right{font-size:8px;color:#64748b;white-space:nowrap;text-align:right}'+
   '.header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1e3a5f;padding-bottom:6px;margin-bottom:8px}'+
   '.header h1{font-size:14px;font-weight:700;color:#1e3a5f;margin:0 0 2px}'+
   '.header .sub{font-size:9px;color:#64748b}'+
   '.header .meta{text-align:right;font-size:8px;color:#64748b;line-height:1.5}'+
   '.filter-bar{background:#f1f5f9;border-radius:4px;padding:4px 8px;font-size:8px;color:#475569;margin-bottom:6px}'+
   'table{width:100%;border-collapse:collapse;font-size:8.5px}'+
-  'th{background:#1e3a5f;color:#fff;padding:5px 7px;text-align:left;white-space:nowrap;font-size:8px;font-weight:600;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+  'th{background:#1e3a5f;color:#fff;padding:5px 7px;text-align:left;white-space:nowrap;font-size:8px;font-weight:600}'+
   'td{padding:4px 7px;border-bottom:1px solid #e2e8f0;vertical-align:middle}'+
-  'thead{display:table-header-group}'+
   '.legend{display:flex;gap:16px;margin-top:6px;flex-wrap:wrap}'+
   '.leg{display:flex;align-items:center;gap:4px;font-size:8px;color:#475569}'+
   '.leg-dot{width:9px;height:9px;border-radius:2px;display:inline-block;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
   '.footer{margin-top:8px;display:flex;justify-content:space-between;font-size:7px;color:#94a3b8;padding-top:4px;border-top:1px solid #e2e8f0}'+
+  '.pg-hdr{display:none;position:fixed;top:0;left:0;right:0;background:#fff;padding:3mm 10mm 2mm;border-bottom:1.5px solid #1e3a5f;align-items:center;justify-content:space-between;z-index:9998;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+  '.pg-hdr-l{font-size:9px;font-weight:700;color:#1e3a5f;white-space:nowrap}'+
+  '.pg-hdr-c{font-size:7.5px;color:#64748b;flex:1;padding:0 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}'+
+  '.pg-hdr-r{font-size:8px;color:#64748b;white-space:nowrap;text-align:right}'+
+  '@media print{thead{display:table-header-group}th{-webkit-print-color-adjust:exact;print-color-adjust:exact}}'+
   '.print-btn{position:fixed;bottom:20px;right:20px;background:#1e3a5f;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:9999;display:flex;align-items:center;gap:6px}'+
   '.print-btn:hover{background:#2d5a9e}'+
+  '@media print{.print-btn{display:none}}'+
   '.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}'+
   '.kpi-card{border-radius:6px;padding:8px 10px;display:flex;flex-direction:column;gap:2px;border:1px solid #e2e8f0;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
   '.kpi-label{font-size:7px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;opacity:.75}'+
@@ -5314,10 +5310,10 @@ function exportTablePDF(){
   '.sum-pct{font-size:7.5px;color:#94a3b8;margin-left:4px}'+
   '</style></head><body>'+
   '<button class="print-btn" onclick="window.print()">&#128438; Print / Save PDF</button>'+
-  '<div class="pg-hdr" id="pg-hdr">'+
-    '<div class="pg-hdr-left">FC S600+ PTT — Metering Units</div>'+
-    '<div class="pg-hdr-center">Filter: '+filterText+'</div>'+
-    '<div class="pg-hdr-right" id="pg-num">Date: '+dateStr+'</div>'+
+  '<div class="pg-hdr">'+
+    '<div class="pg-hdr-l">FC S600+ PTT — Metering Units</div>'+
+    '<div class="pg-hdr-c">Filter: '+filterText+'</div>'+
+    '<div class="pg-hdr-r">'+dateStr+' &nbsp;•&nbsp; <span id="pg-pg"></span></div>'+
   '</div>'+
   '<div class="page">'+
     '<div class="header">'+
@@ -5351,7 +5347,8 @@ function exportTablePDF(){
   '</body></html>';
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
-  window.open(URL.createObjectURL(blob),'_blank');
+  var _url=URL.createObjectURL(blob);
+  setTimeout(function(){ window.open(_url,'_blank'); },0);
 }
 
 </script>
