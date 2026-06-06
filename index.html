@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.16.39</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.40</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.16.39 — visionOS-inspired
+   LIQUID GLASS v1.16.40 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1941,7 +1941,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.16.39</div>
+  <div class="home-version">v1.16.40</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -5357,13 +5357,14 @@ function exportTablePDF(){
 'window.onload=function(){'+
 '  var overlay=document.getElementById("fkpi-overlay");'+
 '  var spacer=document.getElementById("fkpi-spacer");'+
-'  var thead=document.querySelector("thead");'+
-'  if(overlay&&spacer&&thead){'+
-'    var theadH=thead.getBoundingClientRect().height;'+
-'    overlay.style.top=theadH+"px";'+
+'  var companyRow=document.querySelector("thead tr:first-child");'+
+'  var colHdrRow=document.querySelector("thead tr:last-child");'+
+'  if(overlay&&spacer&&companyRow){'+
+'    var compH=companyRow.getBoundingClientRect().height;'+
+'    overlay.style.top=compH+"px";'+
 '    var overlayH=overlay.getBoundingClientRect().height;'+
 '    spacer.style.height=overlayH+"px";'+
-'    spacer.querySelector("td").style.height=overlayH+"px";'+
+'    spacer.firstElementChild.style.height=overlayH+"px";'+
 '  }'+
 '  window.print();'+
 '};'+
@@ -5376,7 +5377,7 @@ function exportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.16.39</div>
+<div class="version-badge" style="display:none">v1.16.40</div>
 </body>
 </html>
 
