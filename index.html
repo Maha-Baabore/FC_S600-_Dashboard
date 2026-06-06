@@ -5141,16 +5141,19 @@ function openServiceReport(planId){
 //  exportTablePDF — Metering Units PDF (A4 Landscape, print preview)
 // ══════════════════════════════════════════
 function exportTablePDF(){
-  // Build filtered dataset (mirrors current table filter state)
+  // Build filtered dataset — mirrors render() filter logic exactly
+  var nv=function(v){ return (v||'').toString().trim(); };
   var filtered=DATA.filter(function(x){
-    if(ST.f.r.size>0&&!ST.f.r.has(String((x['PTT Region']||'').trim()))) return false;
-    if(ST.f.fw.size>0&&!ST.f.fw.has((x['Firmware']||'').trim())) return false;
-    if(ST.f.s.size>0&&!ST.f.s.has((x['Firmware Update']||'').trim())) return false;
-    if(ST.f.st.size>0&&!ST.f.st.has((x['Status']||'').trim())) return false;
-    if(ST.f.ap.size>0&&!ST.f.ap.has((x['Application']||'').trim())) return false;
+    if(ST.f.r.size>0  && !ST.f.r.has(nv(x['PTT Region'])))    return false;
+    if(ST.f.fw.size>0 && !ST.f.fw.has(nv(x['Firmware'])))     return false;
+    if(ST.f.fwu.size>0&& !ST.f.fwu.has(nv(x['Firmware Update']))) return false;
+    if(ST.f.st.size>0 && !ST.f.st.has(nv(x['Status'])))       return false;
+    if(ST.f.ap.size>0 && !ST.f.ap.has(nv(x['Applications']))) return false;
     if(ST.q){
       var q=ST.q.toLowerCase();
-      return (x['TAG']||'').toLowerCase().includes(q)||(x['Site']||'').toLowerCase().includes(q)||(x['Metering name']||'').toLowerCase().includes(q);
+      return nv(x['TAG']).toLowerCase().includes(q)||
+             nv(x['Site']).toLowerCase().includes(q)||
+             nv(x['Metering name']).toLowerCase().includes(q);
     }
     return true;
   });
@@ -5181,7 +5184,7 @@ function exportTablePDF(){
       '<td style="font-family:monospace;color:#334155">'+fw+'</td>'+
       '<td><span style="'+fwColor+'">'+fwu+'</span></td>'+
       '<td><span style="'+stColor+'">'+st+'</span></td>'+
-      '<td>'+((x['Application']||'').trim()||'—')+'</td>'+
+      '<td>'+(nv(x['Applications'])||nv(x['Application'])||'—')+'</td>'+
       '<td style="font-size:7.5px;color:#64748b">'+((x['Last config installed date']||'').trim()||'—')+'</td>'+
       '</tr>';
   }).join('');
