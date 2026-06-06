@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.16.15</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.16</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.16.15 — visionOS-inspired
+   LIQUID GLASS v1.16.16 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1941,7 +1941,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.16.15</div>
+  <div class="home-version">v1.16.16</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4090,7 +4090,7 @@ function gcExport(){
   // Layout
   var LABEL_W=180, COL_W=GC_VIEW==='day'?70:GC_VIEW==='week'?100:120;
   var HDR_H=GC_VIEW==='day'?48:34, GRP_H=28, ROW_H=32;
-  var SCALE=3;
+  var SCALE=2;
 
   // Count total rows
   var totalRows=0;
@@ -4584,7 +4584,7 @@ function gcExportPDF(){
 
   var LABEL_W=180, COL_W=GC_VIEW==='day'?70:GC_VIEW==='week'?100:120;
   var HDR_H=GC_VIEW==='day'?48:34, GRP_H=28, ROW_H=32;
-  var SCALE=2;
+  var SCALE=3;
 
   var totalRows=0;
   regions.forEach(function(reg){ totalRows++; if(GC_OPEN[reg]!==false) totalRows+=byRegion[reg].length; });
@@ -4701,34 +4701,26 @@ function gcExportPDF(){
   var ganttDataUrl=canvas.toDataURL('image/png');
   var now=new Date();
 
-  // Build activity summary
   var sumCounts={planned:0,inprogress:0,done:0,cancelled:0};
-  var sumBySite={};
-  pdfPlans.forEach(function(p){
-    var st=p.status||'planned';
-    if(sumCounts[st]!==undefined) sumCounts[st]++; else sumCounts.planned++;
-    var key=p.site+(p.tag?' / '+p.tag:'');
-    if(!sumBySite[key]) sumBySite[key]={site:p.site,tag:p.tag,date:p.date,status:p.status||'planned',fwTarget:p.fwTarget||'',performedBy:p.performedBy||''};
-  });
+  pdfPlans.forEach(function(p){ var st=p.status||'planned'; if(sumCounts[st]!==undefined) sumCounts[st]++; else sumCounts.planned++; });
   var statusLabel={planned:'Planned',inprogress:'In Progress',done:'Done',cancelled:'Cancelled'};
   var statusColor={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444'};
-  var viewLabel=GC_VIEW==='day'?(MONTH_EN[calMonth]+' '+calYear):'All Plans';
-  var summaryRows=Object.keys(sumBySite).map(function(k){
-    var s=sumBySite[k];
-    var sc=statusColor[s.status]||'#64748b';
-    var sl=statusLabel[s.status]||s.status;
-    var d=s.date?new Date(s.date).toLocaleDateString('th-TH',{day:'2-digit',month:'short',year:'numeric'}):'';
-    return '<tr><td style="padding:3px 6px;border-bottom:1px solid #e2e8f0">'+s.site+'</td>'+
-      '<td style="padding:3px 6px;border-bottom:1px solid #e2e8f0;color:#0284c7;font-family:monospace;font-size:8px">'+s.tag+'</td>'+
+  var MONTH_EN2=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var viewLabel=GC_VIEW==='day'?(MONTH_EN2[calMonth]+' '+calYear):'All Plans';
+  var summaryRows=pdfPlans.map(function(p){
+    var sc=statusColor[p.status||'planned']||'#64748b';
+    var sl=statusLabel[p.status||'planned']||p.status||'Planned';
+    var d=p.date?new Date(p.date).toLocaleDateString('th-TH',{day:'2-digit',month:'short',year:'numeric'}):'';
+    return '<tr><td style="padding:3px 6px;border-bottom:1px solid #e2e8f0">'+p.site+'</td>'+
+      '<td style="padding:3px 6px;border-bottom:1px solid #e2e8f0;color:#0284c7;font-family:monospace;font-size:8px">'+p.tag+'</td>'+
       '<td style="padding:3px 6px;border-bottom:1px solid #e2e8f0">'+d+'</td>'+
       '<td style="padding:3px 6px;border-bottom:1px solid #e2e8f0"><span style="color:'+sc+';font-weight:700">'+sl+'</span></td>'+
-      '<td style="padding:3px 6px;border-bottom:1px solid #e2e8f0;font-family:monospace;font-size:8px">'+s.fwTarget+'</td>'+
-      '<td style="padding:3px 6px;border-bottom:1px solid #e2e8f0;color:#64748b">'+s.performedBy+'</td></tr>';
+      '<td style="padding:3px 6px;border-bottom:1px solid #e2e8f0;font-family:monospace;font-size:8px">'+(p.fwTarget||'')+'</td>'+
+      '<td style="padding:3px 6px;border-bottom:1px solid #e2e8f0;color:#64748b">'+(p.performedBy||'')+'</td></tr>';
   }).join('');
   var ganttSummaryHTML=
     '<div style="margin-top:12px;page-break-inside:avoid">'+
-    '<div style="font-size:10px;font-weight:700;color:#1e3a5f;border-left:3px solid #1e3a5f;padding-left:8px;margin-bottom:8px">Activity Summary — '+viewLabel+' &nbsp;'+
-    '<span style="font-weight:400;font-size:9px;color:#64748b">(Total: '+pdfPlans.length+' activities)</span></div>'+
+    '<div style="font-size:10px;font-weight:700;color:#1e3a5f;border-left:3px solid #1e3a5f;padding-left:8px;margin-bottom:8px">Activity Summary — '+viewLabel+' <span style="font-weight:400;font-size:9px;color:#64748b">(Total: '+pdfPlans.length+' activities)</span></div>'+
     '<div style="display:flex;gap:10px;margin-bottom:8px">'+
       '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:5px;padding:5px 10px;font-size:9px;color:#1d4ed8;-webkit-print-color-adjust:exact;print-color-adjust:exact"><strong>'+pdfPlans.length+'</strong> Total</div>'+
       (sumCounts.planned?'<div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:5px;padding:5px 10px;font-size:9px;color:#4338ca;-webkit-print-color-adjust:exact;print-color-adjust:exact"><strong>'+sumCounts.planned+'</strong> Planned</div>':'')+
@@ -5217,22 +5209,11 @@ function exportTablePDF(){
   if(ST.f.ap.size>0) filterParts.push('App: '+Array.from(ST.f.ap).join(', '));
   if(ST.q) filterParts.push('Search: "'+ST.q+'"');
   var filterText=filterParts.length?filterParts.join(' | '):'All records';
-
-  // KPI computation from filtered data
   var kpiTotal=filtered.length;
-  var kpiFwUp=0,kpiFwOut=0,kpiFwUnk=0,kpiComm=0,kpiDecomm=0;
-  filtered.forEach(function(x){
-    var fwu=nv(x['Firmware Update']);
-    if(fwu==='Up-to-date') kpiFwUp++;
-    else if(fwu==='Outdated') kpiFwOut++;
-    else kpiFwUnk++;
-    var st=nv(x['Status']);
-    if(st==='Commissioned') kpiComm++;
-    else if(st==='Decommissioned') kpiDecomm++;
-  });
+  var kpiFwUp=0,kpiFwOut=0;
+  filtered.forEach(function(x){ var f=(x['Firmware Update']||'').trim(); if(f==='Up-to-date') kpiFwUp++; else if(f==='Outdated') kpiFwOut++; });
   var kpiFwUpPct=kpiTotal?Math.round(kpiFwUp/kpiTotal*100):0;
   var kpiFwOutPct=kpiTotal?Math.round(kpiFwOut/kpiTotal*100):0;
-  var kpiCommPct=kpiTotal?Math.round(kpiComm/kpiTotal*100):0;
 
   var rows=filtered.map(function(x,idx){
     var fw=(x['Firmware']||'—').trim();
@@ -5253,27 +5234,29 @@ function exportTablePDF(){
       '</tr>';
   }).join('');
 
-  // Application & FW summary
-  var appCounts={},fwVerCounts={};
+  var appCounts={},fwStatusCounts={'Up-to-date':0,'Outdated':0,'Unknown':0};
   filtered.forEach(function(x){
-    var ap=(x['Applications']||x['Application']||'Unknown').trim();
+    var ap=((x['Applications']||x['Application']||'Unknown').trim())||'Unknown';
     appCounts[ap]=(appCounts[ap]||0)+1;
-    var fw=(x['Firmware']||'Unknown').trim();
-    fwVerCounts[fw]=(fwVerCounts[fw]||0)+1;
+    var fwu=(x['Firmware Update']||'').trim();
+    if(fwu==='Up-to-date') fwStatusCounts['Up-to-date']++;
+    else if(fwu==='Outdated') fwStatusCounts['Outdated']++;
+    else fwStatusCounts['Unknown']++;
   });
-  var appColors={'Turbine':'#6366f1','Supervisory':'#0284c7','USM':'#f59e0b','Orifice':'#10b981'};
-  function barRow(label,count,total,color){
+  var appDotColors={'Turbine':'#0ea5e9','Supervisory':'#a855f7','USM':'#f59e0b','Orifice':'#10b981'};
+  var fwDotColors={'Up-to-date':'#10b981','Outdated':'#ef4444','Unknown':'#94a3b8'};
+  function dotRow(label,dotColor,count,total){
     var pct=total?Math.round(count/total*100):0;
-    return '<div class="summary-bar-row"><span class="summary-bar-label">'+label+'</span>'+
-      '<div class="summary-bar-track"><div class="summary-bar-fill" style="width:'+pct+'%;background:'+color+'"></div></div>'+
-      '<span class="summary-bar-count">'+count+'</span></div>';
+    return '<div class="sum-row">'+
+      '<span class="sum-dot-label"><span class="sum-dot" style="background:'+dotColor+'"></span>'+label+'</span>'+
+      '<span><span class="sum-count">'+count+'</span><span class="sum-pct">'+pct+'%</span></span>'+
+      '</div>';
   }
-  var appBars=Object.keys(appCounts).sort().map(function(k){
-    return barRow(k,appCounts[k],kpiTotal,appColors[k]||'#64748b');
+  var appRows=Object.keys(appCounts).sort().map(function(k){
+    return dotRow(k,appDotColors[k]||'#64748b',appCounts[k],kpiTotal);
   }).join('');
-  var fwVersSorted=Object.keys(fwVerCounts).sort(function(a,b){ return fwVerCounts[b]-fwVerCounts[a]; });
-  var fwBars=fwVersSorted.map(function(k){
-    return barRow(k,fwVerCounts[k],kpiTotal,'#0284c7');
+  var fwStatusRows=['Up-to-date','Outdated','Unknown'].filter(function(k){return fwStatusCounts[k]>0;}).map(function(k){
+    return dotRow(k,fwDotColors[k],fwStatusCounts[k],kpiTotal);
   }).join('');
 
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>FC S600+ Metering Units</title>'+
@@ -5301,14 +5284,15 @@ function exportTablePDF(){
   '.kpi-label{font-size:7px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;opacity:.75}'+
   '.kpi-val{font-size:18px;font-weight:700;line-height:1}'+
   '.kpi-sub{font-size:7.5px;opacity:.65}'+
-  '.summary-section{margin-top:12px;page-break-inside:avoid}'+
-  '.summary-title{font-size:9px;font-weight:700;color:#1e3a5f;border-left:3px solid #1e3a5f;padding-left:7px;margin-bottom:7px}'+
-  '.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}'+
-  '.summary-bar-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:8px}'+
-  '.summary-bar-label{width:90px;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}'+
-  '.summary-bar-track{flex:1;background:#e2e8f0;border-radius:3px;height:9px;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
-  '.summary-bar-fill{height:100%;border-radius:3px;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
-  '.summary-bar-count{width:28px;text-align:right;color:#334155;font-weight:600;flex-shrink:0}'+
+  '.sum-section{margin-top:12px;page-break-inside:avoid}'+
+  '.sum-title{font-size:9px;font-weight:700;color:#1e3a5f;border-left:3px solid #1e3a5f;padding-left:7px;margin-bottom:7px}'+
+  '.sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}'+
+  '.sum-sub-title{font-size:7.5px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}'+
+  '.sum-row{display:flex;align-items:center;justify-content:space-between;padding:3px 0;font-size:8.5px;border-bottom:1px solid #f1f5f9}'+
+  '.sum-dot-label{display:flex;align-items:center;gap:6px;color:#334155}'+
+  '.sum-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+  '.sum-count{font-weight:700;color:#0f172a;font-size:9px}'+
+  '.sum-pct{font-size:7.5px;color:#94a3b8;margin-left:4px}'+
   '</style></head><body>'+
   '<button class="print-btn" onclick="window.print()">&#128438; Print / Save PDF</button>'+
   '<div class="page">'+
@@ -5331,11 +5315,11 @@ function exportTablePDF(){
       '<span class="leg"><span class="leg-dot" style="background:#dc2626"></span>Outdated / Decommissioned</span>'+
       '<span class="leg"><span class="leg-dot" style="background:#94a3b8"></span>Unknown</span>'+
     '</div>'+
-    '<div class="summary-section">'+
-      '<div class="summary-title">Application &amp; Firmware Status Summary</div>'+
-      '<div class="summary-grid">'+
-        '<div><div style="font-size:7.5px;font-weight:700;color:#64748b;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">Application Type</div>'+appBars+'</div>'+
-        '<div><div style="font-size:7.5px;font-weight:700;color:#64748b;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">Firmware Version</div>'+fwBars+'</div>'+
+    '<div class="sum-section">'+
+      '<div class="sum-title">Application &amp; Firmware Status Summary</div>'+
+      '<div class="sum-grid">'+
+        '<div><div class="sum-sub-title">Application</div>'+appRows+'</div>'+
+        '<div><div class="sum-sub-title">Firmware Update Status</div>'+fwStatusRows+'</div>'+
       '</div>'+
     '</div>'+
   '</div>'+
@@ -5347,7 +5331,7 @@ function exportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.16.15</div>
+<div class="version-badge" style="display:none">v1.16.16</div>
 </body>
 </html>
 
