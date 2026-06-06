@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.16.12</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.14</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.16.12 — visionOS-inspired
+   LIQUID GLASS v1.16.14 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1941,7 +1941,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.16.12</div>
+  <div class="home-version">v1.16.14</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4090,7 +4090,7 @@ function gcExport(){
   // Layout
   var LABEL_W=180, COL_W=GC_VIEW==='day'?70:GC_VIEW==='week'?100:120;
   var HDR_H=GC_VIEW==='day'?48:34, GRP_H=28, ROW_H=32;
-  var SCALE=2;
+  var SCALE=3;
 
   // Count total rows
   var totalRows=0;
@@ -5169,6 +5169,22 @@ function exportTablePDF(){
   if(ST.q) filterParts.push('Search: "'+ST.q+'"');
   var filterText=filterParts.length?filterParts.join(' | '):'All records';
 
+  // KPI computation from filtered data
+  var kpiTotal=filtered.length;
+  var kpiFwUp=0,kpiFwOut=0,kpiFwUnk=0,kpiComm=0,kpiDecomm=0;
+  filtered.forEach(function(x){
+    var fwu=nv(x['Firmware Update']);
+    if(fwu==='Up-to-date') kpiFwUp++;
+    else if(fwu==='Outdated') kpiFwOut++;
+    else kpiFwUnk++;
+    var st=nv(x['Status']);
+    if(st==='Commissioned') kpiComm++;
+    else if(st==='Decommissioned') kpiDecomm++;
+  });
+  var kpiFwUpPct=kpiTotal?Math.round(kpiFwUp/kpiTotal*100):0;
+  var kpiFwOutPct=kpiTotal?Math.round(kpiFwOut/kpiTotal*100):0;
+  var kpiCommPct=kpiTotal?Math.round(kpiComm/kpiTotal*100):0;
+
   var rows=filtered.map(function(x,idx){
     var fw=(x['Firmware']||'—').trim();
     var fwu=(x['Firmware Update']||'—').trim();
@@ -5208,6 +5224,11 @@ function exportTablePDF(){
   '.print-btn{position:fixed;bottom:20px;right:20px;background:#1e3a5f;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:9999;display:flex;align-items:center;gap:6px}'+
   '.print-btn:hover{background:#2d5a9e}'+
   '@media print{.print-btn{display:none}}'+
+  '.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}'+
+  '.kpi-card{border-radius:6px;padding:8px 10px;display:flex;flex-direction:column;gap:2px;border:1px solid #e2e8f0;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+  '.kpi-label{font-size:7px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;opacity:.75}'+
+  '.kpi-val{font-size:18px;font-weight:700;line-height:1}'+
+  '.kpi-sub{font-size:7.5px;opacity:.65}'+
   '</style></head><body>'+
   '<button class="print-btn" onclick="window.print()">&#128438; Print / Save PDF</button>'+
   '<div class="page">'+
@@ -5216,6 +5237,11 @@ function exportTablePDF(){
       '<div class="meta">Total: <strong>'+filtered.length+'</strong> records<br>Date: '+dateStr+'</div>'+
     '</div>'+
     '<div class="filter-bar">Filter: '+filterText+'</div>'+
+    '<div class="kpi-row">'+
+      '<div class="kpi-card" style="background:#eff6ff;border-color:#bfdbfe"><div class="kpi-label" style="color:#1d4ed8">Total Units</div><div class="kpi-val" style="color:#1d4ed8">'+kpiTotal+'</div><div class="kpi-sub" style="color:#1d4ed8">all filtered records</div></div>'+
+      '<div class="kpi-card" style="background:#f0fdf4;border-color:#bbf7d0"><div class="kpi-label" style="color:#15803d">&#9650; FW Up-to-date</div><div class="kpi-val" style="color:#15803d">'+kpiFwUp+'</div><div class="kpi-sub" style="color:#15803d">'+kpiFwUpPct+'% of total</div></div>'+
+      '<div class="kpi-card" style="background:#fef2f2;border-color:#fecaca"><div class="kpi-label" style="color:#b91c1c">&#9660; FW Outdated</div><div class="kpi-val" style="color:#b91c1c">'+kpiFwOut+'</div><div class="kpi-sub" style="color:#b91c1c">'+kpiFwOutPct+'% of total</div></div>'+
+    '</div>'+
     '<table>'+
       '<thead><tr><th>Region</th><th>Site / TAG</th><th>Metering Name</th><th>Firmware</th><th>FW Update</th><th>Status</th><th>Application</th><th>Config Date</th></tr></thead>'+
       '<tbody>'+rows+'</tbody>'+
@@ -5234,7 +5260,7 @@ function exportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.16.12</div>
+<div class="version-badge" style="display:none">v1.16.14</div>
 </body>
 </html>
 
