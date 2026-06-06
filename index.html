@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.16.8</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.9</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -564,7 +564,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .gantt-progress-text{font-size:9px;color:var(--tx3);font-family:'Space Mono',monospace;margin-top:2px}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 /* Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.38);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.hidden{display:none!important}
 .modal-box{background:var(--sf);border:1px solid var(--br);border-radius:18px;width:100%;max-width:460px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.3)}
 .modal-box-wide{max-width:680px}
@@ -582,7 +582,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .modal-btn-secondary:hover{background:rgba(var(--ac-rgb,59,130,246),.1)}
 .sr-img-attach-btn{background:var(--sf2);border:1.5px solid var(--br);color:var(--tx2);border-radius:8px;padding:5px 10px;font-size:10px;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center;transition:border-color .15s,color .15s,box-shadow .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-flex;align-items:center;gap:5px}
 .sr-img-attach-btn:hover{border-color:var(--ac);color:var(--ac);box-shadow:0 0 0 2px rgba(var(--ac-rgb,2,132,199),.2)}
-.sr-section{margin-bottom:14px}
+.sr-section{margin-bottom:14px}.sr-table thead{position:static!important;top:auto!important}.sr-table thead tr{background:transparent!important}
 .sr-section-header{padding:6px 12px;font-size:11px;font-weight:700;border-left:3px solid;border-radius:6px;margin-bottom:6px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .sr-table{width:100%;border-collapse:collapse;font-size:10px}
 .sr-table th{background:rgba(0,0,0,.06);color:var(--tx2);padding:5px 8px;text-align:left;border:1px solid var(--br);font-weight:600;font-size:10px;letter-spacing:.5px;text-transform:uppercase}
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.16.8 — visionOS-inspired
+   LIQUID GLASS v1.16.9 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1937,7 +1937,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.16.8</div>
+  <div class="home-version">v1.16.9</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -3944,7 +3944,7 @@ function renderGantt(){
     var doneCount=ps.filter(function(p){ return p.status==='done'; }).length;
 
     // ── Region group row ──
-    labelHTML+='<div data-region="'+reg+'" data-type="group" style="height:'+GRP_H+'px;flex-shrink:0;display:flex;align-items:center;padding:0 8px;gap:5px;background:var(--sf2);border-bottom:1px solid var(--br);cursor:pointer" onclick="gcToggle(\''+reg+'\')">'+
+    labelHTML+='<div data-region="'+reg+'" data-type="group" title="Region '+reg+' | '+ps.length+' plan(s)"  style="height:'+GRP_H+'px;flex-shrink:0;display:flex;align-items:center;padding:0 8px;gap:5px;background:var(--sf2);border-bottom:1px solid var(--br);cursor:pointer" onclick="gcToggle(\''+reg+'\')">'+
       '<span style="font-size:9px;color:var(--tx3);display:inline-block;transition:transform .15s;">'+(isOpen?'<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 19L3.5 5H20.5L12 19Z"/></svg>':'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M9.5 5L16.5 12L9.5 19"/></svg>')+'</span>'+
       '<span style="font-size:10px;font-weight:700;font-family:Space Mono,monospace;color:'+regColor+'">'+reg+'</span>'+
       '<span data-region="'+reg+'" data-type="badge" style="font-size:9px;color:var(--tx3);font-family:Space Mono,monospace;margin-left:auto">'+doneCount+'/'+ps.length+'</span>'+
@@ -4720,7 +4720,7 @@ function gcExportPDF(){
       '<span class="leg-item"><span class="leg-dot" style="background:#10b981"></span>Done</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Cancelled</span>'+
     '</div>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.8</span><span>SRPLC Confidential</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.9</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
   '<script>window.onload=function(){ window.print(); };<\/script>'+
   '</body></html>';
@@ -4963,7 +4963,7 @@ function exportServiceReportPDF(){
     '<div class="footer"><div style="flex:3;overflow:hidden"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Firmware Update Service Report</div><div style="opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+rptData.name+'</div></div><div style="flex:2;text-align:center;white-space:nowrap;font-weight:600">Page 4 of 4</div><div style="flex:3;text-align:right;overflow:hidden"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Performed By (SRPLC): '+rptData.performedBy+'</div><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Acknowledged By (PTT): '+rptData.ackBy+'</div></div></div>'+
   '</div>'+
 
-  '<script>window.onload=function(){ window.print(); };<\/script>'+
+  '<div style="position:fixed;bottom:20px;right:20px;z-index:9999"><button onclick="window.print()" style="background:#1e3a5f;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3)">🖨 Print / Save PDF</button></div>'+
   '</body></html>';
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
@@ -5177,7 +5177,7 @@ function exportTablePDF(){
       '<thead><tr><th>Region</th><th>Site / TAG</th><th>Metering Name</th><th>Firmware</th><th>FW Update</th><th>Status</th><th>Application</th><th>Config Date</th></tr></thead>'+
       '<tbody>'+rows+'</tbody>'+
     '</table>'+
-    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.8</span><span>SRPLC Confidential</span></div>'+
+    '<div class="footer"><span>FC S600+ PTT — Metering Dashboard v1.16.9</span><span>SRPLC Confidential</span></div>'+
   '</div>'+
     '</body></html>';
 
@@ -5186,7 +5186,7 @@ function exportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.16.8</div>
+<div class="version-badge" style="display:none">v1.16.9</div>
 </body>
 </html>
 
