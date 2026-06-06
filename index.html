@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.16.36</title>
+<title>FC S600+ PTT — Metering Dashboard v1.16.37</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.16.36 — visionOS-inspired
+   LIQUID GLASS v1.16.37 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1941,7 +1941,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">FC S600+ PTT Dashboard</div>
   <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.16.36</div>
+  <div class="home-version">v1.16.37</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -5267,8 +5267,12 @@ function exportTablePDF(){
   '@page{@bottom-center{content:"Page " counter(page) " of " counter(pages);font-size:8px;color:#94a3b8;font-family:Helvetica Neue,Arial,sans-serif}}'+
   '@media print{body{margin:0}.print-btn{display:none!important}}'+
   '.page{width:100%;padding:0;box-sizing:border-box}'+
-  '.tbl-hdr-row td{padding:0 0 6px 0;border:none!important;background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
-  '.tbl-fkpi-row td{border:none!important;background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+  '.hdr-tbl{width:100%;border-collapse:collapse;table-layout:fixed;margin-bottom:0}'+
+  '.hdr-tbl tbody tr td{padding:0;height:0;border:none;line-height:0;font-size:0}'+
+  '.hdr-tbl thead{display:table-header-group;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+  '.data-tbl{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:0}'+
+  '.data-tbl thead{display:table-header-group;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+  '.tbl-hdr-row td{padding:0 0 5px 0;border:none!important;background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
   '.tbl-hdr-inner{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1e3a5f;padding-bottom:5px;margin-bottom:4px}'+
   '.tbl-hdr-logo{height:40px;width:auto;flex-shrink:0}'+
   '.tbl-hdr-mid{flex:1;text-align:center;padding:0 8px}'+
@@ -5311,30 +5315,32 @@ function exportTablePDF(){
   '</style></head><body>'+
   '<button class="print-btn" onclick="window.print()">&#128438; Print / Save PDF</button>'+
   '<div class="page">'+
-    '<table>'+
+    '<table class="hdr-tbl">'+
       '<thead>'+
-      '<tr class="tbl-hdr-row"><td colspan="8">'+
-        '<div class="tbl-hdr-inner">'+
-          '<img class="tbl-hdr-logo" src="'+LOGO_DATA+'" alt="Siamraj">'+
-          '<div class="tbl-hdr-mid">'+
-            '<h2>FC S600+ PTT — Metering Units</h2>'+
-            '<p>SIAMRAJ PUBLIC COMPANY LIMITED &nbsp;|  PTT Metering Dashboard</p>'+
+        '<tr class="tbl-hdr-row"><td colspan="8">'+
+          '<div class="tbl-hdr-inner">'+
+            '<img class="tbl-hdr-logo" src="'+LOGO_DATA+'" alt="Siamraj">'+
+            '<div class="tbl-hdr-mid">'+
+              '<h2>FC S600+ PTT — Metering Units</h2>'+
+              '<p>SIAMRAJ PUBLIC COMPANY LIMITED &nbsp;|  PTT Metering Dashboard</p>'+
+            '</div>'+
+            '<div class="tbl-hdr-right">Date: '+dateStr+'<br>Total: '+filtered.length+' records</div>'+
           '</div>'+
-          '<div class="tbl-hdr-right">Date: '+dateStr+'<br>Total: '+filtered.length+' records</div>'+
-        '</div>'+
-      '</td></tr>'+
-      '<tr><th>Region</th><th>Site / TAG</th><th>Metering Name</th><th>Firmware</th><th>FW Update</th><th>Status</th><th>Application</th><th>Config Date</th></tr>'+
+        '</td></tr>'+
       '</thead>'+
-      '<tbody>'+
-      '<tr class="tbl-fkpi-row"><td colspan="8" style="padding:0 0 8px 0;border:none!important;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+
-        '<div class="filter-bar" style="margin-bottom:6px">Filter: '+filterText+'</div>'+
-        '<div class="kpi-row">'+
-          '<div class="kpi-card" style="background:#eff6ff;border-color:#bfdbfe"><div class="kpi-label" style="color:#1d4ed8">Total Units</div><div class="kpi-val" style="color:#1d4ed8">'+kpiTotal+'</div><div class="kpi-sub" style="color:#1d4ed8">all filtered records</div></div>'+
-          '<div class="kpi-card" style="background:#f0fdf4;border-color:#bbf7d0"><div class="kpi-label" style="color:#15803d">&#9650; FW Up-to-date</div><div class="kpi-val" style="color:#15803d">'+kpiFwUp+'</div><div class="kpi-sub" style="color:#15803d">'+kpiFwUpPct+'% of total</div></div>'+
-          '<div class="kpi-card" style="background:#fef2f2;border-color:#fecaca"><div class="kpi-label" style="color:#b91c1c">&#9660; FW Outdated</div><div class="kpi-val" style="color:#b91c1c">'+kpiFwOut+'</div><div class="kpi-sub" style="color:#b91c1c">'+kpiFwOutPct+'% of total</div></div>'+
-        '</div>'+
-      '</td></tr>'+
-      rows+'</tbody>'+
+      '<tbody><tr><td style="padding:0;border:none"></td></tr></tbody>'+
+    '</table>'+
+    '<div class="filter-bar">Filter: '+filterText+'</div>'+
+    '<div class="kpi-row" style="margin-bottom:8px">'+
+      '<div class="kpi-card" style="background:#eff6ff;border-color:#bfdbfe"><div class="kpi-label" style="color:#1d4ed8">Total Units</div><div class="kpi-val" style="color:#1d4ed8">'+kpiTotal+'</div><div class="kpi-sub" style="color:#1d4ed8">all filtered records</div></div>'+
+      '<div class="kpi-card" style="background:#f0fdf4;border-color:#bbf7d0"><div class="kpi-label" style="color:#15803d">&#9650; FW Up-to-date</div><div class="kpi-val" style="color:#15803d">'+kpiFwUp+'</div><div class="kpi-sub" style="color:#15803d">'+kpiFwUpPct+'% of total</div></div>'+
+      '<div class="kpi-card" style="background:#fef2f2;border-color:#fecaca"><div class="kpi-label" style="color:#b91c1c">&#9660; FW Outdated</div><div class="kpi-val" style="color:#b91c1c">'+kpiFwOut+'</div><div class="kpi-sub" style="color:#b91c1c">'+kpiFwOutPct+'% of total</div></div>'+
+    '</div>'+
+    '<table class="data-tbl">'+
+      '<thead>'+
+        '<tr><th>Region</th><th>Site / TAG</th><th>Metering Name</th><th>Firmware</th><th>FW Update</th><th>Status</th><th>Application</th><th>Config Date</th></tr>'+
+      '</thead>'+
+      '<tbody>'+rows+'</tbody>'+
     '</table>'+
     '<div class="legend">'+
       '<span class="leg"><span class="leg-dot" style="background:#059669"></span>Up-to-date / Commissioned</span>'+
@@ -5349,18 +5355,7 @@ function exportTablePDF(){
       '</div>'+
     '</div>'+
   '</div>'+
-  '<script>'+
-'window.onload=function(){'+
-'  var fkpi=document.querySelector(".tbl-fkpi-row");'+
-'  var thead=document.querySelector("table thead");'+
-'  if(fkpi&&thead){'+
-'    var rows=thead.querySelectorAll("tr");'+
-'    if(rows.length>=1){thead.insertBefore(fkpi,rows[rows.length-1]);}'+
-'    else{thead.appendChild(fkpi);}'+
-'  }'+
-'  window.print();'+
-'};'+
-'<\/script>'+
+  '<script>window.onload=function(){window.print();};<\/script>'+
   '</body></html>';
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
@@ -5369,7 +5364,7 @@ function exportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.16.36</div>
+<div class="version-badge" style="display:none">v1.16.37</div>
 </body>
 </html>
 
