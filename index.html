@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.4</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.5</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.4 — visionOS-inspired
+   LIQUID GLASS v1.17.5 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1957,7 +1957,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard &middot; PTT Overall</div>
-  <div class="home-version">v1.17.4</div>
+  <div class="home-version">v1.17.5</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2088,7 +2088,7 @@ html:not(.light) .sched-gantt {
               <svg style="position:absolute;left:9px;width:15px;height:15px;pointer-events:none;color:var(--tx3)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5l-4-4"/></svg>
               <input class="srch" id="si" type="text" placeholder="Search TAG, Site, Metering name..." oninput="sch()" style="padding-left:32px">
             </div>
-            <button class="sf-sm-btn" onclick="exportTablePDF()" style="white-space:nowrap;display:inline-flex;align-items:center;gap:5px;flex-shrink:0;z-index:1;position:relative"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3V15"/><path d="M6.5 9.5L12 15L17.5 9.5"/><path d="M4 19H20"/></svg> Export PDF</button>
+            <button id="btn-export-table-pdf" class="sf-sm-btn" onclick="exportTablePDF()" style="white-space:nowrap;display:inline-flex;align-items:center;gap:5px;flex-shrink:0;z-index:1;position:relative"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3V15"/><path d="M6.5 9.5L12 15L17.5 9.5"/><path d="M4 19H20"/></svg> Export PDF</button>
           </div>
         </div>
         <div class="tw"><table>
@@ -5250,6 +5250,28 @@ function openServiceReport(planId){
 //  exportTablePDF — Metering Units PDF (A4 Landscape, print preview)
 // ══════════════════════════════════════════
 function exportTablePDF(){
+  // ── UX: show loading state immediately, yield paint, then do heavy work ──
+  var _exportBtn = document.getElementById('btn-export-table-pdf');
+  var _exportBtnOrigHTML = _exportBtn ? _exportBtn.innerHTML : '';
+  if(_exportBtn){
+    _exportBtn.disabled = true;
+    _exportBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="animation:sp .8s linear infinite"><path d="M12 3A9 9 0 1 1 4.5 7"/></svg> Building...';
+  }
+  // requestAnimationFrame ensures the disabled/loading state is painted before
+  // we block the main thread with HTML string construction and Blob creation.
+  // The inner setTimeout(0) yields one additional task-queue turn so pending
+  // input events (e.g. keystrokes in the search box) can drain first.
+  requestAnimationFrame(function(){
+    setTimeout(function(){
+      _doExportTablePDF();
+      if(_exportBtn){
+        _exportBtn.disabled = false;
+        _exportBtn.innerHTML = _exportBtnOrigHTML;
+      }
+    }, 0);
+  });
+}
+function _doExportTablePDF(){
   var LOGO_DATA='data:image/jpeg;base64,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xkNuFQ09osOIUpRwOqUqGfOvaTw29I4QRalPtpnNRVNNPgZCVFJHUZ04OD1xThMK8/B1xZEsJnOB3sJJcJSMklGEY7uBgfRnem7tvvatJivrYToSG0uSi4WlhYKlKJHfBTtjp9OwHT3DzpntPRyw20BG7RABGsoW4pZ5b51j13zUfC4SnMOwlrltERhEykFXeLROrpy04x6nNezdn4nUWm3rxhpKQgrQvv41ZKjturBx4d0eJr2ftvEqy6Wbm2g5U43k7ZKdPZqGOQxqChuCfDagO7rY58qatyK+00DLZka1gnupRpKMeoB+nyplbuEZDD0NUl5hxlpLCHmdyhYQwpC9iN8qKDv0HjUu5BuiI01LUxS1l9Co2peClsKSpSScc/lj00imM+3cSPPSnIdxSwh0OJQhS86AoJKSNtlApI6jCj5UA2VwrM+EWHULjJYRKW8vBOcF9S8AYx8hRTz6mltPDE+H2JkvtOO64upbecBLOo9dyTqxnrnpTtdrvqo68TyHjHfSCHlYC1O5bPLojIz/APadRYl2Tde2W+Uxe01FCndWUdkE6cdDr72c/bQE6OVFAooAooooAooooAooooAooooAooooAooooAooooAooooD/9k=';
   // Build filtered dataset — mirrors render() filter logic exactly
   var nv=function(v){ return (v||'').toString().trim(); };
@@ -5447,11 +5469,11 @@ function exportTablePDF(){
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   var _tblUrl=URL.createObjectURL(blob);
-  setTimeout(function(){ window.open(_tblUrl,'_blank'); }, 0);
+  window.open(_tblUrl,'_blank');
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.4</div>
+<div class="version-badge" style="display:none">v1.17.5</div>
 </body>
 </html>
 
