@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.7</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.8</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.7 — visionOS-inspired
+   LIQUID GLASS v1.17.8 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard &middot; PTT Overall</div>
-  <div class="home-version">v1.17.7</div>
+  <div class="home-version">v1.17.8</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4894,35 +4894,31 @@ function exportServiceReportPDF(){
     }).join('');
   }
 
+  // imgSection — always renders a fixed-height frame.
+  // Empty slots show a dashed placeholder at the same height so layout is stable.
+  // Fixed heights: checklist sections 150px per slot, constant-log 180px, version 150px.
   function imgSection(sectionId, label){
     var isConstantLog=(sectionId==='constant-log');
     var isVersionPhoto=(sectionId==='old-version'||sectionId==='new-version');
     var key1=sectionId, key2=sectionId+'-2';
     var img1=_srReportImages[key1], img2=_srReportImages[key2];
-    if(!img1&&!img2) return '';
-    var html='<div style="margin-top:8px;padding-bottom:8px">';
+    var H = isConstantLog ? '180px' : '150px'; // fixed slot height
+    var FRAME='border:1.5px solid #cbd5e1;border-radius:4px;padding:3px;background:#f8fafc;box-sizing:border-box';
+    var EMPTY='<div style="'+FRAME+';height:'+H+';display:flex;align-items:center;justify-content:center;border-style:dashed"><span style="font-size:8px;color:#94a3b8">No image attached</span></div>';
+    function slot(img){
+      if(!img) return EMPTY;
+      return '<div style="'+FRAME+'"><img src="'+img.dataUrl+'" style="width:100%;height:'+H+';object-fit:contain;border-radius:2px;display:block"></div>';
+    }
+    var html='<div style="margin-top:6px;margin-bottom:8px;page-break-inside:avoid">';
     if(label) html+='<div style="font-size:9px;font-weight:600;color:#64748b;margin-bottom:4px">'+label+'</div>';
-    if(isConstantLog){
-      // Single large image - standardized border
-      var img=img1||img2;
-      html+='<div style="border:1.5px solid #cbd5e1;border-radius:4px;padding:3px;background:#f8fafc">';
-      html+='<img src="'+img.dataUrl+'" style="width:100%;height:auto;max-height:260px;object-fit:contain;border-radius:2px;display:block">';
-      html+='</div>';
-    } else if(isVersionPhoto){
-      // Single image, 1.5x size - standardized border
-      var img=img1||img2;
-      html+='<div style="border:1.5px solid #cbd5e1;border-radius:4px;padding:3px;background:#f8fafc">';
-      html+='<img src="'+img.dataUrl+'" style="width:100%;height:auto;max-height:165px;object-fit:contain;border-radius:2px;display:block">';
-      html+='</div>';
-    } else if(img1&&img2){
-      html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">';
-      html+='<div style="border:1.5px solid #cbd5e1;border-radius:4px;padding:3px;background:#f8fafc"><img src="'+img1.dataUrl+'" style="width:100%;height:auto;max-height:190px;object-fit:contain;border-radius:2px;display:block"></div>';
-      html+='<div style="border:1.5px solid #cbd5e1;border-radius:4px;padding:3px;background:#f8fafc"><img src="'+img2.dataUrl+'" style="width:100%;height:auto;max-height:190px;object-fit:contain;border-radius:2px;display:block"></div>';
-      html+='</div>';
+    if(isConstantLog||isVersionPhoto){
+      // Single-image sections — full width
+      html+=slot(img1||img2);
     } else {
-      var img=img1||img2;
-      html+='<div style="border:1.5px solid #cbd5e1;border-radius:4px;padding:3px;background:#f8fafc;display:inline-block">';
-      html+='<img src="'+img.dataUrl+'" style="width:100%;height:auto;max-height:190px;object-fit:contain;border-radius:2px;display:block">';
+      // Two-slot sections — always render both frames side by side
+      html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">';
+      html+=slot(img1);
+      html+=slot(img2);
       html+='</div>';
     }
     html+='</div>';
@@ -4993,7 +4989,7 @@ function exportServiceReportPDF(){
       '<tr><td class="lbl" style="font-weight:700">New Firmware</td><td class="val" style="font-weight:400;color:#059669;font-weight:700">'+rptData.fwNew+'</td></tr>'+
     '</table>'+
     '</div>'+
-    '<div class="footer"><div style="flex:3;overflow:hidden"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Firmware Update Service Report</div><div style="opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+rptData.name+'</div></div><div style="flex:2;text-align:center;white-space:nowrap;font-weight:600">Page 1 of 4</div><div style="flex:3;text-align:right;overflow:hidden"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Performed By (SRPLC): '+rptData.performedBy+'</div><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Acknowledged By (PTT): '+rptData.ackBy+'</div></div></div>'+
+    '<div class="footer"><div style="flex:3;overflow:hidden"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Firmware Update Service Report</div><div style="opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+rptData.name+'</div></div><div style="flex:2;text-align:center;white-space:nowrap;font-weight:600">Page 1 of 5</div><div style="flex:3;text-align:right;overflow:hidden"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Performed By (SRPLC): '+rptData.performedBy+'</div><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Acknowledged By (PTT): '+rptData.ackBy+'</div></div></div>'+
   '</div>'+
 
   '<div class="page page-break">'+
@@ -5006,7 +5002,7 @@ function exportServiceReportPDF(){
     '<table class="checklist"><tr><th>Description</th><th class="c">Check</th><th class="r">Remarks</th></tr>'+chkRows(CL.performFw,'Done','Not Done')+'</table>'+
     imgSection('perform-update','Perform Firmware Update Photo')+
     '</div>'+
-    '<div class="footer"><div style="flex:3;overflow:hidden"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Firmware Update Service Report</div><div style="opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+rptData.name+'</div></div><div style="flex:2;text-align:center;white-space:nowrap;font-weight:600">Page 2 of 4</div><div style="flex:3;text-align:right;overflow:hidden"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Performed By (SRPLC): '+rptData.performedBy+'</div><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Acknowledged By (PTT): '+rptData.ackBy+'</div></div></div>'+
+    '<div class="footer"><div style="flex:3;overflow:hidden"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Firmware Update Service Report</div><div style="opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+rptData.name+'</div></div><div style="flex:2;text-align:center;white-space:nowrap;font-weight:600">Page 2 of 5</div><div style="flex:3;text-align:right;overflow:hidden"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Performed By (SRPLC): '+rptData.performedBy+'</div><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Acknowledged By (PTT): '+rptData.ackBy+'</div></div></div>'+
   '</div>'+
 
   '<div class="page page-break">'+
@@ -5018,11 +5014,18 @@ function exportServiceReportPDF(){
     '<h2 style="background:#fff7ed;border-color:#f59e0b;color:#92400e">Calculation Tests</h2>'+
     '<table class="checklist"><tr><th>Description</th><th class="c">Check</th><th class="r">Remarks</th></tr>'+chkRows(CL.calcTests,'Pass','Fail')+'</table>'+
     imgSection('calc-test','Calculation Tests Photo')+
+    '</div>'+
+    '<div class="footer"><div style="flex:3;overflow:hidden"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Firmware Update Service Report</div><div style="opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+rptData.name+'</div></div><div style="flex:2;text-align:center;white-space:nowrap;font-weight:600">Page 3 of 5</div><div style="flex:3;text-align:right;overflow:hidden"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Performed By (SRPLC): '+rptData.performedBy+'</div><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Acknowledged By (PTT): '+rptData.ackBy+'</div></div></div>'+
+  '</div>'+
+
+  '<div class="page page-break">'+
+    '<div class="header"><img class="header-logo" src="'+LOGO_DATA+'" alt="Siamraj"><div class="header-center"><h1 style="background:none;border:none;margin:0;padding:0;font-size:12px">Firmware Update Service Report</h1><div class="subtitle" style="max-width:none;text-align:center">'+rptData.name+'</div></div><div class="header-right"><span class="tag-badge" style="font-size:10px;padding:2px 8px">'+rptData.tag+'</span></div></div>'+
+    '<div class="page-content">'+
     '<h2 style="background:#f0fdf4;border-color:#10b981;color:#065f46">Post-Update</h2>'+
     '<table class="checklist"><tr><th>Description</th><th class="c">Check</th><th class="r">Remarks</th></tr>'+chkRows(CL.postUpdate,'Done','Not Done')+'</table>'+
     imgSection('post-update','Post-Update Photo')+
     '</div>'+
-    '<div class="footer"><div style="flex:3;overflow:hidden"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Firmware Update Service Report</div><div style="opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+rptData.name+'</div></div><div style="flex:2;text-align:center;white-space:nowrap;font-weight:600">Page 3 of 4</div><div style="flex:3;text-align:right;overflow:hidden"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Performed By (SRPLC): '+rptData.performedBy+'</div><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Acknowledged By (PTT): '+rptData.ackBy+'</div></div></div>'+
+    '<div class="footer"><div style="flex:3;overflow:hidden"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Firmware Update Service Report</div><div style="opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+rptData.name+'</div></div><div style="flex:2;text-align:center;white-space:nowrap;font-weight:600">Page 4 of 5</div><div style="flex:3;text-align:right;overflow:hidden"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Performed By (SRPLC): '+rptData.performedBy+'</div><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Acknowledged By (PTT): '+rptData.ackBy+'</div></div></div>'+
   '</div>'+
 
   '<div class="page page-break">'+
@@ -5035,15 +5038,15 @@ function exportServiceReportPDF(){
     '</table>'+
     '<div class="ready-stmt">✓ Constant log is checked and Flow Computer Tag No. <span class="tag-badge">'+rptData.tag+'</span> is ready for service.</div>'+
     '<h2 style="background:#f1f5f9;border-color:#64748b;color:#334155">Constant Log Comparison</h2>'+
-    (imgSection('constant-log','')||'<div style="height:50px;border:1px dashed #cbd5e1;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#94a3b8">No image attached</div>')+
+    imgSection('constant-log','')+
     '<div class="photo-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">'+
       '<div><h2 style="margin-top:0;background:#f1f5f9;border-color:#64748b;color:#334155">Old Version</h2>'+
-      (imgSection('old-version','')||'<div style="height:50px;border:1px dashed #cbd5e1;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#94a3b8">No image attached</div>')+'</div>'+
+      imgSection('old-version','')+'</div>'+
       '<div><h2 style="margin-top:0;background:#f1f5f9;border-color:#64748b;color:#334155">New Version</h2>'+
-      (imgSection('new-version','')||'<div style="height:50px;border:1px dashed #cbd5e1;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#94a3b8">No image attached</div>')+'</div>'+
+      imgSection('new-version','')+'</div>'+
     '</div>'+
     '</div>'+
-    '<div class="footer"><div style="flex:3;overflow:hidden"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Firmware Update Service Report</div><div style="opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+rptData.name+'</div></div><div style="flex:2;text-align:center;white-space:nowrap;font-weight:600">Page 4 of 4</div><div style="flex:3;text-align:right;overflow:hidden"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Performed By (SRPLC): '+rptData.performedBy+'</div><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Acknowledged By (PTT): '+rptData.ackBy+'</div></div></div>'+
+    '<div class="footer"><div style="flex:3;overflow:hidden"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Firmware Update Service Report</div><div style="opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+rptData.name+'</div></div><div style="flex:2;text-align:center;white-space:nowrap;font-weight:600">Page 5 of 5</div><div style="flex:3;text-align:right;overflow:hidden"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Performed By (SRPLC): '+rptData.performedBy+'</div><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Acknowledged By (PTT): '+rptData.ackBy+'</div></div></div>'+
   '</div>'+
 
   '<script>window.onload=function(){ window.print(); };<\/script>'+
@@ -5509,7 +5512,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.7</div>
+<div class="version-badge" style="display:none">v1.17.8</div>
 </body>
 </html>
 
