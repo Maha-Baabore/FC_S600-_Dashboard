@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.2</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.3</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.2 — visionOS-inspired
+   LIQUID GLASS v1.17.3 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1088,9 +1088,14 @@ html.light .chip.on, html:not(.light) .chip.on{
 }
 
 /* Text input fields */
-input[type=text], input[type=url], select, textarea{
+input[type=text], input[type=url], textarea{
   background: var(--lg-bg) !important;
   backdrop-filter: blur(10px);
+  border: 1px solid var(--lg-bd) !important;
+}
+/* select: same styling but NO backdrop-filter (breaks native dropdown in Chrome) */
+select{
+  background: var(--lg-bg) !important;
   border: 1px solid var(--lg-bd) !important;
 }
 
@@ -1246,12 +1251,15 @@ html.light .cal-day:not(.selected):not(.cd-selected), html:not(.light) .cal-day:
 
 /* Inputs */
 html.light input, html:not(.light) input,
-html.light select, html:not(.light) select,
 html.light textarea, html:not(.light) textarea,
 html.light .sf-input, html:not(.light) .sf-input{
   background: var(--lg-bg) !important;
   backdrop-filter: blur(10px) !important;
   -webkit-backdrop-filter: blur(10px) !important;
+  border-color: var(--lg-bd) !important;
+}
+html.light select, html:not(.light) select{
+  background: var(--lg-bg) !important;
   border-color: var(--lg-bd) !important;
 }
 
@@ -1574,13 +1582,17 @@ html.light .vpbtn.active, html.light .vp-btn.active{
 :root:not(.light) .btn,
 :root:not(.light) input[type=text],
 :root:not(.light) input[type=url],
-:root:not(.light) select,
 :root:not(.light) textarea,
 :root:not(.light) .sf-input,
 :root:not(.light) #si{
   background: rgba(13,18,32,0.50) !important;
   backdrop-filter: blur(20px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  color: var(--tx) !important;
+}
+:root:not(.light) select{
+  background: rgba(13,18,32,0.50) !important;
   border-color: rgba(255,255,255,0.10) !important;
   color: var(--tx) !important;
 }
@@ -1751,13 +1763,17 @@ html.light .vpbtn.active, html.light .vp-btn.active{
 :root.light .btn,
 :root.light input[type=text],
 :root.light input[type=url],
-:root.light select,
 :root.light textarea,
 :root.light .sf-input,
 :root.light #si{
   background: rgba(255,255,255,0.50) !important;
   backdrop-filter: blur(20px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-color: rgba(255,255,255,0.65) !important;
+  color: #0f172a !important;
+}
+:root.light select{
+  background: rgba(255,255,255,0.50) !important;
   border-color: rgba(255,255,255,0.65) !important;
   color: #0f172a !important;
 }
@@ -1941,7 +1957,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard &middot; PTT Overall</div>
-  <div class="home-version">v1.17.2</div>
+  <div class="home-version">v1.17.3</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -5209,7 +5225,7 @@ function openServiceReport(planId){
       if(btn){
         btn.style.borderColor=''; btn.style.color='';
         if(isSingle){
-          btn.innerHTML=SVG_ATTACH+'Attach Photo — '+SID_LABELS[sid]+' (1 image)';
+          btn.innerHTML=SVG_ATTACH+'Attach Photo — '+SID_LABELS[sid];
         } else {
           btn.innerHTML=SVG_ATTACH+'Photo '+slot+' — '+SID_LABELS[sid];
         }
@@ -5382,7 +5398,7 @@ function exportTablePDF(){
           '<div class="tbl-hdr-inner">'+
             '<img class="tbl-hdr-logo" src="'+LOGO_DATA+'" alt="Siamraj">'+
             '<div class="tbl-hdr-mid">'+
-              '<h2>Flow Computer FloBoss™ S600+ - Metering Units Table</h2>'+
+              '<h2>Flow Computer FloBoss™ S600+ — Metering Units Table</h2>'+
               '<p>PTT Metering Dashboard</p>'+
             '</div>'+
             '<div class="tbl-hdr-right">Date: '+dateStr+'<br>Total: '+filtered.length+' records</div>'+
@@ -5436,7 +5452,7 @@ function exportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.2</div>
+<div class="version-badge" style="display:none">v1.17.3</div>
 </body>
 </html>
 
