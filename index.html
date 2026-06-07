@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.3</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.4</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.3 — visionOS-inspired
+   LIQUID GLASS v1.17.4 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1957,7 +1957,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard &middot; PTT Overall</div>
-  <div class="home-version">v1.17.3</div>
+  <div class="home-version">v1.17.4</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -5225,7 +5225,7 @@ function openServiceReport(planId){
       if(btn){
         btn.style.borderColor=''; btn.style.color='';
         if(isSingle){
-          btn.innerHTML=SVG_ATTACH+'Attach Photo — '+SID_LABELS[sid];
+          btn.innerHTML=SVG_ATTACH+'Attach Photo — '+SID_LABELS[sid]+' (1 image)';
         } else {
           btn.innerHTML=SVG_ATTACH+'Photo '+slot+' — '+SID_LABELS[sid];
         }
@@ -5233,9 +5233,8 @@ function openServiceReport(planId){
       // Reset name label
       var nameEl=document.getElementById('sr-img-name-'+sid+'-'+slot);
       if(nameEl) nameEl.textContent='';
-      // Reset preview
-      var previewKey=slot===2?(sid+'-2'):sid;
-      var previewEl=document.getElementById('sr-preview-'+previewKey);
+      // Reset preview — IDs are always sid+'-'+slot (e.g. sr-preview-pre-update-1)
+      var previewEl=document.getElementById('sr-preview-'+sid+'-'+slot);
       if(previewEl) previewEl.innerHTML='';
     });
   });
@@ -5452,7 +5451,7 @@ function exportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.3</div>
+<div class="version-badge" style="display:none">v1.17.4</div>
 </body>
 </html>
 
