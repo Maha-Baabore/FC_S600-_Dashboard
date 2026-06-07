@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FC S600+ PTT — Metering Dashboard v1.17.1</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.2</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -647,7 +647,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.1 — visionOS-inspired
+   LIQUID GLASS v1.17.2 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1939,9 +1939,9 @@ html:not(.light) .sched-gantt {
 <!-- HOME -->
 <div id="home">
   <div class="logo-box">FC<br>S600+</div>
-  <div class="home-title">FC S600+ PTT Dashboard</div>
-  <div class="home-sub">Metering Status Monitor &middot; PTT Overall</div>
-  <div class="home-version">v1.17.1</div>
+  <div class="home-title">Flow Computer FloBoss™ S600+</div>
+  <div class="home-sub">PTT Metering Dashboard &middot; PTT Overall</div>
+  <div class="home-version">v1.17.2</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -1996,7 +1996,7 @@ html:not(.light) .sched-gantt {
   <header>
     <div class="hlogo">
       <div class="hlogo-icon">FC<br>S600+</div>
-      <div><h1>PTT Metering Dashboard</h1><span id="hf">FC S600+ &middot; Overall</span></div>
+      <div><h1>PTT Metering Dashboard</h1><span id="hf">FloBoss™ S600+ &middot; Overall</span></div>
     </div>
     <div class="hright">
       <span class="lupd" id="h-upd"></span>
@@ -2263,15 +2263,15 @@ html:not(.light) .sched-gantt {
       </div>
 
       <!-- Checklist sections -->
-      <div class="sr-section">
+      <div class="sr-section" id="sr-section-pre-update">
         <div class="sr-section-header" style="background:rgba(251,191,36,.15);border-left-color:#f59e0b;color:#92400e;backdrop-filter:blur(8px)">Pre-Update</div>
         <table class="sr-table">
           <thead><tr><th>Description</th><th class="sr-th-check">Done</th><th class="sr-th-check">Not Done</th><th class="sr-th-remark">Remarks</th></tr></thead>
           <tbody>
-            <tr><td>Switch Meter run (If required)</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
-            <tr><td>Check FC status is not online</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
+            <tr id="sr-row-switch-meter"><td>Switch Meter run (If required)</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
+            <tr id="sr-row-check-fc"><td>Check FC status is not online</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
             <tr><td>Backup all data (Configuration, Alarm log, Event log, Archive report, Communication setting)</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
-            <tr><td>Print out Current report and Constant log</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
+            <tr id="sr-row-print-pre"><td>Print out Current report and Constant log</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
             <tr><td>Check communication</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
           </tbody>
         </table>
@@ -2339,16 +2339,16 @@ html:not(.light) .sched-gantt {
         </div>
       </div>
 
-      <div class="sr-section">
+      <div class="sr-section" id="sr-section-calc-test">
         <div class="sr-section-header" style="background:rgba(245,158,11,.12);border-left-color:#f59e0b;color:#b45309;backdrop-filter:blur(8px)">Calculation Tests</div>
         <table class="sr-table">
           <thead><tr><th>Description</th><th class="sr-th-check">Pass</th><th class="sr-th-check">Fail</th><th class="sr-th-remark">Remarks</th></tr></thead>
-          <tbody>
+          <tbody id="sr-calc-tbody">
             <tr><td>Fixed Gas Composition Test</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
             <tr><td>Fixed Compressibility Test</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
             <tr><td>Hourly Calculation Test</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
             <tr><td>Monthly Calculation Test</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
-            <tr><td>Linear K-Factor Calculation Test</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
+            <tr id="sr-row-linear-kfactor"><td>Linear K-Factor Calculation Test</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
           </tbody>
         </table>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
@@ -2371,7 +2371,7 @@ html:not(.light) .sched-gantt {
           <thead><tr><th>Description</th><th class="sr-th-check">Done</th><th class="sr-th-check">Not Done</th><th class="sr-th-remark">Remarks</th></tr></thead>
           <tbody>
             <tr><td>Cold start and set FC to ready for service (Check communication, Check constant log)</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
-            <tr><td>Print out Current report and Constant log</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
+            <tr id="sr-row-print-post"><td>Print out Current report and Constant log</td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td class="sr-td-check"><input type="checkbox" class="sr-chk"></td><td><input type="text" class="sr-remark-input"></td></tr>
           </tbody>
         </table>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
@@ -2393,15 +2393,15 @@ html:not(.light) .sched-gantt {
         <div class="sr-section-header" style="background:rgba(var(--ac-rgb,2,132,199),.1);border-left-color:var(--ac);color:var(--tx1);backdrop-filter:blur(8px)">Result &amp; Photos</div>
         <div style="padding:10px 0 4px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div>
-            <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-old-version" onclick="srAttachImageSingle('old-version')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photo — Old Version (1 image)</button><span id="sr-img-name-old-version-1" class="sr-img-name"></span></div>
+            <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-old-version" onclick="srAttachImageSingle('old-version')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photo — Old Version</button><span id="sr-img-name-old-version-1" class="sr-img-name"></span></div>
             <div id="sr-preview-old-version-1" class="sr-img-preview" style="margin-top:5px;min-height:80px"></div>
           </div>
           <div>
-            <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-new-version" onclick="srAttachImageSingle('new-version')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photo — New Version (1 image)</button><span id="sr-img-name-new-version-1" class="sr-img-name"></span></div>
+            <div class="sr-photo-row"><button class="sr-img-attach-btn" id="sr-img-btn-new-version" onclick="srAttachImageSingle('new-version')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photo — New Version</button><span id="sr-img-name-new-version-1" class="sr-img-name"></span></div>
             <div id="sr-preview-new-version-1" class="sr-img-preview" style="margin-top:5px;min-height:80px"></div>
           </div>
         </div>
-        <div class="sr-photo-row" style="margin-top:4px"><button class="sr-img-attach-btn" id="sr-img-btn-constant-log" onclick="srAttachImageSingle('constant-log')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photo — Constant Log (1 image)</button><span id="sr-img-name-constant-log-1" class="sr-img-name"></span></div>
+        <div class="sr-photo-row" style="margin-top:4px"><button class="sr-img-attach-btn" id="sr-img-btn-constant-log" onclick="srAttachImageSingle('constant-log')"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg> Attach Photo — Constant Log</button><span id="sr-img-name-constant-log-1" class="sr-img-name"></span></div>
         <div id="sr-preview-constant-log-1" class="sr-img-preview" style="margin-top:5px;min-height:80px;max-height:200px"></div>
         <div class="sf-row" style="margin-top:10px"><label class="sf-label">Note / Remark</label>
           <textarea class="sf-input" id="sr-final-remark" placeholder="Additional notes..." rows="3" style="resize:vertical;min-height:60px;height:70px;line-height:1.5"></textarea></div>
@@ -3604,13 +3604,20 @@ function populateSiteDropdown(){
   siteEl.onchange = function(){
     var site = siteEl.value;
     var tags = [];
-    DATA.forEach(function(x){ if((x['Site']||'').trim()===site&&(x['Status']||'').trim()==='Commissioned'){ var t=(x['TAG']||'').trim(); if(t&&tags.indexOf(t)<0) tags.push(t); } });
+    DATA.forEach(function(x){
+      if((x['Site']||'').trim()===site&&(x['Status']||'').trim()==='Commissioned'&&(x['Firmware Update']||'').trim()==='Outdated'){
+        var t=(x['TAG']||'').trim(); if(t&&tags.indexOf(t)<0) tags.push(t);
+      }
+    });
     tags.sort();
-    tagEl.innerHTML = '<option value="">-- Select TAG --</option>' +
-      tags.map(function(t){ return '<option value="'+t+'">'+t+'</option>'; }).join('');
-    if(tags.length){
-      var row=DATA.find(function(x){ return (x['TAG']||'').trim()===tags[0]; });
-      if(row) document.getElementById('sf-fw-target').value = row['Firmware']||'';
+    if(tags.length===0){
+      tagEl.innerHTML='<option value="">— No Outdated TAGs —</option>';
+      document.getElementById('sf-fw-target').value='';
+    } else {
+      tagEl.innerHTML = '<option value="">-- Select TAG --</option>' +
+        tags.map(function(t){ return '<option value="'+t+'">'+t+'</option>'; }).join('');
+      var firstRow=DATA.find(function(x){ return (x['TAG']||'').trim()===tags[0]; });
+      if(firstRow) document.getElementById('sf-fw-target').value = firstRow['Firmware']||'';
     }
   };
   tagEl.onchange = function(){
@@ -4745,7 +4752,7 @@ function gcExportPDF(){
   // Build print-preview HTML page
   var LOGO_DATA='data:image/jpeg;base64,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xkNuFQ09osOIUpRwOqUqGfOvaTw29I4QRalPtpnNRVNNPgZCVFJHUZ04OD1xThMK8/B1xZEsJnOB3sJJcJSMklGEY7uBgfRnem7tvvatJivrYToSG0uSi4WlhYKlKJHfBTtjp9OwHT3DzpntPRyw20BG7RABGsoW4pZ5b51j13zUfC4SnMOwlrltERhEykFXeLROrpy04x6nNezdn4nUWm3rxhpKQgrQvv41ZKjturBx4d0eJr2ftvEqy6Wbm2g5U43k7ZKdPZqGOQxqChuCfDagO7rY58qatyK+00DLZka1gnupRpKMeoB+nyplbuEZDD0NUl5hxlpLCHmdyhYQwpC9iN8qKDv0HjUu5BuiI01LUxS1l9Co2peClsKSpSScc/lj00imM+3cSPPSnIdxSwh0OJQhS86AoJKSNtlApI6jCj5UA2VwrM+EWHULjJYRKW8vBOcF9S8AYx8hRTz6mltPDE+H2JkvtOO64upbecBLOo9dyTqxnrnpTtdrvqo68TyHjHfSCHlYC1O5bPLojIz/APadRYl2Tde2W+Uxe01FCndWUdkE6cdDr72c/bQE6OVFAooAooooAooooAooooAooooAooooAooooAooooAooooD/9k=';
 
-  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>FC S600+ PTT — Gantt Chart</title>'+
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>FloBoss™ S600+ — Firmware Update Schedule</title>'+
   '<style>'+
   'body{margin:0;padding:0;font-family:"Helvetica Neue",Arial,sans-serif;background:#fff;color:#1e293b}'+
   '@media print{body{margin:0}@page{size:A4 landscape;margin:10mm}}'+
@@ -4766,8 +4773,8 @@ function gcExportPDF(){
     '<div class="header">'+
       '<img class="header-logo" src="'+LOGO_DATA+'" alt="Siamraj">'+
       '<div class="header-title">'+
-        '<h1>FC S600+ PTT — Firmware Update Schedule (Gantt Chart)</h1>'+
-        '<p>SIAMRAJ PUBLIC COMPANY LIMITED &nbsp;|&nbsp; PTT Metering Dashboard</p>'+
+        '<h1>Flow Computer FloBoss™ S600+ — Firmware Update Schedule</h1>'+
+        '<p>PTT Metering Dashboard</p>'+
       '</div>'+
       '<div class="header-right">Date: '+dateStr+'<br>View: '+GC_VIEW.charAt(0).toUpperCase()+GC_VIEW.slice(1)+'</div>'+
     '</div>'+
@@ -4952,7 +4959,7 @@ function exportServiceReportPDF(){
     '<div class="page-content">'+
     '<div style="text-align:center;margin-bottom:10px;padding-bottom:6px">'+
       '<div style="font-size:16px;font-weight:700;color:#1e3a5f">Firmware Update Service Report</div>'+
-      '<div style="font-size:11px;color:#64748b;margin-top:2px">Flow Computer — FloBoss S600+</div>'+
+      '<div style="font-size:11px;color:#64748b;margin-top:2px">Flow Computer FloBoss™ S600+</div>'+
     '</div>'+
     '<table class="info-table" style="font-size:9.5px">'+
       '<tr><td class="lbl" style="width:40%;font-weight:700">Work Site / Location</td><td class="val" style="font-weight:400">'+rptData.name+'</td></tr>'+
@@ -5118,6 +5125,50 @@ function srAttachImage(sectionId, slot){
 }
 
 // openServiceReport — open new modal with data from the reported plan
+// ══════════════════════════════════════════
+//  applyAppTypeToReport — adjust Service Report sections by Application type
+// ══════════════════════════════════════════
+function applyAppTypeToReport(app){
+  // Helper: show/hide element by id
+  function vis(id,show){ var el=document.getElementById(id); if(el) el.style.display=show?'':'none'; }
+
+  // Reset all to visible first
+  vis('sr-row-switch-meter',true);
+  vis('sr-row-check-fc',true);
+  vis('sr-row-print-pre',true);
+  vis('sr-section-calc-test',true);
+  vis('sr-row-print-post',true);
+  vis('sr-row-linear-kfactor',true);
+
+  // Restore calc tbody to full Turbine set (in case Orifice changed it)
+  var tbody=document.getElementById('sr-calc-tbody');
+  var chkCell='<td class="sr-td-check"><input type="checkbox" class="sr-chk"></td>';
+  var remarkCell='<td><input type="text" class="sr-remark-input"></td>';
+  function mkRow(label){ return '<tr><td>'+label+'</td>'+chkCell+chkCell+remarkCell+'</tr>'; }
+  tbody.innerHTML=
+    mkRow('Fixed Gas Composition Test')+
+    mkRow('Fixed Compressibility Test')+
+    mkRow('Hourly Calculation Test')+
+    mkRow('Monthly Calculation Test')+
+    '<tr id="sr-row-linear-kfactor"><td>Linear K-Factor Calculation Test</td>'+chkCell+chkCell+remarkCell+'</tr>';
+
+  var a=(app||'').trim();
+
+  if(a==='USM'){
+    vis('sr-row-linear-kfactor',false);
+  } else if(a==='Orifice'){
+    // Replace calc tests with single 24-Hours row
+    tbody.innerHTML='<tr><td>24-Hours Calculation Test</td>'+chkCell+chkCell+remarkCell+'</tr>';
+  } else if(a==='Supervisory'){
+    vis('sr-row-switch-meter',false);
+    vis('sr-row-check-fc',false);
+    vis('sr-row-print-pre',false);
+    vis('sr-section-calc-test',false);
+    vis('sr-row-print-post',false);
+  }
+  // Turbine: everything visible (already reset above)
+}
+
 function openServiceReport(planId){
   // Find the plan and its DATA row
   var p=PLANS.find(function(x){ return String(x.id)===String(planId); });
@@ -5172,6 +5223,9 @@ function openServiceReport(planId){
       if(previewEl) previewEl.innerHTML='';
     });
   });
+
+  // Apply app-type-specific section visibility
+  applyAppTypeToReport(row['Applications']||row['Application']||'');
 
   openModal('modal-service-report');
 }
@@ -5260,7 +5314,7 @@ function exportTablePDF(){
     return dotRow(k,fwDotColors[k],fwStatusCounts[k],kpiTotal);
   }).join('');
 
-  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>FC S600+ Metering Units</title>'+
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>FloBoss™ S600+ Metering Units</title>'+
   '<style>'+
   'body{margin:0;padding:0;font-family:"Helvetica Neue",Arial,sans-serif;font-size:9px;color:#1e293b;background:#fff}'+
   '@page{size:A4 landscape;margin:10mm}'+
@@ -5328,8 +5382,8 @@ function exportTablePDF(){
           '<div class="tbl-hdr-inner">'+
             '<img class="tbl-hdr-logo" src="'+LOGO_DATA+'" alt="Siamraj">'+
             '<div class="tbl-hdr-mid">'+
-              '<h2>FC S600+ PTT — Metering Units</h2>'+
-              '<p>SIAMRAJ PUBLIC COMPANY LIMITED &nbsp;|  PTT Metering Dashboard</p>'+
+              '<h2>Flow Computer FloBoss™ S600+ - Metering Units Table</h2>'+
+              '<p>PTT Metering Dashboard</p>'+
             '</div>'+
             '<div class="tbl-hdr-right">Date: '+dateStr+'<br>Total: '+filtered.length+' records</div>'+
           '</div>'+
@@ -5382,7 +5436,7 @@ function exportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.1</div>
+<div class="version-badge" style="display:none">v1.17.2</div>
 </body>
 </html>
 
