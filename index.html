@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.6</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.7</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.6 — visionOS-inspired
+   LIQUID GLASS v1.17.7 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard &middot; PTT Overall</div>
-  <div class="home-version">v1.17.6</div>
+  <div class="home-version">v1.17.7</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4916,13 +4916,13 @@ function exportServiceReportPDF(){
       html+='</div>';
     } else if(img1&&img2){
       html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">';
-      html+='<div style="border:1.5px solid #cbd5e1;border-radius:4px;padding:3px;background:#f8fafc"><img src="'+img1.dataUrl+'" style="width:100%;height:auto;max-height:120px;object-fit:contain;border-radius:2px;display:block"></div>';
-      html+='<div style="border:1.5px solid #cbd5e1;border-radius:4px;padding:3px;background:#f8fafc"><img src="'+img2.dataUrl+'" style="width:100%;height:auto;max-height:120px;object-fit:contain;border-radius:2px;display:block"></div>';
+      html+='<div style="border:1.5px solid #cbd5e1;border-radius:4px;padding:3px;background:#f8fafc"><img src="'+img1.dataUrl+'" style="width:100%;height:auto;max-height:190px;object-fit:contain;border-radius:2px;display:block"></div>';
+      html+='<div style="border:1.5px solid #cbd5e1;border-radius:4px;padding:3px;background:#f8fafc"><img src="'+img2.dataUrl+'" style="width:100%;height:auto;max-height:190px;object-fit:contain;border-radius:2px;display:block"></div>';
       html+='</div>';
     } else {
       var img=img1||img2;
       html+='<div style="border:1.5px solid #cbd5e1;border-radius:4px;padding:3px;background:#f8fafc;display:inline-block">';
-      html+='<img src="'+img.dataUrl+'" style="max-width:60%;height:auto;max-height:130px;object-fit:contain;border-radius:2px;display:block">';
+      html+='<img src="'+img.dataUrl+'" style="width:100%;height:auto;max-height:190px;object-fit:contain;border-radius:2px;display:block">';
       html+='</div>';
     }
     html+='</div>';
@@ -4961,7 +4961,7 @@ function exportServiceReportPDF(){
   '.checklist tr:nth-child(even) td{background:#f8fafc}'+
   '.photo-pair{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:4px 0 8px;page-break-inside:avoid}'+
   '.photo-single{margin:4px 0 8px;page-break-inside:avoid}'+
-  '.photo-single img,.photo-pair img{width:100%;height:auto;max-height:110px;object-fit:contain;border:1px solid #e2e8f0;border-radius:3px;display:block}'+
+  '.photo-single img,.photo-pair img{width:100%;height:auto;max-height:190px;object-fit:contain;border:1px solid #e2e8f0;border-radius:3px;display:block}'+
   '.photo-label{font-size:8px;font-weight:600;color:#64748b;margin-bottom:3px}'+
   '.footer{padding-top:5px;border-top:1.5px solid #1e3a5f;display:flex;align-items:center;gap:0;font-size:9px;color:#475569}'+
   '.tag-badge{display:inline-block;background:#eff6ff;border:1px solid #3b82f6;color:#1d4ed8;border-radius:3px;padding:0 4px;font-weight:700}'+
@@ -5509,7 +5509,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.6</div>
+<div class="version-badge" style="display:none">v1.17.7</div>
 </body>
 </html>
 
