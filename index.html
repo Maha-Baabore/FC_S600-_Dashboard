@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.9</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.10</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.9 — visionOS-inspired
+   LIQUID GLASS v1.17.10 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard &middot; PTT Overall</div>
-  <div class="home-version">v1.17.9</div>
+  <div class="home-version">v1.17.10</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4856,9 +4856,15 @@ function exportServiceReportPDF(){
   function getSectionChecklist(sectionIdx){
     var tables=modal.querySelectorAll('.sr-table');
     if(sectionIdx >= tables.length) return [];
-    var rows=tables[sectionIdx].querySelectorAll('tbody tr');
+    // If the table's closest sr-section ancestor is hidden, skip entire section
+    var tbl=tables[sectionIdx];
+    var sec=tbl.closest('.sr-section');
+    if(sec && sec.style.display==='none') return [];
+    var rows=tbl.querySelectorAll('tbody tr');
     var result=[];
     rows.forEach(function(tr){
+      // Skip rows hidden by applyAppTypeToReport (display:none)
+      if(tr.style.display==='none') return;
       var cells=tr.querySelectorAll('td');
       var desc=cells[0]?cells[0].textContent.trim():'';
       var chks=tr.querySelectorAll('.sr-chk');
@@ -5558,7 +5564,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.9</div>
+<div class="version-badge" style="display:none">v1.17.10</div>
 </body>
 </html>
 
