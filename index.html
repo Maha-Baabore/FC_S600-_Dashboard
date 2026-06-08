@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.21</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.22</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.21 — visionOS-inspired
+   LIQUID GLASS v1.17.22 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.21</div>
+  <div class="home-version">v1.17.22</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2179,6 +2179,11 @@ html:not(.light) .sched-gantt {
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-shrink:0">
               <div class="sched-subtitle"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M3 5H10M7 10H16M11 15H20M5 20H13"/></svg> Gantt Chart — by Region</div>
               <div style="display:flex;gap:5px;align-items:center">
+                <div style="display:flex;align-items:center;gap:4px">
+                  <button id="gc-btn-week-prev" onclick="gcPrevWeek()" style="display:none;background:var(--lg-bg);border:1px solid var(--lg-bd);border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:13px;color:var(--tx);display:none;align-items:center;justify-content:center;flex-shrink:0" title="Previous week">&#8249;</button>
+                  <span id="gc-week-label" style="display:none;font-size:10px;font-weight:600;color:var(--tx3);white-space:nowrap;min-width:80px;text-align:center"></span>
+                  <button id="gc-btn-week-next" onclick="gcNextWeek()" style="display:none;background:var(--lg-bg);border:1px solid var(--lg-bd);border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:13px;color:var(--tx);display:none;align-items:center;justify-content:center;flex-shrink:0" title="Next week">&#8250;</button>
+                </div>
                 <div class="toggle-pill" style="padding:2px">
                   <button class="vpill-btn active" id="gc-btn-week"  onclick="gcSetView('week')">Week</button>
                   <button class="vpill-btn"         id="gc-btn-month" onclick="gcSetView('month')">Month</button>
@@ -3691,8 +3696,8 @@ function populateSiteDropdown(){
   };
 }
 
-function calPrev(){ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCal(); renderPlanList(); renderGantt(); }
-function calNext(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCal(); renderPlanList(); renderGantt(); }
+function calPrev(){ calMonth--; if(calMonth<0){calMonth=11;calYear--;} GC_WEEK_OFFSET=0; renderCal(); renderPlanList(); renderGantt(); }
+function calNext(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} GC_WEEK_OFFSET=0; renderCal(); renderPlanList(); renderGantt(); }
 
 var MONTH_TH=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
 var SCHED_STATUS_COLORS={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444'};
@@ -3879,9 +3884,14 @@ function renderPlanList(){
 // ── CUSTOM GANTT — Daily Load View ──
 var GC_VIEW = 'week';
 var GC_OPEN = {};
+var GC_WEEK_OFFSET = 0; // weeks offset from anchor (for < > navigation)
+
+function gcPrevWeek(){ GC_WEEK_OFFSET--; renderGantt(); }
+function gcNextWeek(){ GC_WEEK_OFFSET++; renderGantt(); }
 
 function gcSetView(v){
   GC_VIEW = v;
+  if(v==='week') GC_WEEK_OFFSET=0; // reset to anchor week on view switch
   ['week','month'].forEach(function(m){
     var b=document.getElementById('gc-btn-'+m);
     if(b) b.classList.toggle('active', m===v);
@@ -3924,8 +3934,25 @@ function renderGantt(){
   var weekAnchor=_sdInMonth?new Date(selectedDate):new Date(calYear,calMonth,1);
   weekAnchor.setHours(0,0,0,0);
   var weekDay=weekAnchor.getDay(); // 0=Sun
-  var weekMon=new Date(weekAnchor); weekMon.setDate(weekAnchor.getDate()-(weekDay===0?6:weekDay-1));
+  var weekMon=new Date(weekAnchor); weekMon.setDate(weekAnchor.getDate()-(weekDay===0?6:weekDay-1)+GC_WEEK_OFFSET*7);
   var weekSun=new Date(weekMon); weekSun.setDate(weekMon.getDate()+6);
+  // Update week nav UI
+  (function(){
+    var isWeek=GC_VIEW==='week';
+    var prevBtn=document.getElementById('gc-btn-week-prev');
+    var nextBtn=document.getElementById('gc-btn-week-next');
+    var lbl=document.getElementById('gc-week-label');
+    if(prevBtn){ prevBtn.style.display=isWeek?'flex':'none'; }
+    if(nextBtn){ nextBtn.style.display=isWeek?'flex':'none'; }
+    if(lbl){
+      lbl.style.display=isWeek?'block':'none';
+      if(isWeek){
+        var _m=String(weekMon.getDate()).padStart(2,'0')+'/'+(weekMon.getMonth()+1);
+        var _s=String(weekSun.getDate()).padStart(2,'0')+'/'+(weekSun.getMonth()+1);
+        lbl.textContent=_m+' – '+_s;
+      }
+    }
+  })();
   // Week number within the month (1-based, based on weekMon)
   var _wkOfMonth=(function(){
     var _firstMon=new Date(weekMon.getFullYear(),weekMon.getMonth(),1);
@@ -4006,15 +4033,16 @@ function renderGantt(){
   }
 
   function colLabel(col){
-    // Always daily: show date number + day-of-week abbrev
-    // Week view: Mon label; Month view: just date
     var dayNum=col.getDate();
     if(GC_VIEW==='week'){
       return String(dayNum)+'<br><span style="font-size:8px;opacity:.7">'+DAY_EN[col.getDay()]+'</span>';
     }
-    // month: date + abbreviated month on the 1st
-    var suffix=dayNum===1?'<br><span style="font-size:8px;opacity:.7">'+MONTH_EN[col.getMonth()]+'</span>':'';
-    return String(dayNum)+suffix;
+    // month: show month name on day 1, abbreviated month on month boundary
+    var monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+    if(dayNum===1){
+      return '1<br><span style="font-size:7px;font-weight:600;opacity:.85;color:var(--ac)">'+monthNames[col.getMonth()]+'</span>';
+    }
+    return String(dayNum);
   }
 
   // Today column index for vertical line
@@ -5642,7 +5670,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.21</div>
+<div class="version-badge" style="display:none">v1.17.22</div>
 </body>
 </html>
 
