@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.19</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.20</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.19 — visionOS-inspired
+   LIQUID GLASS v1.17.20 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.19</div>
+  <div class="home-version">v1.17.20</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2180,8 +2180,7 @@ html:not(.light) .sched-gantt {
               <div class="sched-subtitle"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M3 5H10M7 10H16M11 15H20M5 20H13"/></svg> Gantt Chart — by Region</div>
               <div style="display:flex;gap:5px;align-items:center">
                 <div class="toggle-pill" style="padding:2px">
-                  <button class="vpill-btn active" id="gc-btn-day"   onclick="gcSetView('day')">Day</button>
-                  <button class="vpill-btn"         id="gc-btn-week"  onclick="gcSetView('week')">Week</button>
+                  <button class="vpill-btn active" id="gc-btn-week"  onclick="gcSetView('week')">Week</button>
                   <button class="vpill-btn"         id="gc-btn-month" onclick="gcSetView('month')">Month</button>
                 </div>
                 <button class="sf-sm-btn" onclick="gcExpandAll()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 3L12 7L16 3"/><path d="M8 21L12 17L16 21"/><path d="M4 12H20"/></svg> All</button>
@@ -3646,7 +3645,7 @@ function initSched(){
   var now = new Date();
   if(!calYear){ calYear = now.getFullYear(); calMonth = now.getMonth(); }
   // Sync view toggle buttons with current GC_VIEW state
-  ['day','week','month'].forEach(function(m){
+  ['week','month'].forEach(function(m){
     var b=document.getElementById('gc-btn-'+m);
     if(b) b.classList.toggle('active', m===GC_VIEW);
   });
@@ -3878,12 +3877,12 @@ function renderPlanList(){
 
 
 // ── CUSTOM GANTT — Daily Load View ──
-var GC_VIEW = 'day';
+var GC_VIEW = 'week';
 var GC_OPEN = {};
 
 function gcSetView(v){
   GC_VIEW = v;
-  ['day','week','month'].forEach(function(m){
+  ['week','month'].forEach(function(m){
     var b=document.getElementById('gc-btn-'+m);
     if(b) b.classList.toggle('active', m===v);
   });
@@ -3914,14 +3913,27 @@ function renderGantt(){
   var SL={planned:'P',inprogress:'IP',done:'D',cancelled:'X'};
   var today=new Date(); today.setHours(0,0,0,0);
 
-  // Filter plans to current calendar month (for all views — Gantt shows current month context)
+  // Date range anchor based on view
   var mk=calYear+'-'+String(calMonth+1).padStart(2,'0');
-  var visiblePlans=GC_VIEW==='day'
-    ? PLANS.filter(function(p){ return p.date.startsWith(mk); })
-    : PLANS; // week/month views show all plans
+  // Week: Mon-Sun of the week containing selectedDate (or today)
+  var weekAnchor=selectedDate?new Date(selectedDate):new Date();
+  weekAnchor.setHours(0,0,0,0);
+  var weekDay=weekAnchor.getDay(); // 0=Sun
+  var weekMon=new Date(weekAnchor); weekMon.setDate(weekAnchor.getDate()-(weekDay===0?6:weekDay-1));
+  var weekSun=new Date(weekMon); weekSun.setDate(weekMon.getDate()+6);
+  // Month: day 1 to last day of calMonth
+  var monthStart=new Date(calYear,calMonth,1);
+  var monthEnd=new Date(calYear,calMonth+1,0);
+  // Filter plans to visible range
+  var visiblePlans=GC_VIEW==='week'
+    ? PLANS.filter(function(p){ var d=new Date(p.date); return d>=weekMon&&d<=weekSun; })
+    : PLANS.filter(function(p){ return p.date.startsWith(mk); }); // month: current month
 
   if(!visiblePlans.length){
-    el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--tx3);font-size:12px;font-family:Space Mono,monospace">No plans for '+MONTH_TH[calMonth]+' '+calYear+'.</div>';
+    var _noMsg=GC_VIEW==='week'
+      ?'No plans for week of '+String(weekMon.getDate()).padStart(2,'0')+'/'+(weekMon.getMonth()+1)+'/'+weekMon.getFullYear()
+      :'No plans for '+MONTH_TH[calMonth]+' '+calYear;
+    el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--tx3);font-size:12px;font-family:Space Mono,monospace">'+_noMsg+'</div>';
     return;
   }
 
@@ -3943,41 +3955,29 @@ function renderGantt(){
   });
   regions.forEach(function(r){ if(GC_OPEN[r]===undefined) GC_OPEN[r]=true; });
 
-  // Date range: day view = current calendar month; week/month = visible plans range
+  // Date range: week = Mon-Sun; month = day 1 to last day
   var minD, maxD;
-  if(GC_VIEW==='day'){
-    minD=new Date(calYear,calMonth,1);
-    maxD=new Date(calYear,calMonth+1,0); // last day of month
+  if(GC_VIEW==='week'){
+    minD=new Date(weekMon); maxD=new Date(weekSun);
   } else {
-    var allD=visiblePlans.map(function(p){ return new Date(p.date); });
-    minD=new Date(Math.min.apply(null,allD));
-    maxD=new Date(Math.max.apply(null,allD));
-    var pad=GC_VIEW==='month'?30:7;
-    minD.setDate(minD.getDate()-pad); maxD.setDate(maxD.getDate()+pad);
+    minD=new Date(monthStart); maxD=new Date(monthEnd);
   }
 
   // Build columns based on view
+  // Both week and month: daily columns
   var cols=[]; var cur=new Date(minD);
   var MONTH_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  if(GC_VIEW==='month'){
-    cur=new Date(minD.getFullYear(),minD.getMonth(),1);
-    while(cur<=maxD){ cols.push(new Date(cur)); cur.setMonth(cur.getMonth()+1); }
-  } else if(GC_VIEW==='week'){
-    var wd=cur.getDay(); cur.setDate(cur.getDate()-(wd===0?6:wd-1));
-    while(cur<=maxD){ cols.push(new Date(cur)); cur.setDate(cur.getDate()+7); }
-  } else {
-    while(cur<=maxD){ cols.push(new Date(cur)); cur.setDate(cur.getDate()+1); }
-  }
-  var COL_W_MIN=GC_VIEW==='month'?72:GC_VIEW==='week'?56:28;
-  // Calculate COL_W to fill the gantt container, expand if few cols
+  var DAY_EN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  while(cur<=maxD){ cols.push(new Date(cur)); cur.setDate(cur.getDate()+1); }
+  // Daily columns for both views — week=7 cols, month=28-31 cols
+  var COL_W_MIN=GC_VIEW==='week'?56:28;
   var ganttWrap=document.getElementById('gantt-wrap');
-  var availW=ganttWrap?(ganttWrap.clientWidth-145):600; // subtract label width
+  var availW=ganttWrap?(ganttWrap.clientWidth-145):600;
   var COL_W=Math.max(COL_W_MIN, Math.floor(availW/cols.length));
-  // Cap to prevent giant columns when few plans
-  COL_W=Math.min(COL_W, GC_VIEW==='month'?160:GC_VIEW==='week'?120:60);
+  COL_W=Math.min(COL_W, GC_VIEW==='week'?100:44);
   var totalW=cols.length*COL_W;
   var LABEL_W=140;
-  var HDR_H_ACTUAL=GC_VIEW==='day'?44:HDR_H;
+  var HDR_H_ACTUAL=HDR_H;
   var ROW_H=34;
   var GRP_H=28;
   var HDR_H=36;
@@ -3985,25 +3985,23 @@ function renderGantt(){
   // Helper: check if a plan falls in a column
   function planInCol(p, col){
     var d=new Date(p.date);
-    if(GC_VIEW==='month') return d.getFullYear()===col.getFullYear()&&d.getMonth()===col.getMonth();
-    if(GC_VIEW==='week'){ var we=new Date(col); we.setDate(we.getDate()+6); return d>=col&&d<=we; }
     return d.toDateString()===col.toDateString();
   }
 
   function isTodayCol(col){
-    if(GC_VIEW==='month') return col.getFullYear()===today.getFullYear()&&col.getMonth()===today.getMonth();
-    if(GC_VIEW==='week'){ var we=new Date(col); we.setDate(we.getDate()+6); return today>=col&&today<=we; }
     return col.toDateString()===today.toDateString();
   }
 
   function colLabel(col){
-    if(GC_VIEW==='month') return MONTH_EN[col.getMonth()]+' '+String(col.getFullYear()).slice(2);
+    // Always daily: show date number + day-of-week abbrev
+    // Week view: Mon label; Month view: just date
+    var dayNum=col.getDate();
     if(GC_VIEW==='week'){
-      var d2=col.getDate(),m2=col.getMonth()+1;
-      return (d2<10?'0'+d2:d2)+'/'+(m2<10?'0'+m2:m2);
+      return String(dayNum)+'<br><span style="font-size:8px;opacity:.7">'+DAY_EN[col.getDay()]+'</span>';
     }
-    // day: show date + month abbreviation
-    return String(col.getDate())+'<br><span style="font-size:8px;opacity:.7">'+MONTH_EN[col.getMonth()]+'</span>';
+    // month: date + abbreviated month on the 1st
+    var suffix=dayNum===1?'<br><span style="font-size:8px;opacity:.7">'+MONTH_EN[col.getMonth()]+'</span>':'';
+    return String(dayNum)+suffix;
   }
 
   // Today column index for vertical line
@@ -4140,27 +4138,22 @@ function gcExport(){
     return a.localeCompare(b);
   });
 
-  // Date range: day view = current calendar month; week/month = all plans
-  var minD, maxD;
-  if(GC_VIEW==='day'){
-    minD=new Date(calYear,calMonth,1);
-    maxD=new Date(calYear,calMonth+1,0);
-  } else {
-    var allD=PLANS.map(function(p){ return new Date(p.date); });
-    minD=new Date(Math.min.apply(null,allD)); minD.setDate(minD.getDate()-2);
-    maxD=new Date(Math.max.apply(null,allD)); maxD.setDate(maxD.getDate()+2);
-  }
+  // Date range: week=Mon-Sun; month=day1-lastDay
+  var _pdfAnchor=selectedDate?new Date(selectedDate):new Date();
+  _pdfAnchor.setHours(0,0,0,0);
+  var _pdfWd=_pdfAnchor.getDay();
+  var _pdfMon=new Date(_pdfAnchor); _pdfMon.setDate(_pdfAnchor.getDate()-(_pdfWd===0?6:_pdfWd-1));
+  var _pdfSun=new Date(_pdfMon); _pdfSun.setDate(_pdfMon.getDate()+6);
+  var minD=GC_VIEW==='week'?new Date(_pdfMon):new Date(calYear,calMonth,1);
+  var maxD=GC_VIEW==='week'?new Date(_pdfSun):new Date(calYear,calMonth+1,0);
 
   function planInCol(p,col){
-    var d=new Date(p.date);
-    if(GC_VIEW==='month') return d.getFullYear()===col.getFullYear()&&d.getMonth()===col.getMonth();
-    if(GC_VIEW==='week'){ var we=new Date(col); we.setDate(we.getDate()+6); return d>=col&&d<=we; }
-    return d.toDateString()===col.toDateString();
+    return new Date(p.date).toDateString()===col.toDateString();
   }
 
   // Layout
-  var LABEL_W=180, COL_W=GC_VIEW==='day'?70:GC_VIEW==='week'?100:120;
-  var HDR_H=GC_VIEW==='day'?48:34, GRP_H=28, ROW_H=32;
+  var LABEL_W=180, COL_W=GC_VIEW==='week'?70:32;
+  var HDR_H=44, GRP_H=28, ROW_H=32;
   var SCALE=2;
 
   // Count total rows
@@ -4193,8 +4186,6 @@ function gcExport(){
 
   var today=new Date(); today.setHours(0,0,0,0);
   function isTodayCol(col){
-    if(GC_VIEW==='month') return col.getFullYear()===today.getFullYear()&&col.getMonth()===today.getMonth();
-    if(GC_VIEW==='week'){ var we=new Date(col); we.setDate(we.getDate()+6); return today>=col&&today<=we; }
     return col.toDateString()===today.toDateString();
   }
 
@@ -4211,16 +4202,12 @@ function gcExport(){
     var x=LABEL_W+i*COL_W;
     var isT=isTodayCol(col);
     rect(x,0,COL_W,HDR_H,isT?'rgba(99,102,241,0.15)':HEADER);
-    var label=GC_VIEW==='day'?String(col.getDate()):
-              GC_VIEW==='week'?(function(){ var d=col.getDate(),m=col.getMonth()+1; return (d<10?'0'+d:d)+'/'+(m<10?'0'+m:m); })():
-              MONTH_EN[col.getMonth()]+' '+String(col.getFullYear()).slice(2);
     var cx=x+COL_W/2;
-    if(GC_VIEW==='day'){
-      text(String(col.getDate()),cx,HDR_H/2-6,isT?'#6366f1':TXT,9,'center',true);
-      text(MONTH_EN[col.getMonth()],cx,HDR_H/2+8,isT?'#6366f1':TXT,7,'center');
-    } else {
-      text(label,cx,HDR_H/2,isT?'#6366f1':TXT,9,'center',true);
-    }
+    var _DAY_EN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    // Daily: date number on top, day-of-week (week) or month abbrev on 1st (month)
+    text(String(col.getDate()),cx,HDR_H/2-7,isT?'#6366f1':TXT,9,'center',true);
+    var _subLbl=GC_VIEW==='week'?_DAY_EN[col.getDay()]:(col.getDate()===1?MONTH_EN[col.getMonth()]:'');
+    if(_subLbl) text(_subLbl,cx,HDR_H/2+8,isT?'#6366f1':TXT,7,'center');
     line(x+COL_W,0,x+COL_W,totalH,BORDER);
   });
 
@@ -4635,9 +4622,9 @@ function gcExportPDF(){
 
   // Filter plans to current calendar month (same as web Gantt)
   var mk=calYear+'-'+String(calMonth+1).padStart(2,'0');
-  var pdfPlans=GC_VIEW==='day'
-    ? PLANS.filter(function(p){ return p.date.startsWith(mk); })
-    : PLANS;
+  var pdfPlans=GC_VIEW==='week'
+    ? (function(){ var _a=selectedDate?new Date(selectedDate):new Date(); _a.setHours(0,0,0,0); var _wd=_a.getDay(); var _m=new Date(_a); _m.setDate(_a.getDate()-(_wd===0?6:_wd-1)); var _s=new Date(_m); _s.setDate(_m.getDate()+6); return PLANS.filter(function(p){ var d=new Date(p.date); return d>=_m&&d<=_s; }); })()
+    : PLANS.filter(function(p){ return p.date.startsWith(mk); });
 
   if(!pdfPlans.length){ alert('No plans for selected month'); return; }
 
@@ -4656,35 +4643,20 @@ function gcExportPDF(){
     return a.localeCompare(b);
   });
 
-  var minD, maxD;
-  if(GC_VIEW==='day'){
-    minD=new Date(calYear,calMonth,1);
-    maxD=new Date(calYear,calMonth+1,0);
-  } else {
-    var allD=PLANS.map(function(p){ return new Date(p.date); });
-    minD=new Date(Math.min.apply(null,allD)); minD.setDate(minD.getDate()-2);
-    maxD=new Date(Math.max.apply(null,allD)); maxD.setDate(maxD.getDate()+2);
-  }
+  var _p3A=selectedDate?new Date(selectedDate):new Date(); _p3A.setHours(0,0,0,0);
+  var _p3Wd=_p3A.getDay(); var _p3Mon=new Date(_p3A); _p3Mon.setDate(_p3A.getDate()-(_p3Wd===0?6:_p3Wd-1));
+  var _p3Sun=new Date(_p3Mon); _p3Sun.setDate(_p3Mon.getDate()+6);
+  var minD=GC_VIEW==='week'?new Date(_p3Mon):new Date(calYear,calMonth,1);
+  var maxD=GC_VIEW==='week'?new Date(_p3Sun):new Date(calYear,calMonth+1,0);
   var cols=[]; var cur=new Date(minD);
-  if(GC_VIEW==='month'){
-    cur=new Date(minD.getFullYear(),minD.getMonth(),1);
-    while(cur<=maxD){ cols.push(new Date(cur)); cur.setMonth(cur.getMonth()+1); }
-  } else if(GC_VIEW==='week'){
-    var wd=cur.getDay(); cur.setDate(cur.getDate()-(wd===0?6:wd-1));
-    while(cur<=maxD){ cols.push(new Date(cur)); cur.setDate(cur.getDate()+7); }
-  } else {
-    while(cur<=maxD){ cols.push(new Date(cur)); cur.setDate(cur.getDate()+1); }
-  }
+  while(cur<=maxD){ cols.push(new Date(cur)); cur.setDate(cur.getDate()+1); }
 
   function planInCol(p,col){
-    var d=new Date(p.date);
-    if(GC_VIEW==='month') return d.getFullYear()===col.getFullYear()&&d.getMonth()===col.getMonth();
-    if(GC_VIEW==='week'){ var we=new Date(col); we.setDate(we.getDate()+6); return d>=col&&d<=we; }
-    return d.toDateString()===col.toDateString();
+    return new Date(p.date).toDateString()===col.toDateString();
   }
 
-  var LABEL_W=180, COL_W=GC_VIEW==='day'?70:GC_VIEW==='week'?100:120;
-  var HDR_H=GC_VIEW==='day'?48:34, GRP_H=28, ROW_H=32;
+  var LABEL_W=180, COL_W=GC_VIEW==='week'?70:32;
+  var HDR_H=44, GRP_H=28, ROW_H=32;
   var SCALE=3;
 
   var totalRows=0;
@@ -4704,11 +4676,7 @@ function gcExportPDF(){
   function txt(str,x,y,color,size,align,bold){ ctx.fillStyle=color; ctx.font=(bold?'bold ':'')+size+'px "Space Mono",monospace'; ctx.textAlign=align||'left'; ctx.textBaseline='middle'; ctx.fillText(str,x,y); }
 
   var today=new Date(); today.setHours(0,0,0,0);
-  function isTodayCol(col){
-    if(GC_VIEW==='month') return col.getFullYear()===today.getFullYear()&&col.getMonth()===today.getMonth();
-    if(GC_VIEW==='week'){ var we=new Date(col); we.setDate(we.getDate()+6); return today>=col&&today<=we; }
-    return col.toDateString()===today.toDateString();
-  }
+  function isTodayCol(col){ return col.toDateString()===today.toDateString(); }
 
   rect(0,0,totalW,totalH,BG);
   rect(0,0,LABEL_W,HDR_H,HEADER);
@@ -4721,13 +4689,10 @@ function gcExportPDF(){
     var isT=isTodayCol(col);
     rect(x,0,COL_W,HDR_H,isT?'rgba(99,102,241,0.15)':HEADER);
     var cx=x+COL_W/2;
-    if(GC_VIEW==='day'){
-      txt(String(col.getDate()),cx,HDR_H/2-6,isT?'#6366f1':TXT,9,'center',true);
-      txt(MONTH_EN[col.getMonth()],cx,HDR_H/2+8,isT?'#6366f1':TXT,7,'center');
-    } else {
-      var label=GC_VIEW==='week'?(function(){ var d=col.getDate(),m=col.getMonth()+1; return (d<10?'0'+d:d)+'/'+(m<10?'0'+m:m); })():MONTH_EN[col.getMonth()]+' '+String(col.getFullYear()).slice(2);
-      txt(label,cx,HDR_H/2,isT?'#6366f1':TXT,9,'center',true);
-    }
+    var _D3=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    txt(String(col.getDate()),cx,HDR_H/2-7,isT?'#6366f1':TXT,9,'center',true);
+    var _sub3=GC_VIEW==='week'?_D3[col.getDay()]:(col.getDate()===1?MONTH_EN[col.getMonth()]:'');
+    if(_sub3) txt(_sub3,cx,HDR_H/2+8,isT?'#6366f1':TXT,7,'center');
     line(x+COL_W,0,x+COL_W,totalH,BORDER);
   });
 
@@ -4807,7 +4772,7 @@ function gcExportPDF(){
   var statusLabel={planned:'Planned',inprogress:'In Progress',done:'Done',cancelled:'Cancelled'};
   var statusColor={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444'};
   var MONTH_EN2=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var viewLabel=GC_VIEW==='day'?(MONTH_EN2[calMonth]+' '+calYear):'All Plans';
+  var viewLabel=GC_VIEW==='week'?('Week of '+String(_p3Mon.getDate()).padStart(2,'0')+'/'+((_p3Mon.getMonth()+1)+'').padStart(2,'0')+'/'+_p3Mon.getFullYear()):(MONTH_EN2[calMonth]+' '+calYear);
   var summaryRows=pdfPlans.map(function(p){
     var sc=statusColor[p.status||'planned']||'#64748b';
     var sl=statusLabel[p.status||'planned']||p.status||'Planned';
@@ -5664,7 +5629,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.19</div>
+<div class="version-badge" style="display:none">v1.17.20</div>
 </body>
 </html>
 
