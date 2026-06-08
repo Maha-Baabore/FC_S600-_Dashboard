@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.25</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.26</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.25 — visionOS-inspired
+   LIQUID GLASS v1.17.26 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.25</div>
+  <div class="home-version">v1.17.26</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4682,7 +4682,7 @@ function gcExportPDF(){
     ? (function(){ var _a=selectedDate?new Date(selectedDate):new Date(); _a.setHours(0,0,0,0); var _wd=_a.getDay(); var _m=new Date(_a); _m.setDate(_a.getDate()-(_wd===0?6:_wd-1)); var _s=new Date(_m); _s.setDate(_m.getDate()+6); return PLANS.filter(function(p){ var d=new Date(p.date); return d>=_m&&d<=_s; }); })()
     : PLANS.filter(function(p){ return p.date.startsWith(mk); });
 
-  if(!pdfPlans.length){ alert('No plans for selected month'); return; }
+  if(!pdfPlans.length){ alert(GC_VIEW==='week'?'No plans for selected week':'No plans for selected month'); return; }
 
   var byRegion={};
   pdfPlans.forEach(function(p){
@@ -5716,7 +5716,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.25</div>
+<div class="version-badge" style="display:none">v1.17.26</div>
 </body>
 </html>
 
