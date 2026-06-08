@@ -1958,7 +1958,7 @@ html:not(.light) .sched-gantt {
 <div id="home">
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
-  <div class="home-sub">PTT Metering Dashboard &middot; PTT Overall</div>
+  <div class="home-sub">PTT Metering Dashboard· PTT Overall</div>
   <div class="home-version">v1.17.10</div>
 
   <div class="home-theme-row">
@@ -2014,7 +2014,7 @@ html:not(.light) .sched-gantt {
   <header>
     <div class="hlogo">
       <div class="hlogo-icon">FC<br>S600+</div>
-      <div><h1>PTT Metering Dashboard</h1><span id="hf">FloBoss™ S600+ &middot; Overall</span></div>
+      <div><h1>PTT Metering Dashboard</h1><span id="hf">FloBoss™ S600+ · Overall</span></div>
     </div>
     <div class="hright">
       <span class="lupd" id="h-upd"></span>
@@ -2588,7 +2588,7 @@ function finishGS(csv,url,sheet,btn){
   setP(100,'');
   setTimeout(function(){
     clrP();
-    showDash(sheet+' (Google Sheet) &middot; '+DATA.length+' records');
+    showDash(sheet+' (Google Sheet) '+DATA.length+' records');
     var ok=document.getElementById('gs-ok');ok.style.display='flex';
     document.getElementById('gs-ok-txt').textContent='Loaded '+DATA.length+' records — '+new Date().toLocaleTimeString('en-GB');
     btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';
