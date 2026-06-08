@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.17</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.18</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.17 — visionOS-inspired
+   LIQUID GLASS v1.17.18 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.17</div>
+  <div class="home-version">v1.17.18</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4887,6 +4887,18 @@ function gcExportPDF(){
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   var url=URL.createObjectURL(blob);
   window.open(url,'_blank');
+  // After window.open steals focus to the new tab, restore interactivity
+  // to the service report modal so the textarea remains editable on return
+  setTimeout(function(){
+    var el=document.getElementById('sr-final-remark');
+    if(el){ el.blur(); }
+    var modal=document.getElementById('modal-service-report');
+    if(modal && !modal.classList.contains('hidden')){
+      modal.style.pointerEvents='';
+      // Remove any accidental inert state
+      modal.removeAttribute('inert');
+    }
+  }, 200);
 }
 
 // ══════════════════════════════════════════════════════
@@ -5640,7 +5652,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.17</div>
+<div class="version-badge" style="display:none">v1.17.18</div>
 </body>
 </html>
 
