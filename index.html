@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.24</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.25</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.24 — visionOS-inspired
+   LIQUID GLASS v1.17.25 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.24</div>
+  <div class="home-version">v1.17.25</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4713,12 +4713,14 @@ function gcExportPDF(){
 
   var LABEL_W=180, COL_W=GC_VIEW==='week'?70:32;
   var HDR_H=44, GRP_H=28, ROW_H=32;
+  var BANNER_H=GC_VIEW==='month'?20:0; // month banner above day row
+  var TOTAL_HDR=BANNER_H+HDR_H;
   var SCALE=3;
 
   var totalRows=0;
   regions.forEach(function(reg){ totalRows++; if(GC_OPEN[reg]!==false) totalRows+=byRegion[reg].length; });
   var totalW=LABEL_W+cols.length*COL_W;
-  var totalH=HDR_H+regions.reduce(function(acc,reg){
+  var totalH=TOTAL_HDR+regions.reduce(function(acc,reg){
     return acc+GRP_H+(GC_OPEN[reg]!==false?byRegion[reg].length*ROW_H:0);
   },0);
 
@@ -4733,26 +4735,46 @@ function gcExportPDF(){
 
   var today=new Date(); today.setHours(0,0,0,0);
   function isTodayCol(col){ return col.toDateString()===today.toDateString(); }
+  var MONTH_NAMES_FULL3=['January','February','March','April','May','June','July','August','September','October','November','December'];
 
   rect(0,0,totalW,totalH,BG);
-  rect(0,0,LABEL_W,HDR_H,HEADER);
-  txt('REGION',LABEL_W/2,HDR_H/2,TXT,8,'center',true);
-  line(0,HDR_H,totalW,HDR_H,BORDER);
+
+  // ── Month banner row (month view only) ──
+  if(GC_VIEW==='month'){
+    rect(0,0,LABEL_W,BANNER_H,HEADER);
+    line(0,BANNER_H,totalW,BANNER_H,BORDER);
+    var _bi=0;
+    while(_bi<cols.length){
+      var _bm=cols[_bi].getMonth(), _by=cols[_bi].getFullYear();
+      var _bs=0;
+      while(_bi+_bs<cols.length&&cols[_bi+_bs].getMonth()===_bm&&cols[_bi+_bs].getFullYear()===_by) _bs++;
+      var _bx=LABEL_W+_bi*COL_W;
+      rect(_bx,0,_bs*COL_W,BANNER_H,'rgba(99,102,241,0.08)');
+      txt(MONTH_NAMES_FULL3[_bm]+' '+_by, _bx+(_bs*COL_W)/2, BANNER_H/2, '#3b5bdb', 9, 'center', true);
+      line(_bx+_bs*COL_W,0,_bx+_bs*COL_W,BANNER_H,BORDER);
+      _bi+=_bs;
+    }
+  }
+
+  // ── Day-number header row (offset by BANNER_H) ──
+  rect(0,BANNER_H,LABEL_W,HDR_H,HEADER);
+  txt('REGION',LABEL_W/2,BANNER_H+HDR_H/2,TXT,8,'center',true);
+  line(0,TOTAL_HDR,totalW,TOTAL_HDR,BORDER);
   line(LABEL_W,0,LABEL_W,totalH,BORDER);
 
   cols.forEach(function(col,i){
     var x=LABEL_W+i*COL_W;
     var isT=isTodayCol(col);
-    rect(x,0,COL_W,HDR_H,isT?'rgba(99,102,241,0.15)':HEADER);
+    rect(x,BANNER_H,COL_W,HDR_H,isT?'rgba(99,102,241,0.15)':HEADER);
     var cx=x+COL_W/2;
     var _D3=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    txt(String(col.getDate()),cx,HDR_H/2-7,isT?'#6366f1':TXT,9,'center',true);
-    var _sub3=GC_VIEW==='week'?_D3[col.getDay()]:(col.getDate()===1?MONTH_EN[col.getMonth()]:'');
-    if(_sub3) txt(_sub3,cx,HDR_H/2+8,isT?'#6366f1':TXT,7,'center');
+    txt(String(col.getDate()),cx,BANNER_H+HDR_H/2-7,isT?'#6366f1':TXT,9,'center',true);
+    var _sub3=GC_VIEW==='week'?_D3[col.getDay()]:'';
+    if(_sub3) txt(_sub3,cx,BANNER_H+HDR_H/2+8,isT?'#6366f1':TXT,7,'center');
     line(x+COL_W,0,x+COL_W,totalH,BORDER);
   });
 
-  var y=HDR_H;
+  var y=TOTAL_HDR;
   regions.forEach(function(reg){
     var regColor=REGION_COLOR_MAP[reg]||'#6366f1';
     var ps=byRegion[reg];
@@ -5694,7 +5716,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.24</div>
+<div class="version-badge" style="display:none">v1.17.25</div>
 </body>
 </html>
 
