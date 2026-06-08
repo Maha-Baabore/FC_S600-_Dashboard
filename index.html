@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.20</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.21</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.20 — visionOS-inspired
+   LIQUID GLASS v1.17.21 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.20</div>
+  <div class="home-version">v1.17.21</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -3915,12 +3915,25 @@ function renderGantt(){
 
   // Date range anchor based on view
   var mk=calYear+'-'+String(calMonth+1).padStart(2,'0');
-  // Week: Mon-Sun of the week containing selectedDate (or today)
-  var weekAnchor=selectedDate?new Date(selectedDate):new Date();
+  // Week anchor: use selectedDate if it's within the current calendar month,
+  // otherwise use the 1st of calMonth (so calendar navigation drives week view)
+  var _sdInMonth=selectedDate&&(function(){
+    var _sd=new Date(selectedDate);
+    return _sd.getFullYear()===calYear&&_sd.getMonth()===calMonth;
+  })();
+  var weekAnchor=_sdInMonth?new Date(selectedDate):new Date(calYear,calMonth,1);
   weekAnchor.setHours(0,0,0,0);
   var weekDay=weekAnchor.getDay(); // 0=Sun
   var weekMon=new Date(weekAnchor); weekMon.setDate(weekAnchor.getDate()-(weekDay===0?6:weekDay-1));
   var weekSun=new Date(weekMon); weekSun.setDate(weekMon.getDate()+6);
+  // Week number within the month (1-based, based on weekMon)
+  var _wkOfMonth=(function(){
+    var _firstMon=new Date(weekMon.getFullYear(),weekMon.getMonth(),1);
+    var _fwd=_firstMon.getDay(); var _firstMonDay=new Date(_firstMon);
+    _firstMonDay.setDate(1-(_fwd===0?6:_fwd-1)); // Monday of week containing 1st
+    return Math.floor((weekMon-_firstMonDay)/(7*86400000))+1;
+  })();
+  var _wkMonthName=MONTH_TH[weekMon.getMonth()];
   // Month: day 1 to last day of calMonth
   var monthStart=new Date(calYear,calMonth,1);
   var monthEnd=new Date(calYear,calMonth+1,0);
@@ -3931,7 +3944,7 @@ function renderGantt(){
 
   if(!visiblePlans.length){
     var _noMsg=GC_VIEW==='week'
-      ?'No plans for week of '+String(weekMon.getDate()).padStart(2,'0')+'/'+(weekMon.getMonth()+1)+'/'+weekMon.getFullYear()
+      ?'No plans for Week '+_wkOfMonth+' of '+_wkMonthName+' '+weekMon.getFullYear()
       :'No plans for '+MONTH_TH[calMonth]+' '+calYear;
     el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--tx3);font-size:12px;font-family:Space Mono,monospace">'+_noMsg+'</div>';
     return;
@@ -5629,7 +5642,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.20</div>
+<div class="version-badge" style="display:none">v1.17.21</div>
 </body>
 </html>
 
