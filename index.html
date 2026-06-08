@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.10</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.11</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.10 — visionOS-inspired
+   LIQUID GLASS v1.17.11 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1958,8 +1958,8 @@ html:not(.light) .sched-gantt {
 <div id="home">
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
-  <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.10</div>
+  <div class="home-sub">PTT Metering Dashboard &middot; PTT Overall</div>
+  <div class="home-version">v1.17.11</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2014,7 +2014,7 @@ html:not(.light) .sched-gantt {
   <header>
     <div class="hlogo">
       <div class="hlogo-icon">FC<br>S600+</div>
-      <div><h1>PTT Metering Dashboard</h1><span id="hf">FloBoss™ S600+ · Overall</span></div>
+      <div><h1>PTT Metering Dashboard</h1><span id="hf">FloBoss™ S600+ &middot; Overall</span></div>
     </div>
     <div class="hright">
       <span class="lupd" id="h-upd"></span>
@@ -2588,7 +2588,7 @@ function finishGS(csv,url,sheet,btn){
   setP(100,'');
   setTimeout(function(){
     clrP();
-    showDash(sheet+' (Google Sheet) '+DATA.length+' records');
+    showDash(sheet+' (Google Sheet) &middot; '+DATA.length+' records');
     var ok=document.getElementById('gs-ok');ok.style.display='flex';
     document.getElementById('gs-ok-txt').textContent='Loaded '+DATA.length+' records — '+new Date().toLocaleTimeString('en-GB');
     btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';
@@ -4446,7 +4446,8 @@ function submitReport(){
   // ── Timestamp for log
   var nowTs = new Date().toLocaleString('th-TH',{hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
   var updateDtRaw = document.getElementById('rpt-update-datetime').value;
-  var updateDtDisplay = updateDtRaw ? new Date(updateDtRaw).toLocaleDateString('th-TH',{year:'numeric',month:'2-digit',day:'2-digit'}) : new Date().toLocaleDateString('th-TH',{year:'numeric',month:'2-digit',day:'2-digit'});
+  function fmtDDMMYYYY(d){ var dd=String(d.getDate()).padStart(2,'0'),mm=String(d.getMonth()+1).padStart(2,'0'),yyyy=d.getFullYear(); return dd+'/'+mm+'/'+yyyy; }
+  var updateDtDisplay = updateDtRaw ? fmtDDMMYYYY(new Date(updateDtRaw)) : fmtDDMMYYYY(new Date());
 
   // ── Main sheet payload (existing sheet update)
   var payload={
@@ -4735,7 +4736,7 @@ function gcExportPDF(){
   var summaryRows=pdfPlans.map(function(p){
     var sc=statusColor[p.status||'planned']||'#64748b';
     var sl=statusLabel[p.status||'planned']||p.status||'Planned';
-    var d=p.date?new Date(p.date).toLocaleDateString('th-TH',{day:'2-digit',month:'short',year:'numeric'}):'';
+    var _d2=p.date?new Date(p.date):null; var d=_d2?(String(_d2.getDate()).padStart(2,'0')+'/'+String(_d2.getMonth()+1).padStart(2,'0')+'/'+_d2.getFullYear()):'';
     return '<tr><td style="padding:3px 6px;border-bottom:1px solid #e2e8f0">'+p.site+'</td>'+
       '<td style="padding:3px 6px;border-bottom:1px solid #e2e8f0;color:#0284c7;font-family:monospace;font-size:8px">'+p.tag+'</td>'+
       '<td style="padding:3px 6px;border-bottom:1px solid #e2e8f0">'+d+'</td>'+
@@ -4846,8 +4847,9 @@ function exportServiceReportPDF(){
       // Try rpt-update-datetime first (if report modal was used), then plan date
       var el=document.getElementById('rpt-update-datetime');
       var v=el?el.value:'';
-      if(v) return new Date(v).toLocaleDateString('th-TH',{year:'numeric',month:'2-digit',day:'2-digit'});
-      if(p.date) return new Date(p.date).toLocaleDateString('th-TH',{year:'numeric',month:'2-digit',day:'2-digit'});
+      function _fmt(d){ var dd=String(d.getDate()).padStart(2,'0'),mm=String(d.getMonth()+1).padStart(2,'0'),yyyy=d.getFullYear(); return dd+'/'+mm+'/'+yyyy; }
+      if(v) return _fmt(new Date(v));
+      if(p.date) return _fmt(new Date(p.date));
       return '';
     })()
   };
@@ -5035,7 +5037,7 @@ function exportServiceReportPDF(){
     mkChkTable(chkRows(CL.postUpdate,'Done','Not Done'))+
     imgSection('post-update','Post-Update Photo');
   var secResult=
-    '<h2 style="background:none;border:none;border-bottom:1px solid #e2e8f0;padding:3px 0;color:#1e3a5f;margin-top:0">Result</h2>'+
+    '<h2 style="background:none;border:none;border-bottom:1px solid #e2e8f0;padding:3px 0;color:#1e3a5f;margin-top:0">2. Result</h2>'+
     '<table class="info-table" style="margin-bottom:6px">'+
       '<tr><td class="lbl">Flow Computer Tag No.</td><td class="val"><span class="tag-badge">'+rptData.tag+'</span></td></tr>'+
       '<tr><td class="lbl">Note(s) / Remark</td><td class="val" style="white-space:pre-wrap;word-break:break-word">'+rptData.remark+'&nbsp;</td></tr>'+
@@ -5564,7 +5566,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.10</div>
+<div class="version-badge" style="display:none">v1.17.11</div>
 </body>
 </html>
 
