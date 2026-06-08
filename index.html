@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.16</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.17</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.16 — visionOS-inspired
+   LIQUID GLASS v1.17.17 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard &middot; PTT Overall</div>
-  <div class="home-version">v1.17.16</div>
+  <div class="home-version">v1.17.17</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4479,6 +4479,7 @@ function openReport(id){
   var _cfgTxt=document.getElementById('rpt-config-date-text');
   if(_cfgTxt) _cfgTxt.value=_cfgIso?isoToText(_cfgIso):'';
   document.getElementById('rpt-performed-by').value=p.performedBy||'';
+  document.getElementById('rpt-ack-by').value=p.ackBy||'';
   // default update date = today (date only)
   var nowDt=new Date(); var dtIso=nowDt.getFullYear()+'-'+String(nowDt.getMonth()+1).padStart(2,'0')+'-'+String(nowDt.getDate()).padStart(2,'0');
   document.getElementById('rpt-update-datetime').value=dtIso;
@@ -5639,7 +5640,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.16</div>
+<div class="version-badge" style="display:none">v1.17.17</div>
 </body>
 </html>
 
