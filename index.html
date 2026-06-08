@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.23</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.24</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.23 — visionOS-inspired
+   LIQUID GLASS v1.17.24 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.23</div>
+  <div class="home-version">v1.17.24</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4828,7 +4828,16 @@ function gcExportPDF(){
   var statusLabel={planned:'Planned',inprogress:'In Progress',done:'Done',cancelled:'Cancelled'};
   var statusColor={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444'};
   var MONTH_EN2=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var viewLabel=GC_VIEW==='week'?('Week of '+String(_p3Mon.getDate()).padStart(2,'0')+'/'+((_p3Mon.getMonth()+1)+'').padStart(2,'0')+'/'+_p3Mon.getFullYear()):(MONTH_EN2[calMonth]+' '+calYear);
+  // Compute week-of-month number for the label
+  var _p3WkNum=(function(){
+    var _first=new Date(_p3Mon.getFullYear(),_p3Mon.getMonth(),1);
+    var _fwd=_first.getDay();
+    var _firstMon=new Date(_first); _firstMon.setDate(1-(_fwd===0?6:_fwd-1));
+    return Math.floor((_p3Mon-_firstMon)/(7*86400000))+1;
+  })();
+  var viewLabel=GC_VIEW==='week'
+    ?('Week '+_p3WkNum+' of '+MONTH_EN2[_p3Mon.getMonth()]+' '+_p3Mon.getFullYear())
+    :(MONTH_EN2[calMonth]+' '+calYear);
   var summaryRows=pdfPlans.map(function(p){
     var sc=statusColor[p.status||'planned']||'#64748b';
     var sl=statusLabel[p.status||'planned']||p.status||'Planned';
@@ -5685,7 +5694,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.23</div>
+<div class="version-badge" style="display:none">v1.17.24</div>
 </body>
 </html>
 
