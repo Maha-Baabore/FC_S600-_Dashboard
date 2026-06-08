@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.26</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.27</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.26 — visionOS-inspired
+   LIQUID GLASS v1.17.27 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.26</div>
+  <div class="home-version">v1.17.27</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4676,10 +4676,16 @@ function gcExportPDF(){
   var TXT='#475569', TXT2='#0f172a', SC={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444'};
   var MONTH_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-  // Filter plans to current calendar month (same as web Gantt)
+  // Compute week anchor with GC_WEEK_OFFSET — must match renderGantt exactly
   var mk=calYear+'-'+String(calMonth+1).padStart(2,'0');
+  var _sdInMonth=selectedDate&&(function(){ var _sd=new Date(selectedDate); return _sd.getFullYear()===calYear&&_sd.getMonth()===calMonth; })();
+  var _p3A=_sdInMonth?new Date(selectedDate):new Date(calYear,calMonth,1); _p3A.setHours(0,0,0,0);
+  var _p3Wd=_p3A.getDay();
+  var _p3Mon=new Date(_p3A); _p3Mon.setDate(_p3A.getDate()-(_p3Wd===0?6:_p3Wd-1)+GC_WEEK_OFFSET*7);
+  var _p3Sun=new Date(_p3Mon); _p3Sun.setDate(_p3Mon.getDate()+6);
+
   var pdfPlans=GC_VIEW==='week'
-    ? (function(){ var _a=selectedDate?new Date(selectedDate):new Date(); _a.setHours(0,0,0,0); var _wd=_a.getDay(); var _m=new Date(_a); _m.setDate(_a.getDate()-(_wd===0?6:_wd-1)); var _s=new Date(_m); _s.setDate(_m.getDate()+6); return PLANS.filter(function(p){ var d=new Date(p.date); return d>=_m&&d<=_s; }); })()
+    ? PLANS.filter(function(p){ var d=new Date(p.date); return d>=_p3Mon&&d<=_p3Sun; })
     : PLANS.filter(function(p){ return p.date.startsWith(mk); });
 
   if(!pdfPlans.length){ alert(GC_VIEW==='week'?'No plans for selected week':'No plans for selected month'); return; }
@@ -4699,9 +4705,6 @@ function gcExportPDF(){
     return a.localeCompare(b);
   });
 
-  var _p3A=selectedDate?new Date(selectedDate):new Date(); _p3A.setHours(0,0,0,0);
-  var _p3Wd=_p3A.getDay(); var _p3Mon=new Date(_p3A); _p3Mon.setDate(_p3A.getDate()-(_p3Wd===0?6:_p3Wd-1));
-  var _p3Sun=new Date(_p3Mon); _p3Sun.setDate(_p3Mon.getDate()+6);
   var minD=GC_VIEW==='week'?new Date(_p3Mon):new Date(calYear,calMonth,1);
   var maxD=GC_VIEW==='week'?new Date(_p3Sun):new Date(calYear,calMonth+1,0);
   var cols=[]; var cur=new Date(minD);
@@ -5716,7 +5719,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.26</div>
+<div class="version-badge" style="display:none">v1.17.27</div>
 </body>
 </html>
 
