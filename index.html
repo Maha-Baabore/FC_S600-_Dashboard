@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.15</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.16</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.15 — visionOS-inspired
+   LIQUID GLASS v1.17.16 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard &middot; PTT Overall</div>
-  <div class="home-version">v1.17.15</div>
+  <div class="home-version">v1.17.16</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4403,8 +4403,6 @@ document.addEventListener('click', function(e){
   if(!e.target.classList.contains('modal-overlay')) return;
   var id=e.target.id;
   if(id && !e.target.classList.contains('hidden')){
-    // Don't close service-report via click-outside (too easy to accidentally dismiss)
-    if(id==='modal-service-report') return;
     closeModal(id);
   }
 });
@@ -4514,7 +4512,9 @@ function submitReport(){
   }
 
   // ── Timestamp for log
-  var nowTs = new Date().toLocaleString('th-TH',{hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  var _tsNow=new Date();
+  var nowTs=String(_tsNow.getDate()).padStart(2,'0')+'/'+String(_tsNow.getMonth()+1).padStart(2,'0')+'/'+_tsNow.getFullYear()
+    +' '+String(_tsNow.getHours()).padStart(2,'0')+':'+String(_tsNow.getMinutes()).padStart(2,'0')+':'+String(_tsNow.getSeconds()).padStart(2,'0');
   var updateDtRaw = document.getElementById('rpt-update-datetime').value;
   var updateDtDisplay = updateDtRaw ? fmtCE(new Date(updateDtRaw)) : fmtCE(new Date());
 
@@ -5639,7 +5639,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.15</div>
+<div class="version-badge" style="display:none">v1.17.16</div>
 </body>
 </html>
 
