@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.13</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.14</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.13 — visionOS-inspired
+   LIQUID GLASS v1.17.14 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard &middot; PTT Overall</div>
-  <div class="home-version">v1.17.13</div>
+  <div class="home-version">v1.17.14</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2221,7 +2221,7 @@ html:not(.light) .sched-gantt {
       <div class="sf-row"><label class="sf-label">Target Firmware</label>
         <input class="sf-input" id="edit-sf-fw-target" type="text"></div>
       <div class="sf-row"><label class="sf-label">Date</label>
-        <div style="position:relative;display:flex;align-items:center"><input class="sf-input" id="edit-sf-date-text" type="text" placeholder="DD/MM/BBBB" style="padding-right:32px" oninput="(function(el){var iso=textToISO(el.value);var h=document.getElementById('edit-sf-date');if(h)h.value=iso;})(this)" onblur="(function(el){var iso=textToISO(el.value);if(iso){el.value=isoToText(iso);}else if(el.value.trim()){el.value='';}var h=document.getElementById('edit-sf-date');if(h)h.value=iso||'';})(this)"><input type="date" id="edit-sf-date" style="position:absolute;right:2px;top:50%;transform:translateY(-50%);width:20px;height:20px;opacity:0;cursor:pointer;z-index:2" onchange="(function(el){var vis=document.getElementById('edit-sf-date-text');if(vis)vis.value=isoToText(el.value);})(this)"><svg style="position:absolute;right:8px;pointer-events:none;opacity:.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div></div>
+        <div style="position:relative;display:flex;align-items:center"><input class="sf-input" id="edit-sf-date-text" type="text" placeholder="DD/MM/YYYY" style="padding-right:32px" oninput="(function(el){var iso=textToISO(el.value);var h=document.getElementById('edit-sf-date');if(h)h.value=iso;})(this)" onblur="(function(el){var iso=textToISO(el.value);if(iso){el.value=isoToText(iso);}else if(el.value.trim()){el.value='';}var h=document.getElementById('edit-sf-date');if(h)h.value=iso||'';})(this)"><input type="date" id="edit-sf-date" style="position:absolute;right:2px;top:50%;transform:translateY(-50%);width:20px;height:20px;opacity:0;cursor:pointer;z-index:2" onchange="(function(el){var vis=document.getElementById('edit-sf-date-text');if(vis)vis.value=isoToText(el.value);})(this)"><svg style="position:absolute;right:8px;pointer-events:none;opacity:.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div></div>
       <div class="sf-row"><label class="sf-label">Performed By</label>
         <input class="sf-input" id="edit-sf-performed-by" type="text" placeholder="Engineer name"></div>
       <div class="sf-row"><label class="sf-label">Note (optional)</label>
@@ -2468,13 +2468,13 @@ html:not(.light) .sched-gantt {
         <div class="sf-row"><label class="sf-label">Config Name</label>
           <input class="sf-input" id="rpt-config-name" type="text"></div>
         <div class="sf-row"><label class="sf-label">Last Config Installed Date</label>
-          <div style="position:relative;display:flex;align-items:center"><input class="sf-input" id="rpt-config-date-text" type="text" placeholder="DD/MM/BBBB" style="padding-right:32px" oninput="(function(el){var iso=textToISO(el.value);var h=document.getElementById('rpt-config-date');if(h)h.value=iso;})(this)" onblur="(function(el){var iso=textToISO(el.value);if(iso){el.value=isoToText(iso);}else if(el.value.trim()){el.value='';}var h=document.getElementById('rpt-config-date');if(h)h.value=iso||'';})(this)"><input type="date" id="rpt-config-date" style="position:absolute;right:2px;top:50%;transform:translateY(-50%);width:20px;height:20px;opacity:0;cursor:pointer;z-index:2" onchange="(function(el){var vis=document.getElementById('rpt-config-date-text');if(vis)vis.value=isoToText(el.value);})(this)"><svg style="position:absolute;right:8px;pointer-events:none;opacity:.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div></div>
+          <div style="position:relative;display:flex;align-items:center"><input class="sf-input" id="rpt-config-date-text" type="text" placeholder="DD/MM/YYYY" style="padding-right:32px" oninput="(function(el){var iso=textToISO(el.value);var h=document.getElementById('rpt-config-date');if(h)h.value=iso;})(this)" onblur="(function(el){var iso=textToISO(el.value);if(iso){el.value=isoToText(iso);}else if(el.value.trim()){el.value='';}var h=document.getElementById('rpt-config-date');if(h)h.value=iso||'';})(this)"><input type="date" id="rpt-config-date" style="position:absolute;right:2px;top:50%;transform:translateY(-50%);width:20px;height:20px;opacity:0;cursor:pointer;z-index:2" onchange="(function(el){var vis=document.getElementById('rpt-config-date-text');if(vis)vis.value=isoToText(el.value);})(this)"><svg style="position:absolute;right:8px;pointer-events:none;opacity:.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div></div>
         <div class="sf-row"><label class="sf-label">Performed By</label>
           <input class="sf-input" id="rpt-performed-by" type="text" placeholder="Engineer name"></div>
         <div class="sf-row"><label class="sf-label">Acknowledged By</label>
           <input class="sf-input" id="rpt-ack-by" type="text" placeholder="Customer name"></div>
         <div class="sf-row"><label class="sf-label">Update Date</label>
-          <div style="position:relative;display:flex;align-items:center"><input class="sf-input" id="rpt-update-datetime-text" type="text" placeholder="DD/MM/BBBB" style="padding-right:32px" oninput="(function(el){var iso=textToISO(el.value);var h=document.getElementById('rpt-update-datetime');if(h)h.value=iso;})(this)" onblur="(function(el){var iso=textToISO(el.value);if(iso){el.value=isoToText(iso);}else if(el.value.trim()){el.value='';}var h=document.getElementById('rpt-update-datetime');if(h)h.value=iso||'';})(this)"><input type="date" id="rpt-update-datetime" style="position:absolute;right:2px;top:50%;transform:translateY(-50%);width:20px;height:20px;opacity:0;cursor:pointer;z-index:2" onchange="(function(el){var vis=document.getElementById('rpt-update-datetime-text');if(vis)vis.value=isoToText(el.value);})(this)"><svg style="position:absolute;right:8px;pointer-events:none;opacity:.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div></div>
+          <div style="position:relative;display:flex;align-items:center"><input class="sf-input" id="rpt-update-datetime-text" type="text" placeholder="DD/MM/YYYY" style="padding-right:32px" oninput="(function(el){var iso=textToISO(el.value);var h=document.getElementById('rpt-update-datetime');if(h)h.value=iso;})(this)" onblur="(function(el){var iso=textToISO(el.value);if(iso){el.value=isoToText(iso);}else if(el.value.trim()){el.value='';}var h=document.getElementById('rpt-update-datetime');if(h)h.value=iso||'';})(this)"><input type="date" id="rpt-update-datetime" style="position:absolute;right:2px;top:50%;transform:translateY(-50%);width:20px;height:20px;opacity:0;cursor:pointer;z-index:2" onchange="(function(el){var vis=document.getElementById('rpt-update-datetime-text');if(vis)vis.value=isoToText(el.value);})(this)"><svg style="position:absolute;right:8px;pointer-events:none;opacity:.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div></div>
         <div class="sf-row"><label class="sf-label">Remark</label>
           <input class="sf-input" id="rpt-remark" type="text" placeholder="Optional note"></div>
       </div>
@@ -2521,23 +2521,22 @@ function hexToRgba(hex, alpha) {
 }
 
 var RC=['#00d4ff','#3b82f6','#8b5cf6','#ec4899','#f97316','#f59e0b','#10b981','#14b8a6','#06b6d4','#84cc16','#a855f7','#ef4444','#6366f1','#d946ef'];
-// ── Global BE date formatter ───────────────────────────────────────────
-function fmtBE(dateOrStr){
+// ── Global CE date formatter ───────────────────────────────────────────
+function fmtCE(dateOrStr){
   var d = (typeof dateOrStr === 'string') ? new Date(dateOrStr) : dateOrStr;
   if(!d || isNaN(d.getTime())) return '';
   var dd=String(d.getDate()).padStart(2,'0');
   var mm=String(d.getMonth()+1).padStart(2,'0');
-  var yyyy=d.getFullYear()+543;
+  var yyyy=d.getFullYear();
   return dd+'/'+mm+'/'+yyyy;
 }
-// isoToText: convert ISO date string → DD/MM/BBBB display text
-function isoToText(iso){ return iso ? fmtBE(new Date(iso)) : ''; }
-// textToISO: parse DD/MM/BBBB → ISO YYYY-MM-DD (CE)
+// isoToText: convert ISO date string → DD/MM/YYYY display text
+function isoToText(iso){ return iso ? fmtCE(new Date(iso)) : ''; }
+// textToISO: parse DD/MM/YYYY → ISO YYYY-MM-DD
 function textToISO(txt){
   var p=txt.replace(/[^0-9\/]/g,'').split('/');
   if(p.length!==3) return '';
   var dd=p[0],mm=p[1],yyyy=parseInt(p[2]||0);
-  if(yyyy>2400) yyyy=yyyy-543; // BE→CE
   if(!dd||!mm||!yyyy) return '';
   return yyyy+'-'+mm.padStart(2,'0')+'-'+dd.padStart(2,'0');
 }
@@ -3674,7 +3673,7 @@ var MONTH_TH=['มกราคม','กุมภาพันธ์','มีน�
 var SCHED_STATUS_COLORS={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444'};
 
 function renderCal(){
-  document.getElementById('cal-month-label').textContent = MONTH_TH[calMonth]+' '+(calYear+543);
+  document.getElementById('cal-month-label').textContent = MONTH_TH[calMonth]+' '+calYear;
   var grid=document.getElementById('cal-grid');
   var dayNames=['อา','จ','อ','พ','พฤ','ศ','ส'];
   var html=dayNames.map(function(d){ return '<div class="cal-day-name">'+d+'</div>'; }).join('');
@@ -3705,7 +3704,7 @@ function renderCal(){
   if(nextGrid && nextLbl){
     var ndt=new Date(calYear,calMonth+1,1);
     var ny=ndt.getFullYear(), nm=ndt.getMonth();
-    nextLbl.textContent=MONTH_TH[nm]+' '+(ny+543);
+    nextLbl.textContent=MONTH_TH[nm]+' '+ny;
     var nhtml=dayNames.map(function(d){ return '<div class="cal-day-name">'+d+'</div>'; }).join('');
     var nfirst=new Date(ny,nm,1).getDay();
     var ntotal=new Date(ny,nm+1,0).getDate();
@@ -3754,7 +3753,7 @@ function selectDate(ds){
   var names=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
   var dt=new Date(y,m,d);
   var el=document.getElementById('cal-selected-label');
-  if(el) el.textContent=names[dt.getDay()]+' '+d+' '+MONTH_TH[m]+' '+(y+543);
+  if(el) el.textContent=names[dt.getDay()]+' '+d+' '+MONTH_TH[m]+' '+y;
   renderCal(); renderPlanList();
 }
 
@@ -3808,7 +3807,7 @@ function renderPlanList(){
   if(!ps.length){ el.innerHTML='<div class="plan-empty">No plans this month.<br>Select a date and add a plan.</div>'; return; }
   el.innerHTML=ps.map(function(p){
     var d=p.date.split('-');
-    var dl=fmtBE(new Date(p.date));
+    var dl=fmtCE(new Date(p.date));
     // lookup extra info from DATA — match TAG + Site
     var row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag && (x['Site']||'').trim()===p.site; });
     if(!row) row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; });
@@ -3896,7 +3895,7 @@ function renderGantt(){
     : PLANS; // week/month views show all plans
 
   if(!visiblePlans.length){
-    el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--tx3);font-size:12px;font-family:Space Mono,monospace">No plans for '+MONTH_TH[calMonth]+' '+(calYear+543)+'.</div>';
+    el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--tx3);font-size:12px;font-family:Space Mono,monospace">No plans for '+MONTH_TH[calMonth]+' '+calYear+'.</div>';
     return;
   }
 
@@ -4317,7 +4316,7 @@ function adminUnlock(id){
 
 function clearMonthPlans(){
   var mk=calYear+'-'+String(calMonth+1).padStart(2,'0');
-  var monthName=MONTH_TH[calMonth]+' '+(calYear+543);
+  var monthName=MONTH_TH[calMonth]+' '+calYear;
   var deletable=PLANS.filter(function(p){ return p.date.startsWith(mk) && !p.reported; });
   var locked=PLANS.filter(function(p){ return p.date.startsWith(mk) && p.reported; }).length;
   if(!deletable.length){
@@ -4490,7 +4489,7 @@ function submitReport(){
   // ── Timestamp for log
   var nowTs = new Date().toLocaleString('th-TH',{hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
   var updateDtRaw = document.getElementById('rpt-update-datetime').value;
-  var updateDtDisplay = updateDtRaw ? fmtBE(new Date(updateDtRaw)) : fmtBE(new Date());
+  var updateDtDisplay = updateDtRaw ? fmtCE(new Date(updateDtRaw)) : fmtCE(new Date());
 
   // ── Main sheet payload (existing sheet update)
   var payload={
@@ -4784,7 +4783,7 @@ function gcExportPDF(){
   var summaryRows=pdfPlans.map(function(p){
     var sc=statusColor[p.status||'planned']||'#64748b';
     var sl=statusLabel[p.status||'planned']||p.status||'Planned';
-    var d=p.date?fmtBE(new Date(p.date)):'';
+    var d=p.date?fmtCE(new Date(p.date)):'';
     return '<tr><td style="padding:3px 6px;border-bottom:1px solid #e2e8f0">'+p.site+'</td>'+
       '<td style="padding:3px 6px;border-bottom:1px solid #e2e8f0;color:#0284c7;font-family:monospace;font-size:8px">'+p.tag+'</td>'+
       '<td style="padding:3px 6px;border-bottom:1px solid #e2e8f0">'+d+'</td>'+
@@ -4814,7 +4813,7 @@ function gcExportPDF(){
     '<tbody>'+summaryRows+'</tbody>'+
     '</table></div>';
 
-  var dateStr=String(now.getDate()).padStart(2,'0')+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+(now.getFullYear()+543);
+  var dateStr=String(now.getDate()).padStart(2,'0')+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+now.getFullYear();
 
   // Build print-preview HTML page
   var LOGO_DATA='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAAAAAAD/2wBDAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5Ojf/2wBDAQoKCg0MDRoPDxo3JR8lNzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzf/wAARCAB4AHgDASIAAhEBAxEB/8QAHAAAAQUBAQEAAAAAAAAAAAAAAAEEBQYHAgMI/8QARxAAAQMDAgMFAggLBQkAAAAAAQIDBAAFERIhBjFBEyJRYXEHFBUkMkKBkbHRIzVSg4SUobLB0uEWM2J08Bc0Q0VVY3LC8f/EABoBAQADAQEBAAAAAAAAAAAAAAADBAUCBgH/xAAqEQACAQMCBQMEAwAAAAAAAAAAAQIDBBESMQUTIUFhMnHhIjNSU5Khwf/aAAwDAQACEQMRAD8A3CiiigCk3paCKATNGaSvOS+1FjuPyHEttNpKlrUdkgczQDG/XqPZIQkSVZUtxLTTecFa1HAH8a9Hbo2zd27e6CntWtSHM7FWSNPqcbfTWG8ScUu8T8WxHUlSYbMhCI7Z6DUO8fM1rHEaEuXUoVnBip3BwQdasEeBFcQmpt47Fq4tZUIw17yWfYtOaM1E2C5maypmQoe9s4DnTWOix69fA5qVrsqi5oGaAKWgCiiigFFFAooBKKKKAKKKKAQ1jvta4w96dVYbc7+BbV8aWk/LUPm+g6+fpVt9pfF44etvukNY+EZKSEY/4SeqvurBFKKlFSiSScknrVW4q6VpW5ucHsObLnTX0rby/gdWf8bQv8w3+8K+gL/+OP0Ufvqr5/s/42hf5hv94V9AX/8AHH6KP31UtfSzrj33Ye3+kMX3okluVGI7Zo7A8lg80nyP7Dg9Ku1umM3CI3JjklCxyPNJ6g+YNUaTS2K7/BE89qr4m+QHf8B5Bf8AA+XpVowTQqKQEEZByDS0AUUUUAoooFFAJRRRQBUXxJfIvD9penyzsgYQjO7iuiRUi862w0t11aUNoSVKUo4AA5k189+0Litzia7HsVKECOSlhB6+Kj5n7Kjq1FCOS5Y2krqqoLbuyBvV1lXq5Pz5q9TrysnwSOgHkKY0U9s9slXi4sQITZW88rA8B4k+QrN6yfk9slCjTxtFIm/Z9w3J4gvrPZ5RGjLS687jkAcgDzOK2niaO426m4J7zKW+zeHVAySFemTv9fQ0tltUThSxtQYgCnTupeN3F9VHyp3bnj3mn++heflb7nn9daNKnojg8XxC8d1W1dl0RUpNRMnrU9ereq1yQ0ATFcz2CvyfFB9Onl6VAyOtSlEs/BF91YtMtffQPiyiflJHzPUdPL0q5Vibri2nUuNLKHEKCkKTzSRyIrUeFL63fLcHDhMprCX0DofEeR/pQE3RRRQCiigUUAlFFVD2jcWp4btRbjqBuMkFLI/IHVZ9OnnXxtJZZ3TpyqSUIrLZUva5xhrUrh+3Od0H42tJ5noj76yiu3FqccUtxRUtRJUonJJ8a4rMqVHOWT3FlaRtaSgt+78nSEqWoJQCpROAANya3j2d8KN8L2ozrggfCD6QV55tp6IHn4/0qteyTg7tFJv9zb7if90bUOZ/LPkOlaJMfVKd0pz2SDttz86tW9LC1MweMX/MlyKb6Lfy/g8VrXJeLrnM8h4Dwpw2kJTk1y03gZI2riQ6QMAH6qtGEOXER7rEdgyhnI2IO4xyI8waz+5xX4MpyLKH4VG+oDAWnooev7DkVKXa7ORFBbBUFoOQQk86kdcbjSxCRGAanxyRpVtpX1Sf8KvH08KAoEnrXFmvL1iujcxnKkjuut5/vEdR93nXpLSpC1ocQpC0EpUhQ3SRzBqIk8jQG+QJjFwhtS4iwtl1OpKh/rnTise9nfFPwTP+DZzmIUlXcUo7NLPX0PWthoBRRQKKAjr9eItitb9wmqw20Nk53WrokeZr5u4gvMq/XV+4TFZW4dk9EJ6JHkK+gOLLva7Z7s3doBlpd1FA7NKwkjGfletQaOIOFl8uH0fqrX31FVpuaxk0LC8p2snNwy/fYwmnEBxhmW25LZL7KVAqaCtOseGelbs3deGXCALC0PWM3T6SeH48pyOuyRyps4JEZvFQK1aecmnLj0ZRacH18/BR2vbAWWkNNWJtDaAEpSmRgADkPk13/tlc/wCio/WT/LV3bFgXyssf9Wbp0xAsjxwmzxBsTvGR91Taan5f0ZvPsv1P+TKJC9rrkqYxH+B0J7V1KNXvBOMnGeVXy73aTDmiPGZZWOy7QqcWR84jAwD4V0m32VBC02qIlQOQRHRkH6q9ZRt8lYVJhtvKSMBS20qIH01JFSXqeSrXnRk1yo6V75IVziee3ziRD+dV/LTZfGc1HODGP55X8tTxjWfsi4bZHxq0/wBwmvEosg/5VHP5hFdEBnvEVyF1liUYrUd0pw4UOFWvwJyBv/rpVbkkYO9a+69YG/lWhg/mEV5T5fD0Ith2zsKK20uDTHb5HlQGHSSMncfXWuey7i4XaJ8Ez3QZ0dP4NRO7rY/iPsrt3iHhZv5ViQf0Zr766tXFHDL92ixodlDMl1wIbcEdtOknrkHNAXsUUDlRQFC9pqNbtt8g5/61VYzPLatZuEG3zVN+/stOFOdHadPHH1VExmbA7Jfjt29KFtflt6Qvw05PXbHjnbIoCoxWNxtViubWq7STj54+wVKW1u0ymy4iCljBAAeTpJJ8ATnnkeoNPn27emQkSOwS86e6FqAUs+QzvQEHGZ8qloaNBP8A4n7KcJEBITpLA1EBPeG5PLG/Wuy5EbSpZcZSkA5UVAAb4P7dqAj1qrwWqpX4kSoZZJGMjUNs8vrryk+4sRTIKG1px3QCO+fAb7mgGClfEFH/ALw+yoyQ7pBqwKcgpgOuqaTpaT2jjWRqScZwRnY+VeMVu2TUJUYiWy5nQh0aVLA+cBnOKApkyRsa8OKntLsPfnCZP7DV7XabMpwtLix9e3dPPfOPsP1Uki02OWUGRGiuFCA2kkjZIGQOfhv6UBi0yRzpOE3tXGFoHjLT/Gtg/s1wusA/B8FQUAQdjkHkRvSxeG+GYsuPIjW6E3ISoKZWhO4VgkEfQDQFgHKilHKigIXiS2SbimKYfY62lOau1WU5SppaMbA53Uk/RUNJ4SkmMW4rrDS/d4zetBKCVtrSVLzgkEgED1GeVWS6MzHfd1QnNKkOhS0lWEqT1Bxv9XXHOoNVt4mUwhAuSELLKW1KC8lK0qCtfLfPeSR4YoBm3wfMzGU5JZJaOtQyTqX70HQeXMIynPifCpS62GROvCJiHGw2l2OvScg4bUrUNhvkK6/s3y0j27ipu4iS7OZcb1LUWe0ITvqwAMfJGR5kDmDzeRoV9SWG35iVpYYfbLvabvqVjs1EY2IAOf60BGROEpabXLZkqimU5GYZac1FWlSB3lZKQRnPTwrtvhWaZE1yW7EfbdRI7JsoP4NS3EqT9ACfoPjXu3auIWWg0Lkt5TkdAU4t3HZOhRUrG24IIGefjXLNv4lRHkIVM1KciqbaUXt23MjCjt6770ATOGH1+7qjGMFtxkNuFQ09osOIUpRwOqUqGfOvaTw29I4QRalPtpnNRVNNPgZCVFJHUZ04OD1xThMK8/B1xZEsJnOB3sJJcJSMklGEY7uBgfRnem7tvvatJivrYToSG0uSi4WlhYKlKJHfBTtjp9OwHT3DzpntPRyw20BG7RABGsoW4pZ5b51j13zUfC4SnMOwlrltERhEykFXeLROrpy04x6nNezdn4nUWm3rxhpKQgrQvv41ZKjturBx4d0eJr2ftvEqy6Wbm2g5U43k7ZKdPZqGOQxqChuCfDagO7rY58qatyK+00DLZka1gnupRpKMeoB+nyplbuEZDD0NUl5hxlpLCHmdyhYQwpC9iN8qKDv0HjUu5BuiI01LUxS1l9Co2peClsKSpSScc/lj00imM+3cSPPSnIdxSwh0OJQhS86AoJKSNtlApI6jCj5UA2VwrM+EWHULjJYRKW8vBOcF9S8AYx8hRTz6mltPDE+H2JkvtOO64upbecBLOo9dyTqxnrnpTtdrvqo68TyHjHfSCHlYC1O5bPLojIz/APadRYl2Tde2W+Uxe01FCndWUdkE6cdDr72c/bQE6OVFAooAooooAooooAooooAooooAooooAooooAooooAooooD/9k=';
@@ -4895,8 +4894,8 @@ function exportServiceReportPDF(){
       // Try rpt-update-datetime first (if report modal was used), then plan date
       var el=document.getElementById('rpt-update-datetime');
       var v=el?el.value:'';
-      if(v) return fmtBE(new Date(v));
-      if(p.date) return fmtBE(new Date(p.date));
+      if(v) return fmtCE(new Date(v));
+      if(p.date) return fmtCE(new Date(p.date));
       return '';
     })()
   };
@@ -4987,7 +4986,7 @@ function exportServiceReportPDF(){
   var LOGO_DATA='data:image/jpeg;base64,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xkNuFQ09osOIUpRwOqUqGfOvaTw29I4QRalPtpnNRVNNPgZCVFJHUZ04OD1xThMK8/B1xZEsJnOB3sJJcJSMklGEY7uBgfRnem7tvvatJivrYToSG0uSi4WlhYKlKJHfBTtjp9OwHT3DzpntPRyw20BG7RABGsoW4pZ5b51j13zUfC4SnMOwlrltERhEykFXeLROrpy04x6nNezdn4nUWm3rxhpKQgrQvv41ZKjturBx4d0eJr2ftvEqy6Wbm2g5U43k7ZKdPZqGOQxqChuCfDagO7rY58qatyK+00DLZka1gnupRpKMeoB+nyplbuEZDD0NUl5hxlpLCHmdyhYQwpC9iN8qKDv0HjUu5BuiI01LUxS1l9Co2peClsKSpSScc/lj00imM+3cSPPSnIdxSwh0OJQhS86AoJKSNtlApI6jCj5UA2VwrM+EWHULjJYRKW8vBOcF9S8AYx8hRTz6mltPDE+H2JkvtOO64upbecBLOo9dyTqxnrnpTtdrvqo68TyHjHfSCHlYC1O5bPLojIz/APadRYl2Tde2W+Uxe01FCndWUdkE6cdDr72c/bQE6OVFAooAooooAooooAooooAooooAooooAooooAooooAooooD/9k=';
 
   var now=new Date();
-  var dateStr=String(now.getDate()).padStart(2,'0')+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+(now.getFullYear()+543);
+  var dateStr=String(now.getDate()).padStart(2,'0')+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+now.getFullYear();
 
   // ── PDF page builder helpers ──────────────────────────────────────────
   var CSS=
@@ -5431,7 +5430,7 @@ function _doExportTablePDF(){
   });
 
   var now=new Date();
-  var dateStr=String(now.getDate()).padStart(2,'0')+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+(now.getFullYear()+543);
+  var dateStr=String(now.getDate()).padStart(2,'0')+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+now.getFullYear();
 
   // Build active filter summary
   var filterParts=[];
@@ -5613,7 +5612,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.13</div>
+<div class="version-badge" style="display:none">v1.17.14</div>
 </body>
 </html>
 
