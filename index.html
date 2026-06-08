@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.12</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.13</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.12 — visionOS-inspired
+   LIQUID GLASS v1.17.13 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1958,8 +1958,8 @@ html:not(.light) .sched-gantt {
 <div id="home">
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
-  <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.12</div>
+  <div class="home-sub">PTT Metering Dashboard &middot; PTT Overall</div>
+  <div class="home-version">v1.17.13</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2014,7 +2014,7 @@ html:not(.light) .sched-gantt {
   <header>
     <div class="hlogo">
       <div class="hlogo-icon">FC<br>S600+</div>
-      <div><h1>PTT Metering Dashboard</h1><span id="hf">FloBoss™ S600+ · Overall</span></div>
+      <div><h1>PTT Metering Dashboard</h1><span id="hf">FloBoss™ S600+ &middot; Overall</span></div>
     </div>
     <div class="hright">
       <span class="lupd" id="h-upd"></span>
@@ -2221,7 +2221,7 @@ html:not(.light) .sched-gantt {
       <div class="sf-row"><label class="sf-label">Target Firmware</label>
         <input class="sf-input" id="edit-sf-fw-target" type="text"></div>
       <div class="sf-row"><label class="sf-label">Date</label>
-        <input class="sf-input" id="edit-sf-date" type="date"></div>
+        <div style="position:relative;display:flex;align-items:center"><input class="sf-input" id="edit-sf-date-text" type="text" placeholder="DD/MM/BBBB" style="padding-right:32px" oninput="(function(el){var iso=textToISO(el.value);var h=document.getElementById('edit-sf-date');if(h)h.value=iso;})(this)" onblur="(function(el){var iso=textToISO(el.value);if(iso){el.value=isoToText(iso);}else if(el.value.trim()){el.value='';}var h=document.getElementById('edit-sf-date');if(h)h.value=iso||'';})(this)"><input type="date" id="edit-sf-date" style="position:absolute;right:2px;top:50%;transform:translateY(-50%);width:20px;height:20px;opacity:0;cursor:pointer;z-index:2" onchange="(function(el){var vis=document.getElementById('edit-sf-date-text');if(vis)vis.value=isoToText(el.value);})(this)"><svg style="position:absolute;right:8px;pointer-events:none;opacity:.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div></div>
       <div class="sf-row"><label class="sf-label">Performed By</label>
         <input class="sf-input" id="edit-sf-performed-by" type="text" placeholder="Engineer name"></div>
       <div class="sf-row"><label class="sf-label">Note (optional)</label>
@@ -2468,13 +2468,13 @@ html:not(.light) .sched-gantt {
         <div class="sf-row"><label class="sf-label">Config Name</label>
           <input class="sf-input" id="rpt-config-name" type="text"></div>
         <div class="sf-row"><label class="sf-label">Last Config Installed Date</label>
-          <input class="sf-input" id="rpt-config-date" type="date"></div>
+          <div style="position:relative;display:flex;align-items:center"><input class="sf-input" id="rpt-config-date-text" type="text" placeholder="DD/MM/BBBB" style="padding-right:32px" oninput="(function(el){var iso=textToISO(el.value);var h=document.getElementById('rpt-config-date');if(h)h.value=iso;})(this)" onblur="(function(el){var iso=textToISO(el.value);if(iso){el.value=isoToText(iso);}else if(el.value.trim()){el.value='';}var h=document.getElementById('rpt-config-date');if(h)h.value=iso||'';})(this)"><input type="date" id="rpt-config-date" style="position:absolute;right:2px;top:50%;transform:translateY(-50%);width:20px;height:20px;opacity:0;cursor:pointer;z-index:2" onchange="(function(el){var vis=document.getElementById('rpt-config-date-text');if(vis)vis.value=isoToText(el.value);})(this)"><svg style="position:absolute;right:8px;pointer-events:none;opacity:.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div></div>
         <div class="sf-row"><label class="sf-label">Performed By</label>
           <input class="sf-input" id="rpt-performed-by" type="text" placeholder="Engineer name"></div>
         <div class="sf-row"><label class="sf-label">Acknowledged By</label>
           <input class="sf-input" id="rpt-ack-by" type="text" placeholder="Customer name"></div>
         <div class="sf-row"><label class="sf-label">Update Date</label>
-          <input class="sf-input" id="rpt-update-datetime" type="date"></div>
+          <div style="position:relative;display:flex;align-items:center"><input class="sf-input" id="rpt-update-datetime-text" type="text" placeholder="DD/MM/BBBB" style="padding-right:32px" oninput="(function(el){var iso=textToISO(el.value);var h=document.getElementById('rpt-update-datetime');if(h)h.value=iso;})(this)" onblur="(function(el){var iso=textToISO(el.value);if(iso){el.value=isoToText(iso);}else if(el.value.trim()){el.value='';}var h=document.getElementById('rpt-update-datetime');if(h)h.value=iso||'';})(this)"><input type="date" id="rpt-update-datetime" style="position:absolute;right:2px;top:50%;transform:translateY(-50%);width:20px;height:20px;opacity:0;cursor:pointer;z-index:2" onchange="(function(el){var vis=document.getElementById('rpt-update-datetime-text');if(vis)vis.value=isoToText(el.value);})(this)"><svg style="position:absolute;right:8px;pointer-events:none;opacity:.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div></div>
         <div class="sf-row"><label class="sf-label">Remark</label>
           <input class="sf-input" id="rpt-remark" type="text" placeholder="Optional note"></div>
       </div>
@@ -2521,6 +2521,27 @@ function hexToRgba(hex, alpha) {
 }
 
 var RC=['#00d4ff','#3b82f6','#8b5cf6','#ec4899','#f97316','#f59e0b','#10b981','#14b8a6','#06b6d4','#84cc16','#a855f7','#ef4444','#6366f1','#d946ef'];
+// ── Global BE date formatter ───────────────────────────────────────────
+function fmtBE(dateOrStr){
+  var d = (typeof dateOrStr === 'string') ? new Date(dateOrStr) : dateOrStr;
+  if(!d || isNaN(d.getTime())) return '';
+  var dd=String(d.getDate()).padStart(2,'0');
+  var mm=String(d.getMonth()+1).padStart(2,'0');
+  var yyyy=d.getFullYear()+543;
+  return dd+'/'+mm+'/'+yyyy;
+}
+// isoToText: convert ISO date string → DD/MM/BBBB display text
+function isoToText(iso){ return iso ? fmtBE(new Date(iso)) : ''; }
+// textToISO: parse DD/MM/BBBB → ISO YYYY-MM-DD (CE)
+function textToISO(txt){
+  var p=txt.replace(/[^0-9\/]/g,'').split('/');
+  if(p.length!==3) return '';
+  var dd=p[0],mm=p[1],yyyy=parseInt(p[2]||0);
+  if(yyyy>2400) yyyy=yyyy-543; // BE→CE
+  if(!dd||!mm||!yyyy) return '';
+  return yyyy+'-'+mm.padStart(2,'0')+'-'+dd.padStart(2,'0');
+}
+
 var AC={Turbine:'#00d4ff',Supervisory:'#c084fc',USM:'#10b981',Orifice:'#fbbf24'};
 var FWC={'Up-to-date':'#34d399',Outdated:'#f87171',Unknown:'#a8a29e'};
 var CM={'PTT Region':0,Site:1,Firmware:3,Status:4,Applications:5,'Last config installed date':6};
@@ -2588,7 +2609,7 @@ function finishGS(csv,url,sheet,btn){
   setP(100,'');
   setTimeout(function(){
     clrP();
-    showDash(sheet+' (Google Sheet) '+DATA.length+' records');
+    showDash(sheet+' (Google Sheet) &middot; '+DATA.length+' records');
     var ok=document.getElementById('gs-ok');ok.style.display='flex';
     document.getElementById('gs-ok-txt').textContent='Loaded '+DATA.length+' records — '+new Date().toLocaleTimeString('en-GB');
     btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';
@@ -3787,7 +3808,7 @@ function renderPlanList(){
   if(!ps.length){ el.innerHTML='<div class="plan-empty">No plans this month.<br>Select a date and add a plan.</div>'; return; }
   el.innerHTML=ps.map(function(p){
     var d=p.date.split('-');
-    var dl=d[2]+'/'+d[1]+'/'+d[0];
+    var dl=fmtBE(new Date(p.date));
     // lookup extra info from DATA — match TAG + Site
     var row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag && (x['Site']||'').trim()===p.site; });
     if(!row) row=DATA.find(function(x){ return (x['TAG']||'').trim()===p.tag; });
@@ -4335,17 +4356,33 @@ function exportPlanCSV(){
 
 // ── MODAL HELPERS ──
 function closeModal(id){
-  document.getElementById(id).classList.add('hidden');
-  // unblur version badge if no other modal is open
+  var el=document.getElementById(id); if(!el) return;
+  el.classList.add('hidden');
+  // Restore pointer events in case they were captured
+  el.style.pointerEvents='';
+  // Unblur version badge if no other modal is open
   var anyOpen=document.querySelectorAll('.modal-overlay:not(.hidden)').length>0;
   var vb=document.querySelector('.version-badge');
   if(vb) vb.style.filter=anyOpen?'blur(4px)':'';
+  // Restore body scroll/interaction
+  if(!anyOpen) document.body.style.overflow='';
 }
 function openModal(id){
-  document.getElementById(id).classList.remove('hidden');
+  var el=document.getElementById(id); if(!el) return;
+  el.classList.remove('hidden');
   var vb=document.querySelector('.version-badge');
   if(vb) vb.style.filter='blur(4px)';
 }
+// Click-outside safety valve: close modal if user clicks the dark overlay (not the box)
+document.addEventListener('click', function(e){
+  if(!e.target.classList.contains('modal-overlay')) return;
+  var id=e.target.id;
+  if(id && !e.target.classList.contains('hidden')){
+    // Don't close service-report via click-outside (too easy to accidentally dismiss)
+    if(id==='modal-service-report') return;
+    closeModal(id);
+  }
+});
 
 // ── EDIT PLAN ──
 function openEditPlan(id){
@@ -4365,7 +4402,9 @@ function openEditPlan(id){
   fillTags(p.site);
   siteEl.onchange=function(){ fillTags(siteEl.value); };
   document.getElementById('edit-sf-fw-target').value=p.fwTarget||'';
-  document.getElementById('edit-sf-date').value=p.date;
+  document.getElementById('edit-sf-date').value=p.date||'';
+  var _edt=document.getElementById('edit-sf-date-text');
+  if(_edt) _edt.value=p.date?isoToText(p.date):'';
   document.getElementById('edit-sf-note').value=p.note||'';
   document.getElementById('edit-sf-performed-by').value=p.performedBy||'';
   openModal('modal-edit-plan');
@@ -4411,11 +4450,16 @@ function openReport(id){
   document.getElementById('rpt-config-name').value=row['Config name']||'';
   // default config date = today
   var today=new Date(); var iso=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
-  document.getElementById('rpt-config-date').value=row['Last config installed date']||iso;
+  var _cfgIso=row['Last config installed date']||iso;
+  document.getElementById('rpt-config-date').value=_cfgIso;
+  var _cfgTxt=document.getElementById('rpt-config-date-text');
+  if(_cfgTxt) _cfgTxt.value=_cfgIso?isoToText(_cfgIso):'';
   document.getElementById('rpt-performed-by').value=p.performedBy||'';
   // default update date = today (date only)
   var nowDt=new Date(); var dtIso=nowDt.getFullYear()+'-'+String(nowDt.getMonth()+1).padStart(2,'0')+'-'+String(nowDt.getDate()).padStart(2,'0');
   document.getElementById('rpt-update-datetime').value=dtIso;
+  var _updTxt=document.getElementById('rpt-update-datetime-text');
+  if(_updTxt) _updTxt.value=dtIso?isoToText(dtIso):'';
   document.getElementById('rpt-remark').value='';
   document.getElementById('rpt-api-status').className='report-apps-status';
   document.getElementById('rpt-api-status').textContent='';
@@ -4446,8 +4490,7 @@ function submitReport(){
   // ── Timestamp for log
   var nowTs = new Date().toLocaleString('th-TH',{hour12:false,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
   var updateDtRaw = document.getElementById('rpt-update-datetime').value;
-  function fmtDDMMYYYY(d){ var dd=String(d.getDate()).padStart(2,'0'),mm=String(d.getMonth()+1).padStart(2,'0'),yyyy=d.getFullYear(); return dd+'/'+mm+'/'+yyyy; }
-  var updateDtDisplay = updateDtRaw ? fmtDDMMYYYY(new Date(updateDtRaw)) : fmtDDMMYYYY(new Date());
+  var updateDtDisplay = updateDtRaw ? fmtBE(new Date(updateDtRaw)) : fmtBE(new Date());
 
   // ── Main sheet payload (existing sheet update)
   var payload={
@@ -4518,7 +4561,12 @@ function submitReport(){
               savePlans();
             }
           }
-          setTimeout(function(){ closeModal('modal-report'); render(); renderPlanList(); renderGantt(); },1800);
+          (function(){
+          var _closeTimer=setTimeout(function(){ closeModal('modal-report'); render(); renderPlanList(); renderGantt(); },1800);
+          // Fallback: also close when tab regains focus (handles window.open popup stealing focus)
+          function _onVis(){ if(!document.hidden){ clearTimeout(_closeTimer); closeModal('modal-report'); render(); renderPlanList(); renderGantt(); document.removeEventListener('visibilitychange',_onVis); } }
+          document.addEventListener('visibilitychange',_onVis);
+        })()
         } else {
           throw new Error(res2.msg||'FW_Log sheet error');
         }
@@ -4736,7 +4784,7 @@ function gcExportPDF(){
   var summaryRows=pdfPlans.map(function(p){
     var sc=statusColor[p.status||'planned']||'#64748b';
     var sl=statusLabel[p.status||'planned']||p.status||'Planned';
-    var _d2=p.date?new Date(p.date):null; var d=_d2?(String(_d2.getDate()).padStart(2,'0')+'/'+String(_d2.getMonth()+1).padStart(2,'0')+'/'+_d2.getFullYear()):'';
+    var d=p.date?fmtBE(new Date(p.date)):'';
     return '<tr><td style="padding:3px 6px;border-bottom:1px solid #e2e8f0">'+p.site+'</td>'+
       '<td style="padding:3px 6px;border-bottom:1px solid #e2e8f0;color:#0284c7;font-family:monospace;font-size:8px">'+p.tag+'</td>'+
       '<td style="padding:3px 6px;border-bottom:1px solid #e2e8f0">'+d+'</td>'+
@@ -4766,7 +4814,7 @@ function gcExportPDF(){
     '<tbody>'+summaryRows+'</tbody>'+
     '</table></div>';
 
-  var dateStr=String(now.getDate()).padStart(2,'0')+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+now.getFullYear();
+  var dateStr=String(now.getDate()).padStart(2,'0')+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+(now.getFullYear()+543);
 
   // Build print-preview HTML page
   var LOGO_DATA='data:image/jpeg;base64,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xkNuFQ09osOIUpRwOqUqGfOvaTw29I4QRalPtpnNRVNNPgZCVFJHUZ04OD1xThMK8/B1xZEsJnOB3sJJcJSMklGEY7uBgfRnem7tvvatJivrYToSG0uSi4WlhYKlKJHfBTtjp9OwHT3DzpntPRyw20BG7RABGsoW4pZ5b51j13zUfC4SnMOwlrltERhEykFXeLROrpy04x6nNezdn4nUWm3rxhpKQgrQvv41ZKjturBx4d0eJr2ftvEqy6Wbm2g5U43k7ZKdPZqGOQxqChuCfDagO7rY58qatyK+00DLZka1gnupRpKMeoB+nyplbuEZDD0NUl5hxlpLCHmdyhYQwpC9iN8qKDv0HjUu5BuiI01LUxS1l9Co2peClsKSpSScc/lj00imM+3cSPPSnIdxSwh0OJQhS86AoJKSNtlApI6jCj5UA2VwrM+EWHULjJYRKW8vBOcF9S8AYx8hRTz6mltPDE+H2JkvtOO64upbecBLOo9dyTqxnrnpTtdrvqo68TyHjHfSCHlYC1O5bPLojIz/APadRYl2Tde2W+Uxe01FCndWUdkE6cdDr72c/bQE6OVFAooAooooAooooAooooAooooAooooAooooAooooAooooD/9k=';
@@ -4847,9 +4895,8 @@ function exportServiceReportPDF(){
       // Try rpt-update-datetime first (if report modal was used), then plan date
       var el=document.getElementById('rpt-update-datetime');
       var v=el?el.value:'';
-      function _fmt(d){ var dd=String(d.getDate()).padStart(2,'0'),mm=String(d.getMonth()+1).padStart(2,'0'),yyyy=d.getFullYear(); return dd+'/'+mm+'/'+yyyy; }
-      if(v) return _fmt(new Date(v));
-      if(p.date) return _fmt(new Date(p.date));
+      if(v) return fmtBE(new Date(v));
+      if(p.date) return fmtBE(new Date(p.date));
       return '';
     })()
   };
@@ -4940,7 +4987,7 @@ function exportServiceReportPDF(){
   var LOGO_DATA='data:image/jpeg;base64,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xkNuFQ09osOIUpRwOqUqGfOvaTw29I4QRalPtpnNRVNNPgZCVFJHUZ04OD1xThMK8/B1xZEsJnOB3sJJcJSMklGEY7uBgfRnem7tvvatJivrYToSG0uSi4WlhYKlKJHfBTtjp9OwHT3DzpntPRyw20BG7RABGsoW4pZ5b51j13zUfC4SnMOwlrltERhEykFXeLROrpy04x6nNezdn4nUWm3rxhpKQgrQvv41ZKjturBx4d0eJr2ftvEqy6Wbm2g5U43k7ZKdPZqGOQxqChuCfDagO7rY58qatyK+00DLZka1gnupRpKMeoB+nyplbuEZDD0NUl5hxlpLCHmdyhYQwpC9iN8qKDv0HjUu5BuiI01LUxS1l9Co2peClsKSpSScc/lj00imM+3cSPPSnIdxSwh0OJQhS86AoJKSNtlApI6jCj5UA2VwrM+EWHULjJYRKW8vBOcF9S8AYx8hRTz6mltPDE+H2JkvtOO64upbecBLOo9dyTqxnrnpTtdrvqo68TyHjHfSCHlYC1O5bPLojIz/APadRYl2Tde2W+Uxe01FCndWUdkE6cdDr72c/bQE6OVFAooAooooAooooAooooAooooAooooAooooAooooAooooD/9k=';
 
   var now=new Date();
-  var dateStr=String(now.getDate()).padStart(2,'0')+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+now.getFullYear();
+  var dateStr=String(now.getDate()).padStart(2,'0')+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+(now.getFullYear()+543);
 
   // ── PDF page builder helpers ──────────────────────────────────────────
   var CSS=
@@ -5384,7 +5431,7 @@ function _doExportTablePDF(){
   });
 
   var now=new Date();
-  var dateStr=String(now.getDate()).padStart(2,'0')+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+now.getFullYear();
+  var dateStr=String(now.getDate()).padStart(2,'0')+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+(now.getFullYear()+543);
 
   // Build active filter summary
   var filterParts=[];
@@ -5566,7 +5613,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.12</div>
+<div class="version-badge" style="display:none">v1.17.13</div>
 </body>
 </html>
 
