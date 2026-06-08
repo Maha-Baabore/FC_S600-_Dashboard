@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.14</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.15</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.14 — visionOS-inspired
+   LIQUID GLASS v1.17.15 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard &middot; PTT Overall</div>
-  <div class="home-version">v1.17.14</div>
+  <div class="home-version">v1.17.15</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2521,9 +2521,36 @@ function hexToRgba(hex, alpha) {
 }
 
 var RC=['#00d4ff','#3b82f6','#8b5cf6','#ec4899','#f97316','#f59e0b','#10b981','#14b8a6','#06b6d4','#84cc16','#a855f7','#ef4444','#6366f1','#d946ef'];
+// ── Global date helpers ────────────────────────────────────────────────
+// parseToISO: normalise any common date string → ISO YYYY-MM-DD
+// Handles: DD-MM-YYYY, DD/MM/YYYY, YYYY-MM-DD, M/D/YYYY, already ISO
+function parseToISO(str){
+  if(!str || typeof str !== 'string') return '';
+  str = str.replace(' 00:00:00','').replace('Invalid Date','').trim();
+  if(!str) return '';
+  // Already ISO: YYYY-MM-DD
+  if(/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+  // DD-MM-YYYY or DD/MM/YYYY (day first — Google Sheets locale TH)
+  var m1 = str.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
+  if(m1) return m1[3]+'-'+m1[2].padStart(2,'0')+'-'+m1[1].padStart(2,'0');
+  // YYYY/MM/DD
+  var m2 = str.match(/^(\d{4})\/(\d{2})\/(\d{2})$/);
+  if(m2) return m2[1]+'-'+m2[2]+'-'+m2[3];
+  // Fallback: try native Date parse (handles "21 Oct 2021" etc.)
+  var d = new Date(str);
+  if(!isNaN(d.getTime())){
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  }
+  return ''; // unparseable
+}
+
 // ── Global CE date formatter ───────────────────────────────────────────
 function fmtCE(dateOrStr){
-  var d = (typeof dateOrStr === 'string') ? new Date(dateOrStr) : dateOrStr;
+  var d;
+  if(typeof dateOrStr === 'string'){
+    var iso=parseToISO(dateOrStr);
+    d = iso ? new Date(iso) : new Date(dateOrStr);
+  } else { d = dateOrStr; }
   if(!d || isNaN(d.getTime())) return '';
   var dd=String(d.getDate()).padStart(2,'0');
   var mm=String(d.getMonth()+1).padStart(2,'0');
@@ -2654,8 +2681,7 @@ function processRows(rows){
     if(!obj['Applications']&&obj['Column1'])obj['Applications']=obj['Column1'];
     obj['Applications']=(obj['Applications']||'').trim();
         obj['Hart version']=fixHart(obj['Hart version']||'');
-    var d=obj['Last config installed date']||'';
-    obj['Last config installed date']=d.replace(' 00:00:00','').replace('Invalid Date','').trim();
+    obj['Last config installed date']=parseToISO(obj['Last config installed date']||'');
     if(obj['PTT Region']||obj['Site']||obj['TAG'])DATA.push(obj);
   }
 }
@@ -2934,7 +2960,7 @@ function render(){
     var fwuc=fwu==='Up-to-date'?'fwb-u':fwu==='Outdated'?'fwb-o':'fwb-k';
     var fwuicon=fwu==='Up-to-date'?'<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 5L20.5 19H3.5L12 5Z"/></svg>':fwu==='Outdated'?'<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 19L3.5 5H20.5L12 19Z"/></svg>':'?';
     var mn=nv(x['Metering name']);
-    var dt=nv(x['Last config installed date']).replace(' 00:00:00','');
+    var dt=fmtCE(nv(x['Last config installed date']));
     var _reg=nv(x['PTT Region']);var _regCol=REGION_COLOR_MAP[_reg]||'#475569';
     return '<tr><td><span class="rb" style="background:'+_regCol+';color:'+(isLightColor(_regCol)?'#080c18':'#fff')+'">'+regLabel(_reg)+'</span></td>'+
       '<td><div class="cell-primary">'+( nv(x['Site'])||'&mdash;')+'</div><div class="cell-tag">'+( nv(x['TAG'])||'&mdash;')+'</div></td>'+
@@ -4449,7 +4475,8 @@ function openReport(id){
   document.getElementById('rpt-config-name').value=row['Config name']||'';
   // default config date = today
   var today=new Date(); var iso=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
-  var _cfgIso=row['Last config installed date']||iso;
+  var _cfgRaw=row['Last config installed date']||iso;
+  var _cfgIso=parseToISO(_cfgRaw)||_cfgRaw;
   document.getElementById('rpt-config-date').value=_cfgIso;
   var _cfgTxt=document.getElementById('rpt-config-date-text');
   if(_cfgTxt) _cfgTxt.value=_cfgIso?isoToText(_cfgIso):'';
@@ -5612,7 +5639,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.14</div>
+<div class="version-badge" style="display:none">v1.17.15</div>
 </body>
 </html>
 
