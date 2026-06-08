@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.18</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.19</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.18 — visionOS-inspired
+   LIQUID GLASS v1.17.19 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.18</div>
+  <div class="home-version">v1.17.19</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4887,18 +4887,30 @@ function gcExportPDF(){
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   var url=URL.createObjectURL(blob);
   window.open(url,'_blank');
-  // After window.open steals focus to the new tab, restore interactivity
-  // to the service report modal so the textarea remains editable on return
-  setTimeout(function(){
-    var el=document.getElementById('sr-final-remark');
-    if(el){ el.blur(); }
-    var modal=document.getElementById('modal-service-report');
-    if(modal && !modal.classList.contains('hidden')){
-      modal.style.pointerEvents='';
-      // Remove any accidental inert state
-      modal.removeAttribute('inert');
+  // window.open shifts browser focus to the new tab. We use visibilitychange
+  // (fires exactly when the user returns to this tab) to .focus() the textarea.
+  // This guarantees immediate editability with zero extra clicks.
+  (function(){
+    function _restoreFocus(){
+      if(document.hidden) return;
+      document.removeEventListener('visibilitychange', _restoreFocus);
+      var ta=document.getElementById('sr-final-remark');
+      if(ta){
+        ta.removeAttribute('disabled');
+        ta.removeAttribute('readonly');
+        ta.style.pointerEvents='';
+        ta.focus();
+      }
+      var modal=document.getElementById('modal-service-report');
+      if(modal){ modal.style.pointerEvents=''; modal.removeAttribute('inert'); }
     }
-  }, 200);
+    document.addEventListener('visibilitychange', _restoreFocus);
+    // Fallback: also fire on window focus (covers same-tab return without tab switch)
+    window.addEventListener('focus', function _wFocus(){
+      window.removeEventListener('focus', _wFocus);
+      _restoreFocus();
+    });
+  })();
 }
 
 // ══════════════════════════════════════════════════════
@@ -5652,7 +5664,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.18</div>
+<div class="version-badge" style="display:none">v1.17.19</div>
 </body>
 </html>
 
