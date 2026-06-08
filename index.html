@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.27</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.28</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.27 — visionOS-inspired
+   LIQUID GLASS v1.17.28 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.27</div>
+  <div class="home-version">v1.17.28</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -3886,8 +3886,31 @@ var GC_VIEW = 'week';
 var GC_OPEN = {};
 var GC_WEEK_OFFSET = 0; // weeks offset from anchor (for < > navigation)
 
-function gcPrevWeek(){ GC_WEEK_OFFSET--; renderGantt(); }
-function gcNextWeek(){ GC_WEEK_OFFSET++; renderGantt(); }
+function gcPrevWeek(){
+  // Compute proposed weekMon after decrement and clamp to calMonth
+  var _test=_computeWeekMon(GC_WEEK_OFFSET-1);
+  // Allow if weekMon is within calMonth OR if weekSun crosses into calMonth
+  var _testSun=new Date(_test); _testSun.setDate(_test.getDate()+6);
+  if(_testSun.getFullYear()===calYear&&_testSun.getMonth()===calMonth||
+     _test.getFullYear()===calYear&&_test.getMonth()===calMonth){
+    GC_WEEK_OFFSET--; renderGantt();
+  }
+}
+function gcNextWeek(){
+  var _test=_computeWeekMon(GC_WEEK_OFFSET+1);
+  var _testSun=new Date(_test); _testSun.setDate(_test.getDate()+6);
+  if(_test.getFullYear()===calYear&&_test.getMonth()===calMonth||
+     _testSun.getFullYear()===calYear&&_testSun.getMonth()===calMonth){
+    GC_WEEK_OFFSET++; renderGantt();
+  }
+}
+function _computeWeekMon(offset){
+  var _sdInMonth=selectedDate&&(function(){ var _sd=new Date(selectedDate); return _sd.getFullYear()===calYear&&_sd.getMonth()===calMonth; })();
+  var _a=_sdInMonth?new Date(selectedDate):new Date(calYear,calMonth,1); _a.setHours(0,0,0,0);
+  var _wd=_a.getDay();
+  var _m=new Date(_a); _m.setDate(_a.getDate()-(_wd===0?6:_wd-1)+offset*7);
+  return _m;
+}
 
 function gcSetView(v){
   GC_VIEW = v;
@@ -4934,8 +4957,14 @@ function gcExportPDF(){
       '<span class="leg-item"><span class="leg-dot" style="background:#10b981"></span>Done</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Cancelled</span>'+
     '</div>'+
-    ganttSummaryHTML+
   '</div>'+
+  '<div class="page" style="page-break-before:always">'+
+    '<div class="header">'+
+      '<img class="header-logo" src="'+LOGO_DATA+'" alt="Siamraj">'+
+      '<div class="header-title"><h1>Flow Computer FloBoss™ S600+ — Firmware Update Schedule</h1><p>PTT Metering Dashboard</p></div>'+
+      '<div class="header-right">Date: '+dateStr+'<br>View: '+GC_VIEW.charAt(0).toUpperCase()+GC_VIEW.slice(1)+'</div>'+
+    '</div>'+
+    ganttSummaryHTML+
   '<script>window.onload=function(){ window.print(); };<\/script>'+
   '</body></html>';
 
@@ -5719,7 +5748,7 @@ function _doExportTablePDF(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.27</div>
+<div class="version-badge" style="display:none">v1.17.28</div>
 </body>
 </html>
 
