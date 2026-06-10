@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.31</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.32</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.31 — visionOS-inspired
+   LIQUID GLASS v1.17.32 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1939,7 +1939,7 @@ html:not(.light) .sched-gantt {
   box-shadow: none !important;
 }
 
-/* ── v1.17.31: Metering Name column — fit full name (override global td max-width:180px) ── */
+/* ── v1.17.32: Metering Name column — fit full name (override global td max-width:180px) ── */
 td.td-mn{
   max-width: none !important;
   min-width: 240px;
@@ -1971,7 +1971,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.31</div>
+  <div class="home-version">v1.17.32</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -5605,7 +5605,7 @@ function _doExportTablePDF(){
     return '<tr style="'+bg+'">'+
       '<td>'+((x['PTT Region']||'').trim()||'—')+'</td>'+
       '<td>'+((x['Site']||'').trim()||'—')+'<br><span style="color:#0284c7;font-size:7.5px;font-family:monospace">'+((x['TAG']||'').trim()||'—')+'</span></td>'+
-      '<td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+((x['Metering name']||'').trim()||'—')+'</td>'+
+      '<td style="white-space:normal;word-break:break-word;line-height:1.35;min-width:170px">'+((x['Metering name']||'').trim()||'—')+'</td>'+
       '<td style="font-family:monospace;color:#334155">'+fw+'</td>'+
       '<td><span style="'+fwColor+'">'+fwu+'</span></td>'+
       '<td><span style="'+stColor+'">'+st+'</span></td>'+
@@ -5915,7 +5915,7 @@ function _doExportTableExcel(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.31</div>
+<div class="version-badge" style="display:none">v1.17.32</div>
 </body>
 </html>
 
