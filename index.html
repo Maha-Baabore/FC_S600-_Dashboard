@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.28</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.29</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.28 — visionOS-inspired
+   LIQUID GLASS v1.17.29 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.28</div>
+  <div class="home-version">v1.17.29</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2091,6 +2091,7 @@ html:not(.light) .sched-gantt {
               <input class="srch" id="si" type="text" placeholder="Search TAG, Site, Metering name..." oninput="sch()" style="padding-left:32px">
             </div>
             <button id="btn-export-table-pdf" class="sf-sm-btn" onclick="exportTablePDF()" style="white-space:nowrap;display:inline-flex;align-items:center;gap:5px;flex-shrink:0;z-index:1;position:relative"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3V15"/><path d="M6.5 9.5L12 15L17.5 9.5"/><path d="M4 19H20"/></svg> Export PDF</button>
+            <button id="btn-export-table-xlsx" class="sf-sm-btn" onclick="exportTableExcel()" style="white-space:nowrap;display:inline-flex;align-items:center;gap:5px;flex-shrink:0;z-index:1;position:relative"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8L12 13L8 18"/><path d="M16 8L12 13L16 18"/></svg> Export Excel</button>
           </div>
         </div>
         <div class="tw"><table>
@@ -5747,8 +5748,170 @@ function _doExportTablePDF(){
   window.open(_tblUrl,'_blank');
 }
 
+// ══════════════════════════════════════════
+//  exportTableExcel — Metering Units Excel Export (.xlsx via SheetJS)
+//  - Mirrors the exact same filter logic as exportTablePDF / render()
+//  - SheetJS is lazy-loaded from CDN on first use, then cached
+// ══════════════════════════════════════════
+var _XLSX_CDN='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+var _xlsxLoading=null;
+function _loadSheetJS(){
+  if(window.XLSX) return Promise.resolve();
+  if(_xlsxLoading) return _xlsxLoading;
+  _xlsxLoading=new Promise(function(resolve,reject){
+    var s=document.createElement('script');
+    s.src=_XLSX_CDN;
+    s.onload=function(){ resolve(); };
+    s.onerror=function(){ _xlsxLoading=null; reject(new Error('Failed to load SheetJS')); };
+    document.head.appendChild(s);
+  });
+  return _xlsxLoading;
+}
+
+function exportTableExcel(){
+  // ── UX: loading state on the button while SheetJS loads + workbook builds ──
+  var _btn=document.getElementById('btn-export-table-xlsx');
+  var _btnOrig=_btn?_btn.innerHTML:'';
+  if(_btn){
+    _btn.disabled=true;
+    _btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="animation:sp .8s linear infinite"><path d="M12 3A9 9 0 1 1 4.5 7"/></svg> Building...';
+  }
+  function _restore(){ if(_btn){ _btn.disabled=false; _btn.innerHTML=_btnOrig; } }
+
+  _loadSheetJS().then(function(){
+    try{ _doExportTableExcel(); }
+    catch(e){ alert('Excel export failed: '+e.message); }
+    _restore();
+  }).catch(function(){
+    alert('Could not load the Excel library. Please check your internet connection and try again.');
+    _restore();
+  });
+}
+
+function _doExportTableExcel(){
+  // Build filtered dataset — mirrors render() / exportTablePDF filter logic exactly
+  var nv=function(v){ return (v||'').toString().trim(); };
+  var filtered=DATA.filter(function(x){
+    if(ST.f.r.size>0  && !ST.f.r.has(nv(x['PTT Region'])))    return false;
+    if(ST.f.fw.size>0 && !ST.f.fw.has(nv(x['Firmware'])))     return false;
+    if(ST.f.fwu.size>0&& !ST.f.fwu.has(nv(x['Firmware Update']))) return false;
+    if(ST.f.st.size>0 && !ST.f.st.has(nv(x['Status'])))       return false;
+    if(ST.f.ap.size>0 && !ST.f.ap.has(nv(x['Applications']))) return false;
+    if(ST.q){
+      var q=ST.q.toLowerCase();
+      return nv(x['TAG']).toLowerCase().includes(q)||
+             nv(x['Site']).toLowerCase().includes(q)||
+             nv(x['Metering name']).toLowerCase().includes(q);
+    }
+    return true;
+  });
+
+  if(!filtered.length){ alert('No records to export'); return; }
+
+  var now=new Date();
+  var dateStr=String(now.getDate()).padStart(2,'0')+'/'+String(now.getMonth()+1).padStart(2,'0')+'/'+now.getFullYear();
+  var fileDate=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+
+  // Active filter summary (same as PDF export)
+  var filterParts=[];
+  if(ST.f.r.size>0) filterParts.push('Region: '+Array.from(ST.f.r).join(', '));
+  if(ST.f.fw.size>0) filterParts.push('FW: '+Array.from(ST.f.fw).join(', '));
+  if(ST.f.fwu.size>0) filterParts.push('FW Update: '+Array.from(ST.f.fwu).join(', '));
+  if(ST.f.st.size>0) filterParts.push('Status: '+Array.from(ST.f.st).join(', '));
+  if(ST.f.ap.size>0) filterParts.push('App: '+Array.from(ST.f.ap).join(', '));
+  if(ST.q) filterParts.push('Search: "'+ST.q+'"');
+  var filterText=filterParts.length?filterParts.join(' | '):'All records';
+
+  // ── Sheet 1: Metering Units data ──
+  var HDR=['PTT Region','Site','TAG','Metering Name','IP Address','Serial No.','Firmware','FW Update','Hart Version','Status','Application','Config Name','Config Date'];
+  var rows=filtered.map(function(x){
+    return [
+      nv(x['PTT Region']),
+      nv(x['Site']),
+      nv(x['TAG']),
+      nv(x['Metering name']),
+      nv(x['IP : Address'])||nv(x['IP Address']),
+      nv(x['Serial No.'])||nv(x['Serial No']),
+      nv(x['Firmware']),
+      nv(x['Firmware Update']),
+      nv(x['Hart version']),
+      nv(x['Status']),
+      nv(x['Applications'])||nv(x['Application']),
+      nv(x['Config name']),
+      nv(x['Last config installed date'])
+    ];
+  });
+  var aoa=[HDR].concat(rows);
+  var ws=XLSX.utils.aoa_to_sheet(aoa);
+
+  // Column widths (in characters)
+  ws['!cols']=[
+    {wch:11},  // PTT Region
+    {wch:14},  // Site
+    {wch:20},  // TAG
+    {wch:38},  // Metering Name
+    {wch:15},  // IP Address
+    {wch:14},  // Serial No.
+    {wch:10},  // Firmware
+    {wch:12},  // FW Update
+    {wch:12},  // Hart Version
+    {wch:15},  // Status
+    {wch:12},  // Application
+    {wch:24},  // Config Name
+    {wch:14}   // Config Date
+  ];
+  // Auto-filter on the header row across all data
+  ws['!autofilter']={ref:XLSX.utils.encode_range({s:{r:0,c:0},e:{r:rows.length,c:HDR.length-1}})};
+
+  // ── Sheet 2: Summary (KPI + breakdowns) ──
+  var kpiTotal=filtered.length;
+  var kpiFwUp=0,kpiFwOut=0;
+  var appCounts={};
+  filtered.forEach(function(x){
+    var f=nv(x['Firmware Update']);
+    if(f==='Up-to-date') kpiFwUp++; else if(f==='Outdated') kpiFwOut++;
+    var ap=nv(x['Applications'])||nv(x['Application'])||'Unknown';
+    appCounts[ap]=(appCounts[ap]||0)+1;
+  });
+  var kpiFwUnk=kpiTotal-kpiFwUp-kpiFwOut;
+  function pct(n){ return kpiTotal?Math.round(n/kpiTotal*100)+'%':'0%'; }
+
+  var sumAoa=[
+    ['Flow Computer FloBoss S600+ — Metering Units Export'],
+    ['PTT Metering Dashboard'],
+    [],
+    ['Export Date',dateStr],
+    ['Filter',filterText],
+    ['Total Records',kpiTotal],
+    [],
+    ['Firmware Update Status','Count','%'],
+    ['Up-to-date',kpiFwUp,pct(kpiFwUp)],
+    ['Outdated',kpiFwOut,pct(kpiFwOut)],
+    ['Unknown',kpiFwUnk,pct(kpiFwUnk)],
+    [],
+    ['Application','Count','%']
+  ];
+  Object.keys(appCounts).sort().forEach(function(k){
+    sumAoa.push([k,appCounts[k],pct(appCounts[k])]);
+  });
+  var wsSum=XLSX.utils.aoa_to_sheet(sumAoa);
+  wsSum['!cols']=[{wch:36},{wch:10},{wch:8}];
+
+  // ── Workbook assembly + download ──
+  var wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Metering Units');
+  XLSX.utils.book_append_sheet(wb,wsSum,'Summary');
+  wb.Props={
+    Title:'FC S600+ Metering Units',
+    Subject:'PTT Metering Dashboard Export',
+    Author:'SIAMRAJ PUBLIC COMPANY LIMITED',
+    CreatedDate:now
+  };
+  XLSX.writeFile(wb,'FC_S600_Metering_Units_'+fileDate+'.xlsx');
+}
+
 </script>
-<div class="version-badge" style="display:none">v1.17.28</div>
+<div class="version-badge" style="display:none">v1.17.29</div>
 </body>
 </html>
 
