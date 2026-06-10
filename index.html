@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.29</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.30</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.29 — visionOS-inspired
+   LIQUID GLASS v1.17.30 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1959,7 +1959,7 @@ html:not(.light) .sched-gantt {
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.29</div>
+  <div class="home-version">v1.17.30</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2091,7 +2091,7 @@ html:not(.light) .sched-gantt {
               <input class="srch" id="si" type="text" placeholder="Search TAG, Site, Metering name..." oninput="sch()" style="padding-left:32px">
             </div>
             <button id="btn-export-table-pdf" class="sf-sm-btn" onclick="exportTablePDF()" style="white-space:nowrap;display:inline-flex;align-items:center;gap:5px;flex-shrink:0;z-index:1;position:relative"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3V15"/><path d="M6.5 9.5L12 15L17.5 9.5"/><path d="M4 19H20"/></svg> Export PDF</button>
-            <button id="btn-export-table-xlsx" class="sf-sm-btn" onclick="exportTableExcel()" style="white-space:nowrap;display:inline-flex;align-items:center;gap:5px;flex-shrink:0;z-index:1;position:relative"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8L12 13L8 18"/><path d="M16 8L12 13L16 18"/></svg> Export Excel</button>
+            <button id="btn-export-table-xlsx" class="sf-sm-btn" onclick="exportTableExcel()" style="white-space:nowrap;display:inline-flex;align-items:center;gap:5px;flex-shrink:0;z-index:1;position:relative"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9H21"/><path d="M3 14.5H21"/><path d="M9.5 9V20"/><path d="M15.5 9V20"/></svg> Export Excel</button>
           </div>
         </div>
         <div class="tw"><table>
@@ -5823,21 +5823,17 @@ function _doExportTableExcel(){
   var filterText=filterParts.length?filterParts.join(' | '):'All records';
 
   // ── Sheet 1: Metering Units data ──
-  var HDR=['PTT Region','Site','TAG','Metering Name','IP Address','Serial No.','Firmware','FW Update','Hart Version','Status','Application','Config Name','Config Date'];
+  var HDR=['PTT Region','Site','TAG','Metering Name','Firmware','FW Update','Status','Application','Config Date'];
   var rows=filtered.map(function(x){
     return [
       nv(x['PTT Region']),
       nv(x['Site']),
       nv(x['TAG']),
       nv(x['Metering name']),
-      nv(x['IP : Address'])||nv(x['IP Address']),
-      nv(x['Serial No.'])||nv(x['Serial No']),
       nv(x['Firmware']),
       nv(x['Firmware Update']),
-      nv(x['Hart version']),
       nv(x['Status']),
       nv(x['Applications'])||nv(x['Application']),
-      nv(x['Config name']),
       nv(x['Last config installed date'])
     ];
   });
@@ -5850,14 +5846,10 @@ function _doExportTableExcel(){
     {wch:14},  // Site
     {wch:20},  // TAG
     {wch:38},  // Metering Name
-    {wch:15},  // IP Address
-    {wch:14},  // Serial No.
     {wch:10},  // Firmware
     {wch:12},  // FW Update
-    {wch:12},  // Hart Version
     {wch:15},  // Status
     {wch:12},  // Application
-    {wch:24},  // Config Name
     {wch:14}   // Config Date
   ];
   // Auto-filter on the header row across all data
@@ -5911,7 +5903,7 @@ function _doExportTableExcel(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.29</div>
+<div class="version-badge" style="display:none">v1.17.30</div>
 </body>
 </html>
 
