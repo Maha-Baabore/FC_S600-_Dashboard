@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.33</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.34</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -649,7 +649,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.33 — visionOS-inspired
+   LIQUID GLASS v1.17.34 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1939,7 +1939,7 @@ html:not(.light) .sched-gantt {
   box-shadow: none !important;
 }
 
-/* ── v1.17.33: Metering Name column — fit full name (override global td max-width:180px) ── */
+/* ── v1.17.34: Metering Name column — fit full name (override global td max-width:180px) ── */
 td.td-mn{
   max-width: none !important;
   min-width: 240px;
@@ -1971,7 +1971,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.33</div>
+  <div class="home-version">v1.17.34</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4983,7 +4983,7 @@ function gcExportPDF(){
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   var url=URL.createObjectURL(blob);
-  window.open(url,'_blank');
+  _openPrintTab(url); // v1.17.34: noopener — separate process, no main-thread freeze
   // window.open shifts browser focus to the new tab. We use visibilitychange
   // (fires exactly when the user returns to this tab) to .focus() the textarea.
   // This guarantees immediate editability with zero extra clicks.
@@ -5008,6 +5008,27 @@ function gcExportPDF(){
       _restoreFocus();
     });
   })();
+}
+
+// ══════════════════════════════════════════════════════
+//  _openPrintTab — open blob print page in a SEPARATE process
+//  v1.17.34 ROOT CAUSE FIX for keyboard freeze after export:
+//  Plain window.open(blobUrl) shares the renderer process with this
+//  tab (same-origin + window.opener link). The new tab's
+//  window.print() preview generation BLOCKS that shared main thread,
+//  freezing all JS (incl. keyboard handlers) in this tab until the
+//  preview finishes. rel="noopener" severs the link → Chrome gives
+//  the print tab its own process → this tab never freezes.
+// ══════════════════════════════════════════════════════
+function _openPrintTab(url){
+  var a=document.createElement('a');
+  a.href=url;
+  a.target='_blank';
+  a.rel='noopener noreferrer';
+  a.style.display='none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){ a.remove(); },0);
 }
 
 // ══════════════════════════════════════════════════════
@@ -5338,8 +5359,8 @@ function exportServiceReportPDF(){
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   var url=URL.createObjectURL(blob);
-  window.open(url,'_blank');
-  // v1.17.33: restore keyboard input (Search/Note/Remark) when user returns to this tab
+  _openPrintTab(url); // v1.17.34: noopener — separate process, no main-thread freeze
+  // restore keyboard input (Search/Note/Remark) when user returns to this tab
   _recoverFocusAfterExport('sr-final-remark');
 }
 
@@ -5794,8 +5815,8 @@ function _doExportTablePDF(){
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   var _tblUrl=URL.createObjectURL(blob);
-  window.open(_tblUrl,'_blank');
-  // v1.17.33: restore keyboard input when user returns to this tab
+  _openPrintTab(_tblUrl); // v1.17.34: noopener — separate process, no main-thread freeze
+  // restore keyboard input when user returns to this tab
   _recoverFocusAfterExport();
 }
 
@@ -5954,7 +5975,7 @@ function _doExportTableExcel(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.33</div>
+<div class="version-badge" style="display:none">v1.17.34</div>
 </body>
 </html>
 
