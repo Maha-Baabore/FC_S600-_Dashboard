@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.35</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.36</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -289,7 +289,10 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 #login-pw::placeholder{color:var(--tx3)}
 #login-pw::-ms-reveal,#login-pw::-ms-clear{display:none}
-#login-pw::-webkit-credentials-auto-fill-button,#login-pw::-webkit-textfield-decoration-container{display:none!important}
+/* v1.17.36: hide ONLY the Safari autofill key button. Never display:none the
+   ::-webkit-textfield-decoration-container — it wraps the inner editor on
+   WebKit/iOS, hiding it makes the password field impossible to type into. */
+#login-pw::-webkit-credentials-auto-fill-button{visibility:hidden;pointer-events:none}
 #login-pw{-webkit-appearance:none;appearance:none}
 :root:not(.light) #login-eye{color:#ffffff}
 :root:not(.light) #login-eye:hover{color:#ffffff}
@@ -649,7 +652,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.35 — visionOS-inspired
+   LIQUID GLASS v1.17.36 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1939,7 +1942,7 @@ html:not(.light) .sched-gantt {
   box-shadow: none !important;
 }
 
-/* ── v1.17.35: Metering Name column — fit full name (override global td max-width:180px) ── */
+/* ── v1.17.36: Metering Name column — fit full name (override global td max-width:180px) ── */
 td.td-mn{
   max-width: none !important;
   min-width: 240px;
@@ -1971,7 +1974,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.35</div>
+  <div class="home-version">v1.17.36</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -3090,7 +3093,7 @@ function showLogin(){
   setTimeout(function(){ var el=document.getElementById('login-pw'); if(el) el.focus(); }, 80);
 }
 // ── sha256Hex — SHA-256 with pure-JS fallback ──────────
-// v1.17.35: crypto.subtle exists ONLY in secure contexts (HTTPS/localhost).
+// v1.17.36: crypto.subtle exists ONLY in secure contexts (HTTPS/localhost).
 // Mobile devices opening via LAN IP (http://192.168.x.x) get undefined →
 // login silently froze at "Verifying...". Fallback keeps login working anywhere.
 function sha256Hex(str){
@@ -5044,7 +5047,7 @@ function gcExportPDF(){
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   var url=URL.createObjectURL(blob);
-  _openPrintTab(url); // v1.17.35: noopener — separate process, no main-thread freeze
+  _openPrintTab(url); // v1.17.36: noopener — separate process, no main-thread freeze
   // window.open shifts browser focus to the new tab. We use visibilitychange
   // (fires exactly when the user returns to this tab) to .focus() the textarea.
   // This guarantees immediate editability with zero extra clicks.
@@ -5073,7 +5076,7 @@ function gcExportPDF(){
 
 // ══════════════════════════════════════════════════════
 //  _openPrintTab — open blob print page in a SEPARATE process
-//  v1.17.35 ROOT CAUSE FIX for keyboard freeze after export:
+//  v1.17.36 ROOT CAUSE FIX for keyboard freeze after export:
 //  Plain window.open(blobUrl) shares the renderer process with this
 //  tab (same-origin + window.opener link). The new tab's
 //  window.print() preview generation BLOCKS that shared main thread,
@@ -5420,7 +5423,7 @@ function exportServiceReportPDF(){
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   var url=URL.createObjectURL(blob);
-  _openPrintTab(url); // v1.17.35: noopener — separate process, no main-thread freeze
+  _openPrintTab(url); // v1.17.36: noopener — separate process, no main-thread freeze
   // restore keyboard input (Search/Note/Remark) when user returns to this tab
   _recoverFocusAfterExport('sr-final-remark');
 }
@@ -5876,7 +5879,7 @@ function _doExportTablePDF(){
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   var _tblUrl=URL.createObjectURL(blob);
-  _openPrintTab(_tblUrl); // v1.17.35: noopener — separate process, no main-thread freeze
+  _openPrintTab(_tblUrl); // v1.17.36: noopener — separate process, no main-thread freeze
   // restore keyboard input when user returns to this tab
   _recoverFocusAfterExport();
 }
@@ -6036,7 +6039,7 @@ function _doExportTableExcel(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.35</div>
+<div class="version-badge" style="display:none">v1.17.36</div>
 </body>
 </html>
 
