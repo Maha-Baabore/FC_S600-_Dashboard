@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.36</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.37</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -289,7 +289,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 #login-pw::placeholder{color:var(--tx3)}
 #login-pw::-ms-reveal,#login-pw::-ms-clear{display:none}
-/* v1.17.36: hide ONLY the Safari autofill key button. Never display:none the
+/* v1.17.37: hide ONLY the Safari autofill key button. Never display:none the
    ::-webkit-textfield-decoration-container — it wraps the inner editor on
    WebKit/iOS, hiding it makes the password field impossible to type into. */
 #login-pw::-webkit-credentials-auto-fill-button{visibility:hidden;pointer-events:none}
@@ -652,7 +652,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.36 — visionOS-inspired
+   LIQUID GLASS v1.17.37 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1942,7 +1942,7 @@ html:not(.light) .sched-gantt {
   box-shadow: none !important;
 }
 
-/* ── v1.17.36: Metering Name column — fit full name (override global td max-width:180px) ── */
+/* ── v1.17.37: Metering Name column — fit full name (override global td max-width:180px) ── */
 td.td-mn{
   max-width: none !important;
   min-width: 240px;
@@ -1974,7 +1974,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.36</div>
+  <div class="home-version">v1.17.37</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2652,6 +2652,7 @@ function finishGS(csv,url,sheet,btn){
   if(rows.length<2){clrP();showErr('No data found in sheet');btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';return;}
   processRows(rows);
   lastSrc={type:'gs',url:url,sheet:sheet};
+  loadPlansFromCloud(); // v1.17.37: pull shared schedule plans from Google Sheets
   setP(100,'');
   setTimeout(function(){
     clrP();
@@ -3093,7 +3094,7 @@ function showLogin(){
   setTimeout(function(){ var el=document.getElementById('login-pw'); if(el) el.focus(); }, 80);
 }
 // ── sha256Hex — SHA-256 with pure-JS fallback ──────────
-// v1.17.36: crypto.subtle exists ONLY in secure contexts (HTTPS/localhost).
+// v1.17.37: crypto.subtle exists ONLY in secure contexts (HTTPS/localhost).
 // Mobile devices opening via LAN IP (http://192.168.x.x) get undefined →
 // login silently froze at "Verifying...". Fallback keeps login working anywhere.
 function sha256Hex(str){
@@ -3695,33 +3696,96 @@ function getOriginalPixelData() {
 //  SCHEDULE PLAN
 // ══════════════════════════════════════════
 var PLANS_VERSION = 2;
+
+// v1.17.37: shared plan normaliser — used by localStorage load AND cloud load.
+// Also fixes latent bug: old migration dropped ackBy/fwOld/fwNew on reload.
+function _normPlan(p){
+  return {
+    id:          p.id          || (Date.now().toString(36)+Math.random().toString(36).slice(2)),
+    date:        p.date        || '',
+    site:        p.site        || '',
+    tag:         p.tag         || '',
+    fwTarget:    p.fwTarget    || '',
+    timeStart:   p.timeStart   || '08:00',
+    timeEnd:     p.timeEnd     || '17:00',
+    performedBy: p.performedBy || '',
+    note:        p.note        || '',
+    status:      (['planned','inprogress','done','cancelled'].indexOf(p.status)>=0 ? p.status : 'planned'),
+    reported:    p.reported    === true,  // *** preserve lock — must be explicit true
+    ackBy:       p.ackBy       || '',
+    fwOld:       p.fwOld       || '',
+    fwNew:       p.fwNew       || ''
+  };
+}
+
 var PLANS = (function(){
   try{
     var raw=localStorage.getItem('fc-plans');
     if(!raw) return [];
     var arr=JSON.parse(raw);
     if(!Array.isArray(arr)) return [];
-    // Migrate: ensure all required fields exist with defaults
-    return arr.map(function(p){
-      return {
-        id:          p.id          || (Date.now().toString(36)+Math.random().toString(36).slice(2)),
-        date:        p.date        || '',
-        site:        p.site        || '',
-        tag:         p.tag         || '',
-        fwTarget:    p.fwTarget    || '',
-        timeStart:   p.timeStart   || '08:00',
-        timeEnd:     p.timeEnd     || '17:00',
-        performedBy: p.performedBy || '',
-        note:        p.note        || '',
-        status:      (['planned','inprogress','done','cancelled'].indexOf(p.status)>=0 ? p.status : 'planned'),
-        reported:    p.reported    === true  // *** preserve lock — must be explicit true
-      };
-    }).filter(function(p){ return p.date && p.tag; }); // drop corrupt entries
+    return arr.map(_normPlan).filter(function(p){ return p.date && p.tag; });
   }catch(e){ return []; }
 })();
 var calYear, calMonth, selectedDate = null;
 
-function savePlans(){ try{ localStorage.setItem('fc-plans', JSON.stringify(PLANS)); }catch(e){} }
+// ══════════════════════════════════════════
+//  v1.17.37 PLANS CLOUD SYNC (Google Sheets via Apps Script)
+//  Why: localStorage is per-browser/per-device/per-origin — plans
+//  created on Chrome desktop never appear in Safari/mobile, and
+//  Safari ITP deletes localStorage after 7 days of no visits.
+//  Model: Google Sheet "Plans" is source of truth; localStorage is cache.
+// ══════════════════════════════════════════
+var _plansSyncTimer=null;
+var _plansLastSyncOk=true;
+
+function savePlans(){
+  try{ localStorage.setItem('fc-plans', JSON.stringify(PLANS)); }catch(e){}
+  syncPlansToCloud(); // debounced push to Google Sheets
+}
+
+// Debounced full-replace push (plans list is small; last-write-wins)
+function syncPlansToCloud(){
+  clearTimeout(_plansSyncTimer);
+  _plansSyncTimer=setTimeout(function(){
+    var url=(CONFIG.appsScriptUrl||'').trim();
+    if(!url) return;
+    fetch(url,{method:'POST',body:JSON.stringify({sheetTarget:'Plans',action:'sync',plans:PLANS})})
+      .then(function(r){ return r.json(); })
+      .then(function(res){
+        _plansLastSyncOk=!!(res&&res.ok);
+        if(!_plansLastSyncOk) console.warn('[Plans sync] failed:',res&&res.msg);
+      })
+      .catch(function(e){
+        _plansLastSyncOk=false;
+        console.warn('[Plans sync] network error — will retry on next save:',e.message);
+      });
+  },1200);
+}
+
+// Pull plans from Google Sheets. Cloud is source of truth when reachable;
+// on failure we keep whatever localStorage already gave us (offline fallback).
+function loadPlansFromCloud(){
+  var url=(CONFIG.appsScriptUrl||'').trim();
+  if(!url) return Promise.resolve(false);
+  var _pc=new AbortController();var _pt=setTimeout(function(){_pc.abort();},12000);
+  return fetch(url+'?action=plans',{signal:_pc.signal})
+    .then(function(r){ clearTimeout(_pt); return r.json(); })
+    .then(function(res){
+      if(!(res&&res.ok&&Array.isArray(res.plans))) return false;
+      PLANS.length=0;
+      res.plans.map(_normPlan)
+        .filter(function(p){ return p.date && p.tag; })
+        .forEach(function(p){ PLANS.push(p); });
+      try{ localStorage.setItem('fc-plans', JSON.stringify(PLANS)); }catch(e){}
+      // Refresh schedule UI if already rendered
+      if(typeof renderCal==='function'&&document.getElementById('view-sched')){
+        try{ renderCal(); renderPlanList(); renderGantt(); }catch(e){}
+      }
+      return true;
+    })
+    .catch(function(){ clearTimeout(_pt); return false; });
+}
 
 function initSched(){
   var now = new Date();
@@ -5047,7 +5111,7 @@ function gcExportPDF(){
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   var url=URL.createObjectURL(blob);
-  _openPrintTab(url); // v1.17.36: noopener — separate process, no main-thread freeze
+  _openPrintTab(url); // v1.17.37: noopener — separate process, no main-thread freeze
   // window.open shifts browser focus to the new tab. We use visibilitychange
   // (fires exactly when the user returns to this tab) to .focus() the textarea.
   // This guarantees immediate editability with zero extra clicks.
@@ -5076,7 +5140,7 @@ function gcExportPDF(){
 
 // ══════════════════════════════════════════════════════
 //  _openPrintTab — open blob print page in a SEPARATE process
-//  v1.17.36 ROOT CAUSE FIX for keyboard freeze after export:
+//  v1.17.37 ROOT CAUSE FIX for keyboard freeze after export:
 //  Plain window.open(blobUrl) shares the renderer process with this
 //  tab (same-origin + window.opener link). The new tab's
 //  window.print() preview generation BLOCKS that shared main thread,
@@ -5423,7 +5487,7 @@ function exportServiceReportPDF(){
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   var url=URL.createObjectURL(blob);
-  _openPrintTab(url); // v1.17.36: noopener — separate process, no main-thread freeze
+  _openPrintTab(url); // v1.17.37: noopener — separate process, no main-thread freeze
   // restore keyboard input (Search/Note/Remark) when user returns to this tab
   _recoverFocusAfterExport('sr-final-remark');
 }
@@ -5879,7 +5943,7 @@ function _doExportTablePDF(){
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   var _tblUrl=URL.createObjectURL(blob);
-  _openPrintTab(_tblUrl); // v1.17.36: noopener — separate process, no main-thread freeze
+  _openPrintTab(_tblUrl); // v1.17.37: noopener — separate process, no main-thread freeze
   // restore keyboard input when user returns to this tab
   _recoverFocusAfterExport();
 }
@@ -6039,7 +6103,7 @@ function _doExportTableExcel(){
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.36</div>
+<div class="version-badge" style="display:none">v1.17.37</div>
 </body>
 </html>
 
