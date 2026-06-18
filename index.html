@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.47</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.0</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -336,10 +336,13 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 #sched-view{flex:1;overflow:hidden;background:var(--bg);height:calc(100vh - 62px)}
 #sched-view.hidden{display:none!important}
 /* ── Satellite View ── */
-#satellite-view{flex:1;overflow:hidden;background:var(--bg);height:calc(100vh - 62px);display:block;padding:12px 20px 12px 296px;box-sizing:border-box}
+#satellite-view{flex:1;overflow:hidden;background:var(--bg);height:calc(100vh - 62px);display:block;padding:10px 20px 10px 10px;box-sizing:border-box}
 #satellite-view.hidden{display:none!important}
 #sat-left-panel{position:fixed;top:72px;left:20px;width:256px;bottom:10px;display:flex;flex-direction:column;overflow:visible;z-index:10}
 #satellite-map{width:100%;height:100%;border-radius:16px;overflow:hidden}
+#sat-site-list::-webkit-scrollbar{width:3px}
+#sat-site-list::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+#sat-site-list::-webkit-scrollbar-track{background:transparent}
 .sched-active #satellite-view{display:none!important}
 .sched-layout{display:block;height:100%;padding:12px 26px 12px 322px;box-sizing:border-box}
 .sched-left{position:fixed;top:74px;left:20px;width:256px;bottom:10px;display:flex;flex-direction:column;overflow:visible;z-index:10}
@@ -658,7 +661,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.47 — visionOS-inspired
+   LIQUID GLASS v1.18.0 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1951,7 +1954,7 @@ html:not(.light) .sched-gantt {
   box-shadow: none !important;
 }
 
-/* ── v1.17.47: Metering Name column — fit full name (override global td max-width:180px) ── */
+/* ── v1.18.0: Metering Name column — fit full name (override global td max-width:180px) ── */
 td.td-mn{
   max-width: none !important;
   min-width: 240px;
@@ -1983,7 +1986,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.47</div>
+  <div class="home-version">v1.18.0</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2173,7 +2176,7 @@ td.td-mn{
           <!-- Search box with icon -->
           <div style="position:relative;display:flex;align-items:center;margin-bottom:8px">
             <svg style="position:absolute;left:9px;width:14px;height:14px;pointer-events:none;color:var(--tx3)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5l-4-4"/></svg>
-            <input class="srch" id="sat-search" type="text" placeholder="Search Site, Metering, Tag..." oninput="satSearch()" style="padding-left:30px;width:100%;font-size:11px">
+            <input class="srch" id="sat-search" type="text" placeholder="Search Site, Tag, Metering Name..." oninput="satSearch()" style="padding-left:30px;width:100%;font-size:11px">
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 2px">
             <div id="sat-result-count" style="font-size:10px;color:var(--tx3);font-family:'Space Mono',monospace"></div>
@@ -2686,7 +2689,7 @@ function finishGS(csv,url,sheet,btn){
   if(rows.length<2){clrP();showErr('No data found in sheet');btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';return;}
   processRows(rows);
   lastSrc={type:'gs',url:url,sheet:sheet};
-  loadPlansFromCloud(); // v1.17.47: pull shared schedule plans from Google Sheets
+  loadPlansFromCloud(); // v1.18.0: pull shared schedule plans from Google Sheets
   setP(100,'');
   setTimeout(function(){
     clrP();
@@ -6341,8 +6344,9 @@ function _satRenderSiteList(q) {
   var listEl = document.getElementById('sat-site-list');
   if (!listEl) return;
 
+  // Search by site name, tag, or metering name
   var items = _satSiteData.filter(function(s) {
-    return !q || s.siteLower.indexOf(q) > -1;
+    return !q || s.searchText.indexOf(q) > -1;
   });
 
   listEl.innerHTML = items.map(function(s, i) {
@@ -6382,14 +6386,14 @@ function satSearch() {
   // Update site list
   _satRenderSiteList(q);
 
-  // Filter markers — match by site name (consistent with list)
+  // Filter markers — match by site, tag, or metering name
   if (!_satMapObj || !_satMarkers.length) return;
   if (_openIW) { _openIW.close(); _openIW = null; }
 
   var shown = 0;
   var firstMatch = null;
   _satMarkers.forEach(function(m) {
-    var match = (!q || m.siteLower.indexOf(q) > -1);
+    var match = (!q || m.searchText.indexOf(q) > -1);
     m.marker.setMap(match ? _satMapObj : null);
     if (match) { shown++; if (!firstMatch) firstMatch = m; }
   });
@@ -6422,7 +6426,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.47</div>
+<div class="version-badge" style="display:none">v1.18.0</div>
 </body>
 </html>
 
