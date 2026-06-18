@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.0</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.2</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -661,7 +661,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.18.0 — visionOS-inspired
+   LIQUID GLASS v1.18.2 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1954,7 +1954,7 @@ html:not(.light) .sched-gantt {
   box-shadow: none !important;
 }
 
-/* ── v1.18.0: Metering Name column — fit full name (override global td max-width:180px) ── */
+/* ── v1.18.2: Metering Name column — fit full name (override global td max-width:180px) ── */
 td.td-mn{
   max-width: none !important;
   min-width: 240px;
@@ -1986,7 +1986,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.18.0</div>
+  <div class="home-version">v1.18.2</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2689,7 +2689,7 @@ function finishGS(csv,url,sheet,btn){
   if(rows.length<2){clrP();showErr('No data found in sheet');btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';return;}
   processRows(rows);
   lastSrc={type:'gs',url:url,sheet:sheet};
-  loadPlansFromCloud(); // v1.18.0: pull shared schedule plans from Google Sheets
+  loadPlansFromCloud(); // v1.18.2: pull shared schedule plans from Google Sheets
   setP(100,'');
   setTimeout(function(){
     clrP();
@@ -6255,12 +6255,21 @@ function _buildSatelliteMarkers() {
       '</tr>';
     }).join('');
 
+    var gmapsUrl = 'https://www.google.com/maps?q=' + g.lat + ',' + g.lng + '&z=16';
+
     var iwContent =
       '<div style="font-family:\'DM Sans\',sans-serif;min-width:280px;max-width:360px;padding:4px 2px">' +
-        '<div style="font-size:13px;font-weight:700;color:#1e3a5f;margin-bottom:8px;border-bottom:2px solid #0284c7;padding-bottom:6px;word-break:break-word">' +
-          '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C12 21 5 13.5 5 9a7 7 0 0 1 14 0c0 4.5-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>' +
-          _escIW(site) +
-          '<span style="font-size:10px;font-weight:500;color:#64748b;margin-left:6px">' + g.rows.length + ' unit' + (g.rows.length > 1 ? 's' : '') + '</span>' +
+        '<div style="font-size:13px;font-weight:700;color:#1e3a5f;margin-bottom:8px;border-bottom:2px solid #0284c7;padding-bottom:6px;word-break:break-word;display:flex;align-items:center;justify-content:space-between;gap:8px">' +
+          '<span>' +
+            '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C12 21 5 13.5 5 9a7 7 0 0 1 14 0c0 4.5-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>' +
+            _escIW(site) +
+            '<span style="font-size:10px;font-weight:500;color:#64748b;margin-left:6px">' + g.rows.length + ' unit' + (g.rows.length > 1 ? 's' : '') + '</span>' +
+          '</span>' +
+          '<a href="' + gmapsUrl + '" target="_blank" rel="noopener noreferrer" ' +
+            'style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:#fff;background:#0284c7;border-radius:6px;padding:4px 8px;text-decoration:none;white-space:nowrap;flex-shrink:0;line-height:1">' +
+            '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
+            'Google Maps' +
+          '</a>' +
         '</div>' +
         '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:4px;font-family:\'Space Mono\',monospace">Tag No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Metering Name</div>' +
         '<table style="width:100%;border-collapse:collapse;font-size:11px">' +
@@ -6349,12 +6358,20 @@ function _satRenderSiteList(q) {
     return !q || s.searchText.indexOf(q) > -1;
   });
 
-  listEl.innerHTML = items.map(function(s, i) {
-    return '<div class="sat-site-item" data-idx="' + i + '" onclick="satClickSite(\'' + s.lat + '\',\'' + s.lng + '\',\'' + _escIW(s.site).replace(/'/g, "&#39;") + '\')" ' +
-      'style="padding:8px 6px;border-bottom:1px solid var(--br);cursor:pointer;transition:background .15s;border-radius:6px;margin-bottom:2px"' +
-      ' onmouseover="this.style.background=\'var(--sf2)\'" onmouseout="this.style.background=\'transparent\'">' +
-      '<div style="font-size:11px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + _escIW(s.site) + '</div>' +
-      '<div style="font-size:10px;color:var(--tx3);font-family:\'Space Mono\',monospace;margin-top:2px">' + s.count + ' unit' + (s.count > 1 ? 's' : '') + '</div>' +
+  listEl.innerHTML = items.map(function(s) {
+    var gmUrl = 'https://www.google.com/maps?q=' + s.lat + ',' + s.lng + '&z=16';
+    var siteEnc = _escIW(s.site).replace(/'/g, "&#39;");
+    return '<div style="padding:7px 6px 7px 4px;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;gap:6px">' +
+      '<div style="flex:1;min-width:0;cursor:pointer" onclick="satClickSite(\'' + s.lat + '\',\'' + s.lng + '\',\'' + siteEnc + '\')" onmouseover="this.style.color=\'var(--ac)\'" onmouseout="this.style.color=\'\'">'+
+        '<div style="font-size:11px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + _escIW(s.site) + '</div>' +
+        '<div style="font-size:10px;color:var(--tx3);font-family:\'Space Mono\',monospace;margin-top:1px">' + s.count + ' unit' + (s.count > 1 ? 's' : '') + '</div>' +
+      '</div>' +
+      '<a href="' + gmUrl + '" target="_blank" rel="noopener noreferrer" title="View on Google Maps" ' +
+        'style="flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;background:var(--sf2);border:1px solid var(--br);color:var(--tx3);text-decoration:none;transition:background .15s,color .15s" ' +
+        'onmouseover="this.style.background=\'#0284c7\';this.style.color=\'#fff\';this.style.borderColor=\'#0284c7\'" ' +
+        'onmouseout="this.style.background=\'var(--sf2)\';this.style.color=\'var(--tx3)\';this.style.borderColor=\'var(--br)\'">' +
+        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
+      '</a>' +
     '</div>';
   }).join('');
 }
@@ -6378,7 +6395,8 @@ function satClickSite(lat, lng, siteName) {
 
 /* Search + filter markers AND site list */
 function satSearch() {
-  var q = (document.getElementById('sat-search').value || '').toLowerCase().trim();
+  var inputEl = document.getElementById('sat-search');
+  var q = (inputEl ? inputEl.value : '').toLowerCase().trim();
   var cb = document.getElementById('sat-clear-btn');
   var rc = document.getElementById('sat-result-count');
   if (cb) cb.style.display = q ? '' : 'none';
@@ -6386,10 +6404,10 @@ function satSearch() {
   // Update site list
   _satRenderSiteList(q);
 
-  // Filter markers — match by site, tag, or metering name
+  // Filter markers
   if (!_satMapObj || !_satMarkers.length) return;
-  if (_openIW) { _openIW.close(); _openIW = null; }
 
+  // Close any open InfoWindow only if it no longer matches
   var shown = 0;
   var firstMatch = null;
   _satMarkers.forEach(function(m) {
@@ -6400,19 +6418,20 @@ function satSearch() {
 
   if (rc) rc.textContent = shown + ' sites' + (q ? ' found' : '');
 
+  // Pan/zoom only — never open InfoWindow during typing (causes focus steal)
   if (q && firstMatch) {
     _satMapObj.panTo(firstMatch.marker.getPosition());
-    if (shown === 1) {
-      _satMapObj.setZoom(14);
-      firstMatch.infoWindow.open(_satMapObj, firstMatch.marker);
-      _openIW = firstMatch.infoWindow;
-    }
+    if (shown === 1) _satMapObj.setZoom(14);
   }
+
+  // Restore focus to input after map interactions
+  if (inputEl) setTimeout(function(){ inputEl.focus(); }, 0);
 }
 
 /* Clear search */
 function satClearSearch() {
-  var si = document.getElementById('sat-search'); if(si) si.value = '';
+  var si = document.getElementById('sat-search');
+  if(si) { si.value = ''; si.focus(); }
   satSearch();
 }
 
@@ -6426,7 +6445,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.18.0</div>
+<div class="version-badge" style="display:none">v1.18.2</div>
 </body>
 </html>
 
