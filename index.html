@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.39</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.40</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -339,6 +339,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 #satellite-view{flex:1;overflow:hidden;background:var(--bg);height:calc(100vh - 62px);display:flex;flex-direction:column}
 #satellite-view.hidden{display:none!important}
 #satellite-map{flex:1;width:100%;min-height:0}
+#sat-search-bar{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .sched-active #satellite-view{display:none!important}
 .sched-layout{display:block;height:100%;padding:12px 26px 12px 322px;box-sizing:border-box}
 .sched-left{position:fixed;top:74px;left:20px;width:256px;bottom:10px;display:flex;flex-direction:column;overflow:visible;z-index:10}
@@ -657,7 +658,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.39 — visionOS-inspired
+   LIQUID GLASS v1.17.40 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1947,7 +1948,7 @@ html:not(.light) .sched-gantt {
   box-shadow: none !important;
 }
 
-/* ── v1.17.39: Metering Name column — fit full name (override global td max-width:180px) ── */
+/* ── v1.17.40: Metering Name column — fit full name (override global td max-width:180px) ── */
 td.td-mn{
   max-width: none !important;
   min-width: 240px;
@@ -1979,7 +1980,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.39</div>
+  <div class="home-version">v1.17.40</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2163,7 +2164,18 @@ td.td-mn{
 
     <!-- SATELLITE VIEW -->
     <div id="satellite-view" class="hidden">
-      <div id="satellite-map"></div>
+      <!-- Search bar row -->
+      <div id="sat-search-bar" style="display:flex;align-items:center;gap:10px;padding:10px 20px;flex-shrink:0;border-bottom:1px solid var(--br);background:var(--sf2)">
+        <div style="position:relative;display:inline-flex;align-items:center;flex:1;max-width:400px">
+          <svg style="position:absolute;left:9px;width:15px;height:15px;pointer-events:none;color:var(--tx3)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5l-4-4"/></svg>
+          <input class="srch" id="sat-search" type="text" placeholder="Search Site, Metering Name, Tag No..." oninput="satSearch()" style="padding-left:32px;width:100%">
+        </div>
+        <div id="sat-result-count" style="font-size:11px;color:var(--tx3);white-space:nowrap;font-family:'Space Mono',monospace"></div>
+        <button class="sf-sm-btn" onclick="satClearSearch()" id="sat-clear-btn" style="display:none;flex-shrink:0">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M5.5 5.5L18.5 18.5"/><path d="M18.5 5.5L5.5 18.5"/></svg> Clear
+        </button>
+      </div>
+      <div id="satellite-map" style="flex:1;min-height:0"></div>
     </div>
 
     <!-- SCHEDULE VIEW -->
@@ -2663,7 +2675,7 @@ function finishGS(csv,url,sheet,btn){
   if(rows.length<2){clrP();showErr('No data found in sheet');btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';return;}
   processRows(rows);
   lastSrc={type:'gs',url:url,sheet:sheet};
-  loadPlansFromCloud(); // v1.17.39: pull shared schedule plans from Google Sheets
+  loadPlansFromCloud(); // v1.17.40: pull shared schedule plans from Google Sheets
   setP(100,'');
   setTimeout(function(){
     clrP();
@@ -2722,6 +2734,7 @@ function processRows(rows){
 
 function showDash(sub){
   mapBuilt = false; // reset so map rebuilds with new data
+  satResetMarkers(); // reset satellite markers on data reload
   document.getElementById('home').style.display='none';
   document.getElementById('dash').style.display='block';
   var vb=document.querySelector('.version-badge');if(vb)vb.style.display='';
@@ -3272,9 +3285,9 @@ function setView(v) {
   document.getElementById('sched-view').classList.toggle('hidden', v !== 'sched');
   var mainEl = document.querySelector('.main');
   if(mainEl) mainEl.classList.toggle('sched-active', v === 'sched');
-  // show sidebar for dash, map, table, satellite; hide for sched (sched-active handles it)
+  // show sidebar for dash, map, table; hide for sched and satellite
   var sb = document.querySelector('.sidebar');
-  if(sb) sb.style.display = (v === 'sched') ? 'none' : '';
+  if(sb) sb.style.display = (v === 'sched' || v === 'satellite') ? 'none' : '';
   if (v === 'map') {
     if (!mapBuilt && DATA.length > 0) buildPixelMap();
     renderMapKPI();
@@ -6128,9 +6141,13 @@ function _doExportTableExcel(){
 // ── Config: ใส่ API Key ของคุณตรงนี้ ──
 var GMAPS_API_KEY = 'AIzaSyDtm4wdt3Qlkyewwze7r1QzXwLEMskkPQE';
 
-var _satMapObj   = null;   // google.maps.Map instance
-var _satLoaded   = false;  // script loaded flag
-var _satBuilt    = false;  // markers built flag
+var _satMapObj    = null;   // google.maps.Map instance
+var _satLoaded    = false;  // script loaded flag
+var _satMarkers   = [];     // [{marker, row, infoWindow}]
+var _openIW       = null;   // currently open InfoWindow
+
+/* Call this after data refresh so markers rebuild on next Satellite open */
+function satResetMarkers() { _satMarkers = []; }
 
 /* Lazy-load Google Maps script เมื่อเปิด Satellite view ครั้งแรก */
 function initSatelliteMap() {
@@ -6143,6 +6160,11 @@ function initSatelliteMap() {
       '</div>';
     return;
   }
+  // Reset search bar
+  var si = document.getElementById('sat-search'); if(si) si.value = '';
+  var cb = document.getElementById('sat-clear-btn'); if(cb) cb.style.display = 'none';
+  var rc = document.getElementById('sat-result-count'); if(rc) rc.textContent = '';
+
   if (_satLoaded) {
     _buildSatelliteMarkers();
     return;
@@ -6152,15 +6174,13 @@ function initSatelliteMap() {
     '<div style="display:flex;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--tx3);font-size:13px">' +
     '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="animation:sp .8s linear infinite"><path d="M20 12A8 8 0 1 1 17.5 6.5"/></svg>' +
     'Loading Google Maps...</div>';
-  // Define callback before loading script
   window._gmapsReady = function() {
     _satLoaded = true;
     _buildSatelliteMarkers();
   };
   var s = document.createElement('script');
   s.src = 'https://maps.googleapis.com/maps/api/js?key=' + GMAPS_API_KEY + '&callback=_gmapsReady&loading=async';
-  s.async = true;
-  s.defer = true;
+  s.async = true; s.defer = true;
   s.onerror = function() {
     document.getElementById('satellite-map').innerHTML =
       '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#f87171;font-size:13px">โหลด Google Maps ไม่ได้ — ตรวจสอบ API Key และ Network</div>';
@@ -6170,35 +6190,33 @@ function initSatelliteMap() {
 
 function _buildSatelliteMarkers() {
   var container = document.getElementById('satellite-map');
-  // Clear placeholder content and set map div
-  container.innerHTML = '<div id="gmap-inner" style="width:100%;height:100%"></div>';
 
-  // Centre of Thailand as default
-  var centre = { lat: 13.0, lng: 101.5 };
+  // Init map only once
+  if (!_satMapObj) {
+    container.innerHTML = '<div id="gmap-inner" style="width:100%;height:100%"></div>';
+    _satMapObj = new google.maps.Map(document.getElementById('gmap-inner'), {
+      center: { lat: 13.0, lng: 101.5 },
+      zoom: 6,
+      mapTypeId: google.maps.MapTypeId.HYBRID,
+      mapTypeControl: true,
+      mapTypeControlOptions: {
+        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+        position: google.maps.ControlPosition.TOP_RIGHT,
+        mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE, google.maps.MapTypeId.HYBRID]
+      },
+      fullscreenControl: true,
+      streetViewControl: false,
+      zoomControl: true
+    });
+    _satMapObj.addListener('click', function() {
+      if (_openIW) { _openIW.close(); _openIW = null; }
+    });
+  }
 
-  _satMapObj = new google.maps.Map(document.getElementById('gmap-inner'), {
-    center: centre,
-    zoom: 6,
-    mapTypeId: google.maps.MapTypeId.HYBRID,  // Satellite + labels
-    mapTypeControl: true,
-    mapTypeControlOptions: {
-      style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-      position: google.maps.ControlPosition.TOP_RIGHT,
-      mapTypeIds: [
-        google.maps.MapTypeId.ROADMAP,
-        google.maps.MapTypeId.SATELLITE,
-        google.maps.MapTypeId.HYBRID
-      ]
-    },
-    fullscreenControl: true,
-    streetViewControl: false,
-    zoomControl: true
-  });
+  // Clear old markers before rebuilding
+  _satMarkers.forEach(function(m) { m.marker.setMap(null); });
+  _satMarkers = [];
 
-  // Close any open InfoWindow when clicking the map background
-  var _openIW = null;
-
-  // Build markers from DATA (rows that have Latitude + Longitude)
   var validCount = 0;
   DATA.forEach(function(row) {
     var lat = parseFloat(row['Latitude'] || row['latitude'] || '');
@@ -6206,16 +6224,15 @@ function _buildSatelliteMarkers() {
     if (isNaN(lat) || isNaN(lng)) return;
     validCount++;
 
+    var tag      = row['TAG'] || row['TAG FC'] || '—';
+    var site     = row['Site'] || '—';
+    var metering = row['Metering Name'] || row['Metering name'] || '—';
+
     var marker = new google.maps.Marker({
       position: { lat: lat, lng: lng },
       map: _satMapObj,
-      title: (row['TAG'] || row['TAG FC'] || '') + ' — ' + (row['Site'] || '')
+      title: tag + ' — ' + site
     });
-
-    // InfoWindow content: Site / Metering Name / Tag No. only
-    var tag     = row['TAG'] || row['TAG FC'] || '—';
-    var site    = row['Site'] || '—';
-    var metering = row['Metering Name'] || row['Metering name'] || '—';
 
     var iwContent =
       '<div style="font-family:\'DM Sans\',sans-serif;min-width:200px;padding:4px 2px">' +
@@ -6230,28 +6247,66 @@ function _buildSatelliteMarkers() {
       '</div>';
 
     var infoWindow = new google.maps.InfoWindow({ content: iwContent, maxWidth: 280 });
-
     marker.addListener('click', function() {
       if (_openIW) _openIW.close();
       infoWindow.open(_satMapObj, marker);
       _openIW = infoWindow;
     });
+
+    _satMarkers.push({ marker: marker, row: row, infoWindow: infoWindow,
+      tag: tag.toLowerCase(), site: site.toLowerCase(), metering: metering.toLowerCase() });
   });
 
-  _satMapObj.addListener('click', function() {
-    if (_openIW) { _openIW.close(); _openIW = null; }
-  });
+  // Update result count
+  var rc = document.getElementById('sat-result-count');
+  if (rc) rc.textContent = validCount + ' stations';
 
-  _satBuilt = true;
-
-  // If no rows have lat/lng, show advisory overlay
+  // No lat/lng advisory
   if (validCount === 0) {
+    var rc2 = document.getElementById('sat-result-count');
+    if (rc2) rc2.textContent = '';
     var overlay = document.createElement('div');
     overlay.style.cssText = 'position:absolute;top:12px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 18px;font-size:12px;color:#64748b;z-index:10;pointer-events:none;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.12)';
     overlay.textContent = 'ยังไม่มีข้อมูลพิกัด — กรุณาเพิ่ม column Latitude / Longitude ใน Google Sheets';
     container.style.position = 'relative';
     container.appendChild(overlay);
   }
+}
+
+/* Search: filter markers by site / metering name / tag */
+function satSearch() {
+  var q = (document.getElementById('sat-search').value || '').toLowerCase().trim();
+  var cb = document.getElementById('sat-clear-btn');
+  var rc = document.getElementById('sat-result-count');
+  if (cb) cb.style.display = q ? '' : 'none';
+  if (!_satMapObj || !_satMarkers.length) return;
+  if (_openIW) { _openIW.close(); _openIW = null; }
+
+  var shown = 0;
+  var firstMatch = null;
+  _satMarkers.forEach(function(m) {
+    var match = !q || m.tag.indexOf(q) > -1 || m.site.indexOf(q) > -1 || m.metering.indexOf(q) > -1;
+    m.marker.setMap(match ? _satMapObj : null);
+    if (match) { shown++; if (!firstMatch) firstMatch = m; }
+  });
+
+  if (rc) rc.textContent = shown + ' stations' + (q ? ' found' : '');
+
+  // Pan to first match if search active
+  if (q && firstMatch) {
+    _satMapObj.panTo(firstMatch.marker.getPosition());
+    if (shown === 1) {
+      _satMapObj.setZoom(14);
+      firstMatch.infoWindow.open(_satMapObj, firstMatch.marker);
+      _openIW = firstMatch.infoWindow;
+    }
+  }
+}
+
+/* Clear search */
+function satClearSearch() {
+  var si = document.getElementById('sat-search'); if(si) si.value = '';
+  satSearch();
 }
 
 /* XSS-safe escape for InfoWindow HTML */
@@ -6264,7 +6319,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.39</div>
+<div class="version-badge" style="display:none">v1.17.40</div>
 </body>
 </html>
 
