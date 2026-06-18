@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.46</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.47</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -336,9 +336,9 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 #sched-view{flex:1;overflow:hidden;background:var(--bg);height:calc(100vh - 62px)}
 #sched-view.hidden{display:none!important}
 /* ── Satellite View ── */
-#satellite-view{flex:1;overflow:hidden;background:var(--bg);height:calc(100vh - 62px);display:block;padding:12px 26px 12px 322px;box-sizing:border-box}
+#satellite-view{flex:1;overflow:hidden;background:var(--bg);height:calc(100vh - 62px);display:block;padding:12px 20px 12px 296px;box-sizing:border-box}
 #satellite-view.hidden{display:none!important}
-#sat-left-panel{position:fixed;top:74px;left:20px;width:256px;bottom:10px;display:flex;flex-direction:column;overflow:visible;z-index:10}
+#sat-left-panel{position:fixed;top:72px;left:20px;width:256px;bottom:10px;display:flex;flex-direction:column;overflow:visible;z-index:10}
 #satellite-map{width:100%;height:100%;border-radius:16px;overflow:hidden}
 .sched-active #satellite-view{display:none!important}
 .sched-layout{display:block;height:100%;padding:12px 26px 12px 322px;box-sizing:border-box}
@@ -658,7 +658,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.46 — visionOS-inspired
+   LIQUID GLASS v1.17.47 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1951,7 +1951,7 @@ html:not(.light) .sched-gantt {
   box-shadow: none !important;
 }
 
-/* ── v1.17.46: Metering Name column — fit full name (override global td max-width:180px) ── */
+/* ── v1.17.47: Metering Name column — fit full name (override global td max-width:180px) ── */
 td.td-mn{
   max-width: none !important;
   min-width: 240px;
@@ -1983,7 +1983,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.46</div>
+  <div class="home-version">v1.17.47</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2686,7 +2686,7 @@ function finishGS(csv,url,sheet,btn){
   if(rows.length<2){clrP();showErr('No data found in sheet');btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';return;}
   processRows(rows);
   lastSrc={type:'gs',url:url,sheet:sheet};
-  loadPlansFromCloud(); // v1.17.46: pull shared schedule plans from Google Sheets
+  loadPlansFromCloud(); // v1.17.47: pull shared schedule plans from Google Sheets
   setP(100,'');
   setTimeout(function(){
     clrP();
@@ -6284,7 +6284,7 @@ function _buildSatelliteMarkers() {
       _openIW = infoWindow;
     });
 
-    _satMarkers.push({ marker: marker, infoWindow: infoWindow, searchText: searchText });
+    _satMarkers.push({ marker: marker, infoWindow: infoWindow, searchText: searchText, siteLower: site.toLowerCase() });
   });
 
   // Update result count
@@ -6328,6 +6328,7 @@ function _satBuildSiteList() {
   _satSiteData = sites.map(function(s) {
     var d = siteMap[s];
     return { site: s, lat: d.lat, lng: d.lng, count: d.count,
+      siteLower: s.toLowerCase(),
       searchText: (s + ' ' + d.tags.join(' ') + ' ' + d.meterNames.join(' ')).toLowerCase() };
   });
 
@@ -6341,7 +6342,7 @@ function _satRenderSiteList(q) {
   if (!listEl) return;
 
   var items = _satSiteData.filter(function(s) {
-    return !q || s.searchText.indexOf(q) > -1;
+    return !q || s.siteLower.indexOf(q) > -1;
   });
 
   listEl.innerHTML = items.map(function(s, i) {
@@ -6381,14 +6382,14 @@ function satSearch() {
   // Update site list
   _satRenderSiteList(q);
 
-  // Filter markers
+  // Filter markers — match by site name (consistent with list)
   if (!_satMapObj || !_satMarkers.length) return;
   if (_openIW) { _openIW.close(); _openIW = null; }
 
   var shown = 0;
   var firstMatch = null;
   _satMarkers.forEach(function(m) {
-    var match = (!q || m.searchText.indexOf(q) > -1);
+    var match = (!q || m.siteLower.indexOf(q) > -1);
     m.marker.setMap(match ? _satMapObj : null);
     if (match) { shown++; if (!firstMatch) firstMatch = m; }
   });
@@ -6421,7 +6422,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.46</div>
+<div class="version-badge" style="display:none">v1.17.47</div>
 </body>
 </html>
 
