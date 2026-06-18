@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.41</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.17.42</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -336,7 +336,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 #sched-view{flex:1;overflow:hidden;background:var(--bg);height:calc(100vh - 62px)}
 #sched-view.hidden{display:none!important}
 /* ── Satellite View ── */
-#satellite-view{flex:1;overflow:hidden;background:var(--bg);height:calc(100vh - 62px);display:flex;flex-direction:column;padding:10px 10px 10px 0}
+#satellite-view{flex:1;overflow:hidden;background:var(--bg);height:calc(100vh - 62px);display:flex;flex-direction:column;padding:10px 20px 10px 0}
 #satellite-view.hidden{display:none!important}
 #satellite-map{flex:1;width:100%;min-height:0;border-radius:16px;overflow:hidden}
 .sched-active #satellite-view{display:none!important}
@@ -657,7 +657,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.17.41 — visionOS-inspired
+   LIQUID GLASS v1.17.42 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1947,7 +1947,7 @@ html:not(.light) .sched-gantt {
   box-shadow: none !important;
 }
 
-/* ── v1.17.41: Metering Name column — fit full name (override global td max-width:180px) ── */
+/* ── v1.17.42: Metering Name column — fit full name (override global td max-width:180px) ── */
 td.td-mn{
   max-width: none !important;
   min-width: 240px;
@@ -1979,7 +1979,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.17.41</div>
+  <div class="home-version">v1.17.42</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2163,23 +2163,29 @@ td.td-mn{
 
     <!-- SATELLITE VIEW -->
     <div id="satellite-view" class="hidden">
-      <!-- Left search panel -->
-      <div id="sat-left-panel" style="position:fixed;top:72px;left:20px;width:256px;bottom:10px;z-index:10;display:flex;flex-direction:column;gap:10px">
-        <div style="background:var(--sf);border:1px solid var(--br);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px">
-          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--tx3);font-family:'Space Mono',monospace">Search Station</div>
+      <!-- Left panel: same structure as .sidebar -->
+      <div id="sat-left-panel" style="position:fixed;top:72px;left:20px;width:256px;bottom:10px;z-index:10;background:var(--sf);border:1px solid var(--br);border-radius:18px;overflow-y:auto;padding:16px 0 20px;display:none;flex-direction:column">
+        <!-- Search box (replaces Reset Filters button) -->
+        <div style="padding:0 10px 4px">
           <div style="position:relative;display:flex;align-items:center">
             <svg style="position:absolute;left:9px;width:14px;height:14px;pointer-events:none;color:var(--tx3)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5l-4-4"/></svg>
-            <input class="srch" id="sat-search" type="text" placeholder="Site, Metering, Tag..." oninput="satSearch()" style="padding-left:30px;width:100%;font-size:11px">
+            <input class="srch" id="sat-search" type="text" placeholder="Search Site, Metering, Tag..." oninput="satSearch()" style="padding-left:30px;width:100%;font-size:11px">
           </div>
-          <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;padding:0 2px">
             <div id="sat-result-count" style="font-size:10px;color:var(--tx3);font-family:'Space Mono',monospace"></div>
-            <button class="sf-sm-btn" onclick="satClearSearch()" id="sat-clear-btn" style="display:none;font-size:10px;padding:3px 8px">
+            <button class="sf-sm-btn" onclick="satClearSearch()" id="sat-clear-btn" style="display:none;font-size:10px;padding:2px 7px">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M5.5 5.5L18.5 18.5"/><path d="M18.5 5.5L5.5 18.5"/></svg> Clear
             </button>
           </div>
         </div>
+        <!-- Filter chips (same as sidebar) -->
+        <div class="ftitle">Region</div><div class="fchips" id="sat-fr"></div>
+        <div class="ftitle">Firmware Version</div><div class="fchips" id="sat-ff"></div>
+        <div class="ftitle">Firmware Update</div><div class="fchips" id="sat-ffu"></div>
+        <div class="ftitle">Status</div><div class="fchips" id="sat-fs"></div>
+        <div class="ftitle">Application</div><div class="fchips" id="sat-fa"></div>
       </div>
-      <!-- Map fills remaining space (with left padding for panel) -->
+      <!-- Map: same left offset as .main padding-left -->
       <div id="satellite-map" style="flex:1;min-height:0;margin-left:276px;border-radius:16px;overflow:hidden"></div>
     </div>
 
@@ -2680,7 +2686,7 @@ function finishGS(csv,url,sheet,btn){
   if(rows.length<2){clrP();showErr('No data found in sheet');btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';return;}
   processRows(rows);
   lastSrc={type:'gs',url:url,sheet:sheet};
-  loadPlansFromCloud(); // v1.17.41: pull shared schedule plans from Google Sheets
+  loadPlansFromCloud(); // v1.17.42: pull shared schedule plans from Google Sheets
   setP(100,'');
   setTimeout(function(){
     clrP();
@@ -3288,6 +3294,7 @@ function setView(v) {
   document.getElementById('satellite-view').classList.toggle('hidden', v !== 'satellite');
   var slp = document.getElementById('sat-left-panel');
   if(slp) slp.style.display = (v === 'satellite') ? 'flex' : 'none';
+  if (v === 'satellite') { _satFillFilterChips(); }
   document.getElementById('table-view').classList.toggle('hidden', v !== 'table');
   document.getElementById('sched-view').classList.toggle('hidden', v !== 'sched');
   var mainEl = document.querySelector('.main');
@@ -6220,58 +6227,81 @@ function _buildSatelliteMarkers() {
     });
   }
 
-  // Clear old markers before rebuilding
+  // Clear old markers
   _satMarkers.forEach(function(m) { m.marker.setMap(null); });
   _satMarkers = [];
 
-  var validCount = 0;
+  // Group rows by lat+lng key → same location = same site marker
+  var groups = {}; // key: "lat,lng" → { lat, lng, site, rows[] }
   DATA.forEach(function(row) {
     var lat = parseFloat(row['Latitude'] || row['latitude'] || '');
     var lng = parseFloat(row['Longitude'] || row['longitude'] || '');
     if (isNaN(lat) || isNaN(lng)) return;
-    validCount++;
+    var key = lat.toFixed(6) + ',' + lng.toFixed(6);
+    if (!groups[key]) {
+      groups[key] = { lat: lat, lng: lng, site: row['Site'] || '—', rows: [] };
+    }
+    groups[key].rows.push(row);
+  });
 
-    var tag      = row['TAG'] || '—';
-    var site     = row['Site'] || '—';
-    var metering = row['Metering name'] || row['Metering Name'] || '—';
+  var siteCount = Object.keys(groups).length;
 
-    var marker = new google.maps.Marker({
-      position: { lat: lat, lng: lng },
-      map: _satMapObj,
-      title: tag + ' — ' + site
-    });
+  Object.keys(groups).forEach(function(key) {
+    var g = groups[key];
+    var site = g.site;
+
+    // Build TAG list rows for InfoWindow
+    var tagRows = g.rows.map(function(r) {
+      var tag      = r['TAG'] || '—';
+      var metering = r['Metering name'] || r['Metering Name'] || '—';
+      return '<tr>' +
+        '<td style="color:#0284c7;font-weight:700;font-family:\'Space Mono\',monospace;font-size:10.5px;padding:4px 8px 4px 0;white-space:nowrap;vertical-align:top">' + _escIW(tag) + '</td>' +
+        '<td style="color:#0f172a;font-size:11px;padding:4px 0;word-break:break-word">' + _escIW(metering) + '</td>' +
+      '</tr>';
+    }).join('');
 
     var iwContent =
-      '<div style="font-family:\'DM Sans\',sans-serif;min-width:260px;max-width:320px;padding:4px 2px">' +
+      '<div style="font-family:\'DM Sans\',sans-serif;min-width:280px;max-width:360px;padding:4px 2px">' +
         '<div style="font-size:13px;font-weight:700;color:#1e3a5f;margin-bottom:8px;border-bottom:2px solid #0284c7;padding-bottom:6px;word-break:break-word">' +
           '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C12 21 5 13.5 5 9a7 7 0 0 1 14 0c0 4.5-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>' +
           _escIW(site) +
+          '<span style="font-size:10px;font-weight:500;color:#64748b;margin-left:6px">' + g.rows.length + ' unit' + (g.rows.length > 1 ? 's' : '') + '</span>' +
         '</div>' +
-        '<table style="width:100%;border-collapse:collapse;font-size:11.5px">' +
-          '<tr><td style="color:#64748b;padding:3px 4px 3px 0;white-space:nowrap;vertical-align:top;width:90px">Metering Name</td><td style="font-weight:600;color:#0f172a;padding:3px 0;word-break:break-word">' + _escIW(metering) + '</td></tr>' +
-          '<tr><td style="color:#64748b;padding:3px 4px 3px 0;white-space:nowrap;vertical-align:top">Tag No.</td><td style="font-weight:700;color:#0284c7;padding:3px 0;font-family:\'Space Mono\',monospace;font-size:11px;word-break:break-all">' + _escIW(tag) + '</td></tr>' +
+        '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:4px;font-family:\'Space Mono\',monospace">Tag No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Metering Name</div>' +
+        '<table style="width:100%;border-collapse:collapse;font-size:11px">' +
+          tagRows +
         '</table>' +
       '</div>';
 
-    var infoWindow = new google.maps.InfoWindow({ content: iwContent, maxWidth: 340 });
+    // Search keywords: site + all tags + all metering names
+    var searchText = site.toLowerCase() + ' ' +
+      g.rows.map(function(r) {
+        return (r['TAG'] || '') + ' ' + (r['Metering name'] || r['Metering Name'] || '');
+      }).join(' ').toLowerCase();
+
+    var marker = new google.maps.Marker({
+      position: { lat: g.lat, lng: g.lng },
+      map: _satMapObj,
+      title: site + ' (' + g.rows.length + ' units)'
+    });
+
+    var infoWindow = new google.maps.InfoWindow({ content: iwContent, maxWidth: 380 });
     marker.addListener('click', function() {
       if (_openIW) _openIW.close();
       infoWindow.open(_satMapObj, marker);
       _openIW = infoWindow;
     });
 
-    _satMarkers.push({ marker: marker, row: row, infoWindow: infoWindow,
-      tag: tag.toLowerCase(), site: site.toLowerCase(), metering: metering.toLowerCase() });
+    _satMarkers.push({ marker: marker, infoWindow: infoWindow, searchText: searchText });
   });
 
   // Update result count
   var rc = document.getElementById('sat-result-count');
-  if (rc) rc.textContent = validCount + ' stations';
+  if (rc) rc.textContent = siteCount + ' sites';
 
   // No lat/lng advisory
-  if (validCount === 0) {
-    var rc2 = document.getElementById('sat-result-count');
-    if (rc2) rc2.textContent = '';
+  if (siteCount === 0) {
+    if (rc) rc.textContent = '';
     var overlay = document.createElement('div');
     overlay.style.cssText = 'position:absolute;top:12px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 18px;font-size:12px;color:#64748b;z-index:10;pointer-events:none;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.12)';
     overlay.textContent = 'ยังไม่มีข้อมูลพิกัด — กรุณาเพิ่ม column Latitude / Longitude ใน Google Sheets';
@@ -6280,7 +6310,54 @@ function _buildSatelliteMarkers() {
   }
 }
 
-/* Search: filter markers by site / metering name / tag */
+/* Fill filter chips in sat-left-panel (mirrors buildF for sidebar) */
+function _satFillFilterChips() {
+  if (!DATA.length) return;
+  var allR = DATA.map(function(x){ return x['PTT Region']; }).filter(Boolean);
+  var regOrder=['1','2','3','4','5','6','7','8','9','10','11','12','GSP','OSP','OFFSHORE'];
+  document.getElementById('sat-fr').innerHTML = regOrder.map(function(v){
+    var col = REGION_COLOR_MAP[v] || '#3b82f6';
+    var hasData = allR.indexOf(v) >= 0;
+    var style = (!hasData && v==='12') ? ' style="opacity:0.5"' : '';
+    return '<span class="chip rc"'+style+' data-region="'+v+'" data-color="'+col+'" onclick="satFiltRC(&quot;'+v+'&quot;,this)">'+regLabel(v)+'</span>';
+  }).join('');
+  var fws = []; DATA.forEach(function(x){ var f=x['Firmware']||''; if(f&&fws.indexOf(f)<0) fws.push(f); });
+  fws.sort();
+  document.getElementById('sat-ff').innerHTML = fws.map(function(v){
+    return '<span class="chip fw" onclick="satFiltChip(this)">'+v+'</span>';
+  }).join('');
+  document.getElementById('sat-ffu').innerHTML = ['Up-to-date','Outdated','Unknown'].map(function(v){
+    var sc=v==='Up-to-date'?'fwu':v==='Outdated'?'fwo':'fwk';
+    return '<span class="chip '+sc+'" onclick="satFiltChip(this)">'+v+'</span>';
+  }).join('');
+  document.getElementById('sat-fs').innerHTML = ['Commissioned','Decommissioned'].map(function(v){
+    var sc=v==='Commissioned'?'stc':'std';
+    return '<span class="chip '+sc+'" onclick="satFiltChip(this)">'+v+'</span>';
+  }).join('');
+  document.getElementById('sat-fa').innerHTML = ['Turbine','Supervisory','USM','Orifice'].map(function(v){
+    var clsMap={Turbine:'ap-t',Supervisory:'ap-s',USM:'ap-u',Orifice:'ap-o'};
+    return '<span class="chip ap '+clsMap[v]+'" onclick="satFiltChip(this)">'+v+'</span>';
+  }).join('');
+}
+
+/* Satellite filter state */
+var _satFilter = { r: new Set(), fw: new Set(), fwu: new Set(), st: new Set(), ap: new Set() };
+
+function satFiltRC(v, el) {
+  var s = _satFilter.r;
+  if (s.has(v)) { s.delete(v); el.classList.remove('on'); el.style.removeProperty('--rc-bg'); el.style.removeProperty('--rc-bd'); el.style.removeProperty('--rc-tx'); }
+  else { s.add(v); el.classList.add('on'); var col=el.getAttribute('data-color')||'#3b82f6'; el.style.setProperty('--rc-bg',col); el.style.setProperty('--rc-bd',col); el.style.setProperty('--rc-tx',isLightColor(col)?'#080c18':'#fff'); }
+  satSearch();
+}
+
+function satFiltChip(el) {
+  el.classList.toggle('on');
+  satSearch();
+}
+
+
+
+/* Search + filter markers */
 function satSearch() {
   var q = (document.getElementById('sat-search').value || '').toLowerCase().trim();
   var cb = document.getElementById('sat-clear-btn');
@@ -6292,14 +6369,13 @@ function satSearch() {
   var shown = 0;
   var firstMatch = null;
   _satMarkers.forEach(function(m) {
-    var match = !q || m.tag.indexOf(q) > -1 || m.site.indexOf(q) > -1 || m.metering.indexOf(q) > -1;
+    var match = (!q || m.searchText.indexOf(q) > -1);
     m.marker.setMap(match ? _satMapObj : null);
     if (match) { shown++; if (!firstMatch) firstMatch = m; }
   });
 
-  if (rc) rc.textContent = shown + ' stations' + (q ? ' found' : '');
+  if (rc) rc.textContent = shown + ' sites' + (q ? ' found' : '');
 
-  // Pan to first match if search active
   if (q && firstMatch) {
     _satMapObj.panTo(firstMatch.marker.getPosition());
     if (shown === 1) {
@@ -6326,7 +6402,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.17.41</div>
+<div class="version-badge" style="display:none">v1.17.42</div>
 </body>
 </html>
 
