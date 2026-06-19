@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.10</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.11</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -672,7 +672,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.18.10 — visionOS-inspired
+   LIQUID GLASS v1.18.11 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1965,7 +1965,7 @@ html:not(.light) .sched-gantt {
   box-shadow: none !important;
 }
 
-/* ── v1.18.10: Metering Name column — fit full name (override global td max-width:180px) ── */
+/* ── v1.18.11: Metering Name column — fit full name (override global td max-width:180px) ── */
 td.td-mn{
   max-width: none !important;
   min-width: 240px;
@@ -1997,7 +1997,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.18.10</div>
+  <div class="home-version">v1.18.11</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2712,7 +2712,7 @@ function finishGS(csv,url,sheet,btn){
   if(rows.length<2){clrP();showErr('No data found in sheet');btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';return;}
   processRows(rows);
   lastSrc={type:'gs',url:url,sheet:sheet};
-  loadPlansFromCloud(); // v1.18.10: pull shared schedule plans from Google Sheets
+  loadPlansFromCloud(); // v1.18.11: pull shared schedule plans from Google Sheets
   setP(100,'');
   setTimeout(function(){
     clrP();
@@ -6320,42 +6320,46 @@ function _buildSatelliteMarkers() {
     // Detect current theme for body area colors
     var tagColor = isDark ? '#38bdf8' : '#0284c7';
 
-    // Gradient from region accent (darker shade → accent → lighter shade)
-    var gradStart = _darkenHex(accentColor, 30);
-    var gradEnd = _lightenHex(accentColor, 15);
+    // Banner is now neutral (white in light mode, dark-slate in dark mode) —
+    // region color is expressed via the pin icon, region badge, and Maps pill only
+    var bannerBg = isDark ? '#1e293b' : '#ffffff';
+    var bannerTx = isDark ? '#f1f5f9' : '#0f172a';
+    var bannerTx2 = isDark ? '#94a3b8' : '#64748b';
+    var bannerBorder = isDark ? '#334155' : '#eef0f3';
+    var pinIconBg = hexToRgba(accentColor, isDark ? 0.18 : 0.10);
+    var mapsPillBg = hexToRgba(accentColor, isDark ? 0.16 : 0.08);
+    var mapsPillBorder = hexToRgba(accentColor, isDark ? 0.4 : 0.25);
 
     var iwContent =
       // outer wrapper: negative top margin pulls entire content up into
       // Google's reserved close-button space; no overflow:hidden here so
       // the pull isn't clipped — radius/clipping is handled by the banner itself
       '<div style="font-family:\'DM Sans\',sans-serif;min-width:320px;max-width:400px;margin-top:-28px">' +
-        // ── Variant A header: gradient banner + large pin badge ──
-        '<div style="position:relative;padding:28px 14px 16px;color:#fff;overflow:hidden;border-radius:14px 14px 0 0;' +
-          'background:linear-gradient(135deg,' + gradStart + ' 0%,' + accentColor + ' 55%,' + gradEnd + ' 100%)">' +
-          // subtle radial highlight
-          '<div style="position:absolute;inset:0;opacity:.45;background-image:radial-gradient(circle at 85% 0%,rgba(255,255,255,.3) 0%,transparent 55%);pointer-events:none"></div>' +
-          '<div style="display:flex;align-items:flex-start;gap:12px;position:relative;z-index:1">' +
-            // pin badge (glass)
+        // ── Header: clean white/dark banner — region color lives on icon + badge + pill ──
+        '<div style="position:relative;padding:28px 14px 16px;color:' + bannerTx + ';overflow:hidden;border-radius:14px 14px 0 0;' +
+          'background:' + bannerBg + ';border-bottom:1px solid ' + bannerBorder + '">' +
+          '<div style="display:flex;align-items:flex-start;gap:12px">' +
+            // pin badge — tinted with region color, no longer glass-on-gradient
             '<div style="width:42px;height:42px;border-radius:12px;flex-shrink:0;' +
-              'background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);' +
-              'display:flex;align-items:center;justify-content:center;' +
-              'box-shadow:inset 0 1px 0 rgba(255,255,255,.2)">' +
-              '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C12 21 5 13.5 5 9a7 7 0 0 1 14 0c0 4.5-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>' +
+              'background:' + pinIconBg + ';border:1.5px solid ' + accentColor + ';' +
+              'display:flex;align-items:center;justify-content:center">' +
+              '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="' + accentColor + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C12 21 5 13.5 5 9a7 7 0 0 1 14 0c0 4.5-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>' +
             '</div>' +
             '<div style="flex:1;min-width:0">' +
               '<div style="font-size:15px;font-weight:700;line-height:1.25;word-break:break-word">' + _escIW(site) + '</div>' +
-              '<div style="font-size:10.5px;font-weight:500;opacity:.88;margin-top:3px">' +
-                g.rows.length + ' unit' + (g.rows.length > 1 ? 's' : '') +
-                (regionVal ? ' · Region ' + _escIW(regionVal) : '') +
+              '<div style="display:flex;align-items:center;gap:6px;margin-top:3px">' +
+                '<span style="font-size:10.5px;font-weight:600;color:' + bannerTx2 + '">' + g.rows.length + ' unit' + (g.rows.length > 1 ? 's' : '') + '</span>' +
+                (regionVal ? '<span style="width:3px;height:3px;border-radius:50%;background:' + bannerTx2 + ';flex-shrink:0;opacity:.6"></span>' +
+                '<span style="font-size:10px;font-weight:700;font-family:\'Space Mono\',monospace;color:' + accentColor + ';background:' + pinIconBg + ';border-radius:5px;padding:2px 6px">REGION ' + _escIW(regionVal) + '</span>' : '') +
               '</div>' +
             '</div>' +
           '</div>' +
-          // Google Maps pill (white, inside banner)
-          '<div style="margin-top:12px;position:relative;z-index:1">' +
+          // Google Maps pill — region-tinted outline style instead of solid white-on-gradient
+          '<div style="margin-top:12px">' +
             '<a href="' + gmapsUrl + '" target="_blank" rel="noopener noreferrer" ' +
               'style="display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;' +
-              'color:' + accentColor + ';background:#fff;border-radius:8px;padding:6px 12px;' +
-              'text-decoration:none;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.15)">' +
+              'color:' + accentColor + ';background:' + mapsPillBg + ';border:1px solid ' + mapsPillBorder + ';border-radius:8px;padding:6px 12px;' +
+              'text-decoration:none;white-space:nowrap">' +
               '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
               'Open in Google Maps' +
             '</a>' +
@@ -6569,7 +6573,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.18.10</div>
+<div class="version-badge" style="display:none">v1.18.11</div>
 </body>
 </html>
 
