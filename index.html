@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.2</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.3</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -661,7 +661,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.18.2 — visionOS-inspired
+   LIQUID GLASS v1.18.3 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1954,7 +1954,7 @@ html:not(.light) .sched-gantt {
   box-shadow: none !important;
 }
 
-/* ── v1.18.2: Metering Name column — fit full name (override global td max-width:180px) ── */
+/* ── v1.18.3: Metering Name column — fit full name (override global td max-width:180px) ── */
 td.td-mn{
   max-width: none !important;
   min-width: 240px;
@@ -1986,7 +1986,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.18.2</div>
+  <div class="home-version">v1.18.3</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2689,7 +2689,7 @@ function finishGS(csv,url,sheet,btn){
   if(rows.length<2){clrP();showErr('No data found in sheet');btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';return;}
   processRows(rows);
   lastSrc={type:'gs',url:url,sheet:sheet};
-  loadPlansFromCloud(); // v1.18.2: pull shared schedule plans from Google Sheets
+  loadPlansFromCloud(); // v1.18.3: pull shared schedule plans from Google Sheets
   setP(100,'');
   setTimeout(function(){
     clrP();
@@ -6226,20 +6226,32 @@ function _buildSatelliteMarkers() {
   _satMarkers.forEach(function(m) { m.marker.setMap(null); });
   _satMarkers = [];
 
-  // Group rows by lat+lng key → same location = same site marker
-  var groups = {}; // key: "lat,lng" → { lat, lng, site, rows[] }
+  // Group rows by lat+lng+site → same coordinates CAN host multiple distinct sites
+  // (e.g. OCS1, OCS2, OCS3 sharing one physical location must each get their own marker)
+  var groups = {}; // key: "lat,lng,site" → { lat, lng, site, rows[] }
   DATA.forEach(function(row) {
     var lat = parseFloat(row['Latitude'] || row['latitude'] || '');
     var lng = parseFloat(row['Longitude'] || row['longitude'] || '');
     if (isNaN(lat) || isNaN(lng)) return;
-    var key = lat.toFixed(6) + ',' + lng.toFixed(6);
+    var site = row['Site'] || '—';
+    var key = lat.toFixed(6) + ',' + lng.toFixed(6) + ',' + site;
     if (!groups[key]) {
-      groups[key] = { lat: lat, lng: lng, site: row['Site'] || '—', rows: [] };
+      groups[key] = { lat: lat, lng: lng, site: site, rows: [] };
     }
     groups[key].rows.push(row);
   });
 
   var siteCount = Object.keys(groups).length;
+
+  // Track how many distinct sites share each coordinate, so overlapping
+  // markers can be nudged apart slightly and remain individually clickable
+  var coordCounts = {};
+  Object.keys(groups).forEach(function(key) {
+    var g = groups[key];
+    var coordKey = g.lat.toFixed(6) + ',' + g.lng.toFixed(6);
+    coordCounts[coordKey] = (coordCounts[coordKey] || 0) + 1;
+  });
+  var coordSeen = {};
 
   Object.keys(groups).forEach(function(key) {
     var g = groups[key];
@@ -6283,8 +6295,25 @@ function _buildSatelliteMarkers() {
         return (r['TAG'] || '') + ' ' + (r['Metering name'] || r['Metering Name'] || '');
       }).join(' ').toLowerCase();
 
+    // If multiple distinct sites share this exact coordinate, nudge each
+    // marker outward slightly in a small circle so they don't fully overlap
+    var coordKey = g.lat.toFixed(6) + ',' + g.lng.toFixed(6);
+    var totalAtCoord = coordCounts[coordKey] || 1;
+    var idxAtCoord = coordSeen[coordKey] || 0;
+    coordSeen[coordKey] = idxAtCoord + 1;
+
+    var markerLat = g.lat, markerLng = g.lng;
+    if (totalAtCoord > 1) {
+      var offsetMeters = 18; // small visual separation, ~18m radius
+      var angle = (2 * Math.PI / totalAtCoord) * idxAtCoord;
+      var dLat = (offsetMeters / 111320) * Math.cos(angle);
+      var dLng = (offsetMeters / (111320 * Math.cos(g.lat * Math.PI / 180))) * Math.sin(angle);
+      markerLat = g.lat + dLat;
+      markerLng = g.lng + dLng;
+    }
+
     var marker = new google.maps.Marker({
-      position: { lat: g.lat, lng: g.lng },
+      position: { lat: markerLat, lng: markerLng },
       map: _satMapObj,
       title: site + ' (' + g.rows.length + ' units)'
     });
@@ -6379,16 +6408,24 @@ function _satRenderSiteList(q) {
 /* Click a site in the list → pan map + open InfoWindow */
 function satClickSite(lat, lng, siteName) {
   if (!_satMapObj) return;
-  _satMapObj.panTo({ lat: parseFloat(lat), lng: parseFloat(lng) });
-  _satMapObj.setZoom(14);
-  // Find matching marker and open its InfoWindow
+  var targetSite = siteName.toLowerCase();
+  // Exact site-name match (not substring) so OCS1 never matches OCS10/OCS2/etc,
+  // and correctly resolves even when multiple sites share one coordinate
+  var matched = null;
   _satMarkers.forEach(function(m) {
-    if (m.searchText.indexOf(siteName.toLowerCase()) > -1) {
-      if (_openIW) _openIW.close();
-      m.infoWindow.open(_satMapObj, m.marker);
-      _openIW = m.infoWindow;
-    }
+    if (m.siteLower === targetSite) matched = m;
   });
+  if (matched) {
+    _satMapObj.panTo(matched.marker.getPosition());
+    _satMapObj.setZoom(14);
+    if (_openIW) _openIW.close();
+    matched.infoWindow.open(_satMapObj, matched.marker);
+    _openIW = matched.infoWindow;
+  } else {
+    // Fallback: no exact marker match found, just pan to given coordinates
+    _satMapObj.panTo({ lat: parseFloat(lat), lng: parseFloat(lng) });
+    _satMapObj.setZoom(14);
+  }
 }
 
 
@@ -6445,7 +6482,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.18.2</div>
+<div class="version-badge" style="display:none">v1.18.3</div>
 </body>
 </html>
 
