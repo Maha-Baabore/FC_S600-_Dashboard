@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.3</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.4</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -661,7 +661,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.18.3 — visionOS-inspired
+   LIQUID GLASS v1.18.4 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1954,7 +1954,7 @@ html:not(.light) .sched-gantt {
   box-shadow: none !important;
 }
 
-/* ── v1.18.3: Metering Name column — fit full name (override global td max-width:180px) ── */
+/* ── v1.18.4: Metering Name column — fit full name (override global td max-width:180px) ── */
 td.td-mn{
   max-width: none !important;
   min-width: 240px;
@@ -1986,7 +1986,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.18.3</div>
+  <div class="home-version">v1.18.4</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2689,7 +2689,7 @@ function finishGS(csv,url,sheet,btn){
   if(rows.length<2){clrP();showErr('No data found in sheet');btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';return;}
   processRows(rows);
   lastSrc={type:'gs',url:url,sheet:sheet};
-  loadPlansFromCloud(); // v1.18.3: pull shared schedule plans from Google Sheets
+  loadPlansFromCloud(); // v1.18.4: pull shared schedule plans from Google Sheets
   setP(100,'');
   setTimeout(function(){
     clrP();
@@ -6257,20 +6257,23 @@ function _buildSatelliteMarkers() {
     var g = groups[key];
     var site = g.site;
 
-    // Build TAG list rows for InfoWindow
+    // Build TAG list rows for InfoWindow — shows Firmware Status + Application
     var tagRows = g.rows.map(function(r) {
-      var tag      = r['TAG'] || '—';
-      var metering = r['Metering name'] || r['Metering Name'] || '—';
+      var tag    = r['TAG'] || '—';
+      var fwStat = r['Firmware Update'] || 'Unknown';
+      var app    = r['Applications'] || r['Application'] || '—';
+      var fwColor = fwStat === 'Up-to-date' ? '#16a34a' : (fwStat === 'Outdated' ? '#dc2626' : '#94a3b8');
       return '<tr>' +
         '<td style="color:#0284c7;font-weight:700;font-family:\'Space Mono\',monospace;font-size:10.5px;padding:4px 8px 4px 0;white-space:nowrap;vertical-align:top">' + _escIW(tag) + '</td>' +
-        '<td style="color:#0f172a;font-size:11px;padding:4px 0;word-break:break-word">' + _escIW(metering) + '</td>' +
+        '<td style="color:' + fwColor + ';font-weight:600;font-size:10.5px;padding:4px 8px 4px 0;white-space:nowrap;vertical-align:top">' + _escIW(fwStat) + '</td>' +
+        '<td style="color:#0f172a;font-size:10.5px;padding:4px 0;white-space:nowrap;vertical-align:top">' + _escIW(app) + '</td>' +
       '</tr>';
     }).join('');
 
     var gmapsUrl = 'https://www.google.com/maps?q=' + g.lat + ',' + g.lng + '&z=16';
 
     var iwContent =
-      '<div style="font-family:\'DM Sans\',sans-serif;min-width:280px;max-width:360px;padding:4px 2px">' +
+      '<div style="font-family:\'DM Sans\',sans-serif;min-width:300px;max-width:380px;padding:4px 2px">' +
         '<div style="font-size:13px;font-weight:700;color:#1e3a5f;margin-bottom:8px;border-bottom:2px solid #0284c7;padding-bottom:6px;word-break:break-word;display:flex;align-items:center;justify-content:space-between;gap:8px">' +
           '<span>' +
             '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C12 21 5 13.5 5 9a7 7 0 0 1 14 0c0 4.5-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>' +
@@ -6283,7 +6286,7 @@ function _buildSatelliteMarkers() {
             'Google Maps' +
           '</a>' +
         '</div>' +
-        '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:4px;font-family:\'Space Mono\',monospace">Tag No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Metering Name</div>' +
+        '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:4px;font-family:\'Space Mono\',monospace">Tag No. &nbsp;&nbsp;&nbsp; Firmware &nbsp;&nbsp;&nbsp; Application</div>' +
         '<table style="width:100%;border-collapse:collapse;font-size:11px">' +
           tagRows +
         '</table>' +
@@ -6318,7 +6321,7 @@ function _buildSatelliteMarkers() {
       title: site + ' (' + g.rows.length + ' units)'
     });
 
-    var infoWindow = new google.maps.InfoWindow({ content: iwContent, maxWidth: 380 });
+    var infoWindow = new google.maps.InfoWindow({ content: iwContent, maxWidth: 400 });
     marker.addListener('click', function() {
       if (_openIW) _openIW.close();
       infoWindow.open(_satMapObj, marker);
@@ -6482,7 +6485,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.18.3</div>
+<div class="version-badge" style="display:none">v1.18.4</div>
 </body>
 </html>
 
