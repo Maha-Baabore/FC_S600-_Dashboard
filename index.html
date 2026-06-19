@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.8</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.9</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -348,6 +348,8 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .sched-active #satellite-view{display:none!important}
 /* ── Google Maps InfoWindow dark-mode overrides ── */
 :root:not(.light) .gm-style-iw-d{overflow:auto!important}
+.gm-style-iw-d{padding:0!important}
+.gm-style-iw-d>div{padding:0!important}
 :root:not(.light) .gm-style .gm-style-iw-c{background:#1e293b!important;border-radius:14px!important;padding:0!important}
 :root:not(.light) .gm-style .gm-style-iw-tc::after{background:#1e293b!important}
 :root:not(.light) .gm-style .gm-ui-hover-effect>span{background:#94a3b8!important}
@@ -670,7 +672,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.18.8 — visionOS-inspired
+   LIQUID GLASS v1.18.9 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1963,7 +1965,7 @@ html:not(.light) .sched-gantt {
   box-shadow: none !important;
 }
 
-/* ── v1.18.8: Metering Name column — fit full name (override global td max-width:180px) ── */
+/* ── v1.18.9: Metering Name column — fit full name (override global td max-width:180px) ── */
 td.td-mn{
   max-width: none !important;
   min-width: 240px;
@@ -1995,7 +1997,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.18.8</div>
+  <div class="home-version">v1.18.9</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2710,7 +2712,7 @@ function finishGS(csv,url,sheet,btn){
   if(rows.length<2){clrP();showErr('No data found in sheet');btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';return;}
   processRows(rows);
   lastSrc={type:'gs',url:url,sheet:sheet};
-  loadPlansFromCloud(); // v1.18.8: pull shared schedule plans from Google Sheets
+  loadPlansFromCloud(); // v1.18.9: pull shared schedule plans from Google Sheets
   setP(100,'');
   setTimeout(function(){
     clrP();
@@ -3093,6 +3095,10 @@ function setTheme(mode){
   // re-render gantt when theme changes
   if(typeof renderGantt === 'function' && document.getElementById('gantt-wrap')){
     setTimeout(renderGantt, 50);
+  }
+  // rebuild satellite InfoWindow markers so colors match the new theme
+  if(typeof _buildSatelliteMarkers === 'function' && _satLoaded){
+    setTimeout(_buildSatelliteMarkers, 50);
   }}
 
 // ── ADD-PLAN DRAWER ──
@@ -6298,7 +6304,7 @@ function _buildSatelliteMarkers() {
           ? '<svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 19L3.5 5H20.5L12 19Z"/></svg>'
           : '?');
       var apc = app === 'Turbine' ? 'abt' : (app === 'Supervisory' ? 'abs' : (app === 'USM' ? 'abu' : 'abo'));
-      return '<tr>' +
+      return '<tr style="background:' + bodyBg + '">' +
         '<td style="color:' + _tagC + ';font-weight:700;font-family:\'Space Mono\',monospace;font-size:10.5px;padding:5px 8px 5px 0;white-space:nowrap;vertical-align:middle">' + _escIW(tag) + '</td>' +
         '<td style="padding:5px 8px 5px 0;white-space:nowrap;vertical-align:middle"><span class="fwb ' + fwuc + '">' + fwuicon + ' ' + _escIW(fwu) + '</span></td>' +
         '<td style="padding:5px 0;white-space:nowrap;vertical-align:middle"><span class="ab ' + apc + '">' + _escIW(app) + '</span></td>' +
@@ -6354,13 +6360,13 @@ function _buildSatelliteMarkers() {
         '</div>' +
         // ── Body: tag table (theme-aware) ──
         '<div style="padding:10px 14px 12px;background:' + bodyBg + '">' +
-        '<table style="width:100%;border-collapse:collapse;font-size:11px">' +
-          '<thead><tr>' +
-            '<th style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:' + thColor + ';font-family:\'Space Mono\',monospace;text-align:left;padding:0 8px 6px 0;white-space:nowrap;border-bottom:1px solid ' + borderColor + '">Tag No.</th>' +
-            '<th style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:' + thColor + ';font-family:\'Space Mono\',monospace;text-align:left;padding:0 8px 6px 0;white-space:nowrap;border-bottom:1px solid ' + borderColor + '">Firmware</th>' +
-            '<th style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:' + thColor + ';font-family:\'Space Mono\',monospace;text-align:left;padding:0 0 6px 0;white-space:nowrap;border-bottom:1px solid ' + borderColor + '">Application</th>' +
+        '<table style="width:100%;border-collapse:collapse;font-size:11px;background:' + bodyBg + '">' +
+          '<thead style="background:' + bodyBg + '"><tr style="background:' + bodyBg + '">' +
+            '<th style="background:' + bodyBg + ';font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:' + thColor + ';font-family:\'Space Mono\',monospace;text-align:left;padding:0 8px 6px 0;white-space:nowrap;border-bottom:1px solid ' + borderColor + '">Tag No.</th>' +
+            '<th style="background:' + bodyBg + ';font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:' + thColor + ';font-family:\'Space Mono\',monospace;text-align:left;padding:0 8px 6px 0;white-space:nowrap;border-bottom:1px solid ' + borderColor + '">Firmware</th>' +
+            '<th style="background:' + bodyBg + ';font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:' + thColor + ';font-family:\'Space Mono\',monospace;text-align:left;padding:0 0 6px 0;white-space:nowrap;border-bottom:1px solid ' + borderColor + '">Application</th>' +
           '</tr></thead>' +
-          '<tbody>' +
+          '<tbody style="background:' + bodyBg + '">' +
             tagRows +
           '</tbody>' +
         '</table>' +
@@ -6560,7 +6566,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.18.8</div>
+<div class="version-badge" style="display:none">v1.18.9</div>
 </body>
 </html>
 
