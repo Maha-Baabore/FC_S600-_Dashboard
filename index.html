@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.6</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.7</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -663,7 +663,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.18.6 — visionOS-inspired
+   LIQUID GLASS v1.18.7 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1956,7 +1956,7 @@ html:not(.light) .sched-gantt {
   box-shadow: none !important;
 }
 
-/* ── v1.18.6: Metering Name column — fit full name (override global td max-width:180px) ── */
+/* ── v1.18.7: Metering Name column — fit full name (override global td max-width:180px) ── */
 td.td-mn{
   max-width: none !important;
   min-width: 240px;
@@ -1988,7 +1988,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.18.6</div>
+  <div class="home-version">v1.18.7</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2691,7 +2691,7 @@ function finishGS(csv,url,sheet,btn){
   if(rows.length<2){clrP();showErr('No data found in sheet');btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M7 18H17.5A4 4 0 0 0 18 10A6 6 0 0 0 6.5 11A4 4 0 0 0 7 18Z"/><path d="M9.5 14L11.5 16L15 12.5"/></svg> Enter Dashboard';return;}
   processRows(rows);
   lastSrc={type:'gs',url:url,sheet:sheet};
-  loadPlansFromCloud(); // v1.18.6: pull shared schedule plans from Google Sheets
+  loadPlansFromCloud(); // v1.18.7: pull shared schedule plans from Google Sheets
   setP(100,'');
   setTimeout(function(){
     clrP();
@@ -6280,30 +6280,51 @@ function _buildSatelliteMarkers() {
 
     var gmapsUrl = 'https://www.google.com/maps?q=' + g.lat + ',' + g.lng + '&z=16';
 
+    // Region-based accent color — same palette/logic as sidebar region chips
+    var regionVal = (g.rows[0] && g.rows[0]['PTT Region']) || '';
+    var accentColor = REGION_COLOR_MAP[regionVal] || '#0284c7';
+    var accentIsLight = isLightColor(accentColor);
+    var accentTextOnFill = accentIsLight ? '#0f172a' : '#ffffff';
+    var accentSoftBg = hexToRgba(accentColor, 0.10);
+    var accentSoftBorder = hexToRgba(accentColor, 0.28);
+    var accentRailBg = 'linear-gradient(90deg, ' + hexToRgba(accentColor, 0.08) + ', transparent 70%)';
+
     var iwContent =
-      '<div style="font-family:\'DM Sans\',sans-serif;min-width:320px;max-width:400px;padding:4px 2px">' +
-        '<div style="font-size:13px;font-weight:700;color:#1e3a5f;margin-bottom:8px;border-bottom:2px solid #0284c7;padding-bottom:6px;word-break:break-word;display:flex;align-items:center;justify-content:space-between;gap:8px">' +
-          '<span>' +
-            '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C12 21 5 13.5 5 9a7 7 0 0 1 14 0c0 4.5-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>' +
-            _escIW(site) +
-            '<span style="font-size:10px;font-weight:500;color:#64748b;margin-left:6px">' + g.rows.length + ' unit' + (g.rows.length > 1 ? 's' : '') + '</span>' +
-          '</span>' +
-          '<a href="' + gmapsUrl + '" target="_blank" rel="noopener noreferrer" ' +
-            'style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:#fff;background:#0284c7;border-radius:6px;padding:4px 8px;text-decoration:none;white-space:nowrap;flex-shrink:0;line-height:1">' +
-            '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
-            'Google Maps' +
-          '</a>' +
+      '<div style="font-family:\'DM Sans\',sans-serif;min-width:320px;max-width:400px;border-radius:10px;overflow:hidden">' +
+        // ── Variant C header: accent rail + ring icon + region pill + Google Maps pill ──
+        '<div style="position:relative;padding:14px 14px 12px 14px;border-left:4px solid ' + accentColor + ';background:' + accentRailBg + '">' +
+          '<div style="display:flex;align-items:center;gap:11px">' +
+            '<div style="width:38px;height:38px;border-radius:50%;flex-shrink:0;background:#fff;border:2.5px solid ' + accentColor + ';display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px ' + hexToRgba(accentColor, 0.22) + '">' +
+              '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="' + accentColor + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C12 21 5 13.5 5 9a7 7 0 0 1 14 0c0 4.5-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>' +
+            '</div>' +
+            '<div style="flex:1;min-width:0">' +
+              '<div style="font-size:14px;font-weight:700;color:#0f172a;line-height:1.2;word-break:break-word">' + _escIW(site) + '</div>' +
+              '<div style="display:flex;align-items:center;gap:6px;margin-top:3px">' +
+                '<span style="font-size:10.5px;color:#64748b;font-weight:600">' + g.rows.length + ' unit' + (g.rows.length > 1 ? 's' : '') + '</span>' +
+                (regionVal ? '<span style="width:3px;height:3px;border-radius:50%;background:#cbd5e1;flex-shrink:0"></span>' +
+                '<span style="font-size:10.5px;font-weight:700;font-family:\'Space Mono\',monospace;color:' + accentColor + '">REGION ' + _escIW(regionVal) + '</span>' : '') +
+              '</div>' +
+            '</div>' +
+            '<a href="' + gmapsUrl + '" target="_blank" rel="noopener noreferrer" ' +
+              'style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:' + accentColor + ';background:' + accentSoftBg + ';border:1px solid ' + accentSoftBorder + ';border-radius:7px;padding:6px 10px;text-decoration:none;white-space:nowrap;flex-shrink:0">' +
+              '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
+              'Maps' +
+            '</a>' +
+          '</div>' +
         '</div>' +
+        // ── Body: tag table ──
+        '<div style="padding:10px 14px 12px">' +
         '<table style="width:100%;border-collapse:collapse;font-size:11px">' +
           '<thead><tr>' +
-            '<th style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;font-family:\'Space Mono\',monospace;text-align:left;padding:0 8px 4px 0;white-space:nowrap">Tag No.</th>' +
-            '<th style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;font-family:\'Space Mono\',monospace;text-align:left;padding:0 8px 4px 0;white-space:nowrap">Firmware</th>' +
-            '<th style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;font-family:\'Space Mono\',monospace;text-align:left;padding:0 0 4px 0;white-space:nowrap">Application</th>' +
+            '<th style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#475569;font-family:\'Space Mono\',monospace;text-align:left;padding:0 8px 6px 0;white-space:nowrap;border-bottom:1px solid #e2e8f0">Tag No.</th>' +
+            '<th style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#475569;font-family:\'Space Mono\',monospace;text-align:left;padding:0 8px 6px 0;white-space:nowrap;border-bottom:1px solid #e2e8f0">Firmware</th>' +
+            '<th style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#475569;font-family:\'Space Mono\',monospace;text-align:left;padding:0 0 6px 0;white-space:nowrap;border-bottom:1px solid #e2e8f0">Application</th>' +
           '</tr></thead>' +
           '<tbody>' +
             tagRows +
           '</tbody>' +
         '</table>' +
+        '</div>' +
       '</div>';
 
     // Search keywords: site + all tags + all metering names
@@ -6499,7 +6520,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.18.6</div>
+<div class="version-badge" style="display:none">v1.18.7</div>
 </body>
 </html>
 
