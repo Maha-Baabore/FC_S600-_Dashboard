@@ -2299,6 +2299,109 @@ td.td-mn{
   .src-panel{padding:18px}
   .load-btn,.url-input,#login-pw{min-height:44px}
 }
+
+/* ── Tablet Portrait (≤768px) ────────────────────────────────────────── */
+@media (max-width:768px){
+  /* Header: hide verbose badges, keep logo + hamburger + essential actions */
+  .hbadge{display:none}
+  .lupd{display:none}
+  .hlogo h1{font-size:14px}
+  .hlogo span{font-size:10px}
+  .toggle-pill{display:none}
+  /* Show theme toggle only as icon in hright area */
+  #header-theme-toggle{display:none}
+  header{padding:0 14px}
+
+  /* Sidebar: ensure it's a slide-in drawer (same as ≤1024px but re-state width) */
+  .sidebar{width:260px;min-width:260px}
+
+  /* KPI: 2 columns on tablet portrait */
+  .krow,.krow2{grid-template-columns:1fr 1fr}
+  .crow{grid-template-columns:1fr}
+
+  /* KPI card: slightly tighter */
+  .kcard{padding:12px 14px}
+  .kval{font-size:26px}
+
+  /* Map KPI bar: wrap chips */
+  #map-kpi-bar{flex-wrap:wrap;gap:6px;padding:8px 12px 4px}
+  .mkpi-row{flex-wrap:wrap}
+  .mkpi-card{min-width:100px;padding:10px 14px}
+  .mkpi-val{font-size:20px}
+
+  /* Table: header wraps */
+  .thdr{flex-wrap:wrap;gap:8px;padding:10px 12px}
+  .srch{width:100%;max-width:none;min-height:40px}
+  .ttitle{font-size:12px}
+
+  /* Content padding */
+  .content{padding:10px 14px}
+
+  /* Chart card: tighter */
+  .ccard{padding:14px 16px}
+
+  /* Gantt: allow scroll */
+  #gantt-wrap,.gc-wrap{overflow-x:auto!important}
+
+  /* Map right panel: narrower */
+  .map-right-panel{width:240px}
+
+  /* Modal: wider on tablet portrait */
+  .modal-box{max-width:90vw}
+
+  /* Schedule layout */
+  .sched-layout{padding:10px 12px 12px!important}
+
+  /* Pagination: wrap and center */
+  .pg{flex-wrap:wrap;justify-content:center;gap:4px}
+  .pgi{width:100%;text-align:center;margin-right:0;margin-bottom:4px}
+
+  /* Touch targets */
+  .chip{min-height:36px;padding:6px 12px}
+  .pb,.cal-nav-btn{min-width:36px;min-height:36px}
+  .hbtn{min-height:38px;padding:8px 12px}
+  .sf-add-btn{min-height:44px}
+}
+
+/* ── Large Tablet / Small Desktop (769px – 1024px): 3-column KPI ─────── */
+@media (min-width:769px) and (max-width:1024px){
+  .krow,.krow2{grid-template-columns:repeat(3,1fr)}
+  .crow{grid-template-columns:1fr 1fr}
+  /* Header: hide verbose badges to reclaim space */
+  .hbadge{display:none}
+  .lupd{display:none}
+  /* Map right panel */
+  .map-right-panel{width:260px}
+}
+
+/* ── Landscape phone (max-height:420px and max-width:900px) ───────────── */
+@media (max-height:420px) and (max-width:900px){
+  header{height:50px;padding:0 12px}
+  .hlogo-icon{width:28px;height:28px;font-size:8px}
+  .hlogo h1{font-size:12px}
+  .hlogo span{display:none}
+  .sidebar{top:50px;height:calc(100vh - 50px)}
+  .krow,.krow2{grid-template-columns:repeat(3,1fr)}
+  .crow{grid-template-columns:1fr 1fr 1fr}
+  .kcard{padding:8px 12px}
+  .kval{font-size:20px}
+  /* Map: taller in landscape */
+  #chartdiv{height:calc(100vh - 50px)!important}
+  .map-right-panel{
+    max-height:50vh;
+    position:absolute;right:8px;top:8px;bottom:8px;left:auto;
+    width:220px;border-radius:14px;
+  }
+  .map-right-panel::before{display:none}
+  .map-right-panel.collapsed{max-height:50vh}
+  /* Bottom tab bar: compact in landscape */
+  .mob-tabbar{padding-bottom:0;min-height:44px}
+  .mtab-btn{padding:4px 2px;font-size:9px;min-height:40px}
+  .main,.sched-layout,#satellite-view,#map-view{padding-bottom:calc(44px + env(safe-area-inset-bottom,0px))!important}
+  .content{padding-bottom:calc(44px + env(safe-area-inset-bottom,0px))}
+  /* Gantt: always scrollable */
+  #gantt-wrap,.gc-wrap,.sched-gantt{overflow-x:auto!important}
+}
 </style>
 </head>
 <body>
