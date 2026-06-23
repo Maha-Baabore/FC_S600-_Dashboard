@@ -357,11 +357,11 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 :root.light .gm-style .gm-style-iw-tc::after{background:#fff!important}
 .sched-layout{display:block;height:100%;padding:12px 26px 12px 322px;box-sizing:border-box}
 .sched-left{position:fixed;top:74px;left:20px;width:256px;bottom:10px;display:flex;flex-direction:column;overflow:visible;z-index:10}
-.sched-left-card{flex:1;min-height:0;overflow-y:auto;border-radius:16px;padding:16px 18px 106px}
+.sched-left-card{flex:1;min-height:0;overflow-y:auto;border-radius:16px;padding:16px 18px 16px}
 .sched-left-card::-webkit-scrollbar{width:3px}
 .sched-left-card::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
 .sched-left-card::-webkit-scrollbar-track{background:transparent}
-.sched-add-btn-wrap{position:fixed;bottom:50px;left:20px;width:256px;z-index:11;padding:0 18px;box-sizing:border-box}
+.sched-add-btn-wrap{position:static;width:100%;padding:8px 16px 10px;box-sizing:border-box;flex-shrink:0}
 .sched-right{display:flex;flex-direction:column;gap:10px;height:calc(100vh - 84px)}.sched-section{background:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.6);border-radius:16px;padding:16px 18px;flex-shrink:0}
 .sched-section.sched-gantt{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
 .sched-plans-box{background:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.6);border-radius:16px;display:flex;flex-direction:column;overflow:hidden;flex:0 0 auto;max-height:340px;min-height:80px}
@@ -488,8 +488,8 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 /* Version badge — pill style matching home page */
 .version-badge{
-  position: fixed !important;
-  bottom: 16px;
+  position: static !important;
+  bottom: auto;
   left: 50%;
   transform: translateX(-128px);
   width: auto;
@@ -507,12 +507,14 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   pointer-events: none;
-  left: 78px;
+  left: auto;
   transform: none;
-  width: 140px;
+  width: calc(100% - 32px);
   text-align: center;
+  margin: 10px 16px 6px;
+  display: none;
 }
-.sched-active .version-badge{ width: 140px; left: 78px; }
+.sched-active .version-badge{ width: calc(100% - 32px); }
 .sched-active{ padding-left: 0 !important; }
 /* Plan list — give breathing room below the "Monthly Plan" header */
 .sched-plans{ padding-top: 10px !important; }
@@ -2374,6 +2376,19 @@ td.td-mn{
   .map-right-panel{width:260px}
 }
 
+/* ── KPI cards compact — single row ────────────────────────────────────── */
+.kcard{padding:8px 14px!important}
+.kval{font-size:22px!important}
+.klabel{font-size:8px!important;margin-bottom:3px!important}
+.ksub{font-size:10px!important;margin-top:2px!important}
+.krow,.krow2{gap:8px!important;margin-bottom:10px!important}
+
+/* ── Map view: account for sidebar on desktop ───────────────────────────── */
+@media (min-width:1025px){
+  #map-view{padding-left:296px!important;box-sizing:border-box}
+  #map-kpi-bar{padding-left:12px}
+}
+
 /* ── Landscape phone (max-height:420px and max-width:900px) ───────────── */
 @media (max-height:420px) and (max-width:900px){
   header{height:50px;padding:0 12px}
@@ -2509,11 +2524,12 @@ td.td-mn{
       <div class="ftitle">Status</div><div class="fchips" id="fs"></div>
       <div class="ftitle">Application</div><div class="fchips" id="fa"></div>
       <button class="rbtn" onclick="rst()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 12A8 8 0 1 1 17.5 6.5"/><path d="M20 3.5V8H15.5"/></svg> Reset Filters</button>
+      <div class="version-badge" style="display:none">v1.18.13</div>
     </aside>
 
     <div class="content" id="dash-content">
       <!-- KPI Row -->
-      <div class="krow" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:20px">
+      <div class="krow" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:12px">
         <div class="kcard tot"><div class="klabel">Total Units</div><div class="kval" id="kt" style="color: rgb(2, 132, 199)">0</div><div class="ksub" id="ks"></div></div>
         <div class="kcard fwup"><div class="klabel"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 5L20.5 19H3.5L12 5Z"/></svg> Firmware Up-to-date</div><div class="kval" id="kfu">0</div><div class="ksub" id="kfup"></div></div>
         <div class="kcard fwod"><div class="klabel"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 19L3.5 5H20.5L12 19Z"/></svg> Firmware Outdated</div><div class="kval" id="kfo">0</div><div class="ksub" id="kfop"></div></div>
@@ -2541,7 +2557,7 @@ td.td-mn{
     <!-- TABLE VIEW -->
     <div class="content hidden" id="table-view">
       <!-- KPI Row (same as dashboard) -->
-      <div class="krow" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:12px;flex-shrink:0">
+      <div class="krow" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:10px;flex-shrink:0">
         <div class="kcard tot"><div class="klabel">Total Units</div><div class="kval" id="kt2" style="color:rgb(2,132,199)">0</div><div class="ksub" id="ks2"></div></div>
         <div class="kcard fwup"><div class="klabel"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 5L20.5 19H3.5L12 5Z"/></svg> Firmware Up-to-date</div><div class="kval" id="kfu2">0</div><div class="ksub" id="kfup2"></div></div>
         <div class="kcard fwod"><div class="klabel"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle"><path d="M12 19L3.5 5H20.5L12 19Z"/></svg> Firmware Outdated</div><div class="kval" id="kfo2">0</div><div class="ksub" id="kfop2"></div></div>
@@ -3748,6 +3764,56 @@ function toggleLoginPw(){
 // ─────────────────────────────────────────────────
 
 // ── AUTO-LOAD: check auth then load ──
+// ── MOCKUP / DEMO MODE — activated by ?mockup=1&view=dash ──────────────
+(function(){
+  var _p = new URLSearchParams(window.location.search);
+  if(_p.get('mockup')!=='1') return;
+  // Sample dataset — mirrors real column names used throughout the app
+  var regions=['Central','North','Northeast','South','East'];
+  var sites={Central:['Rayong Terminal','Map Ta Phut','Sriracha'],North:['Chiang Mai Hub','Lampang','Phrae'],Northeast:['Khon Kaen','Nakhon Ratchasima','Udon Thani'],South:['Hat Yai','Surat Thani','Trang'],East:['Chonburi','Chachoengsao','Sa Kaeo']};
+  var apps=['Custody Transfer','Allocation','Fiscal','Other'];
+  var fwVersions=['V2.1.3','V2.0.8','V1.9.5','V1.8.2'];
+  var fwUpdates=['Up-to-date','Outdated','Unknown'];
+  var statuses=['Connected','Connected','Connected','Disconnected','Terminated'];
+  var lats={Central:[13.09,13.12,13.21],North:[18.79,18.30,18.12],Northeast:[16.43,14.97,17.41],South:[7.00,9.13,7.56],East:[13.36,13.69,13.82]};
+  var lngs={Central:[101.19,101.13,101.00],North:[98.98,99.50,100.16],Northeast:[102.84,102.10,102.79],South:[100.47,99.33,99.61],East:[100.98,101.09,102.07]};
+  var d=[];var idx=0;
+  regions.forEach(function(reg){
+    sites[reg].forEach(function(site,si){
+      for(var i=0;i<(reg==='Central'?12:reg==='North'?9:reg==='Northeast'?11:reg==='South'?7:8);i++){
+        idx++;
+        var fw=fwVersions[Math.floor(Math.random()*fwVersions.length)];
+        var fwu=fwUpdates[Math.floor(Math.random()*3)];
+        var st=statuses[Math.floor(Math.random()*statuses.length)];
+        d.push({
+          'PTT Region':reg,'Site':site,
+          'TAG':'OCS-'+String(idx).padStart(3,'0'),
+          'Metering name':'Meter '+String(idx).padStart(3,'0'),
+          'Metering Name':'Meter '+String(idx).padStart(3,'0'),
+          'Firmware':fw,'Firmware Update':fwu,'Status':st,
+          'Applications':apps[Math.floor(Math.random()*apps.length)],
+          'Last config installed date':'2025-0'+((idx%6)+1)+'-'+String((idx%28)+1).padStart(2,'0'),
+          'Config name':'CFG-'+String(idx).padStart(3,'0'),
+          'IP : Address':'192.168.'+Math.floor(idx/10)+'.'+idx%255,
+          'Serial No.':'SN'+String(1000+idx),'Hart version':'7.0',
+          'Latitude':lats[reg][si]+(Math.random()*.2-.1),
+          'Longitude':lngs[reg][si]+(Math.random()*.2-.1)
+        });
+      }
+    });
+  });
+  window.addEventListener('DOMContentLoaded',function(){
+    DATA=d;
+    sessionStorage.setItem('fc-auth','1');sessionStorage.setItem('fc-role','viewer');
+    document.getElementById('home').style.display='none';
+    document.getElementById('dash').style.display='';
+    var vb=document.querySelector('.version-badge');if(vb)vb.style.display='';
+    buildF();render();
+    var v=_p.get('view')||'dash';
+    setTimeout(function(){ setView(v); },150);
+  });
+})();
+
 window.addEventListener('DOMContentLoaded', function(){
   if(sessionStorage.getItem('fc-auth')==='1'){
     var role=sessionStorage.getItem('fc-role')||'viewer';
@@ -7081,7 +7147,6 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.18.13</div>
 </body>
 </html>
 
