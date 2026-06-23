@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.13</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.14</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -28,6 +28,25 @@
 /* perf: removed global wildcard transition — keep targeted transitions only */
 *{box-sizing:border-box;margin:0;padding:0}
 body,header,.sidebar,.content,.main{transition:background-color .3s ease,color .2s ease,border-color .2s ease}
+
+/* v1.18.14: smoother scrolling everywhere there's an overflow container —
+   momentum scroll on touch devices (the single biggest factor in whether
+   a list "feels" smooth) plus smooth behavior for any anchor/programmatic
+   scrolling. Listed individually rather than via a wildcard so this stays
+   cheap and predictable; respects reduced-motion below. */
+html{scroll-behavior:smooth}
+.sidebar,.content,.tw,.tsec,.sched-left-card,.sched-plans,
+.gantt-wrap-scroll,.sched-drawer-body,.modal-body,.map-right-panel-inner,
+.map-body,#sat-site-list,#gantt-wrap,#gc-chart{
+  -webkit-overflow-scrolling:touch;
+  scroll-behavior:smooth;
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .sidebar,.content,.tw,.tsec,.sched-left-card,.sched-plans,
+  .gantt-wrap-scroll,.sched-drawer-body,.modal-body,.map-right-panel-inner,
+  .map-body,#sat-site-list,#gantt-wrap,#gc-chart{scroll-behavior:auto}
+}
 /* Light mode overrides */
 .light header{background:rgba(240,244,248,0.96)!important}
 .light .hlogo h1{color:#0f172a}
@@ -337,11 +356,15 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 #table-view.hidden{display:none!important}
 #sched-view{flex:1;overflow:hidden;background:var(--bg);height:calc(100vh - 62px)}
 #sched-view.hidden{display:none!important}
-/* ── Satellite View ── */
-#satellite-view{flex:1;overflow:hidden;background:var(--bg);height:calc(100vh - 62px);display:block;padding:10px 20px 10px 10px;box-sizing:border-box}
+/* ── Satellite View ──
+   v1.18.14: was display:block + #sat-left-panel position:fixed, which made
+   the search/site-list panel float OVER the map instead of beside it.
+   Switched to a real flex row so the panel occupies its own column and the
+   map gets the rest — same visual position by default, but no overlap. */
+#satellite-view{flex:1;overflow:hidden;background:var(--bg);height:calc(100vh - 62px);display:flex;flex-direction:row;gap:12px;padding:10px 20px 10px 10px;box-sizing:border-box}
 #satellite-view.hidden{display:none!important}
-#sat-left-panel{position:fixed;top:72px;left:20px;width:256px;bottom:10px;display:flex;flex-direction:column;overflow:visible;z-index:10}
-#satellite-map{width:100%;height:100%;border-radius:16px;overflow:hidden}
+#sat-left-panel{position:relative;flex:0 0 256px;width:256px;display:flex;flex-direction:column;overflow:visible;z-index:10}
+#satellite-map{flex:1;min-width:0;width:100%;height:100%;border-radius:16px;overflow:hidden}
 #sat-site-list::-webkit-scrollbar{width:3px}
 #sat-site-list::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
 #sat-site-list::-webkit-scrollbar-track{background:transparent}
@@ -2006,6 +2029,19 @@ td.td-mn{
    Placed last so source order wins over earlier conflicting rules.
    ════════════════════════════════════════════════════════════════════════ */
 
+/* ── v1.18.14 — refinements on top of the above ──────────────────────────
+     • Bottom tab bar extended to tablet (≤1024px), not just phone.
+     • KPI cards 2-per-row + tighter padding/font on phone (more compact);
+       sidebar filter chips sized down slightly to match.
+     • Version badge hidden by default on tablet/phone, shown only while
+       the sidebar/calendar/search drawer is actually open (it was floating
+       over page content most of the time otherwise).
+     • Satellite view's search/site-list panel converted from a fixed
+       overlay (sitting ON TOP of the map) to a real flex sidebar column,
+       on desktop too — see the #satellite-view rule further up.
+     • Global smooth/momentum scrolling added near the top of this file.
+   ──────────────────────────────────────────────────────────────────────── */
+
 /* Hamburger menu button — hidden on desktop, shown ≤1024px */
 .mob-menu-btn{display:none;background:transparent;border:1px solid rgba(255,255,255,.14);border-radius:8px;width:38px;height:38px;align-items:center;justify-content:center;color:var(--tx);cursor:pointer;flex-shrink:0;margin-right:4px}
 .mob-menu-btn:hover{border-color:var(--ac);color:var(--ac)}
@@ -2048,9 +2084,24 @@ td.td-mn{
   .content{padding:12px 16px}
   .mob-menu-btn{display:flex}
 
-  /* Schedule / Satellite own left panels: also slide-in drawers on tablet */
+  /* v1.18.14: the version badge floats fixed near the sidebar's bottom
+     edge and was overlapping page content on phones/tablets when the
+     sidebar/drawer is closed (which is most of the time on these sizes).
+     Hide it by default; reveal — recentered under the drawer's own width
+     — only while a drawer is actually open. */
+  .version-badge{display:none!important}
+  body:has(.sidebar.mob-open) .version-badge,
+  body:has(.sched-left.mob-open) .version-badge,
+  body:has(#sat-left-panel.mob-open) .version-badge{
+    display:inline-block!important;left:0!important;width:280px!important;
+  }
+
+  /* Schedule / Satellite own left panels: also slide-in drawers on tablet.
+     #sat-left-panel's desktop base is now position:relative (flex sidebar,
+     v1.18.14) so it needs position:fixed restated here to become a drawer;
+     .sched-left already has position:fixed at its base. */
   .sched-left,#sat-left-panel{
-    left:-280px;top:62px;height:calc(100vh - 62px);bottom:auto;
+    position:fixed;left:-280px;top:62px;height:calc(100vh - 62px);bottom:auto;
     transition:left .25s ease;box-shadow:8px 0 24px rgba(0,0,0,.25);
     z-index:110;
   }
@@ -2074,6 +2125,19 @@ td.td-mn{
      min-height alone has no effect without switching to inline-flex */
   .chip,.fb-chip{display:inline-flex;align-items:center;min-height:34px;padding:7px 12px}
   .pb,.cal-nav-btn,.vpill-btn,.tpill-btn{min-height:36px}
+
+  /* v1.18.14: bottom tab bar now covers tablet too, not just phone —
+     the old header view-pill nav is replaced everywhere ≤1024px. */
+  .view-pill{display:none}
+  .mob-tabbar{
+    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:115;
+    background:var(--sf);border-top:1px solid var(--br);
+    box-shadow:0 -4px 20px rgba(0,0,0,.18);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .light .mob-tabbar{background:#fff}
+  /* reserve room so page content / fixed panels never sit under the tab bar */
+  .main,.sched-layout,#satellite-view,#map-view{padding-bottom:calc(58px + env(safe-area-inset-bottom,0px))!important}
 }
 
 /* ── Mobile (≤640px) ────────────────────────────────────────────────── */
@@ -2104,34 +2168,39 @@ td.td-mn{
   #role-badge{font-size:0!important;padding:0!important;margin:0!important}
   #role-badge:empty{display:none}
   .hbtn.gr{font-size:0;padding:9px}
-  /* Old desktop view-pill nav is replaced by the bottom tab bar on phones */
-  .view-pill{display:none}
   .toggle-pill{display:none}/* theme toggle hidden on phone header — still on home screen */
-
-  /* Bottom tab bar takes over navigation */
-  .mob-tabbar{
-    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:115;
-    background:var(--sf);border-top:1px solid var(--br);
-    box-shadow:0 -4px 20px rgba(0,0,0,.18);
-    padding-bottom:env(safe-area-inset-bottom,0px);
-  }
-  .light .mob-tabbar{background:#fff}
-  /* reserve room so page content / fixed panels never sit under the tab bar */
-  .main,.sched-layout,#satellite-view,#map-view{padding-bottom:calc(58px + env(safe-area-inset-bottom,0px))!important}
 
   /* Map & Satellite use the bottom-sheet pattern on phones, not the
      hamburger drawer — hide the hamburger there to avoid a dead control. */
   body[data-view="map"] .mob-menu-btn,
   body[data-view="satellite"] .mob-menu-btn{display:none}
 
+  /* version badge (when shown for an open drawer) needs to clear the
+     bottom tab bar instead of sitting underneath it */
+  body:has(.sidebar.mob-open) .version-badge,
+  body:has(.sched-left.mob-open) .version-badge{
+    bottom:calc(58px + 12px + env(safe-area-inset-bottom,0px))!important;
+  }
+
   .sidebar{width:240px;min-width:240px}
   /* shorthand here, declared once — keeps the bottom value in sync with the
      tab bar height instead of relying on a separate rule that a later
      shorthand declaration could silently zero out */
   .content{padding:10px 12px calc(58px + env(safe-area-inset-bottom,0px)) 12px}
-  .krow,.krow2,.crow{grid-template-columns:1fr!important}
-  .kval{font-size:24px}
-  .ccard,.kcard{padding:12px 14px}
+  /* v1.18.14: 1-per-row KPI cards ate a lot of vertical space before any
+     real content appeared; 2-per-row is still comfortably readable and
+     roughly halves the height this section takes. (.crow is left alone —
+     it's used for wider chart content, not KPI numbers.) */
+  .krow,.krow2{grid-template-columns:1fr 1fr!important;gap:8px!important}
+  .kcard{padding:10px 12px}
+  .klabel{font-size:8px;margin-bottom:4px;letter-spacing:1px}
+  .kval{font-size:19px}
+  .ksub{font-size:9.5px;margin-top:2px}
+  .ccard,.kcard{padding:10px 12px}
+  /* sidebar filter chips: a touch smaller than the tablet sizing so more
+     fit per row without shrinking the tap target below ~32px */
+  .sidebar .chip{font-size:10px;padding:6px 10px;min-height:32px}
+  .fb-chip{font-size:9px;padding:2px 3px 2px 8px;min-height:30px}
 
   /* ── Table view: sticky search + card hierarchy ──
      .thdr sits *before* the scrolling .tw in the DOM, so sticky on .thdr
@@ -2299,109 +2368,6 @@ td.td-mn{
   .src-panel{padding:18px}
   .load-btn,.url-input,#login-pw{min-height:44px}
 }
-
-/* ── Tablet Portrait (≤768px) ────────────────────────────────────────── */
-@media (max-width:768px){
-  /* Header: hide verbose badges, keep logo + hamburger + essential actions */
-  .hbadge{display:none}
-  .lupd{display:none}
-  .hlogo h1{font-size:14px}
-  .hlogo span{font-size:10px}
-  .toggle-pill{display:none}
-  /* Show theme toggle only as icon in hright area */
-  #header-theme-toggle{display:none}
-  header{padding:0 14px}
-
-  /* Sidebar: ensure it's a slide-in drawer (same as ≤1024px but re-state width) */
-  .sidebar{width:260px;min-width:260px}
-
-  /* KPI: 2 columns on tablet portrait */
-  .krow,.krow2{grid-template-columns:1fr 1fr}
-  .crow{grid-template-columns:1fr}
-
-  /* KPI card: slightly tighter */
-  .kcard{padding:12px 14px}
-  .kval{font-size:26px}
-
-  /* Map KPI bar: wrap chips */
-  #map-kpi-bar{flex-wrap:wrap;gap:6px;padding:8px 12px 4px}
-  .mkpi-row{flex-wrap:wrap}
-  .mkpi-card{min-width:100px;padding:10px 14px}
-  .mkpi-val{font-size:20px}
-
-  /* Table: header wraps */
-  .thdr{flex-wrap:wrap;gap:8px;padding:10px 12px}
-  .srch{width:100%;max-width:none;min-height:40px}
-  .ttitle{font-size:12px}
-
-  /* Content padding */
-  .content{padding:10px 14px}
-
-  /* Chart card: tighter */
-  .ccard{padding:14px 16px}
-
-  /* Gantt: allow scroll */
-  #gantt-wrap,.gc-wrap{overflow-x:auto!important}
-
-  /* Map right panel: narrower */
-  .map-right-panel{width:240px}
-
-  /* Modal: wider on tablet portrait */
-  .modal-box{max-width:90vw}
-
-  /* Schedule layout */
-  .sched-layout{padding:10px 12px 12px!important}
-
-  /* Pagination: wrap and center */
-  .pg{flex-wrap:wrap;justify-content:center;gap:4px}
-  .pgi{width:100%;text-align:center;margin-right:0;margin-bottom:4px}
-
-  /* Touch targets */
-  .chip{min-height:36px;padding:6px 12px}
-  .pb,.cal-nav-btn{min-width:36px;min-height:36px}
-  .hbtn{min-height:38px;padding:8px 12px}
-  .sf-add-btn{min-height:44px}
-}
-
-/* ── Large Tablet / Small Desktop (769px – 1024px): 3-column KPI ─────── */
-@media (min-width:769px) and (max-width:1024px){
-  .krow,.krow2{grid-template-columns:repeat(3,1fr)}
-  .crow{grid-template-columns:1fr 1fr}
-  /* Header: hide verbose badges to reclaim space */
-  .hbadge{display:none}
-  .lupd{display:none}
-  /* Map right panel */
-  .map-right-panel{width:260px}
-}
-
-/* ── Landscape phone (max-height:420px and max-width:900px) ───────────── */
-@media (max-height:420px) and (max-width:900px){
-  header{height:50px;padding:0 12px}
-  .hlogo-icon{width:28px;height:28px;font-size:8px}
-  .hlogo h1{font-size:12px}
-  .hlogo span{display:none}
-  .sidebar{top:50px;height:calc(100vh - 50px)}
-  .krow,.krow2{grid-template-columns:repeat(3,1fr)}
-  .crow{grid-template-columns:1fr 1fr 1fr}
-  .kcard{padding:8px 12px}
-  .kval{font-size:20px}
-  /* Map: taller in landscape */
-  #chartdiv{height:calc(100vh - 50px)!important}
-  .map-right-panel{
-    max-height:50vh;
-    position:absolute;right:8px;top:8px;bottom:8px;left:auto;
-    width:220px;border-radius:14px;
-  }
-  .map-right-panel::before{display:none}
-  .map-right-panel.collapsed{max-height:50vh}
-  /* Bottom tab bar: compact in landscape */
-  .mob-tabbar{padding-bottom:0;min-height:44px}
-  .mtab-btn{padding:4px 2px;font-size:9px;min-height:40px}
-  .main,.sched-layout,#satellite-view,#map-view{padding-bottom:calc(44px + env(safe-area-inset-bottom,0px))!important}
-  .content{padding-bottom:calc(44px + env(safe-area-inset-bottom,0px))}
-  /* Gantt: always scrollable */
-  #gantt-wrap,.gc-wrap,.sched-gantt{overflow-x:auto!important}
-}
 </style>
 </head>
 <body>
@@ -2422,7 +2388,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.18.13</div>
+  <div class="home-version">v1.18.14</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -7081,7 +7047,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.18.13</div>
+<div class="version-badge" style="display:none">v1.18.14</div>
 </body>
 </html>
 
