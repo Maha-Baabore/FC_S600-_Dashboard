@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.0</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.1</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -683,7 +683,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.19.0 — visionOS-inspired
+   LIQUID GLASS v1.19.1 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -2008,7 +2008,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.19.0</div>
+  <div class="home-version">v1.19.1</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -5634,6 +5634,7 @@ function exportServiceReportPDF(mode){
   _openPrintTab(url); // v1.17.38: noopener — separate process, no main-thread freeze
   // restore keyboard input (Search/Note/Remark) when user returns to this tab
   _recoverFocusAfterExport('sr-final-remark');
+  clearSrDraft(planId); // report finalized → drop the saved draft
 }
 
 // ══════════════════════════════════════════════════════
@@ -5658,6 +5659,8 @@ function uploadServiceReport(html, meta){
         var name=esc(res.fileName||'report.pdf');
         var link=res.viewUrl?('<a href="'+esc(res.viewUrl)+'" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline">'+name+'</a>'):name;
         show('ok','\u2713 Saved to Drive: '+link,true);
+        var _srm=document.getElementById('modal-service-report');
+        clearSrDraft(_srm?_srm.getAttribute('data-plan-id'):null); // finalized → drop draft
         prefetchReports(); // refresh cache so this plan's Download PDF works immediately
       } else {
         throw new Error((res&&res.msg)||'Upload failed');
@@ -5832,6 +5835,7 @@ function srAttachImageSingle(sectionId, slot){
         previewEl.innerHTML='<img src="'+ev.target.result+'" alt="'+file.name+'">'
           +'<button class="sr-remove-btn" title="Remove image" onclick="srRemoveImage(\''+sectionId+'\','+slot+')" tabindex="-1">&#215;</button>';
       }
+      if(typeof saveSrDraft==='function') saveSrDraft();
     };
     reader.readAsDataURL(file);
   };
@@ -5861,6 +5865,7 @@ function srRemoveImage(sectionId, slot){
     var otherKey = slot === 2 ? sectionId : (sectionId + '-2');
     if(!_srReportImages[otherKey]){ sharedBtn.style.borderColor=''; sharedBtn.style.color=''; }
   }
+  if(typeof saveSrDraft==='function') saveSrDraft();
 }
 
 // srAttachImageMulti — single button, pick up to 2 images
@@ -5974,6 +5979,108 @@ function applyAppTypeToReport(app){
   // Turbine: everything visible (already reset above)
 }
 
+// ══════════════════════════════════════════
+//  SERVICE REPORT DRAFT PERSISTENCE (v1.19.1)
+//  Auto-saves in-progress checklist / remarks / photos per plan
+//  so an accidental modal close doesn't lose the work. Cleared on export.
+// ══════════════════════════════════════════
+function _srDraftKey(planId){ return 'fc-srdraft:'+planId; }
+
+function _captureSrDraft(modal){
+  var checklists=[];
+  modal.querySelectorAll('.sr-table').forEach(function(tbl){
+    var rows=[];
+    tbl.querySelectorAll('tbody tr').forEach(function(tr){
+      var chks=tr.querySelectorAll('.sr-chk');
+      var rm=tr.querySelector('.sr-remark-input');
+      rows.push({ c1: chks[0]?chks[0].checked:false, c2: chks[1]?chks[1].checked:false, rm: rm?rm.value:'' });
+    });
+    checklists.push(rows);
+  });
+  var fr=document.getElementById('sr-final-remark');
+  var imgs={}; Object.keys(_srReportImages).forEach(function(k){ imgs[k]=_srReportImages[k]; });
+  return { checklists:checklists, finalRemark: fr?fr.value:'', images: imgs, ts: Date.now() };
+}
+
+function saveSrDraft(){
+  var modal=document.getElementById('modal-service-report');
+  if(!modal || modal.classList.contains('hidden')) return;
+  var planId=modal.getAttribute('data-plan-id'); if(!planId) return;
+  var draft=_captureSrDraft(modal);
+  var hasData = draft.finalRemark || Object.keys(draft.images).length ||
+    draft.checklists.some(function(t){ return t.some(function(r){ return r.c1||r.c2||r.rm; }); });
+  var key=_srDraftKey(planId);
+  if(!hasData){ try{ localStorage.removeItem(key); }catch(e){} return; }
+  var json=JSON.stringify(draft);
+  try{
+    localStorage.setItem(key, json);
+  }catch(e){
+    // quota — drop other plans' drafts, then retry; finally fall back to text-only
+    try{
+      Object.keys(localStorage).forEach(function(k){ if(k.indexOf('fc-srdraft:')===0 && k!==key) localStorage.removeItem(k); });
+      localStorage.setItem(key, json);
+    }catch(e2){
+      try{ var lite=JSON.parse(json); lite.images={}; lite._noimg=true; localStorage.setItem(key, JSON.stringify(lite)); }
+      catch(e3){ console.warn('[SR draft] could not persist (storage full):', e3 && e3.message); }
+    }
+  }
+}
+
+function restoreSrDraft(planId){
+  var raw; try{ raw=localStorage.getItem(_srDraftKey(planId)); }catch(e){ return false; }
+  if(!raw) return false;
+  var d; try{ d=JSON.parse(raw); }catch(e){ return false; }
+  var modal=document.getElementById('modal-service-report'); if(!modal) return false;
+  // checklists (index-aligned; layout is deterministic per plan/app-type)
+  var tables=modal.querySelectorAll('.sr-table');
+  (d.checklists||[]).forEach(function(rows,ti){
+    var tbl=tables[ti]; if(!tbl) return;
+    var trs=tbl.querySelectorAll('tbody tr');
+    (rows||[]).forEach(function(rd,ri){
+      var tr=trs[ri]; if(!tr) return;
+      var chks=tr.querySelectorAll('.sr-chk');
+      if(chks[0]) chks[0].checked=!!rd.c1;
+      if(chks[1]) chks[1].checked=!!rd.c2;
+      var rm=tr.querySelector('.sr-remark-input'); if(rm) rm.value=rd.rm||'';
+    });
+  });
+  var fr=document.getElementById('sr-final-remark'); if(fr) fr.value=d.finalRemark||'';
+  // images
+  _srReportImages = d.images || {};
+  Object.keys(_srReportImages).forEach(function(k){
+    var slot, sid;
+    if(/-2$/.test(k)){ slot=2; sid=k.replace(/-2$/,''); } else { slot=1; sid=k; }
+    var img=_srReportImages[k]; if(!img||!img.dataUrl) return;
+    var nm=img.name||'';
+    var previewEl=document.getElementById('sr-preview-'+sid+'-'+slot);
+    if(previewEl){
+      previewEl.innerHTML='<img src="'+img.dataUrl+'" alt="'+esc(nm)+'">'
+        +'<button class="sr-remove-btn" title="Remove image" onclick="srRemoveImage(\''+sid+'\','+slot+')" tabindex="-1">&#215;</button>';
+    }
+    var nameEl=document.getElementById('sr-img-name-'+sid+'-'+slot);
+    if(nameEl) nameEl.textContent=nm.slice(0,20)+(nm.length>20?'…':'');
+    var btnId=slot===2?('sr-img-btn-'+sid+'-2'):('sr-img-btn-'+sid);
+    var btn=document.getElementById(btnId);
+    if(btn){ btn.style.borderColor='#10b981'; btn.style.color='#10b981'; }
+  });
+  return true;
+}
+
+function clearSrDraft(planId){
+  if(!planId){ var m=document.getElementById('modal-service-report'); planId=m?m.getAttribute('data-plan-id'):null; }
+  if(!planId) return;
+  try{ localStorage.removeItem(_srDraftKey(planId)); }catch(e){}
+}
+
+// Auto-save the draft as the user fills it (debounced for text/checkboxes)
+(function(){
+  var _t=null;
+  function sched(){ clearTimeout(_t); _t=setTimeout(function(){ try{ saveSrDraft(); }catch(e){} },600); }
+  function inModal(e){ var m=document.getElementById('modal-service-report'); return m && !m.classList.contains('hidden') && m.contains(e.target); }
+  document.addEventListener('input',function(e){ if(inModal(e) && (e.target.classList.contains('sr-remark-input')||e.target.id==='sr-final-remark')) sched(); });
+  document.addEventListener('change',function(e){ if(inModal(e) && e.target.classList.contains('sr-chk')) sched(); });
+})();
+
 function openServiceReport(planId){
   // Find the plan and its DATA row
   var p=PLANS.find(function(x){ return String(x.id)===String(planId); });
@@ -6030,6 +6137,9 @@ function openServiceReport(planId){
 
   // Apply app-type-specific section visibility
   applyAppTypeToReport(row['Applications']||row['Application']||'');
+
+  // Restore any in-progress draft for this plan (survives accidental close)
+  restoreSrDraft(planId);
 
   openModal('modal-service-report');
 }
@@ -6807,7 +6917,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.19.0</div>
+<div class="version-badge" style="display:none">v1.19.1</div>
 </body>
 </html>
 
