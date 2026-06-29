@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.1</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.2</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -683,7 +683,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.19.1 — visionOS-inspired
+   LIQUID GLASS v1.19.2 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -2008,7 +2008,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.19.1</div>
+  <div class="home-version">v1.19.2</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4100,6 +4100,9 @@ function renderPlanList(){
     if(!row) row={};
     var app=(row['Applications']||'').trim()||'—';
     var fwCurrent=(row['Firmware']||'').trim()||'—';
+    // Once reported, the unit's live firmware == the new version; show the
+    // frozen pre-update value (p.fwOld) so Old ≠ New stays meaningful.
+    var fwOldShown=(p.reported&&p.fwOld)?p.fwOld:fwCurrent;
     return '<div class="plan-item">'+
       '<div style="flex:1;min-width:0">'+
         '<div class="plan-item-tag">'+esc(p.tag)+'</div>'+
@@ -4107,7 +4110,7 @@ function renderPlanList(){
         '<div class="plan-item-meta" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">'+
           '<span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12L15 14.5"/></svg> '+dl+'</span>'+
           '<span>App: <b>'+esc(app)+'</b></span>'+
-          '<span>FW: <b>'+esc(fwCurrent)+'</b> &rarr; <b style="color:var(--ac)">'+esc(p.fwTarget||'—')+'</b></span>'+
+          '<span>FW: <b>'+esc(fwOldShown)+'</b> &rarr; <b style="color:var(--ac)">'+esc(p.fwTarget||'—')+'</b></span>'+
           (p.performedBy?'<span style="color:var(--tx2)">By: <b>'+esc(p.performedBy)+'</b></span>':'')+
           (p.note?'<span style="color:var(--tx3)">'+esc(p.note)+'</span>':'')+
         '</div>'+
@@ -4791,7 +4794,7 @@ function openReport(id){
   document.getElementById('rpt-tag').setAttribute('data-plan-id', p.id);
   document.getElementById('rpt-ip').value=row['IP : Address']||row['IP Address']||row['IP:Address']||row['IP']||'';
   document.getElementById('rpt-serial').value=row['Serial No.']||row['Serial No']||'';
-  document.getElementById('rpt-fw-old').value=row['Firmware']||'';
+  document.getElementById('rpt-fw-old').value=p.fwOld||row['Firmware']||'';
   document.getElementById('rpt-firmware').value=p.fwTarget||row['Firmware']||'';
   document.getElementById('rpt-fw-update').value='Up-to-date';
   document.getElementById('rpt-hart').value=row['Hart version']||'';
@@ -6917,7 +6920,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.19.1</div>
+<div class="version-badge" style="display:none">v1.19.2</div>
 </body>
 </html>
 
