@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.14</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.0</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -683,7 +683,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.18.14 — visionOS-inspired
+   LIQUID GLASS v1.19.0 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -2008,7 +2008,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.18.14</div>
+  <div class="home-version">v1.19.0</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4125,7 +4125,10 @@ function renderPlanList(){
             : '')+
           // reported: แสดง lock icon — double-click เพื่อ admin unlock
           (p.reported
-            ? '<button class="plan-action-btn" onclick="downloadPlanReport(\''+p.id+'\')" title="Download saved PDF report" style="background:rgba(2,132,199,.1);border-color:rgba(2,132,199,.3);color:#0284c7"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3V14"/><path d="M7.5 10L12 14.5L16.5 10"/><path d="M5 20H19"/></svg></button>'+
+            ? (_findPlanReport(p)
+                ? '<button class="plan-action-btn" onclick="downloadPlanReport(\''+p.id+'\')" title="Download saved PDF report" style="background:rgba(2,132,199,.1);border-color:rgba(2,132,199,.3);color:#0284c7"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3V14"/><path d="M7.5 10L12 14.5L16.5 10"/><path d="M5 20H19"/></svg></button>'
+                : '<button class="plan-action-btn" onclick="openServiceReport(\''+p.id+'\')" title="Create Service Report (Save to Drive)" style="background:rgba(99,102,241,.08);border-color:rgba(99,102,241,.3);color:#6366f1"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3H14L19 8V20A1 1 0 0 1 18 21H6A1 1 0 0 1 5 20V4A1 1 0 0 1 6 3Z"/><path d="M14 3V8H19"/><path d="M8 12H16M8 16H13"/></svg></button>'
+              )+
               '<span title="Double-click to unlock (Admin)" style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:5px;border:1.5px solid currentColor;opacity:.55;cursor:pointer;user-select:none;color:currentColor" ondblclick="adminUnlock(\''+p.id+'\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>'
             : '<button class="plan-action-btn edit-btn" onclick="openEditPlan(\''+p.id+'\')" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:middle"><path d="M15.5 4L20 8.5L9.5 19H5V14.5L15.5 4Z"/><path d="M13 6.5L17.5 11"/></svg></button>'+
               '<button class="plan-action-btn delete-btn" onclick="deletePlan(\''+p.id+'\')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:middle"><path d="M4 6.5H20"/><path d="M9.5 6.5V4.5H14.5V6.5"/><path d="M5.5 6.5L6.5 20H17.5L18.5 6.5"/><path d="M10 10.5V16M14 10.5V16"/></svg></button>'
@@ -5741,35 +5744,44 @@ function deleteStoredReport(fileId, fileName){
     .catch(function(e){ clearTimeout(_t); if(statusEl){ statusEl.className='report-apps-status err'; statusEl.textContent='\u2717 '+e.message; } });
 }
 
-// ── Prefetch the Drive reports list into cache (silent, no UI) ──
+// ── Match a plan to its newest stored Drive report (by TAG, site as tiebreaker) ──
+function _findPlanReport(p){
+  if(!p) return null;
+  var tag=(p.tag||'').trim().toLowerCase();
+  if(!tag) return null;
+  var site=(p.site||'').trim().toLowerCase();
+  var m=_REPORTS_CACHE.filter(function(r){
+    if((r.tag||'').trim().toLowerCase()!==tag) return false;
+    var rs=(r.site||'').trim().toLowerCase();
+    if(site && rs && rs!==site) return false; // site is a tiebreaker only
+    return true;
+  });
+  return m.length ? m[0] : null; // cache is newest-first
+}
+
+// ── Prefetch the Drive reports list into cache, then refresh the plan list ──
+// (the plan list decides Service-Report-vs-Download per row from this cache)
 function prefetchReports(){
   var url=(CONFIG.appsScriptUrl||'').trim(); if(!url) return;
   var _c=new AbortController(); var _t=setTimeout(function(){ _c.abort(); },12000);
   fetch(url+'?action=reports',{signal:_c.signal})
     .then(function(r){ clearTimeout(_t); return r.json(); })
-    .then(function(res){ if(res&&res.ok&&Array.isArray(res.reports)) _REPORTS_CACHE=res.reports; })
+    .then(function(res){
+      if(res&&res.ok&&Array.isArray(res.reports)){
+        _REPORTS_CACHE=res.reports;
+        if(typeof renderPlanList==='function'){ try{ renderPlanList(); }catch(e){} }
+      }
+    })
     .catch(function(){ clearTimeout(_t); });
 }
 
 // ── Download the saved Drive PDF for a (locked) plan ──
 // A reported plan can't be reconstructed locally (checklist/photos live
 // only in the modal at export time), so we fetch the stored snapshot.
-// Matches the newest stored report by TAG (cache is newest-first).
 function downloadPlanReport(planId){
   var p=PLANS.find(function(x){ return String(x.id)===String(planId); });
   if(!p) return;
-  function pick(){
-    var tag=(p.tag||'').trim().toLowerCase();
-    var site=(p.site||'').trim().toLowerCase();
-    var m=_REPORTS_CACHE.filter(function(r){
-      if((r.tag||'').trim().toLowerCase()!==tag) return false;
-      var rs=(r.site||'').trim().toLowerCase();
-      if(site && rs && rs!==site) return false; // site is a tiebreaker only
-      return true;
-    });
-    return m.length ? m[0] : null;
-  }
-  var hit=pick();
+  var hit=_findPlanReport(p);
   if(hit && (hit.downloadUrl||hit.viewUrl)){
     window.open(hit.downloadUrl||hit.viewUrl,'_blank','noopener');
     return;
@@ -5781,8 +5793,11 @@ function downloadPlanReport(planId){
   fetch(url+'?action=reports',{signal:_c.signal})
     .then(function(r){ clearTimeout(_t); return r.json(); })
     .then(function(res){
-      if(res&&res.ok&&Array.isArray(res.reports)) _REPORTS_CACHE=res.reports;
-      var h2=pick();
+      if(res&&res.ok&&Array.isArray(res.reports)){
+        _REPORTS_CACHE=res.reports;
+        if(typeof renderPlanList==='function'){ try{ renderPlanList(); }catch(e){} }
+      }
+      var h2=_findPlanReport(p);
       if(h2 && (h2.downloadUrl||h2.viewUrl)){
         window.open(h2.downloadUrl||h2.viewUrl,'_blank','noopener');
       } else if(confirm('No saved PDF on Drive for TAG '+(p.tag||'')+'.\n\nOpen the service report to create one?')){
@@ -6792,7 +6807,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.18.14</div>
+<div class="version-badge" style="display:none">v1.19.0</div>
 </body>
 </html>
 
