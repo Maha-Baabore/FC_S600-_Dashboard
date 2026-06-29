@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.11</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.18.13</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -635,6 +635,17 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .report-apps-status.ok{background:rgba(16,185,129,.12);color:#10b981}
 .report-apps-status.err{background:rgba(239,68,68,.12);color:#ef4444}
 .report-apps-status.loading{background:rgba(99,102,241,.12);color:#6366f1}
+.ra-list{display:flex;flex-direction:column;gap:8px;max-height:54vh;overflow-y:auto;padding-right:2px}
+.ra-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--lg-bd);border-radius:10px;background:var(--lg-bg)}
+.ra-item-main{flex:1;min-width:0}
+.ra-item-tag{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;color:var(--tx);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ra-item-sub{font-size:11px;color:var(--tx2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ra-badge{font-size:9px;font-weight:700;letter-spacing:.4px;padding:2px 7px;border-radius:5px;text-transform:uppercase}
+.ra-dl{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:7px 12px;border-radius:8px;background:rgba(2,132,199,.12);color:var(--ac);text-decoration:none;border:1px solid rgba(2,132,199,.25);cursor:pointer;white-space:nowrap}
+.ra-dl:hover{background:rgba(2,132,199,.22)}
+.ra-del{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.22);cursor:pointer;flex-shrink:0}
+.ra-del:hover{background:rgba(239,68,68,.2)}
+.ra-empty{text-align:center;padding:34px 12px;color:var(--tx2);font-size:13px}
 #map-kpi-bar{padding:8px 16px 6px;flex-shrink:0;display:flex;justify-content:flex-end;align-items:stretch}
 .mkpi-row{display:flex;flex-wrap:nowrap;gap:8px}
 .mkpi-card{background:var(--sf);border:1px solid var(--br);border-radius:12px;padding:12px 18px;min-width:120px;flex-shrink:0}
@@ -672,7 +683,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.18.11 — visionOS-inspired
+   LIQUID GLASS v1.18.13 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1997,7 +2008,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.18.11</div>
+  <div class="home-version">v1.18.13</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2057,6 +2068,7 @@ td.td-mn{
     <div class="hright">
       <span class="lupd" id="h-upd"></span>
       <button class="hbtn gr" id="ref-btn" onclick="refreshGS()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 12A8 8 0 1 1 17.5 6.5"/><path d="M20 3.5V8H15.5"/></svg> Refresh</button>
+      <button class="hbtn" id="reports-archive-btn" onclick="openReportsArchive()" title="Service Reports Archive"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M4 7V18A2 2 0 0 0 6 20H18A2 2 0 0 0 20 18V9A2 2 0 0 0 18 7H12L10 4H6A2 2 0 0 0 4 6Z"/></svg> Reports</button>
       <!-- View mode toggle -->
       <div class="view-pill">
         <button class="vpill-btn active" id="btn-view-dash" onclick="setView('dash')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><rect x="3.5" y="3.5" width="7.5" height="9" rx="1"/><rect x="13" y="3.5" width="7.5" height="5" rx="1"/><rect x="3.5" y="14" width="7.5" height="6.5" rx="1"/><rect x="13" y="10" width="7.5" height="10.5" rx="1"/></svg> Dashboard</button>
@@ -2494,9 +2506,30 @@ td.td-mn{
       </div>
 
     </div>
+    <div id="sr-drive-status" class="report-apps-status" style="display:none;margin:0 16px 10px"></div>
     <div class="modal-footer">
       <button class="modal-btn-cancel" onclick="closeModal('modal-service-report')">Cancel</button>
-      <button class="modal-btn-save" onclick="exportServiceReportPDF()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 3V15"/><path d="M6.5 9.5L12 15L17.5 9.5"/><path d="M4 19H20"/></svg> Export PDF</button>
+      <button class="modal-btn-save" id="sr-drive-btn" onclick="exportServiceReportPDF('drive')" style="background:linear-gradient(135deg,#0d9488,#0f766e)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M4 14.5A4 4 0 0 1 5 6.7A5.5 5.5 0 0 1 16 7A4.5 4.5 0 0 1 18.5 15.3"/><path d="M12 11V20M8.5 16.5L12 20L15.5 16.5"/></svg> Save to Drive</button>
+      <button class="modal-btn-save" onclick="exportServiceReportPDF('print')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 3V15"/><path d="M6.5 9.5L12 15L17.5 9.5"/><path d="M4 19H20"/></svg> Export PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Service Reports Archive -->
+<div class="modal-overlay hidden" id="modal-reports-archive">
+  <div class="modal-box" style="max-width:900px;width:94%">
+    <div class="modal-header">
+      <span class="modal-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M4 7V18A2 2 0 0 0 6 20H18A2 2 0 0 0 20 18V9A2 2 0 0 0 18 7H12L10 4H6A2 2 0 0 0 4 6Z"/></svg> Service Reports Archive</span>
+      <button class="modal-close" onclick="closeModal('modal-reports-archive')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M5.5 5.5L18.5 18.5"/><path d="M18.5 5.5L5.5 18.5"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <input class="sf-input" id="ra-filter" type="text" placeholder="Search TAG / Site / Region / file..." oninput="renderReportsList()" style="margin-bottom:10px">
+      <div id="ra-status" class="report-apps-status" style="display:none;margin-bottom:8px"></div>
+      <div id="ra-list" class="ra-list"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn-cancel" onclick="closeModal('modal-reports-archive')">Close</button>
+      <button class="modal-btn-save" onclick="loadReportsList()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M20 12A8 8 0 1 1 17.5 6.5"/><path d="M20 3.5V8H15.5"/></svg> Refresh</button>
     </div>
   </div>
 </div>
@@ -5162,7 +5195,11 @@ function gcExportPDF(){
   '.leg-item{display:flex;align-items:center;gap:4px;font-size:9px;color:#475569}'+
   '.leg-dot{width:10px;height:10px;border-radius:2px;display:inline-block;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
   '.footer{margin-top:10px;padding-top:6px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;font-size:8px;color:#94a3b8}'+
+  '.print-btn{position:fixed;bottom:20px;right:20px;background:#1e3a5f;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:9999;display:flex;align-items:center;gap:7px}'+
+  '.print-btn:hover{background:#2d5a9e}'+
+  '@media print{.print-btn{display:none}}'+
   '</style></head><body>'+
+  '<button class="print-btn" onclick="window.print()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3V15"/><path d="M6.5 9.5L12 15L17.5 9.5"/><path d="M4 19H20"/></svg> Download PDF</button>'+
   '<div class="page">'+
     '<div class="header">'+
       '<img class="header-logo" src="'+LOGO_DATA+'" alt="Siamraj">'+
@@ -5280,7 +5317,8 @@ function _recoverFocusAfterExport(focusId){
 // ══════════════════════════════════════════════════════
 var _srReportImages={}; // key: section id, value: {name, dataUrl}
 
-function exportServiceReportPDF(){
+function exportServiceReportPDF(mode){
+  mode = mode || 'print'; // 'print' = open print preview; 'drive' = upload PDF to Google Drive
   // Read data from the service report modal
   var modal=document.getElementById('modal-service-report');
   var planId=modal ? modal.getAttribute('data-plan-id') : null;
@@ -5568,9 +5606,137 @@ function exportServiceReportPDF(){
 
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   var url=URL.createObjectURL(blob);
+
+  if(mode==='drive'){
+    // Stored copy: strip the auto-print script and ship the HTML to Apps Script,
+    // which converts it to PDF on Google Drive. Build metadata for the Reports sheet.
+    var driveHtml=html.replace('<script>window.onload=function(){ window.print(); };<\/script>','');
+    var _meta={
+      reportDate: rptData.updateDt||dateStr,
+      region:     rptData.region,
+      site:       rptData.site,
+      tag:        rptData.tag,
+      name:       rptData.name,
+      fwOld:      rptData.fwOld,
+      fwNew:      rptData.fwNew,
+      status:     rptData.fwStatus,
+      performedBy:rptData.performedBy,
+      ackBy:      rptData.ackBy
+    };
+    uploadServiceReport(driveHtml, _meta);
+    return;
+  }
+
   _openPrintTab(url); // v1.17.38: noopener — separate process, no main-thread freeze
   // restore keyboard input (Search/Note/Remark) when user returns to this tab
   _recoverFocusAfterExport('sr-final-remark');
+}
+
+// ══════════════════════════════════════════════════════
+//  SERVICE REPORT DRIVE ARCHIVE (v1.18.13)
+//  uploadServiceReport — POST the report HTML to Apps Script,
+//  which converts it to PDF, stores it on Google Drive
+//  (shared link), and logs metadata to the Reports sheet.
+// ══════════════════════════════════════════════════════
+function uploadServiceReport(html, meta){
+  var url=(CONFIG.appsScriptUrl||'').trim();
+  var st=document.getElementById('sr-drive-status');
+  var btn=document.getElementById('sr-drive-btn');
+  function show(cls,txt,isHtml){ if(!st) return; st.style.display=''; st.className='report-apps-status '+cls; if(isHtml){ st.innerHTML=txt; } else { st.textContent=txt; } }
+  if(!url){ show('err','\u26a0 appsScriptUrl not set in CONFIG'); return; }
+  show('loading','\u23f3 Saving report to Drive (converting to PDF)...');
+  if(btn){ btn.disabled=true; }
+  var _c=new AbortController(); var _t=setTimeout(function(){ _c.abort(); },60000);
+  fetch(url,{method:'POST',body:JSON.stringify({action:'uploadReport',html:html,meta:meta}),signal:_c.signal})
+    .then(function(r){ clearTimeout(_t); return r.json(); })
+    .then(function(res){
+      if(res&&res.ok){
+        var name=esc(res.fileName||'report.pdf');
+        var link=res.viewUrl?('<a href="'+esc(res.viewUrl)+'" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline">'+name+'</a>'):name;
+        show('ok','\u2713 Saved to Drive: '+link,true);
+      } else {
+        throw new Error((res&&res.msg)||'Upload failed');
+      }
+    })
+    .catch(function(e){ clearTimeout(_t); show('err','\u2717 '+(e.name==='AbortError'?'Timed out (report too large or slow conversion)':e.message)); })
+    .then(function(){ if(btn) btn.disabled=false; }); // finally: re-arm button on success+failure
+}
+
+// ── Open the Reports Archive modal, then (re)load the list ──
+function openReportsArchive(){
+  openModal('modal-reports-archive');
+  loadReportsList();
+}
+
+var _REPORTS_CACHE=[];
+function loadReportsList(){
+  var url=(CONFIG.appsScriptUrl||'').trim();
+  var statusEl=document.getElementById('ra-status');
+  var listEl=document.getElementById('ra-list');
+  function status(cls,txt){ if(!statusEl) return; statusEl.style.display=''; statusEl.className='report-apps-status '+cls; statusEl.textContent=txt; }
+  if(!url){ status('err','\u26a0 appsScriptUrl not set in CONFIG'); return; }
+  status('loading','Loading reports from Google Drive...');
+  if(listEl) listEl.innerHTML='';
+  var _c=new AbortController(); var _t=setTimeout(function(){ _c.abort(); },15000);
+  fetch(url+'?action=reports',{signal:_c.signal})
+    .then(function(r){ clearTimeout(_t); return r.json(); })
+    .then(function(res){
+      if(!(res&&res.ok&&Array.isArray(res.reports))) throw new Error((res&&res.msg)||'Bad response');
+      _REPORTS_CACHE=res.reports;
+      if(statusEl) statusEl.style.display='none';
+      renderReportsList();
+    })
+    .catch(function(e){ clearTimeout(_t); status('err','\u2717 '+(e.name==='AbortError'?'Timed out':e.message)); });
+}
+
+function renderReportsList(){
+  var listEl=document.getElementById('ra-list'); if(!listEl) return;
+  var q=((document.getElementById('ra-filter')||{}).value||'').trim().toLowerCase();
+  var isAdmin=(sessionStorage.getItem('fc-role')||'viewer')==='admin';
+  var items=_REPORTS_CACHE.filter(function(r){
+    if(!q) return true;
+    return [r.tag,r.site,r.region,r.name,r.fileName,r.performedBy].join(' ').toLowerCase().indexOf(q)>=0;
+  });
+  if(!items.length){
+    listEl.innerHTML='<div class="ra-empty">'+(_REPORTS_CACHE.length?'No reports match your search.':'No saved reports yet. Use \u201cSave to Drive\u201d on a service report.')+'</div>';
+    return;
+  }
+  var statusColor={'up-to-date':'#10b981','outdated':'#ef4444'};
+  listEl.innerHTML=items.map(function(r){
+    var sc=statusColor[(r.status||'').toLowerCase()]||'#64748b';
+    var badge=r.status?'<span class="ra-badge" style="background:'+sc+'1f;color:'+sc+'">'+esc(r.status)+'</span>':'';
+    var sub=[r.region&&('Region '+r.region),r.site,r.name].filter(Boolean).map(esc).join(' \u00b7 ');
+    var meta2=[r.reportDate,(r.fwOld&&r.fwNew)?(esc(r.fwOld)+' \u2192 '+esc(r.fwNew)):'',r.performedBy?('By: '+esc(r.performedBy)):''].filter(Boolean).join(' \u00b7 ');
+    var dl=r.downloadUrl||r.viewUrl||'#';
+    var del=isAdmin?('<button class="ra-del" title="Delete report" onclick="deleteStoredReport(\''+esc(r.fileId)+'\',\''+esc(r.fileName)+'\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6H20M9 6V4H15V6M6 6L7 20H17L18 6"/></svg></button>'):'';
+    return '<div class="ra-item">'+
+      '<div class="ra-item-main">'+
+        '<div class="ra-item-tag">'+esc(r.tag||r.fileName||'(no tag)')+badge+'</div>'+
+        '<div class="ra-item-sub">'+(sub||esc(r.fileName||''))+'</div>'+
+        (meta2?'<div class="ra-item-sub" style="opacity:.8">'+meta2+'</div>':'')+
+      '</div>'+
+      '<a class="ra-dl" href="'+esc(dl)+'" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3V15"/><path d="M6.5 9.5L12 15L17.5 9.5"/><path d="M4 19H20"/></svg> PDF</a>'+
+      del+
+    '</div>';
+  }).join('');
+}
+
+function deleteStoredReport(fileId, fileName){
+  if((sessionStorage.getItem('fc-role')||'viewer')!=='admin'){ alert('Admin only'); return; }
+  if(!confirm('Delete this report permanently?\n\n'+(fileName||fileId))) return;
+  var url=(CONFIG.appsScriptUrl||'').trim(); if(!url) return;
+  var statusEl=document.getElementById('ra-status');
+  if(statusEl){ statusEl.style.display=''; statusEl.className='report-apps-status loading'; statusEl.textContent='Deleting...'; }
+  var _c=new AbortController(); var _t=setTimeout(function(){ _c.abort(); },15000);
+  fetch(url,{method:'POST',body:JSON.stringify({action:'deleteReport',fileId:fileId}),signal:_c.signal})
+    .then(function(r){ clearTimeout(_t); return r.json(); })
+    .then(function(res){
+      if(!(res&&res.ok)) throw new Error((res&&res.msg)||'Delete failed');
+      _REPORTS_CACHE=_REPORTS_CACHE.filter(function(x){ return String(x.fileId)!==String(fileId); });
+      if(statusEl) statusEl.style.display='none';
+      renderReportsList();
+    })
+    .catch(function(e){ clearTimeout(_t); if(statusEl){ statusEl.className='report-apps-status err'; statusEl.textContent='\u2717 '+e.message; } });
 }
 
 // ══════════════════════════════════════════════════════
@@ -6573,7 +6739,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.18.11</div>
+<div class="version-badge" style="display:none">v1.18.13</div>
 </body>
 </html>
 
