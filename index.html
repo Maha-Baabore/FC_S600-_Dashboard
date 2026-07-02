@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.3</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.4</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -683,7 +683,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.19.3 — visionOS-inspired
+   LIQUID GLASS v1.19.4 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -2008,7 +2008,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.19.3</div>
+  <div class="home-version">v1.19.4</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -5394,6 +5394,12 @@ function exportServiceReportPDF(mode){
     postUpdate: getSectionChecklist(4)
   };
 
+  // Ready-for-service verdict — any "Fail" tick in the Pass/Fail sections
+  // (Reset Power Cycle Test + Calculation Tests) means NOT ready for service.
+  // "Not Done" in Pre/Perform/Post sections does NOT affect the verdict.
+  // Root cause / details are written by the engineer in Note(s) / Remark.
+  var hasFail = CL.powerCycle.concat(CL.calcTests).some(function(item){ return item.col2===true; });
+
   function chkRows(items, col1Name, col2Name){
     // Single check column: show Pass/Done (green) or Fail/Not Done (red) or dash
     col1Name = col1Name||'Done'; col2Name = col2Name||'Not Done';
@@ -5480,6 +5486,7 @@ function exportServiceReportPDF(mode){
   '.footer{padding-top:5px;border-top:1.5px solid #1e3a5f;display:flex;align-items:center;gap:0;font-size:9px;color:#475569}'+
   '.tag-badge{display:inline-block;background:#eff6ff;border:1px solid #3b82f6;color:#1d4ed8;border-radius:3px;padding:0 4px;font-weight:700}'+
   '.ready-stmt{background:#f0fdf4;border:1px solid #10b981;border-radius:4px;padding:6px 10px;font-size:9.5px;color:#065f46;margin:6px 0;font-weight:600}'+
+  '.notready-stmt{background:#fef2f2;border:1px solid #dc2626;border-radius:4px;padding:6px 10px;font-size:9.5px;color:#991b1b;margin:6px 0;font-weight:600}'+
   '</style></head><body>';
 
   // Shared page sub-components
@@ -5548,7 +5555,9 @@ function exportServiceReportPDF(mode){
     //'<tr><td class="lbl">Flow Computer Tag No.</td><td class="val"><span class="tag-badge">'+rptData.tag+'</span></td></tr>'+
       '<tr><td class="lbl">Note(s) / Remark</td><td class="val" style="white-space:pre-wrap;word-break:break-word">'+rptData.remark+'&nbsp;</td></tr>'+
     '</table>'+
-    '<div class="ready-stmt">✓ Constant log is checked and Flow Computer Tag No. <span class="tag-badge">'+rptData.tag+'</span> is ready for service.</div>'+
+    (hasFail
+      ? '<div class="notready-stmt">✗ Flow Computer Tag No. <span class="tag-badge" style="background:#fff;border-color:#dc2626;color:#991b1b">'+rptData.tag+'</span> is NOT ready for service.</div>'
+      : '<div class="ready-stmt">✓ Constant log is checked and Flow Computer Tag No. <span class="tag-badge">'+rptData.tag+'</span> is ready for service.</div>')+
     '<h2 style="background:#f1f5f9;border-color:#64748b;color:#334155">Constant Log Comparison</h2>'+
     imgSection('constant-log','')+
     '<div class="photo-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">'+
@@ -6921,7 +6930,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.19.3</div>
+<div class="version-badge" style="display:none">v1.19.4</div>
 </body>
 </html>
 
