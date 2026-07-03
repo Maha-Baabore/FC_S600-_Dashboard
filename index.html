@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.7</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.8</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -408,7 +408,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .badge-inprogress{background:rgba(245,158,11,.15);color:#f59e0b}
 .badge-done{background:rgba(16,185,129,.15);color:#10b981}
 .badge-cancelled{background:rgba(239,68,68,.15);color:#ef4444}
-.badge-incomplete{background:rgba(249,115,22,.15);color:#f97316}
+.badge-incomplete{background:rgba(168,85,247,.15);color:#a855f7}
 .plan-del-btn{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:14px;padding:2px 5px;border-radius:4px}
 .plan-del-btn:hover{color:#ef4444}
 .plan-action-btn{width:28px;height:28px;border-radius:6px;border:1px solid transparent;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;margin-left:3px;flex-shrink:0}
@@ -584,7 +584,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .gantt-bar-fill.inprogress{background:linear-gradient(90deg,#f59e0b,#fbbf24);background-size:200% 100%;animation:shimmer 1.5s infinite}
 .gantt-bar-fill.done{background:#10b981}
 .gantt-bar-fill.cancelled{background:#ef4444;opacity:.4}
-.gantt-bar-fill.incomplete{background:#f97316}
+.gantt-bar-fill.incomplete{background:#a855f7}
 .gantt-month-group{font-size:10px;font-weight:700;color:var(--tx2);font-family:'Space Mono',monospace;padding:10px 8px 4px;background:var(--sf2);border-bottom:1px solid var(--br)}
 .gantt-progress-text{font-size:9px;color:var(--tx3);font-family:'Space Mono',monospace;margin-top:2px}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
@@ -685,7 +685,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.19.7 — visionOS-inspired
+   LIQUID GLASS v1.19.8 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -2010,7 +2010,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.19.7</div>
+  <div class="home-version">v1.19.8</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2275,7 +2275,7 @@ td.td-mn{
               <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#f59e0b"></span>In Progress</span>
               <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#10b981"></span>Done</span>
               <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#ef4444"></span>Cancelled</span>
-              <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#f97316"></span>Incomplete</span>
+              <span class="gantt-leg-item"><span class="gantt-leg-dot" style="background:#a855f7"></span>Incomplete</span>
             </div>
             <div id="gantt-wrap" style="flex:1;overflow:auto;min-height:0;position:relative"></div>
           </div>
@@ -3959,7 +3959,7 @@ function calPrev(){ calMonth--; if(calMonth<0){calMonth=11;calYear--;} GC_WEEK_O
 function calNext(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} GC_WEEK_OFFSET=0; renderCal(); renderPlanList(); renderGantt(); }
 
 var MONTH_TH=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-var SCHED_STATUS_COLORS={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444',incomplete:'#f97316'};
+var SCHED_STATUS_COLORS={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444',incomplete:'#a855f7'};
 
 function renderCal(){
   document.getElementById('cal-month-label').textContent = MONTH_TH[calMonth]+' '+calYear;
@@ -4209,7 +4209,7 @@ function renderGantt(){
     el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--tx3);font-size:12px;font-family:Space Mono,monospace">No plans yet. Add plans using the form on the left.</div>';
     return;
   }
-  var SC={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444',incomplete:'#f97316'};
+  var SC={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444',incomplete:'#a855f7'};
   var SL={planned:'P',inprogress:'IP',done:'D',cancelled:'X'};
   var today=new Date(); today.setHours(0,0,0,0);
 
@@ -4465,7 +4465,7 @@ function gcExport(){
   var TXT    = isLight?'#475569':'#94a3b8';
   var TXT2   = isLight?'#0f172a':'#e2e8f0';
   var TODAY_C= isLight?'rgba(99,102,241,0.3)':'rgba(99,102,241,0.4)';
-  var SC={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444',incomplete:'#f97316'};
+  var SC={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444',incomplete:'#a855f7'};
   var MONTH_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
   // Reuse same grouping logic
@@ -5144,7 +5144,7 @@ function gcExportPDF(){
   var sumCounts={planned:0,inprogress:0,done:0,cancelled:0,incomplete:0};
   pdfPlans.forEach(function(p){ var st=p.status||'planned'; if(sumCounts[st]!==undefined) sumCounts[st]++; else sumCounts.planned++; });
   var statusLabel={planned:'Planned',inprogress:'In Progress',done:'Done',cancelled:'Cancelled',incomplete:'Incomplete'};
-  var statusColor={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444',incomplete:'#f97316'};
+  var statusColor={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444',incomplete:'#a855f7'};
   var MONTH_EN2=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   // Compute week-of-month number for the label
   var _p3WkNum=(function(){
@@ -6961,7 +6961,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.19.7</div>
+<div class="version-badge" style="display:none">v1.19.8</div>
 </body>
 </html>
 
