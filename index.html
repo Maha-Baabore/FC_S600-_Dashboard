@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.6</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.7</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -685,7 +685,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.19.6 — visionOS-inspired
+   LIQUID GLASS v1.19.7 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -2010,7 +2010,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.19.6</div>
+  <div class="home-version">v1.19.7</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -5724,6 +5724,23 @@ function loadReportsList(){
     .catch(function(e){ clearTimeout(_t); status('err','\u2717 '+(e.name==='AbortError'?'Timed out':e.message)); });
 }
 
+// ── Normalize reportDate coming back from the Reports sheet ──
+// The dashboard always writes dd/mm/yyyy TEXT, but Google Sheets (US locale)
+// auto-parses it as mm/dd when day ≤ 12, so Apps Script reads back a Date
+// object ("Sat Feb 07 2026 15:00:00 GMT+0700..." for original 02/07/2026).
+// Dates with day > 12 fail US parsing and stay as text — already correct.
+// Fix: text matching dd/mm/yyyy passes through; parseable Date strings get
+// day↔month swapped back to recover the original dd/mm/yyyy.
+function _fmtRaDate(s){
+  s=String(s||'').trim();
+  if(!s) return '';
+  if(/^\d{1,2}\/\d{1,2}\/\d{4}/.test(s)) return s; // stored as text — already dd/mm/yyyy
+  var d=new Date(s);
+  if(isNaN(d.getTime())) return s;
+  // Sheets swapped: its month = our day, its day = our month
+  return String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+'/'+d.getFullYear();
+}
+
 function renderReportsList(){
   var listEl=document.getElementById('ra-list'); if(!listEl) return;
   var q=((document.getElementById('ra-filter')||{}).value||'').trim().toLowerCase();
@@ -5741,7 +5758,7 @@ function renderReportsList(){
     var sc=statusColor[(r.status||'').toLowerCase()]||'#64748b';
     var badge=r.status?'<span class="ra-badge" style="background:'+sc+'1f;color:'+sc+'">'+esc(r.status)+'</span>':'';
     var sub=[r.region&&('Region '+r.region),r.site,r.name].filter(Boolean).map(esc).join(' \u00b7 ');
-    var meta2=[r.reportDate,(r.fwOld&&r.fwNew)?(esc(r.fwOld)+' \u2192 '+esc(r.fwNew)):'',r.performedBy?('By: '+esc(r.performedBy)):''].filter(Boolean).join(' \u00b7 ');
+    var meta2=[_fmtRaDate(r.reportDate),(r.fwOld&&r.fwNew)?(esc(r.fwOld)+' \u2192 '+esc(r.fwNew)):'',r.performedBy?('By: '+esc(r.performedBy)):''].filter(Boolean).join(' \u00b7 ');
     var dl=r.downloadUrl||r.viewUrl||'#';
     var del=isAdmin?('<button class="ra-del" title="Delete report" onclick="deleteStoredReport(\''+esc(r.fileId)+'\',\''+esc(r.fileName)+'\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6H20M9 6V4H15V6M6 6L7 20H17L18 6"/></svg></button>'):'';
     return '<div class="ra-item">'+
@@ -6944,7 +6961,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.19.6</div>
+<div class="version-badge" style="display:none">v1.19.7</div>
 </body>
 </html>
 
