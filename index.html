@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.14</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.16</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -651,7 +651,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.19.14 — visionOS-inspired
+   LIQUID GLASS v1.19.16 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1983,7 +1983,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.19.14</div>
+  <div class="home-version">v1.19.16</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2486,7 +2486,6 @@ td.td-mn{
     <div class="modal-footer">
       <button class="modal-btn-cancel" onclick="closeModal('modal-service-report')">Cancel</button>
       <button class="modal-btn-save" id="sr-drive-btn" onclick="exportServiceReportPDF('drive')" style="background:linear-gradient(135deg,#0d9488,#0f766e)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M4 14.5A4 4 0 0 1 5 6.7A5.5 5.5 0 0 1 16 7A4.5 4.5 0 0 1 18.5 15.3"/><path d="M12 11V20M8.5 16.5L12 20L15.5 16.5"/></svg> Save to Drive</button>
-      <button class="modal-btn-save" onclick="exportServiceReportPDF('print')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 3V15"/><path d="M6.5 9.5L12 15L17.5 9.5"/><path d="M4 19H20"/></svg> Export PDF</button>
     </div>
   </div>
 </div>
@@ -5439,8 +5438,8 @@ function exportServiceReportPDF(mode){
   '<style>'+
   'body{margin:0;padding:0;font-family:"Helvetica Neue",Arial,sans-serif;background:#fff;color:#1e293b;font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
   '@media print{body{margin:0}@page{size:A4 portrait;margin:8mm 10mm}}'+
-  '.page{width:190mm;min-height:267mm;margin:0 auto;padding:6mm 8mm;background:#fff;box-sizing:border-box;display:flex;flex-direction:column}'+
-  '.page-content{flex:1}'+
+  '.page{width:190mm;height:267mm;margin:0 auto;padding:6mm 8mm 16mm;background:#fff;box-sizing:border-box;position:relative;overflow:hidden}'+
+  '.page-content{}'+
   '.page-break{page-break-before:always}'+
   '.header{display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;border-bottom:2px solid #1e3a5f;margin-bottom:8px;gap:8px}'+
   '.header-logo{height:40px;width:auto;flex-shrink:0}'+
@@ -5464,7 +5463,7 @@ function exportServiceReportPDF(mode){
   '.photo-single{margin:4px 0 8px;page-break-inside:avoid}'+
   '.photo-single img,.photo-pair img{width:100%;height:auto;max-height:190px;object-fit:contain;border:1px solid #e2e8f0;border-radius:3px;display:block}'+
   '.photo-label{font-size:8px;font-weight:600;color:#64748b;margin-bottom:3px}'+
-  '.footer{padding-top:5px;border-top:1.5px solid #1e3a5f;display:flex;align-items:center;gap:0;font-size:9px;color:#475569}'+
+  '.footer{position:absolute;bottom:6mm;left:8mm;right:8mm;padding-top:5px;border-top:1.5px solid #1e3a5f;display:flex;align-items:center;gap:0;font-size:9px;color:#475569}'+
   '.tag-badge{display:inline-block;background:#eff6ff;border:1px solid #3b82f6;color:#1d4ed8;border-radius:3px;padding:0 4px;font-weight:700}'+
   '.ready-stmt{background:#f0fdf4;border:1px solid #10b981;border-radius:4px;padding:6px 10px;font-size:9.5px;color:#065f46;margin:6px 0;font-weight:600}'+
   '.notready-stmt{background:#fef2f2;border:1px solid #dc2626;border-radius:4px;padding:6px 10px;font-size:9.5px;color:#991b1b;margin:6px 0;font-weight:600}'+
@@ -6934,7 +6933,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.19.14</div>
+<div class="version-badge" style="display:none">v1.19.16</div>
 </body>
 </html>
 
