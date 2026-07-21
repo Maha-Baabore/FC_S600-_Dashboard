@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.16</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.17</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -651,7 +651,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.19.16 — visionOS-inspired
+   LIQUID GLASS v1.19.17 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1983,7 +1983,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.19.16</div>
+  <div class="home-version">v1.19.17</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2236,8 +2236,8 @@ td.td-mn{
                   <button id="gc-btn-week-next" onclick="gcNextWeek()" style="display:none;background:var(--lg-bg);border:1px solid var(--lg-bd);border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:13px;color:var(--tx);display:none;align-items:center;justify-content:center;flex-shrink:0" title="Next week">&#8250;</button>
                 </div>
                 <div class="toggle-pill" style="padding:2px">
-                  <button class="vpill-btn active" id="gc-btn-week"  onclick="gcSetView('week')">Week</button>
-                  <button class="vpill-btn"         id="gc-btn-month" onclick="gcSetView('month')">Month</button>
+                  <button class="vpill-btn"         id="gc-btn-week"  onclick="gcSetView('week')">Week</button>
+                  <button class="vpill-btn active" id="gc-btn-month" onclick="gcSetView('month')">Month</button>
                 </div>
                 <button class="sf-sm-btn" onclick="gcExpandAll()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 3L12 7L16 3"/><path d="M8 21L12 17L16 21"/><path d="M4 12H20"/></svg> All</button>
                 <button class="sf-sm-btn" onclick="gcExportPDF()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 3V15"/><path d="M6.5 9.5L12 15L17.5 9.5"/><path d="M4 19H20"/></svg> PDF</button>
@@ -4121,7 +4121,7 @@ function renderPlanList(){
 
 
 // ── CUSTOM GANTT — Daily Load View ──
-var GC_VIEW = 'week';
+var GC_VIEW = 'month'; // v1.19.17: Gantt opens in Month view by default
 var GC_OPEN = {};
 var GC_WEEK_OFFSET = 0; // weeks offset from anchor (for < > navigation)
 
@@ -6933,7 +6933,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.19.16</div>
+<div class="version-badge" style="display:none">v1.19.17</div>
 </body>
 </html>
 
