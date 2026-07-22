@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.17</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.9</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -188,7 +188,7 @@ header{background:rgba(8,12,24,.96);border-bottom:1px solid var(--br);padding:0 
 .lupd{font-size:10px;color:var(--tx3);font-family:'Space Mono',monospace}
 .main{display:flex;padding-left:296px}
 .sidebar{width:256px;min-width:256px;background:var(--sf);border-right:none;padding:16px 0 32px;height:calc(100vh - 82px);overflow-y:auto;position:fixed;top:72px;left:20px;border-radius:18px;z-index:10;border:1px solid var(--br)}
-
+.sidebar::-webkit-scrollbar{width:3px}.sidebar::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
 .ftitle{padding:8px 16px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--tx3);font-family:'Space Mono',monospace;display:flex;align-items:center;gap:8px}
 .ftitle::after{content:'';flex:1;height:1px;background:var(--br)}
 .fchips{padding:2px 10px 8px;display:flex;flex-wrap:wrap;gap:5px}
@@ -255,7 +255,7 @@ header{background:rgba(8,12,24,.96);border-bottom:1px solid var(--br);padding:0 
 .srch{background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:7px 12px;font-size:12px;color:var(--tx);outline:none;width:200px;min-width:100px;max-width:200px;font-family:'DM Sans',sans-serif;transition:border-color .2s}
 .srch::placeholder{color:var(--tx3)}.srch:focus{border-color:var(--ac2)}
 .tw{overflow-x:auto;overflow-y:auto;flex:1;min-height:0;display:block}
-
+.tw::-webkit-scrollbar{width:3px;height:3px}.tw::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
 table{width:100%;border-collapse:collapse;font-size:12px}
 thead{position:sticky;top:0;z-index:2}thead tr{background:var(--sf2)}
 th{padding:9px 12px;text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);white-space:nowrap;font-family:'Space Mono',monospace;border-bottom:1px solid var(--br);cursor:pointer;user-select:none}
@@ -342,6 +342,9 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 #satellite-view.hidden{display:none!important}
 #sat-left-panel{position:fixed;top:72px;left:20px;width:256px;bottom:10px;display:flex;flex-direction:column;overflow:visible;z-index:10}
 #satellite-map{width:100%;height:100%;border-radius:16px;overflow:hidden}
+#sat-site-list::-webkit-scrollbar{width:3px}
+#sat-site-list::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+#sat-site-list::-webkit-scrollbar-track{background:transparent}
 .sched-active #satellite-view{display:none!important}
 /* ── Google Maps InfoWindow dark-mode overrides ── */
 :root:not(.light) .gm-style-iw-d{overflow:auto!important}
@@ -355,12 +358,18 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .sched-layout{display:block;height:100%;padding:12px 26px 12px 322px;box-sizing:border-box}
 .sched-left{position:fixed;top:74px;left:20px;width:256px;bottom:10px;display:flex;flex-direction:column;overflow:visible;z-index:10}
 .sched-left-card{flex:1;min-height:0;overflow-y:auto;border-radius:16px;padding:16px 18px 106px}
+.sched-left-card::-webkit-scrollbar{width:3px}
+.sched-left-card::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+.sched-left-card::-webkit-scrollbar-track{background:transparent}
 .sched-add-btn-wrap{position:fixed;bottom:50px;left:20px;width:256px;z-index:11;padding:0 18px;box-sizing:border-box}
 .sched-right{display:flex;flex-direction:column;gap:10px;height:calc(100vh - 84px)}.sched-section{background:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.6);border-radius:16px;padding:16px 18px;flex-shrink:0}
 .sched-section.sched-gantt{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
 .sched-plans-box{background:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.6);border-radius:16px;display:flex;flex-direction:column;overflow:hidden;flex:0 0 auto;max-height:340px;min-height:80px}
 .sched-plans-header{padding:12px 18px 10px;flex-shrink:0;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between}
 .sched-plans{flex:1;overflow-y:auto;padding:10px 18px 12px;min-height:0}
+.sched-plans::-webkit-scrollbar{width:4px}
+.sched-plans::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:4px}
+.sched-plans::-webkit-scrollbar-track{background:transparent}
 .sched-title{font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:1px;margin-bottom:14px;text-transform:uppercase;font-family:'Space Mono',monospace}
 .sched-subtitle{font-size:10px;font-weight:700;color:var(--tx2);letter-spacing:.8px;text-transform:uppercase;font-family:'Space Mono',monospace}
 .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
@@ -419,7 +428,19 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .gantt-leg-dot.cancelled{background:#ef4444}
 .gantt-wrap{overflow-x:auto}
 .gantt-wrap-scroll{overflow-x:auto;overflow-y:auto;max-height:400px;border:1px solid var(--br);border-radius:10px;background:var(--bg)}
+/* Gantt scrollbar — matches .tw scrollbar */
+#gantt-wrap::-webkit-scrollbar{width:3px;height:3px}
+#gantt-wrap::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+#gc-chart::-webkit-scrollbar{width:3px;height:3px}
+#gc-chart::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+#gc-chart::-webkit-scrollbar-track{background:transparent}
+#gc-chart::-webkit-scrollbar-corner{background:transparent}
+#gantt-wrap::-webkit-scrollbar-track{background:transparent}
 /* Frappe Gantt actual scroll container */
+.gantt-container::-webkit-scrollbar{width:3px;height:3px}
+.gantt-container::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+.gantt-container::-webkit-scrollbar-track{background:transparent}
+.gantt-container::-webkit-scrollbar-corner{background:transparent}
 /* Frappe Gantt dark mode — force override */
 :root:not(.light) .gantt-container{background:#0d1220}
 :root:not(.light) .gantt .grid-background{fill:#0d1220!important}
@@ -454,6 +475,8 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .drawer-close{background:transparent;border:none;color:var(--tx3);cursor:pointer;padding:6px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;transition:all .15s}
 .drawer-close:hover{background:var(--sf2);color:var(--rd)}
 .sched-drawer-body{flex:1;overflow-y:auto;padding:18px}
+.sched-drawer-body::-webkit-scrollbar{width:3px}
+.sched-drawer-body::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
 .sched-drawer-footer{display:flex;gap:8px;padding:14px 18px;border-top:1px solid var(--br);background:var(--sf2)}
 .drawer-date-display{font-family:'Space Mono',monospace;font-size:11px;color:var(--ac);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:8px;padding:9px 12px;text-align:center;margin-bottom:14px;font-weight:600;letter-spacing:.4px}
 .light .drawer-date-display{background:rgba(2,132,199,.06);border-color:rgba(2,132,199,.2)}
@@ -498,6 +521,9 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .gc-wrap{display:flex;height:100%;min-height:0}
 .gc-labels{flex-shrink:0;width:160px;border-right:1px solid var(--lg-bd);overflow:hidden}
 .gc-chart{flex:1;overflow-x:auto;overflow-y:hidden;position:relative}
+.gc-chart::-webkit-scrollbar{height:3px}
+.gc-chart::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+.gc-chart::-webkit-scrollbar-track{background:transparent}
 .gc-header-row{display:flex;height:36px;border-bottom:1px solid var(--lg-bd);background:var(--lg-bg);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);position:sticky;top:0;z-index:5}
 .gc-header-cell{font-size:9px;font-family:'Space Mono',monospace;color:var(--tx3);display:flex;align-items:center;justify-content:center;border-right:1px solid var(--lg-bd);flex-shrink:0;font-weight:700;background:transparent}
 .gc-header-cell.today-col{background:rgba(99,102,241,.12);color:var(--ac)}
@@ -520,6 +546,12 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .gc-bar:hover{filter:brightness(1.15)}
 .gc-today-line{position:absolute;top:0;bottom:0;width:2px;background:var(--ac);opacity:.6;z-index:6;pointer-events:none}
 .gc-empty{display:flex;align-items:center;justify-content:center;height:100%;color:var(--tx3);font-size:12px;font-family:'Space Mono',monospace}
+#gantt-wrap::-webkit-scrollbar{width:3px;height:3px}
+#gantt-wrap::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+#gc-chart::-webkit-scrollbar{width:3px;height:3px}
+#gc-chart::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:3px}
+#gc-chart::-webkit-scrollbar-track{background:transparent}
+#gc-chart::-webkit-scrollbar-corner{background:transparent}
 .light .gantt .bar-label{fill:#1e293b!important;font-weight:700!important}
 .sched-active .sidebar{display:none!important}
 .sched-active #dash-content{display:none!important}
@@ -565,7 +597,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .modal-title{font-size:13px;font-weight:700;color:var(--tx);font-family:'Space Mono',monospace}
 .modal-close{background:none;border:none;color:var(--tx3);font-size:16px;cursor:pointer;padding:4px 6px;border-radius:6px;transition:color .15s}
 .modal-close:hover{color:var(--tx)}
-.modal-body{padding:18px 20px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;flex:1;min-height:0}
+.modal-body{padding:18px 20px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;flex:1;min-height:0}.modal-body::-webkit-scrollbar{width:4px}.modal-body::-webkit-scrollbar-thumb{background:var(--sf3);border-radius:4px}.modal-body::-webkit-scrollbar-track{background:transparent}
 .modal-footer{padding:14px 20px 18px;border-top:1px solid var(--br);display:flex;justify-content:flex-end;gap:10px;flex-shrink:0}
 .modal-btn-cancel{background:var(--sf2);border:1px solid var(--br);color:var(--tx2);border-radius:10px;padding:9px 18px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
 .modal-btn-save{background:var(--ac);border:none;color:#fff;border-radius:10px;padding:9px 18px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s}
@@ -605,7 +637,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 .report-apps-status.ok{background:rgba(16,185,129,.12);color:#10b981}
 .report-apps-status.err{background:rgba(239,68,68,.12);color:#ef4444}
 .report-apps-status.loading{background:rgba(99,102,241,.12);color:#6366f1}
-.ra-list{display:flex;flex-direction:column;gap:8px;max-height:54vh;overflow-y:auto;padding-right:2px;scrollbar-width:thin;scrollbar-color:var(--sf3) transparent}
+.ra-list{display:flex;flex-direction:column;gap:8px;max-height:54vh;overflow-y:auto;padding-right:2px}
 .ra-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--lg-bd);border-radius:10px;background:var(--lg-bg)}
 .ra-item-main{flex:1;min-width:0}
 .ra-item-tag{font-family:'Space Mono',monospace;font-weight:700;font-size:13px;color:var(--tx);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -628,7 +660,9 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 #chartdiv{flex:1;min-width:0;height:100%;background:transparent}
 /* Right panel: stretch full height to match sidebar bottom */
 .map-right-panel{width:288px;flex-shrink:0;display:flex;flex-direction:column;align-self:stretch;overflow:visible;padding:8px 0 0 0;height:100%}
-.map-right-panel-inner{flex:1;display:flex;flex-direction:column;gap:10px;overflow-y:auto;overflow-x:visible;padding:6px 10px 10px 4px;margin:-6px -10px -10px -4px}
+.map-right-panel-inner{flex:1;display:flex;flex-direction:column;gap:10px;overflow-y:auto;overflow-x:visible;padding:6px 10px 10px 4px;margin:-6px -10px -10px -4px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.15) transparent}
+.map-right-panel-inner::-webkit-scrollbar{width:3px}
+.map-right-panel-inner::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:3px}
 .map-info-card{border-radius:12px;padding:14px 16px}
 .map-info-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--tx3);font-family:'Space Mono',monospace;margin-bottom:8px}
 .map-info-sub{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);font-family:'Space Mono',monospace;margin-bottom:6px}
@@ -651,7 +685,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.19.17 — visionOS-inspired
+   LIQUID GLASS v1.19.9 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1956,13 +1990,6 @@ td.td-mn{
   line-height: 1.4;
 }
 
-
-/* ── v1.19.14: Unified scrollbar — single standard-CSS system (Chromium 121+ ignores
-   ::-webkit-scrollbar when scrollbar-color is set, so mixing both created two designs).
-   Every scroll container now renders the identical native thin scrollbar. ── */
-.sidebar,.tw,#sat-site-list,.sched-left-card,.sched-plans,#gantt-wrap,#gc-chart,
-.gantt-container,.gc-chart,.sched-drawer-body,.modal-body,.ra-list,.map-right-panel-inner{
-  scrollbar-width:thin;scrollbar-color:var(--sf3) transparent}
 </style>
 </head>
 <body>
@@ -1983,7 +2010,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.19.17</div>
+  <div class="home-version">v1.19.9</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2236,8 +2263,8 @@ td.td-mn{
                   <button id="gc-btn-week-next" onclick="gcNextWeek()" style="display:none;background:var(--lg-bg);border:1px solid var(--lg-bd);border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:13px;color:var(--tx);display:none;align-items:center;justify-content:center;flex-shrink:0" title="Next week">&#8250;</button>
                 </div>
                 <div class="toggle-pill" style="padding:2px">
-                  <button class="vpill-btn"         id="gc-btn-week"  onclick="gcSetView('week')">Week</button>
-                  <button class="vpill-btn active" id="gc-btn-month" onclick="gcSetView('month')">Month</button>
+                  <button class="vpill-btn active" id="gc-btn-week"  onclick="gcSetView('week')">Week</button>
+                  <button class="vpill-btn"         id="gc-btn-month" onclick="gcSetView('month')">Month</button>
                 </div>
                 <button class="sf-sm-btn" onclick="gcExpandAll()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M8 3L12 7L16 3"/><path d="M8 21L12 17L16 21"/><path d="M4 12H20"/></svg> All</button>
                 <button class="sf-sm-btn" onclick="gcExportPDF()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 3V15"/><path d="M6.5 9.5L12 15L17.5 9.5"/><path d="M4 19H20"/></svg> PDF</button>
@@ -2486,6 +2513,7 @@ td.td-mn{
     <div class="modal-footer">
       <button class="modal-btn-cancel" onclick="closeModal('modal-service-report')">Cancel</button>
       <button class="modal-btn-save" id="sr-drive-btn" onclick="exportServiceReportPDF('drive')" style="background:linear-gradient(135deg,#0d9488,#0f766e)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M4 14.5A4 4 0 0 1 5 6.7A5.5 5.5 0 0 1 16 7A4.5 4.5 0 0 1 18.5 15.3"/><path d="M12 11V20M8.5 16.5L12 20L15.5 16.5"/></svg> Save to Drive</button>
+      <button class="modal-btn-save" onclick="exportServiceReportPDF('print')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M12 3V15"/><path d="M6.5 9.5L12 15L17.5 9.5"/><path d="M4 19H20"/></svg> Export PDF</button>
     </div>
   </div>
 </div>
@@ -4075,9 +4103,19 @@ function renderPlanList(){
     if(!row) row={};
     var app=(row['Applications']||'').trim()||'—';
     var fwCurrent=(row['Firmware']||'').trim()||'—';
+    // v1.19.9: lock derives from the Reports sheet (via _findPlanReport),
+    // not only the local p.reported flag — so a GitHub redeploy or Plans
+    // re-sync that drops p.reported can't re-open an already-reported plan.
+    var _rpt=_findPlanReport(p);
+    var _hasReport=!!_rpt;
+    var _locked=p.reported||_hasReport;
+    // Effective incomplete: locally flagged, OR the stored report says Outdated.
+    var _effInc=(p.status==='incomplete')||(_hasReport&&String(_rpt.status||'').toLowerCase()==='outdated');
     // Once reported, the unit's live firmware == the new version; show the
-    // frozen pre-update value (p.fwOld) so Old ≠ New stays meaningful.
-    var fwOldShown=(p.reported&&p.fwOld)?p.fwOld:fwCurrent;
+    // frozen pre-update value so Old ≠ New stays meaningful. Prefer the local
+    // frozen p.fwOld, else fall back to the stored report's Old FW.
+    var _fwOldFrozen=p.fwOld||(_rpt&&_rpt.fwOld)||'';
+    var fwOldShown=(_locked&&_fwOldFrozen)?_fwOldFrozen:fwCurrent;
     return '<div class="plan-item">'+
       '<div style="flex:1;min-width:0">'+
         '<div class="plan-item-tag">'+esc(p.tag)+'</div>'+
@@ -4085,27 +4123,27 @@ function renderPlanList(){
         '<div class="plan-item-meta" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">'+
           '<span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12L15 14.5"/></svg> '+dl+'</span>'+
           '<span>App: <b>'+esc(app)+'</b></span>'+
-          '<span>FW: <b>'+esc(fwOldShown)+'</b> &rarr; <b style="color:var(--ac)">'+esc(p.fwTarget||'—')+'</b></span>'+
+          '<span>FW: <b>'+esc(fwOldShown)+'</b> &rarr; <b style="color:var(--ac)">'+esc(p.fwTarget||(_rpt&&_rpt.fwNew)||'—')+'</b></span>'+
           (p.performedBy?'<span style="color:var(--tx2)">By: <b>'+esc(p.performedBy)+'</b></span>':'')+
           (p.note?'<span style="color:var(--tx3)">'+esc(p.note)+'</span>':'')+
         '</div>'+
       '</div>'+
       '<div class="plan-item-right">'+
-        // ── status badge: ถ้า reported=true ล็อค ไม่ให้กด
-        (p.reported
-          ? (p.status==='incomplete'
+        // ── status badge: ถ้า locked (reported ในเครื่อง หรือมีใน Reports sheet) → ล็อค ไม่ให้กด
+        (_locked
+          ? (_effInc
               ? '<span class="plan-status-badge badge-incomplete" style="cursor:default;opacity:.85" title="Reported — FW still Outdated, follow-up required (locked)">⚠ Incomplete</span>'
               : '<span class="plan-status-badge badge-done" style="cursor:default;opacity:.85" title="Reported — locked">✓ Done</span>')
           : '<button class="plan-status-badge badge-'+p.status+'" onclick="cyclePlanStatus(\''+p.id+'\')" title="Click to change status">'+lbl[p.status]+'</button>'
         )+
         '<div style="display:flex;gap:6px;margin-top:6px;align-items:center">'+
-          // report btn: แสดงเฉพาะ done แต่ยังไม่ได้ report
-          (p.status==='done' && !p.reported
+          // report btn: แสดงเฉพาะ done แต่ยังไม่ได้ report (และไม่มีใน Reports sheet)
+          (p.status==='done' && !_locked
             ? '<button class="plan-action-btn report-btn" onclick="openReport(\''+p.id+'\')" title="Report update result"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3H14L19 8V20A1 1 0 0 1 18 21H6A1 1 0 0 1 5 20V4A1 1 0 0 1 6 3Z"/><path d="M14 3V8H19"/><path d="M8.5 14L10.5 16L15 11.5"/></svg></button>'
             : '')+
-          // reported: แสดง lock icon — double-click เพื่อ admin unlock
-          (p.reported
-            ? (_findPlanReport(p)
+          // locked: แสดง lock icon — double-click เพื่อ admin unlock
+          (_locked
+            ? (_hasReport
                 ? '<button class="plan-action-btn" onclick="downloadPlanReport(\''+p.id+'\')" title="Download saved PDF report" style="background:rgba(2,132,199,.1);border-color:rgba(2,132,199,.3);color:#0284c7"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3V14"/><path d="M7.5 10L12 14.5L16.5 10"/><path d="M5 20H19"/></svg></button>'
                 : '<button class="plan-action-btn" onclick="openServiceReport(\''+p.id+'\')" title="Create Service Report (Save to Drive)" style="background:rgba(99,102,241,.08);border-color:rgba(99,102,241,.3);color:#6366f1"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3H14L19 8V20A1 1 0 0 1 18 21H6A1 1 0 0 1 5 20V4A1 1 0 0 1 6 3Z"/><path d="M14 3V8H19"/><path d="M8 12H16M8 16H13"/></svg></button>'
               )+
@@ -4121,7 +4159,7 @@ function renderPlanList(){
 
 
 // ── CUSTOM GANTT — Daily Load View ──
-var GC_VIEW = 'month'; // v1.19.17: Gantt opens in Month view by default
+var GC_VIEW = 'week';
 var GC_OPEN = {};
 var GC_WEEK_OFFSET = 0; // weeks offset from anchor (for < > navigation)
 
@@ -4757,6 +4795,17 @@ function saveEditPlan(){
 function openReport(id){
   var p=PLANS.find(function(x){ return String(x.id)===String(id); });
   if(!p) return;
+  // v1.19.9: guard against duplicates — if the Reports sheet already has a
+  // matching report for this plan (same TAG+Site, date within window), redirect
+  // to the saved PDF instead of letting a second report be created. Only fires
+  // when a match actually exists, so genuine next-round updates are unaffected.
+  var _existing=_findPlanReport(p);
+  if(_existing){
+    if(confirm('TAG '+(p.tag||'')+' has already been reported (found in the Reports sheet).\n\nOpen the saved PDF instead of creating a new one?')){
+      downloadPlanReport(p.id);
+    }
+    return;
+  }
   // Match by TAG + Site to avoid duplicate TAG collision across regions
   var row=DATA.find(function(x){
     return (x['TAG']||'').trim()===p.tag && (x['Site']||'').trim()===p.site;
@@ -5436,10 +5485,10 @@ function exportServiceReportPDF(mode){
   // ── PDF page builder helpers ──────────────────────────────────────────
   var CSS=
   '<style>'+
-  'body{margin:0;padding:0;font-family:"Helvetica Neue",Arial,sans-serif;background:#fff;color:#1e293b;font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+  'body{margin:0;padding:0;font-family:"Helvetica Neue",Arial,sans-serif;background:#fff;color:#1e293b;font-size:10px}'+
   '@media print{body{margin:0}@page{size:A4 portrait;margin:8mm 10mm}}'+
-  '.page{width:190mm;height:267mm;margin:0 auto;padding:6mm 8mm 16mm;background:#fff;box-sizing:border-box;position:relative;overflow:hidden}'+
-  '.page-content{}'+
+  '.page{width:190mm;min-height:267mm;margin:0 auto;padding:6mm 8mm;background:#fff;box-sizing:border-box;display:flex;flex-direction:column}'+
+  '.page-content{flex:1}'+
   '.page-break{page-break-before:always}'+
   '.header{display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;border-bottom:2px solid #1e3a5f;margin-bottom:8px;gap:8px}'+
   '.header-logo{height:40px;width:auto;flex-shrink:0}'+
@@ -5463,7 +5512,7 @@ function exportServiceReportPDF(mode){
   '.photo-single{margin:4px 0 8px;page-break-inside:avoid}'+
   '.photo-single img,.photo-pair img{width:100%;height:auto;max-height:190px;object-fit:contain;border:1px solid #e2e8f0;border-radius:3px;display:block}'+
   '.photo-label{font-size:8px;font-weight:600;color:#64748b;margin-bottom:3px}'+
-  '.footer{position:absolute;bottom:6mm;left:8mm;right:8mm;padding-top:5px;border-top:1.5px solid #1e3a5f;display:flex;align-items:center;gap:0;font-size:9px;color:#475569}'+
+  '.footer{padding-top:5px;border-top:1.5px solid #1e3a5f;display:flex;align-items:center;gap:0;font-size:9px;color:#475569}'+
   '.tag-badge{display:inline-block;background:#eff6ff;border:1px solid #3b82f6;color:#1d4ed8;border-radius:3px;padding:0 4px;font-weight:700}'+
   '.ready-stmt{background:#f0fdf4;border:1px solid #10b981;border-radius:4px;padding:6px 10px;font-size:9.5px;color:#065f46;margin:6px 0;font-weight:600}'+
   '.notready-stmt{background:#fef2f2;border:1px solid #dc2626;border-radius:4px;padding:6px 10px;font-size:9.5px;color:#991b1b;margin:6px 0;font-weight:600}'+
@@ -5764,18 +5813,63 @@ function deleteStoredReport(fileId, fileName){
 }
 
 // ── Match a plan to its newest stored Drive report (by TAG, site as tiebreaker) ──
+// v1.19.9: Reports sheet is the source of truth for "has this plan been
+// reported?" — surviving GitHub redeploys and Plans re-syncs that can drop
+// the local p.reported flag.
+//
+// A TAG can be updated in multiple rounds (year/version), so a stale report
+// must NOT lock a brand-new plan for the same unit. We therefore scope the
+// match by date: among all Reports-sheet rows for this TAG(+Site), pick the
+// one whose Report Date is closest to the plan's date, and only accept it if
+// within REPORT_MATCH_WINDOW_MS. A next-round plan (~1 year later) falls
+// outside the window → no match → its own report can still be created.
+var REPORT_MATCH_WINDOW_MS = 45*24*60*60*1000; // 45 days — well under a year
+
+// plan.date is ISO yyyy-mm-dd
+function _planDateMs(iso){
+  if(!iso) return null;
+  var m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(String(iso).trim());
+  if(!m) return null;
+  return new Date(+m[1], +m[2]-1, +m[3]).getTime();
+}
+// reportDate may be dd/mm/yyyy text OR a locale-swapped Date string;
+// _fmtRaDate() normalizes both back to dd/mm/yyyy before we parse.
+function _reportDateMs(s){
+  var f=_fmtRaDate(s);
+  var m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(f||'');
+  if(!m) return null;
+  return new Date(+m[3], +m[2]-1, +m[1]).getTime();
+}
+
 function _findPlanReport(p){
   if(!p) return null;
   var tag=(p.tag||'').trim().toLowerCase();
   if(!tag) return null;
   var site=(p.site||'').trim().toLowerCase();
-  var m=_REPORTS_CACHE.filter(function(r){
+  var cands=_REPORTS_CACHE.filter(function(r){
     if((r.tag||'').trim().toLowerCase()!==tag) return false;
     var rs=(r.site||'').trim().toLowerCase();
     if(site && rs && rs!==site) return false; // site is a tiebreaker only
     return true;
   });
-  return m.length ? m[0] : null; // cache is newest-first
+  if(!cands.length) return null;
+  if(cands.length===1) return cands[0];
+
+  // Multiple reports for this TAG → date-scope to the correct round.
+  var planT=_planDateMs(p.date);
+  if(planT==null) return cands[0]; // no plan date → newest (cache is newest-first)
+
+  var best=null, bestDiff=Infinity, anyDate=false;
+  cands.forEach(function(r){
+    var rt=_reportDateMs(r.reportDate);
+    if(rt==null) return;
+    anyDate=true;
+    var diff=Math.abs(rt-planT);
+    if(diff<bestDiff){ bestDiff=diff; best=r; }
+  });
+  if(!anyDate) return cands[0];                       // can't date-scope → keep newest (stay locked)
+  if(best && bestDiff<=REPORT_MATCH_WINDOW_MS) return best;
+  return null;                                        // new round, no matching report yet
 }
 
 // ── Prefetch the Drive reports list into cache, then refresh the plan list ──
@@ -6933,7 +7027,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.19.17</div>
+<div class="version-badge" style="display:none">v1.19.9</div>
 </body>
 </html>
 
