@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.21</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.22</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -651,7 +651,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.19.21 — visionOS-inspired
+   LIQUID GLASS v1.19.22 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1983,7 +1983,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.19.21</div>
+  <div class="home-version">v1.19.22</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -3794,6 +3794,7 @@ function _normPlan(p){
     status:      (['planned','inprogress','done','cancelled','incomplete'].indexOf(p.status)>=0 ? p.status : 'planned'),
     reported:    p.reported    === true,  // *** preserve lock — must be explicit true
     unlocked:    p.unlocked    === true,  // v1.19.21: admin unlock override — beats reported + Reports-sheet lock
+    svcStale:    p.svcStale    === true,  // v1.19.22: FW report (re)sent but Drive PDF not regenerated yet → keep the "Create Service Report" step
     ackBy:       p.ackBy       || '',
     fwOld:       p.fwOld       || '',
     fwNew:       p.fwNew       || ''
@@ -4084,8 +4085,9 @@ function renderPlanList(){
     // v1.19.21: an explicit admin unlock (p.unlocked) beats both the local
     // reported flag and the Reports-sheet match, so the plan is editable again.
     var _locked=(p.reported||_hasReport) && !p.unlocked;
-    // Effective incomplete: locally flagged, OR the stored report says Outdated.
-    var _effInc=(p.status==='incomplete')||(_hasReport&&String(_rpt.status||'').toLowerCase()==='outdated');
+    // Effective incomplete: locally flagged, OR the stored report says Outdated
+    // (but ignore the stale old report once a fresh FW report has been re-sent).
+    var _effInc=(p.status==='incomplete')||(_hasReport && !p.svcStale && String(_rpt.status||'').toLowerCase()==='outdated');
     // Once reported, the unit's live firmware == the new version; show the
     // frozen pre-update value so Old ≠ New stays meaningful. Prefer the local
     // frozen p.fwOld, else fall back to the stored report's Old FW.
@@ -4118,7 +4120,7 @@ function renderPlanList(){
             : '')+
           // locked: แสดง lock icon — double-click เพื่อ admin unlock
           (_locked
-            ? (_hasReport
+            ? ((_hasReport && !p.svcStale)
                 ? '<button class="plan-action-btn" onclick="downloadPlanReport(\''+p.id+'\')" title="Download saved PDF report" style="background:rgba(2,132,199,.1);border-color:rgba(2,132,199,.3);color:#0284c7"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3V14"/><path d="M7.5 10L12 14.5L16.5 10"/><path d="M5 20H19"/></svg></button>'
                 : '<button class="plan-action-btn" onclick="openServiceReport(\''+p.id+'\')" title="Create Service Report (Save to Drive)" style="background:rgba(99,102,241,.08);border-color:rgba(99,102,241,.3);color:#6366f1"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3H14L19 8V20A1 1 0 0 1 18 21H6A1 1 0 0 1 5 20V4A1 1 0 0 1 6 3Z"/><path d="M14 3V8H19"/><path d="M8 12H16M8 16H13"/></svg></button>'
               )+
@@ -4915,6 +4917,7 @@ function submitReport(){
             if(pp){
               pp.reported=true;
               pp.unlocked=false; // v1.19.21: re-lock after a (re)submitted report
+              pp.svcStale=true;  // v1.19.22: fresh FW report → a new Drive PDF is needed, so show "Create Service Report" even if an old row exists
               // FW Update Status = Outdated → update did not succeed → Incomplete (orange)
               var _fwStat=(document.getElementById('rpt-fw-update').value||'').toLowerCase();
               pp.status = (_fwStat==='outdated') ? 'incomplete' : 'done';
@@ -5688,7 +5691,9 @@ function uploadServiceReport(html, meta){
         var link=res.viewUrl?('<a href="'+esc(res.viewUrl)+'" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline">'+name+'</a>'):name;
         show('ok','\u2713 Saved to Drive: '+link,true);
         var _srm=document.getElementById('modal-service-report');
-        clearSrDraft(_srm?_srm.getAttribute('data-plan-id'):null); // finalized → drop draft
+        var _spid=_srm?_srm.getAttribute('data-plan-id'):null;
+        clearSrDraft(_spid); // finalized → drop draft
+        if(_spid){ var _sp=PLANS.find(function(x){ return String(x.id)===String(_spid); }); if(_sp){ _sp.svcStale=false; savePlans(); } } // v1.19.22: fresh PDF stored → clear stale flag so Download shows
         prefetchReports(); // refresh cache so this plan's Download PDF works immediately
       } else {
         throw new Error((res&&res.msg)||'Upload failed');
@@ -7007,7 +7012,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.19.21</div>
+<div class="version-badge" style="display:none">v1.19.22</div>
 </body>
 </html>
 
