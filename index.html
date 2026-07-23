@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.22</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.23</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -651,7 +651,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.19.22 — visionOS-inspired
+   LIQUID GLASS v1.19.23 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1983,7 +1983,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.19.22</div>
+  <div class="home-version">v1.19.23</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2479,6 +2479,10 @@ td.td-mn{
         <div id="sr-preview-constant-log-1" class="sr-img-preview" style="margin-top:5px;min-height:80px;max-height:200px"></div>
         <div class="sf-row" style="margin-top:10px"><label class="sf-label">Note / Remark</label>
           <textarea class="sf-input" id="sr-final-remark" placeholder="Additional notes..." rows="3" style="resize:vertical;min-height:60px;height:70px;line-height:1.5"></textarea></div>
+        <div class="sf-row" style="margin-top:10px;display:flex;align-items:center;gap:8px">
+          <input type="checkbox" id="sr-show-verdict" checked style="width:16px;height:16px;cursor:pointer;accent-color:var(--ac);flex-shrink:0">
+          <label for="sr-show-verdict" class="sf-label" style="margin:0;cursor:pointer">Show ready-for-service statement in report (&#10003; / &#10007;)</label>
+        </div>
       </div>
 
     </div>
@@ -5361,6 +5365,7 @@ function exportServiceReportPDF(mode){
     performedBy: p.performedBy||document.getElementById('sr-info-performed-by').textContent||'',
     ackBy:    p.ackBy||document.getElementById('sr-info-ack-by').textContent||'',
     remark:   document.getElementById('sr-final-remark').value||'',
+    showVerdict: (function(){ var el=document.getElementById('sr-show-verdict'); return el ? el.checked : true; })(), // v1.19.23: toggle the ready/NOT-ready statement
     updateDt: (function(){
       // Try rpt-update-datetime first (if report modal was used), then plan date
       var el=document.getElementById('rpt-update-datetime');
@@ -5573,9 +5578,11 @@ function exportServiceReportPDF(mode){
     //'<tr><td class="lbl">Flow Computer Tag No.</td><td class="val"><span class="tag-badge">'+rptData.tag+'</span></td></tr>'+
       '<tr><td class="lbl">Note(s) / Remark</td><td class="val" style="white-space:pre-wrap;word-break:break-word">'+rptData.remark+'&nbsp;</td></tr>'+
     '</table>'+
-    (hasFail
-      ? '<div class="notready-stmt">✗ Flow Computer Tag No. <span class="tag-badge" style="background:#fff;border-color:#dc2626;color:#991b1b">'+rptData.tag+'</span> is NOT ready for service.</div>'
-      : '<div class="ready-stmt">✓ Constant log is checked and Flow Computer Tag No. <span class="tag-badge">'+rptData.tag+'</span> is ready for service.</div>')+
+    (rptData.showVerdict
+      ? (hasFail
+          ? '<div class="notready-stmt">✗ Flow Computer Tag No. <span class="tag-badge" style="background:#fff;border-color:#dc2626;color:#991b1b">'+rptData.tag+'</span> is NOT ready for service.</div>'
+          : '<div class="ready-stmt">✓ Constant log is checked and Flow Computer Tag No. <span class="tag-badge">'+rptData.tag+'</span> is ready for service.</div>')
+      : '')+
     '<h2 style="background:#f1f5f9;border-color:#64748b;color:#334155">Constant Log Comparison</h2>'+
     imgSection('constant-log','')+
     '<div class="photo-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">'+
@@ -6093,8 +6100,9 @@ function _captureSrDraft(modal){
     checklists.push(rows);
   });
   var fr=document.getElementById('sr-final-remark');
+  var sv=document.getElementById('sr-show-verdict');
   var imgs={}; Object.keys(_srReportImages).forEach(function(k){ imgs[k]=_srReportImages[k]; });
-  return { checklists:checklists, finalRemark: fr?fr.value:'', images: imgs, ts: Date.now() };
+  return { checklists:checklists, finalRemark: fr?fr.value:'', showVerdict: sv?sv.checked:true, images: imgs, ts: Date.now() };
 }
 
 function saveSrDraft(){
@@ -6140,6 +6148,7 @@ function restoreSrDraft(planId){
     });
   });
   var fr=document.getElementById('sr-final-remark'); if(fr) fr.value=d.finalRemark||'';
+  var sv=document.getElementById('sr-show-verdict'); if(sv) sv.checked=(d.showVerdict!==false); // v1.19.23: default show unless explicitly hidden
   // images
   _srReportImages = d.images || {};
   Object.keys(_srReportImages).forEach(function(k){
@@ -7012,7 +7021,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.19.22</div>
+<div class="version-badge" style="display:none">v1.19.23</div>
 </body>
 </html>
 
