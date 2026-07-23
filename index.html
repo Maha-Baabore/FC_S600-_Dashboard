@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.23</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.24</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -651,7 +651,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.19.23 — visionOS-inspired
+   LIQUID GLASS v1.19.24 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1983,7 +1983,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.19.23</div>
+  <div class="home-version">v1.19.24</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -4974,7 +4974,7 @@ function gcExportPDF(){
 
   // Render Gantt to canvas (reuse gcExport canvas logic, always light theme for print)
   var BG='#ffffff', HEADER='#f1f5f9', ROW_ALT='#f8fafc', BORDER='#e2e8f0';
-  var TXT='#475569', TXT2='#0f172a', SC={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444'};
+  var TXT='#475569', TXT2='#0f172a', SC={planned:'#6366f1',inprogress:'#f59e0b',done:'#10b981',cancelled:'#ef4444',incomplete:'#a855f7'}; // v1.19.24: add incomplete (was missing → wrong color in PDF)
   var MONTH_EN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
   // Compute week anchor with GC_WEEK_OFFSET — must match renderGantt exactly
@@ -5183,6 +5183,7 @@ function gcExportPDF(){
       (sumCounts.planned?'<div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:5px;padding:5px 10px;font-size:9px;color:#4338ca;-webkit-print-color-adjust:exact;print-color-adjust:exact"><strong>'+sumCounts.planned+'</strong> Planned</div>':'')+
       (sumCounts.inprogress?'<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:5px;padding:5px 10px;font-size:9px;color:#92400e;-webkit-print-color-adjust:exact;print-color-adjust:exact"><strong>'+sumCounts.inprogress+'</strong> In Progress</div>':'')+
       (sumCounts.done?'<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:5px;padding:5px 10px;font-size:9px;color:#15803d;-webkit-print-color-adjust:exact;print-color-adjust:exact"><strong>'+sumCounts.done+'</strong> Done</div>':'')+
+      (sumCounts.incomplete?'<div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:5px;padding:5px 10px;font-size:9px;color:#7e22ce;-webkit-print-color-adjust:exact;print-color-adjust:exact"><strong>'+sumCounts.incomplete+'</strong> Incomplete</div>':'')+
       (sumCounts.cancelled?'<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:5px;padding:5px 10px;font-size:9px;color:#b91c1c;-webkit-print-color-adjust:exact;print-color-adjust:exact"><strong>'+sumCounts.cancelled+'</strong> Cancelled</div>':'')+
     '</div>'+
     '<table style="width:100%;border-collapse:collapse;font-size:8.5px">'+
@@ -5237,6 +5238,7 @@ function gcExportPDF(){
       '<span class="leg-item"><span class="leg-dot" style="background:#6366f1"></span>Planned</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#f59e0b"></span>In Progress</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#10b981"></span>Done</span>'+
+      '<span class="leg-item"><span class="leg-dot" style="background:#a855f7"></span>Incomplete</span>'+
       '<span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Cancelled</span>'+
     '</div>'+
   '</div>'+
@@ -7021,7 +7023,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.19.23</div>
+<div class="version-badge" style="display:none">v1.19.24</div>
 </body>
 </html>
 
