@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.20</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.21</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -651,7 +651,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.19.20 — visionOS-inspired
+   LIQUID GLASS v1.19.21 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1983,7 +1983,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.19.20</div>
+  <div class="home-version">v1.19.21</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -3793,6 +3793,7 @@ function _normPlan(p){
     note:        p.note        || '',
     status:      (['planned','inprogress','done','cancelled','incomplete'].indexOf(p.status)>=0 ? p.status : 'planned'),
     reported:    p.reported    === true,  // *** preserve lock — must be explicit true
+    unlocked:    p.unlocked    === true,  // v1.19.21: admin unlock override — beats reported + Reports-sheet lock
     ackBy:       p.ackBy       || '',
     fwOld:       p.fwOld       || '',
     fwNew:       p.fwNew       || ''
@@ -4080,7 +4081,9 @@ function renderPlanList(){
     // re-sync that drops p.reported can't re-open an already-reported plan.
     var _rpt=_findPlanReport(p);
     var _hasReport=!!_rpt;
-    var _locked=p.reported||_hasReport;
+    // v1.19.21: an explicit admin unlock (p.unlocked) beats both the local
+    // reported flag and the Reports-sheet match, so the plan is editable again.
+    var _locked=(p.reported||_hasReport) && !p.unlocked;
     // Effective incomplete: locally flagged, OR the stored report says Outdated.
     var _effInc=(p.status==='incomplete')||(_hasReport&&String(_rpt.status||'').toLowerCase()==='outdated');
     // Once reported, the unit's live firmware == the new version; show the
@@ -4109,8 +4112,8 @@ function renderPlanList(){
           : '<button class="plan-status-badge badge-'+p.status+'" onclick="cyclePlanStatus(\''+p.id+'\')" title="Click to change status">'+lbl[p.status]+'</button>'
         )+
         '<div style="display:flex;gap:6px;margin-top:6px;align-items:center">'+
-          // report btn: แสดงเฉพาะ done แต่ยังไม่ได้ report (และไม่มีใน Reports sheet)
-          (p.status==='done' && !_locked
+          // report btn: done ที่ยังไม่ report — หรือ plan ที่ปลดล็อคแล้ว (รวม incomplete) เพื่อทำใหม่
+          ((!_locked && (p.status==='done' || (p.unlocked && p.status==='incomplete')))
             ? '<button class="plan-action-btn report-btn" onclick="openReport(\''+p.id+'\')" title="Report update result"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3H14L19 8V20A1 1 0 0 1 18 21H6A1 1 0 0 1 5 20V4A1 1 0 0 1 6 3Z"/><path d="M14 3V8H19"/><path d="M8.5 14L10.5 16L15 11.5"/></svg></button>'
             : '')+
           // locked: แสดง lock icon — double-click เพื่อ admin unlock
@@ -4651,6 +4654,7 @@ function adminUnlock(id){
   }
   if(!confirm('Unlock "'+p.tag+'" ?\nCurrent status ('+(p.status||'done')+') is kept. Edit and delete will be available again.')) return;
   p.reported = false;
+  p.unlocked = true; // v1.19.21: override the Reports-sheet lock too, so the plan is truly editable again
   savePlans();
   renderCal(); renderPlanList(); renderGantt();
 }
@@ -4771,12 +4775,15 @@ function openReport(id){
   // matching report for this plan (same TAG+Site, date within window), redirect
   // to the saved PDF instead of letting a second report be created. Only fires
   // when a match actually exists, so genuine next-round updates are unaffected.
-  var _existing=_findPlanReport(p);
-  if(_existing){
-    if(confirm('TAG '+(p.tag||'')+' has already been reported (found in the Reports sheet).\n\nOpen the saved PDF instead of creating a new one?')){
-      downloadPlanReport(p.id);
+  // v1.19.21: skip when the admin has explicitly unlocked this plan to redo it.
+  if(!p.unlocked){
+    var _existing=_findPlanReport(p);
+    if(_existing){
+      if(confirm('TAG '+(p.tag||'')+' has already been reported (found in the Reports sheet).\n\nOpen the saved PDF instead of creating a new one?')){
+        downloadPlanReport(p.id);
+      }
+      return;
     }
-    return;
   }
   // Match by TAG + Site to avoid duplicate TAG collision across regions
   var row=DATA.find(function(x){
@@ -4907,6 +4914,7 @@ function submitReport(){
             var pp=PLANS.find(function(x){ return String(x.id)===String(planId); });
             if(pp){
               pp.reported=true;
+              pp.unlocked=false; // v1.19.21: re-lock after a (re)submitted report
               // FW Update Status = Outdated → update did not succeed → Incomplete (orange)
               var _fwStat=(document.getElementById('rpt-fw-update').value||'').toLowerCase();
               pp.status = (_fwStat==='outdated') ? 'incomplete' : 'done';
@@ -6999,7 +7007,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.19.20</div>
+<div class="version-badge" style="display:none">v1.19.21</div>
 </body>
 </html>
 
