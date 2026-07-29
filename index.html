@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.24</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.25</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -651,7 +651,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.19.24 — visionOS-inspired
+   LIQUID GLASS v1.19.25 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1983,7 +1983,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.19.24</div>
+  <div class="home-version">v1.19.25</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2479,9 +2479,18 @@ td.td-mn{
         <div id="sr-preview-constant-log-1" class="sr-img-preview" style="margin-top:5px;min-height:80px;max-height:200px"></div>
         <div class="sf-row" style="margin-top:10px"><label class="sf-label">Note / Remark</label>
           <textarea class="sf-input" id="sr-final-remark" placeholder="Additional notes..." rows="3" style="resize:vertical;min-height:60px;height:70px;line-height:1.5"></textarea></div>
-        <div class="sf-row" style="margin-top:10px;display:flex;align-items:center;gap:8px">
-          <input type="checkbox" id="sr-show-verdict" checked style="width:16px;height:16px;cursor:pointer;accent-color:var(--ac);flex-shrink:0">
-          <label for="sr-show-verdict" class="sf-label" style="margin:0;cursor:pointer">Show ready-for-service statement in report (&#10003; / &#10007;)</label>
+        <div class="sf-row" style="margin-top:10px">
+          <label class="sf-label" style="margin-bottom:6px">Service Report Result <span style="color:var(--tx3);font-weight:400">(leave both unchecked to hide the box in the report)</span></label>
+          <div style="display:flex;gap:20px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px">
+              <input type="checkbox" id="sr-verdict-ready" onclick="if(this.checked){var o=document.getElementById('sr-verdict-notready');if(o)o.checked=false;}" style="width:16px;height:16px;cursor:pointer;accent-color:#10b981;flex-shrink:0">
+              <span style="color:#059669;font-weight:600">&#10003; Ready for service</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px">
+              <input type="checkbox" id="sr-verdict-notready" onclick="if(this.checked){var o=document.getElementById('sr-verdict-ready');if(o)o.checked=false;}" style="width:16px;height:16px;cursor:pointer;accent-color:#dc2626;flex-shrink:0">
+              <span style="color:#dc2626;font-weight:600">&#10007; Not ready for service</span>
+            </label>
+          </div>
         </div>
       </div>
 
@@ -5367,7 +5376,7 @@ function exportServiceReportPDF(mode){
     performedBy: p.performedBy||document.getElementById('sr-info-performed-by').textContent||'',
     ackBy:    p.ackBy||document.getElementById('sr-info-ack-by').textContent||'',
     remark:   document.getElementById('sr-final-remark').value||'',
-    showVerdict: (function(){ var el=document.getElementById('sr-show-verdict'); return el ? el.checked : true; })(), // v1.19.23: toggle the ready/NOT-ready statement
+    verdict: (function(){ var r=document.getElementById('sr-verdict-ready'), n=document.getElementById('sr-verdict-notready'); return (r&&r.checked)?'ready':((n&&n.checked)?'notready':''); })(), // v1.19.25: user-chosen result; '' → hide the Result box
     updateDt: (function(){
       // Try rpt-update-datetime first (if report modal was used), then plan date
       var el=document.getElementById('rpt-update-datetime');
@@ -5580,11 +5589,11 @@ function exportServiceReportPDF(mode){
     //'<tr><td class="lbl">Flow Computer Tag No.</td><td class="val"><span class="tag-badge">'+rptData.tag+'</span></td></tr>'+
       '<tr><td class="lbl">Note(s) / Remark</td><td class="val" style="white-space:pre-wrap;word-break:break-word">'+rptData.remark+'&nbsp;</td></tr>'+
     '</table>'+
-    (rptData.showVerdict
-      ? (hasFail
-          ? '<div class="notready-stmt">✗ Flow Computer Tag No. <span class="tag-badge" style="background:#fff;border-color:#dc2626;color:#991b1b">'+rptData.tag+'</span> is NOT ready for service.</div>'
-          : '<div class="ready-stmt">✓ Constant log is checked and Flow Computer Tag No. <span class="tag-badge">'+rptData.tag+'</span> is ready for service.</div>')
-      : '')+
+    (rptData.verdict==='ready'
+      ? '<div class="ready-stmt">✓ Constant log is checked and Flow Computer Tag No. <span class="tag-badge">'+rptData.tag+'</span> is ready for service.</div>'
+      : rptData.verdict==='notready'
+        ? '<div class="notready-stmt">✗ Flow Computer Tag No. <span class="tag-badge" style="background:#fff;border-color:#dc2626;color:#991b1b">'+rptData.tag+'</span> is NOT ready for service.</div>'
+        : '')+
     '<h2 style="background:#f1f5f9;border-color:#64748b;color:#334155">Constant Log Comparison</h2>'+
     imgSection('constant-log','')+
     '<div class="photo-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">'+
@@ -6102,9 +6111,10 @@ function _captureSrDraft(modal){
     checklists.push(rows);
   });
   var fr=document.getElementById('sr-final-remark');
-  var sv=document.getElementById('sr-show-verdict');
+  var vr=document.getElementById('sr-verdict-ready'), vn=document.getElementById('sr-verdict-notready');
+  var verdict=(vr&&vr.checked)?'ready':((vn&&vn.checked)?'notready':'');
   var imgs={}; Object.keys(_srReportImages).forEach(function(k){ imgs[k]=_srReportImages[k]; });
-  return { checklists:checklists, finalRemark: fr?fr.value:'', showVerdict: sv?sv.checked:true, images: imgs, ts: Date.now() };
+  return { checklists:checklists, finalRemark: fr?fr.value:'', verdict: verdict, images: imgs, ts: Date.now() };
 }
 
 function saveSrDraft(){
@@ -6112,7 +6122,7 @@ function saveSrDraft(){
   if(!modal || modal.classList.contains('hidden')) return;
   var planId=modal.getAttribute('data-plan-id'); if(!planId) return;
   var draft=_captureSrDraft(modal);
-  var hasData = draft.finalRemark || Object.keys(draft.images).length ||
+  var hasData = draft.finalRemark || draft.verdict || Object.keys(draft.images).length ||
     draft.checklists.some(function(t){ return t.some(function(r){ return r.c1||r.c2||r.rm; }); });
   var key=_srDraftKey(planId);
   if(!hasData){ try{ localStorage.removeItem(key); }catch(e){} return; }
@@ -6150,7 +6160,8 @@ function restoreSrDraft(planId){
     });
   });
   var fr=document.getElementById('sr-final-remark'); if(fr) fr.value=d.finalRemark||'';
-  var sv=document.getElementById('sr-show-verdict'); if(sv) sv.checked=(d.showVerdict!==false); // v1.19.23: default show unless explicitly hidden
+  var vr=document.getElementById('sr-verdict-ready'); if(vr) vr.checked=(d.verdict==='ready');
+  var vn=document.getElementById('sr-verdict-notready'); if(vn) vn.checked=(d.verdict==='notready'); // v1.19.25: restore user-chosen result
   // images
   _srReportImages = d.images || {};
   Object.keys(_srReportImages).forEach(function(k){
@@ -6184,7 +6195,7 @@ function clearSrDraft(planId){
   function sched(){ clearTimeout(_t); _t=setTimeout(function(){ try{ saveSrDraft(); }catch(e){} },600); }
   function inModal(e){ var m=document.getElementById('modal-service-report'); return m && !m.classList.contains('hidden') && m.contains(e.target); }
   document.addEventListener('input',function(e){ if(inModal(e) && (e.target.classList.contains('sr-remark-input')||e.target.id==='sr-final-remark')) sched(); });
-  document.addEventListener('change',function(e){ if(inModal(e) && e.target.classList.contains('sr-chk')) sched(); });
+  document.addEventListener('change',function(e){ if(inModal(e) && (e.target.classList.contains('sr-chk')||e.target.id==='sr-verdict-ready'||e.target.id==='sr-verdict-notready')) sched(); });
 })();
 
 function openServiceReport(planId){
@@ -7023,7 +7034,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.19.24</div>
+<div class="version-badge" style="display:none">v1.19.25</div>
 </body>
 </html>
 
