@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.27</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.28</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -651,7 +651,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.19.27 — visionOS-inspired
+   LIQUID GLASS v1.19.28 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1983,7 +1983,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.19.27</div>
+  <div class="home-version">v1.19.28</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -5377,7 +5377,7 @@ function exportServiceReportPDF(mode){
     performedBy: p.performedBy||document.getElementById('sr-info-performed-by').textContent||'',
     ackBy:    p.ackBy||document.getElementById('sr-info-ack-by').textContent||'',
     remark:   document.getElementById('sr-final-remark').value||'',
-    verdict: (function(){ var r=document.getElementById('sr-verdict-ready'), n=document.getElementById('sr-verdict-notready'); return (r&&r.checked)?'ready':((n&&n.checked)?'notready':''); })(), // v1.19.27: user-chosen result; '' → hide the Result box
+    verdict: (function(){ var r=document.getElementById('sr-verdict-ready'), n=document.getElementById('sr-verdict-notready'); return (r&&r.checked)?'ready':((n&&n.checked)?'notready':''); })(), // v1.19.28: user-chosen result; '' → hide the Result box
     updateDt: (function(){
       // Try rpt-update-datetime first (if report modal was used), then plan date
       var el=document.getElementById('rpt-update-datetime');
@@ -5413,7 +5413,10 @@ function exportServiceReportPDF(mode){
   }
 
   // Application type — drives which page layout is used
-  var appType = (row['Applications']||row['Application']||p.appType||'').trim();
+  // v1.19.28: normalized (trim+uppercase) to match applyAppTypeToReport()'s
+  // comparison, so a sheet value like "usm"/"orifice " doesn't silently
+  // fall through to the wrong page layout.
+  var appType = String(row['Applications']||row['Application']||p.appType||'').trim().toUpperCase();
 
   var CL={
     preUpdate:  getSectionChecklist(0),
@@ -5605,7 +5608,7 @@ function exportServiceReportPDF(mode){
   // ── Per-app-type page layouts ──────────────────────────────────────────
   var pages;
 
-  if(appType==='Orifice'){
+  if(appType==='ORIFICE'){
     // Orifice: 4 pages
     // P3: PowerCycle + CalcTests (24-Hours) + PostUpdate
     // P4: Result
@@ -5620,7 +5623,7 @@ function exportServiceReportPDF(mode){
       '</div>'+mkFtr(4,4)+'</div>'
     ];
 
-  } else if(appType==='Supervisory'){
+  } else if(appType==='SUPERVISORY'){
     // Supervisory: sections stripped in DOM by applyAppTypeToReport
     // Pre-Update has no "Switch Meter Run", "Check FC", "Print out Current Report (pre)"
     // No Calc Tests section, no "Print out Current Report (post)"
@@ -5665,7 +5668,7 @@ function exportServiceReportPDF(mode){
   var noPrintHtml=html.replace('<script>window.onload=function(){ window.print(); };<\/script>','');
 
   if(mode==='preview'){
-    // v1.19.27: read-only look at the report before finalizing — opens in a new tab,
+    // v1.19.28: read-only look at the report before finalizing — opens in a new tab,
     // no print dialog, nothing uploaded, draft is left untouched.
     var pBlob=new Blob([noPrintHtml],{type:'text/html;charset=utf-8'});
     var pUrl=URL.createObjectURL(pBlob);
@@ -5713,7 +5716,7 @@ function uploadServiceReport(html, meta){
   if(!url){ show('err','⚠ appsScriptUrl not set in CONFIG'); return; }
   show('loading','⏳ Saving report to Drive (converting to PDF)...');
   if(btn){ btn.disabled=true; }
-  // v1.19.27: remember the newest cached report BEFORE this upload starts, so a
+  // v1.19.28: remember the newest cached report BEFORE this upload starts, so a
   // later reconciliation check (see below) can tell "a new row just appeared"
   // from "nothing changed, same old row".
   var _baselineTopId=(_REPORTS_CACHE&&_REPORTS_CACHE[0]&&_REPORTS_CACHE[0].fileId)||null;
@@ -5731,7 +5734,7 @@ function uploadServiceReport(html, meta){
     finish();
   }
 
-  // v1.19.27: on a slow HTML→PDF conversion (many/large embedded photos),
+  // v1.19.28: on a slow HTML→PDF conversion (many/large embedded photos),
   // Google's own front-end can cut the HTTP response short and hand back an
   // HTML error page instead of our JSON — even though the Apps Script keeps
   // running server-side and the file usually lands in Drive a few seconds
@@ -6130,14 +6133,17 @@ function applyAppTypeToReport(app){
     mkRow('Monthly Calculation Test')+
     '<tr id="sr-row-linear-kfactor"><td>Linear K-Factor Calculation Test</td>'+chkCell+chkCell+remarkCell+'</tr>';
 
-  var a=(app||'').trim();
+  // v1.19.28: normalize case/whitespace before matching — a sheet value like
+  // "usm" or "USM " (instead of exactly "USM") used to silently fall through
+  // to the unfiltered default (all rows visible, incl. Linear K-Factor).
+  var a=String(app||'').trim().toUpperCase();
 
   if(a==='USM'){
     vis('sr-row-linear-kfactor',false);
-  } else if(a==='Orifice'){
+  } else if(a==='ORIFICE'){
     // Replace calc tests with single 24-Hours row
     tbody.innerHTML='<tr><td>24-Hours Calculation Test</td>'+chkCell+chkCell+remarkCell+'</tr>';
-  } else if(a==='Supervisory'){
+  } else if(a==='SUPERVISORY'){
     vis('sr-row-switch-meter',false);
     vis('sr-row-check-fc',false);
     vis('sr-row-print-pre',false);
@@ -6216,7 +6222,7 @@ function restoreSrDraft(planId){
   });
   var fr=document.getElementById('sr-final-remark'); if(fr) fr.value=d.finalRemark||'';
   var vr=document.getElementById('sr-verdict-ready'); if(vr) vr.checked=(d.verdict==='ready');
-  var vn=document.getElementById('sr-verdict-notready'); if(vn) vn.checked=(d.verdict==='notready'); // v1.19.27: restore user-chosen result
+  var vn=document.getElementById('sr-verdict-notready'); if(vn) vn.checked=(d.verdict==='notready'); // v1.19.28: restore user-chosen result
   // images
   _srReportImages = d.images || {};
   Object.keys(_srReportImages).forEach(function(k){
@@ -6308,7 +6314,10 @@ function openServiceReport(planId){
   });
 
   // Apply app-type-specific section visibility
-  applyAppTypeToReport(row['Applications']||row['Application']||'');
+  // v1.19.28: fall back to the plan's own appType (if ever set) like
+  // exportServiceReportPDF already does, instead of silently defaulting to
+  // the unfiltered Turbine-style checklist when the master sheet lookup misses.
+  applyAppTypeToReport(row['Applications']||row['Application']||p.appType||'');
 
   // Restore any in-progress draft for this plan (survives accidental close)
   restoreSrDraft(planId);
@@ -7089,7 +7098,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.19.27</div>
+<div class="version-badge" style="display:none">v1.19.28</div>
 </body>
 </html>
 
