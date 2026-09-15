@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.25</title>
+<title>Flow Computer FloBoss™ S600+ PTT Metering Dashboard v1.19.27</title>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
@@ -651,7 +651,7 @@ tr:hover td{background:rgba(255,255,255,.02)}tr:last-child td{border-bottom:none
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIQUID GLASS v1.19.25 — visionOS-inspired
+   LIQUID GLASS v1.19.27 — visionOS-inspired
    Static mesh gradient backdrop + frosted surfaces + colored light bleeds
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1983,7 +1983,7 @@ td.td-mn{
   <div class="logo-box">FC<br>S600+</div>
   <div class="home-title">Flow Computer FloBoss™ S600+</div>
   <div class="home-sub">PTT Metering Dashboard · PTT Overall</div>
-  <div class="home-version">v1.19.25</div>
+  <div class="home-version">v1.19.27</div>
 
   <div class="home-theme-row">
     <div class="toggle-pill" id="home-theme-toggle">
@@ -2498,6 +2498,7 @@ td.td-mn{
     <div id="sr-drive-status" class="report-apps-status" style="display:none;margin:0 16px 10px"></div>
     <div class="modal-footer">
       <button class="modal-btn-cancel" onclick="closeModal('modal-service-report')">Cancel</button>
+      <button class="modal-btn-secondary" onclick="exportServiceReportPDF('preview')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M2 12S5.5 5 12 5S22 12 22 12S18.5 19 12 19S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg> Preview</button>
       <button class="modal-btn-save" id="sr-drive-btn" onclick="exportServiceReportPDF('drive')" style="background:linear-gradient(135deg,#0d9488,#0f766e)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M4 14.5A4 4 0 0 1 5 6.7A5.5 5.5 0 0 1 16 7A4.5 4.5 0 0 1 18.5 15.3"/><path d="M12 11V20M8.5 16.5L12 20L15.5 16.5"/></svg> Save to Drive</button>
     </div>
   </div>
@@ -5352,7 +5353,7 @@ function _recoverFocusAfterExport(focusId){
 var _srReportImages={}; // key: section id, value: {name, dataUrl}
 
 function exportServiceReportPDF(mode){
-  mode = mode || 'print'; // 'print' = open print preview; 'drive' = upload PDF to Google Drive
+  mode = mode || 'print'; // 'print' = open browser print dialog; 'drive' = upload PDF to Google Drive; 'preview' = view report in a new tab, no print dialog, no upload, draft untouched
   // Read data from the service report modal
   var modal=document.getElementById('modal-service-report');
   var planId=modal ? modal.getAttribute('data-plan-id') : null;
@@ -5376,7 +5377,7 @@ function exportServiceReportPDF(mode){
     performedBy: p.performedBy||document.getElementById('sr-info-performed-by').textContent||'',
     ackBy:    p.ackBy||document.getElementById('sr-info-ack-by').textContent||'',
     remark:   document.getElementById('sr-final-remark').value||'',
-    verdict: (function(){ var r=document.getElementById('sr-verdict-ready'), n=document.getElementById('sr-verdict-notready'); return (r&&r.checked)?'ready':((n&&n.checked)?'notready':''); })(), // v1.19.25: user-chosen result; '' → hide the Result box
+    verdict: (function(){ var r=document.getElementById('sr-verdict-ready'), n=document.getElementById('sr-verdict-notready'); return (r&&r.checked)?'ready':((n&&n.checked)?'notready':''); })(), // v1.19.27: user-chosen result; '' → hide the Result box
     updateDt: (function(){
       // Try rpt-update-datetime first (if report modal was used), then plan date
       var el=document.getElementById('rpt-update-datetime');
@@ -5660,10 +5661,22 @@ function exportServiceReportPDF(mode){
   var blob=new Blob([html],{type:'text/html;charset=utf-8'});
   var url=URL.createObjectURL(blob);
 
+  // No-auto-print copy, shared by 'drive' (uploaded as-is) and 'preview' (just viewed)
+  var noPrintHtml=html.replace('<script>window.onload=function(){ window.print(); };<\/script>','');
+
+  if(mode==='preview'){
+    // v1.19.27: read-only look at the report before finalizing — opens in a new tab,
+    // no print dialog, nothing uploaded, draft is left untouched.
+    var pBlob=new Blob([noPrintHtml],{type:'text/html;charset=utf-8'});
+    var pUrl=URL.createObjectURL(pBlob);
+    _openPrintTab(pUrl);
+    _recoverFocusAfterExport('sr-final-remark');
+    return;
+  }
+
   if(mode==='drive'){
-    // Stored copy: strip the auto-print script and ship the HTML to Apps Script,
+    // Stored copy: ship the (already print-script-stripped) HTML to Apps Script,
     // which converts it to PDF on Google Drive. Build metadata for the Reports sheet.
-    var driveHtml=html.replace('<script>window.onload=function(){ window.print(); };<\/script>','');
     var _meta={
       reportDate: rptData.updateDt||dateStr,
       region:     rptData.region,
@@ -5676,7 +5689,7 @@ function exportServiceReportPDF(mode){
       performedBy:rptData.performedBy,
       ackBy:      rptData.ackBy
     };
-    uploadServiceReport(driveHtml, _meta);
+    uploadServiceReport(noPrintHtml, _meta);
     return;
   }
 
@@ -5697,29 +5710,71 @@ function uploadServiceReport(html, meta){
   var st=document.getElementById('sr-drive-status');
   var btn=document.getElementById('sr-drive-btn');
   function show(cls,txt,isHtml){ if(!st) return; st.style.display=''; st.className='report-apps-status '+cls; if(isHtml){ st.innerHTML=txt; } else { st.textContent=txt; } }
-  if(!url){ show('err','\u26a0 appsScriptUrl not set in CONFIG'); return; }
-  show('loading','\u23f3 Saving report to Drive (converting to PDF)...');
+  if(!url){ show('err','⚠ appsScriptUrl not set in CONFIG'); return; }
+  show('loading','⏳ Saving report to Drive (converting to PDF)...');
   if(btn){ btn.disabled=true; }
+  // v1.19.27: remember the newest cached report BEFORE this upload starts, so a
+  // later reconciliation check (see below) can tell "a new row just appeared"
+  // from "nothing changed, same old row".
+  var _baselineTopId=(_REPORTS_CACHE&&_REPORTS_CACHE[0]&&_REPORTS_CACHE[0].fileId)||null;
+
+  function finish(){ if(btn) btn.disabled=false; }
+  function onSuccess(res){
+    var name=esc(res.fileName||'report.pdf');
+    var link=res.viewUrl?('<a href="'+esc(res.viewUrl)+'" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline">'+name+'</a>'):name;
+    show('ok','✓ Saved to Drive: '+link,true);
+    var _srm=document.getElementById('modal-service-report');
+    var _spid=_srm?_srm.getAttribute('data-plan-id'):null;
+    clearSrDraft(_spid); // finalized → drop draft
+    if(_spid){ var _sp=PLANS.find(function(x){ return String(x.id)===String(_spid); }); if(_sp){ _sp.svcStale=false; savePlans(); } } // v1.19.22: fresh PDF stored → clear stale flag so Download shows
+    prefetchReports(); // refresh cache so this plan's Download PDF works immediately
+    finish();
+  }
+
+  // v1.19.27: on a slow HTML→PDF conversion (many/large embedded photos),
+  // Google's own front-end can cut the HTTP response short and hand back an
+  // HTML error page instead of our JSON — even though the Apps Script keeps
+  // running server-side and the file usually lands in Drive a few seconds
+  // later anyway (this is exactly what caused "Unexpected token '<'... is
+  // not valid JSON" while the PDF still showed up in Drive). Rather than
+  // reporting a hard failure immediately, poll the Reports list briefly to
+  // see if it actually finished.
+  function reconcile(attempt){
+    attempt=attempt||0;
+    if(attempt>=5){
+      show('err','✗ Connection was cut off and the save could not be confirmed. Check the Reports Archive or Drive folder before retrying — retrying now may create a duplicate PDF.');
+      finish();
+      return;
+    }
+    setTimeout(function(){
+      var _rc=new AbortController(); var _rt=setTimeout(function(){ _rc.abort(); },10000);
+      fetch(url+'?action=reports',{signal:_rc.signal})
+        .then(function(r){ clearTimeout(_rt); return r.json(); })
+        .then(function(res){
+          var top=(res&&res.ok&&Array.isArray(res.reports))?res.reports[0]:null;
+          if(top && String(top.tag||'')===String(meta.tag||'') && top.fileId!==_baselineTopId){
+            onSuccess(top); // new row for this TAG just appeared → the earlier "error" was a false alarm
+          } else {
+            reconcile(attempt+1);
+          }
+        })
+        .catch(function(){ reconcile(attempt+1); });
+    },3000);
+  }
+
   var _c=new AbortController(); var _t=setTimeout(function(){ _c.abort(); },60000);
   fetch(url,{method:'POST',body:JSON.stringify({action:'uploadReport',html:html,meta:meta}),signal:_c.signal})
-    .then(function(r){ clearTimeout(_t); return r.json(); })
-    .then(function(res){
-      if(res&&res.ok){
-        var name=esc(res.fileName||'report.pdf');
-        var link=res.viewUrl?('<a href="'+esc(res.viewUrl)+'" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline">'+name+'</a>'):name;
-        show('ok','\u2713 Saved to Drive: '+link,true);
-        var _srm=document.getElementById('modal-service-report');
-        var _spid=_srm?_srm.getAttribute('data-plan-id'):null;
-        clearSrDraft(_spid); // finalized → drop draft
-        if(_spid){ var _sp=PLANS.find(function(x){ return String(x.id)===String(_spid); }); if(_sp){ _sp.svcStale=false; savePlans(); } } // v1.19.22: fresh PDF stored → clear stale flag so Download shows
-        prefetchReports(); // refresh cache so this plan's Download PDF works immediately
-      } else {
-        throw new Error((res&&res.msg)||'Upload failed');
-      }
+    .then(function(r){ clearTimeout(_t); return r.text(); })
+    .then(function(txt){
+      var res=null; try{ res=JSON.parse(txt); }catch(parseErr){ /* fall through to reconcile below */ }
+      if(res&&res.ok){ onSuccess(res); return; }
+      if(res&&res.ok===false){ throw new Error(res.msg||'Upload failed'); }
+      show('loading','⏳ Connection was cut off mid-save — checking if it finished anyway...');
+      reconcile(0);
     })
-    .catch(function(e){ clearTimeout(_t); show('err','\u2717 '+(e.name==='AbortError'?'Timed out (report too large or slow conversion)':e.message)); })
-    .then(function(){ if(btn) btn.disabled=false; }); // finally: re-arm button on success+failure
+    .catch(function(e){ clearTimeout(_t); show('err','✗ '+(e.name==='AbortError'?'Timed out (report too large or slow conversion)':e.message)); finish(); });
 }
+
 
 // ── Open the Reports Archive modal, then (re)load the list ──
 function openReportsArchive(){
@@ -6161,7 +6216,7 @@ function restoreSrDraft(planId){
   });
   var fr=document.getElementById('sr-final-remark'); if(fr) fr.value=d.finalRemark||'';
   var vr=document.getElementById('sr-verdict-ready'); if(vr) vr.checked=(d.verdict==='ready');
-  var vn=document.getElementById('sr-verdict-notready'); if(vn) vn.checked=(d.verdict==='notready'); // v1.19.25: restore user-chosen result
+  var vn=document.getElementById('sr-verdict-notready'); if(vn) vn.checked=(d.verdict==='notready'); // v1.19.27: restore user-chosen result
   // images
   _srReportImages = d.images || {};
   Object.keys(_srReportImages).forEach(function(k){
@@ -7034,7 +7089,7 @@ function _escIW(str) {
 }
 
 </script>
-<div class="version-badge" style="display:none">v1.19.25</div>
+<div class="version-badge" style="display:none">v1.19.27</div>
 </body>
 </html>
 
